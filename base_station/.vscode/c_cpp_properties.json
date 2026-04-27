@@ -164,6 +164,8 @@
                 "/Users/universum/.platformio/packages/framework-espidf/components/perfmon/include",
                 "/Users/universum/.platformio/packages/framework-espidf/components/touch_element/include",
                 "/Users/universum/.platformio/packages/framework-espidf/components/usb/include",
+                "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/lib/lora/include",
+                "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/lib/lora/src",
                 ""
             ],
             "browse": {
@@ -325,6 +327,8 @@
                     "/Users/universum/.platformio/packages/framework-espidf/components/perfmon/include",
                     "/Users/universum/.platformio/packages/framework-espidf/components/touch_element/include",
                     "/Users/universum/.platformio/packages/framework-espidf/components/usb/include",
+                    "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/lib/lora/include",
+                    "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/lib/lora/src",
                     ""
                 ]
             },
@@ -342,6 +346,7 @@
                 "ARDUINO_USB_MODE=1",
                 "ARDUINO_RUNNING_CORE=1",
                 "ARDUINO_EVENT_RUNNING_CORE=1",
+                "__PLATFORMIO_BUILD_DEBUG__",
                 ""
             ],
             "cStandard": "gnu17",

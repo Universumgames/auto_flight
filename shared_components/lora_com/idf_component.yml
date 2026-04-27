@@ -1,0 +1,4 @@
+dependencies:
+  esp32_lora:
+    path: ../esp32-lora-library
+    git: https://github.com/khanafaq0099/esp32-lora-library.git

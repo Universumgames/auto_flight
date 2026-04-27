@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "motor_controller"
+		},
+		{
+			"path": "flight_controller"
+		},
+		{
+			"path": "base_station"
+		}
+	],
+	"settings": {}
+}
