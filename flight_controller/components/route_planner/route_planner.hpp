@@ -1,5 +1,8 @@
 #pragma once
 #include "./route.hpp"
+#include "homog2d.hpp"
+
+using namespace h2d;
 
 class RoutePlannerClass {
 private:
@@ -20,16 +23,16 @@ public:
      */
     std::vector<Coordinate> planRoute(const std::vector<Coordinate>& shape, float maxPointDistance, float maxSwathWidth, float overlapFactor);
 
-private:
+public:
     /**
      * Get lines that cover shape
      * @param shape coordinate array to define shape
-     * @param maxDistance distance between lines
+     * @param maxDistance distance between lines in degree
      * @return list of lines that cover the shape, each line is defined by two coordinates (start and end)
      */
-    std::vector<std::pair<Coordinate, Coordinate>> generateSimpleSweepLines(const std::vector<Coordinate>& shape, float maxDistance);
+    static std::vector<std::pair<Coordinate, Coordinate>> generateSimpleSweepLines(const std::vector<Coordinate>& shape, float maxDistance);
 
-    Coordinate getIntersection(const std::vector<Coordinate>& shape, const Coordinate& origin, const Vector2D& direction);
+    static Coordinate getIntersection(const std::vector<Coordinate>& shape, const Coordinate& origin, const Point2d& direction);
 
     /**
      * Get the point of intersection between the lines ab and cd
@@ -39,11 +42,9 @@ private:
      * @param d point d
      * @return intersection point or (NAN, NAN) if lines are parallel or do not intersect within the line segments
      */
-    Vector2D intersection(Vector2D a, Vector2D b, Vector2D c, Vector2D d);
+    static Point2d intersection(const Point2d& a, const Point2d& b, const Point2d& c, const Point2d& d);
 
-    void getMostOuterPoints(const std::vector<Coordinate>& shape, Coordinate& leftMost, Coordinate& rightMost, Coordinate& topMost, Coordinate& bottomMost);
-
-
+    static void getMostOuterPoints(const std::vector<Coordinate>& shape, Coordinate& leftMost, Coordinate& rightMost, Coordinate& topMost, Coordinate& bottomMost);
 
 };
 

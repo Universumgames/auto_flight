@@ -1,10 +1,12 @@
-//
-// Created by Tom Arlt on 27.04.26.
-//
-
 #include "route_planner.hpp"
 
+#include <cmath>
+
+#include "geo_helper.hpp"
+
 static RoutePlannerClass* route_planner;
+
+RoutePlannerClass& RoutePlanner = RoutePlannerClass::getInstance();
 
 RoutePlannerClass* RoutePlannerClass::getInstancePtr() {
     if (!route_planner) {
@@ -21,28 +23,38 @@ RoutePlannerClass& RoutePlannerClass::getInstance() {
 RoutePlannerClass::RoutePlannerClass() {}
 
 Coordinate RoutePlannerClass::getIntersection(const std::vector<Coordinate>& shape, const Coordinate& origin,
-                                              const Vector2D& direction) {}
+                                              const Point2d& direction) {
 
-Vector2D RoutePlannerClass::intersection(Vector2D a, Vector2D b, Vector2D c, Vector2D d) {
-    if ((a.x == b.x && a.y == b.y) || (c.x == d.x && c.y == d.y)) {
-        return {NAN, NAN}; // Lines are points
+    return {NAN, NAN};
+}
+
+std::vector<std::pair<Coordinate, Coordinate>> RoutePlannerClass::generateSimpleSweepLines(const std::vector<Coordinate>& shape, float maxDistance) {
+    Coordinate leftMost{}, rightMost{}, topMost{}, bottomMost{};
+    getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
+    Coordinate topLeft = {leftMost.longitude, topMost.latitude};
+    Coordinate bottomRight = {rightMost.longitude, bottomMost.latitude};
+
+    const float latDiff = topMost.latitude - bottomMost.latitude;
+    const int lineCount = std::ceil(latitudeDiffToMeters(latDiff) / maxDistance);
+    const float lineDistance = latDiff / (float)lineCount;
+
+    std::vector<std::pair<Coordinate, Coordinate>> lines;
+    for (int i = 0; i < lineCount; i++) {
+        std::pair<Coordinate, Coordinate> line = {
+            {topLeft.longitude, topLeft.latitude + i * lineDistance},
+            {bottomRight.longitude, topLeft.latitude + i * lineDistance}
+        };
+        lines.push_back(line);
     }
+    return lines;
+}
 
-    float denominator = ((d.y - c.y) * (b.x - a.x) - (d.x - c.x) * (b.y - a.y));
-    if (denominator == 0) {
-        return {NAN, NAN}; // Lines are parallel
+Point2d RoutePlannerClass::intersection(const Point2d& a, const Point2d& b, const Point2d& c, const Point2d& d) {
+    auto intersect = Line2d(a, b).intersects(Line2d(c, d));
+    if (intersect()) {
+        return intersect.get();
     }
-
-    float ua = ((d.x - c.x) * (a.y - c.y) - (d.y - c.y) * (a.x - c.x)) / denominator;
-    float ub = ((b.x - a.x) * (a.y - c.y) - (b.y - a.y) * (a.x - c.x)) / denominator;
-
-    if (ua < 0 || ub < 0 || ua > 1 || ub > 1) {
-        return {NAN, NAN};
-    }
-
-    float x = a.x + ua * (b.x - a.x);
-    float y = a.y + ub * (b.y - a.y);
-    return {x, y};
+    return {NAN, NAN};
 }
 
 

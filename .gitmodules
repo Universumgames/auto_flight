@@ -1,3 +1,9 @@
 [submodule "shared_components/esp32-lora-library"]
 	path = shared_components/esp32-lora-library
 	url = https://github.com/khanafaq0099/esp32-lora-library
+[submodule "test/lib"]
+	path = test/lib
+	url = https://github.com/google/googletest
+[submodule "flight_controller/test/lib"]
+	path = flight_controller/test/lib
+	url = https://github.com/google/googletest
