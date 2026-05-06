@@ -7,3 +7,4 @@ struct Coordinate {
 };
 
 typedef std::vector<Coordinate> Route;
+

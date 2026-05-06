@@ -1,5 +1,5 @@
 idf_component_register(
-        SRCS "LoRa_Communication.cpp"
+        SRCS "serializer.cpp"
         INCLUDE_DIRS "."
         REQUIRES driver freertos esp_timer
 )

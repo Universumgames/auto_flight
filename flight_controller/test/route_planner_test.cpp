@@ -3,14 +3,21 @@
 #include <gtest/gtest.h>
 
 #include "route.hpp"
+#include "../shared_components/serializer_helper/serializer.hpp"
 #include "gmock/gmock-matchers.h"
 
-MATCHER_P2(CoordinateEq, expected, actual, "") {
-    return expected.latitude == actual.latitude && expected.longitude == actual.longitude;
+#define CoordinateEq(expected, actual) { \
+    EXPECT_EQ(expected.latitude, actual.latitude); \
+    EXPECT_EQ(expected.longitude, actual.longitude);\
+}
+
+#define EXPECT_IN_BETWEEN(actual, lower, higher) { \
+    EXPECT_LE(lower, actual); \
+    EXPECT_GE(higher, actual); \
 }
 
 TEST(RoutePlannerTest, mostOuterPoints) {
-    std::vector<Coordinate> shape = {
+    const std::vector<Coordinate> shape = {
         {0, 50},
         {-10, 3},
         {20, -50},
@@ -21,32 +28,72 @@ TEST(RoutePlannerTest, mostOuterPoints) {
     RoutePlanner.getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
 
     CoordinateEq(topMost, (Coordinate{0, 50}));
-    CoordinateEq(bottomMost, (Coordinate{-10, 3}));
-    CoordinateEq(leftMost, (Coordinate{20, -50}));
+    CoordinateEq(bottomMost, (Coordinate{20, -50}));
+    CoordinateEq(leftMost, (Coordinate{-10, 3}));
     CoordinateEq(rightMost, (Coordinate{50, 10}));
 }
 
 TEST(RoutePlannerTest, intersection) {
-    Coordinate p1 = {5,0};
-    Coordinate p2 = {0,0};
-    std::vector<Coordinate> shape = {p1, p2};
+    Coordinate p1 = {0,5};
+    Coordinate p2 = {0,-5};
+    const std::vector<Coordinate> shape = {p1, p2};
 
-    Coordinate intersection = RoutePlanner.getIntersection(
+    auto intersections = RoutePlanner.getShapeIntersection(
         shape,
-        {2,-5},
-        {0,1});
+        {-1,0},
+        {1,0});
 
-    CoordinateEq(intersection, (Coordinate{2, 0}));
+    CoordinateEq(intersections.first, (Coordinate{0, 0}));
 }
 
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    // if you plan to use GMock, replace the line above with
-    // ::testing::InitGoogleMock(&argc, argv);
+TEST(RoutePlannerTest, simpleSweepLines) {
+    const std::vector<Coordinate> shape = {
+        {0,0},
+        {0,10},
+        {10,10},
+        {10,0}
+    };
+    constexpr float swathDistance = 2;
+    auto simpleSweepLines = RoutePlanner.generateSimpleSweepLines(shape, swathDistance);
 
-    if (RUN_ALL_TESTS())
-        ;
+    EXPECT_EQ(simpleSweepLines.size(), 5);
+    std::pair<Coordinate, Coordinate> lastLine = {{0, 10}, {10, 10}};
+    std::vector<Coordinate> path = {};
+    for (const auto& line : simpleSweepLines) {
+        std::cerr << line.first.latitude << ", " << line.first.longitude << "\t" << line.second.latitude << ", " << line.second.longitude << std::endl;
+        EXPECT_LT(abs(line.first.latitude - lastLine.first.latitude), swathDistance);
+        EXPECT_EQ(line.first.latitude, line.second.latitude);
+        EXPECT_IN_BETWEEN(line.first.latitude, 0, 10);
+        EXPECT_IN_BETWEEN(line.first.longitude, 0, 10);
+        EXPECT_IN_BETWEEN(line.second.longitude, 0, 10);
+        EXPECT_IN_BETWEEN(line.second.latitude, 0, 10);
+        lastLine = line;
+        path.push_back(line.first);
+        path.push_back(line.second);
+    }
 
-    // Always return zero-code and allow PlatformIO to parse results
-    return 0;
+    std::ofstream os("sweepLines.txt");
+    serialize(path, os);
+    os.close();
+}
+
+TEST(RoutePlannerTest, sweepPath) {
+    const std::vector<Coordinate> shape = {
+        {0,0},
+        {0,10},
+        {10,10},
+        {10,0}
+    };
+    constexpr float swathDistance = 2;
+    auto path = RoutePlanner.generateSimpleSweepPath(shape, swathDistance);
+
+    float lastLat = 300;
+    for (const auto& waypoint : path) {
+        EXPECT_LE(waypoint.latitude, lastLat + 0.001);
+        lastLat = waypoint.latitude;
+    }
+
+    std::ofstream os("sweepPath.txt");
+    serialize(path, os);
+    os.close();
 }

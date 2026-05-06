@@ -5,6 +5,8 @@
 #include "GPS_Reader.hpp"
 #include "freertos/FreeRTOS.h"
 #include <lora.h>
+#include "LoRa_Communication.hpp"
+#include "serializer.hpp"
 
 extern "C" int app_main() {
 

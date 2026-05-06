@@ -1,6 +1,6 @@
 #pragma once
-#include "./route.hpp"
 #include "homog2d.hpp"
+#include "route.hpp"
 
 using namespace h2d;
 
@@ -26,13 +26,26 @@ public:
 public:
     /**
      * Get lines that cover shape
-     * @param shape coordinate array to define shape
-     * @param maxDistance distance between lines in degree
+     * horizontal lines parallel to equator
+     * treats shape as rectangle
+     * @param shape coordinate array to define closed shape
+     * @param swathDistance coverage of lines in degrees
      * @return list of lines that cover the shape, each line is defined by two coordinates (start and end)
      */
-    static std::vector<std::pair<Coordinate, Coordinate>> generateSimpleSweepLines(const std::vector<Coordinate>& shape, float maxDistance);
+    static std::vector<std::pair<Coordinate, Coordinate>> generateSimpleSweepLines(const std::vector<Coordinate>& shape, float swathDistance);
 
-    static Coordinate getIntersection(const std::vector<Coordinate>& shape, const Coordinate& origin, const Point2d& direction);
+    /**
+     * Get lines that cover shape
+     * horizontal lines parallel to equator
+     * @param shape coordinate array to define closed shape
+     * @param swathDistance coverage of lines in degrees
+     * @return list of lines that cover the shape, each line is defined by start and end point
+     */
+    static std::vector<std::pair<Coordinate, Coordinate>> generateContainedSimpleSweepLines(const std::vector<Coordinate>& shape, float swathDistance);
+
+    static std::vector<Coordinate> generateSimpleSweepPath(const std::vector<Coordinate>& shape, float swathDistance);
+
+    static std::pair<Coordinate, Coordinate> getShapeIntersection(const std::vector<Coordinate>& shape, const Coordinate& p1, const Coordinate& p2);
 
     /**
      * Get the point of intersection between the lines ab and cd
@@ -45,6 +58,13 @@ public:
     static Point2d intersection(const Point2d& a, const Point2d& b, const Point2d& c, const Point2d& d);
 
     static void getMostOuterPoints(const std::vector<Coordinate>& shape, Coordinate& leftMost, Coordinate& rightMost, Coordinate& topMost, Coordinate& bottomMost);
+
+    /**
+     * Check if the shape is crossing the anti meridian line (180th meridian)
+     * @param shape the shape to check
+     * @return true if the shape is crossing the anti meridian line, false otherwise
+     */
+    static bool isCrossingAntiMeridian(const std::vector<Coordinate>& shape);
 
 };
 
