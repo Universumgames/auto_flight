@@ -1,0 +1,11 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.extensionActivationMode": "always",
+  "clangd.path": "/Users/universum/.espressif/tools/esp-clang/esp-20.1.1_20250829/esp-clang/bin/clangd",
+  "clangd.arguments": [
+    "--background-index",
+    "--query-driver=**",
+    "--compile-commands-dir=/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller/build"
+  ],
+  "idf.currentSetup": "/Users/universum/.espressif/v6.0.1/esp-idf"
+}

@@ -19,3 +19,6 @@ clean_base_station:
 	cd base_station && pio run --target clean
 
 clean_all: clean_motor_controller clean_flight_controller clean_base_station
+
+create_links:
+	

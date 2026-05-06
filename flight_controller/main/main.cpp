@@ -7,6 +7,7 @@
 #include <lora.h>
 #include "LoRa_Communication.hpp"
 #include "serializer.hpp"
+#include "route_planner.hpp"
 
 extern "C" int app_main() {
 
