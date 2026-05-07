@@ -4,7 +4,14 @@
 # CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.16)
 
-set(EXTRA_COMPONENT_DIRS components shared_components)
+if(DEFINED ENV{ESP_IDF_VERSION})
+    set(EXTRA_COMPONENT_DIRS components shared_components)
 
-include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(flight_controller)
+    include($ENV{IDF_PATH}/tools/cmake/project.cmake)
+    project(flight_controller)
+else()
+    # Global compile definition for all targets
+    add_compile_definitions(NATIVE_BUILD=1)
+    set(NATIVE_BUILD 1)
+    include(test/CMakeLists.txt)
+endif()

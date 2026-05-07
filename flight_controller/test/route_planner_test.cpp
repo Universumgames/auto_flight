@@ -3,7 +3,7 @@
 #include <gtest/gtest.h>
 
 #include "route.hpp"
-#include "../shared_components/serializer_helper/serializer.hpp"
+#include "serializer.hpp"
 #include "gmock/gmock-matchers.h"
 
 #define CoordinateEq(expected, actual) { \
@@ -25,7 +25,7 @@ TEST(RoutePlannerTest, mostOuterPoints) {
         {20, 20}
     };
     Coordinate leftMost{}, rightMost{}, topMost{}, bottomMost{};
-    RoutePlanner.getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
+    RoutePlannerClass::getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
 
     CoordinateEq(topMost, (Coordinate{0, 50}));
     CoordinateEq(bottomMost, (Coordinate{20, -50}));
@@ -38,7 +38,7 @@ TEST(RoutePlannerTest, intersection) {
     Coordinate p2 = {0,-5};
     const std::vector<Coordinate> shape = {p1, p2};
 
-    auto intersections = RoutePlanner.getShapeIntersection(
+    auto intersections = RoutePlannerClass::getShapeIntersection(
         shape,
         {-1,0},
         {1,0});
@@ -54,7 +54,7 @@ TEST(RoutePlannerTest, simpleSweepLines) {
         {10,0}
     };
     constexpr float swathDistance = 2;
-    auto simpleSweepLines = RoutePlanner.generateSimpleSweepLines(shape, swathDistance);
+    auto simpleSweepLines = RoutePlannerClass::generateSimpleSweepLines(shape, swathDistance);
 
     EXPECT_EQ(simpleSweepLines.size(), 5);
     std::pair<Coordinate, Coordinate> lastLine = {{0, 10}, {10, 10}};
@@ -85,7 +85,7 @@ TEST(RoutePlannerTest, sweepPath) {
         {10,0}
     };
     constexpr float swathDistance = 2;
-    auto path = RoutePlanner.generateSimpleSweepPath(shape, swathDistance);
+    auto path = RoutePlannerClass::generateSimpleSweepPath(shape, swathDistance);
 
     float lastLat = 300;
     for (const auto& waypoint : path) {

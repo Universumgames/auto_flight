@@ -4,13 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="6" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="8" type="long" />
     <option name="/Default/Environment/StickyLines/DisabledLanguageList/@EntryValue" value="Jupyter" type="string" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
@@ -22,6 +22,7 @@
       <config projectName="flight_controller" targetName="flight_controller.elf" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_twai" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_timg" />
+      <config projectName="flight_controller" targetName="idf_component_homog2d" />
       <config projectName="flight_controller" targetName="__idf_esp_common" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_touch_sens" />
       <config projectName="flight_controller" targetName="__idf_protobuf-c" />
@@ -107,12 +108,15 @@
       <config projectName="flight_controller" targetName="__idf_protocomm" />
       <config projectName="flight_controller" targetName="__idf_esp_libc" />
       <config projectName="flight_controller" targetName="__idf_efuse" />
+      <config projectName="flight_controller" targetName="flight_controller_test" />
       <config projectName="flight_controller" targetName="__idf_esp_https_server" />
       <config projectName="flight_controller" targetName="__idf_mbedtls" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_mcpwm" />
+      <config projectName="flight_controller" targetName="idf_component_serializer_helper" />
       <config projectName="flight_controller" targetName="dfu-list" />
       <config projectName="flight_controller" targetName="builtin" />
       <config projectName="flight_controller" targetName="partition-table-flash" />
+      <config projectName="flight_controller" targetName="idf_component_minmea" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_sdmmc" />
       <config projectName="flight_controller" targetName="__idf_esp_local_ctrl" />
       <config projectName="flight_controller" targetName="__idf_spiffs" />
@@ -153,6 +157,7 @@
       <config projectName="flight_controller" targetName="memory_ld_in_preprocess" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_ledc" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_cam" />
+      <config projectName="flight_controller" targetName="idf_component_route_planner" />
       <config projectName="flight_controller" targetName="__idf_cmock" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_usb" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_sd_intf" />
@@ -190,54 +195,23 @@
     </generated>
   </component>
   <component name="CMakeSettings">
-    <configurations />
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="switch base station to esp idf, fix compile and cleanup">
-      <change afterPath="$PROJECT_DIR$/../base_station/.clangd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.devcontainer/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.devcontainer/devcontainer.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/base_station.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/cmake.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/deployment.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/editor.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/.vscode/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/main/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/main/main.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/shared_components" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/../Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/.vscode/c_cpp_properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.vscode/c_cpp_properties.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/.vscode/extensions.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.vscode/launch.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/esp32-lora-library" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/lora_com" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/platformio.ini" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/sdkconfig.base_station" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/src/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/src/main.cpp" beforeDir="false" />
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix issues with esp idf 6.0">
+      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/gps/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/gps/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/gps/GPS_Reader.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/gps/GPS_Reader.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/route_planner_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/route_planner_test.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library/idf_component.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library/lora.c" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library/lora.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/test_cmp/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/test_cmp/include/test_cmp.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/test_cmp/test_cmp.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -249,12 +223,14 @@
   </component>
   <component name="CopilotPersistence">
     <persistenceIdMap>
+      <entry key="_/Users/universum/.espressif/v6.0.1/esp-idf" value="3DPSIwC87DpoyHi6sOoRa44wmss" />
       <entry key="_/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller" value="3DMyMsmDV5QJhpLVCSMWn4KRz55" />
     </persistenceIdMap>
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-ESP-IDF" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -266,20 +242,21 @@
     <option name="minorVersion" value="1.1" />
     <option name="productBranch" value="Classic" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0,
-  "fromUser": false
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3DMyMsmDV5QJhpLVCSMWn4KRz55" />
-  <component name="ProjectStatusUIService"><![CDATA[{
-  "uiKindId": "Widget"
-}]]></component>
+  <component name="ProjectStatusUIService">{
+  &quot;uiKindId&quot;: &quot;Widget&quot;
+}</component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Google Test.flight_controller_test.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
@@ -310,7 +287,18 @@
       <recent name="$PROJECT_DIR$/main" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.flight_controller.elf">
+  <component name="RunManager" selected="Google Test.flight_controller_test">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="flight_controller_test" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller_test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="flight_controller" RUN_TARGET_NAME="flight_controller_test" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="__idf_app_update" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_app_update" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -891,11 +879,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="app-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="app-flash" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1027,6 +1010,26 @@
       </method>
     </configuration>
     <configuration name="gen_project_binary" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="gen_project_binary" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_homog2d" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_homog2d" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_minmea" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_minmea" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_route_planner" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_route_planner" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_serializer_helper" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_serializer_helper" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1185,8 +1188,11 @@
       <item itemvalue="CMake Application.uf2" />
       <item itemvalue="CMake Application.uf2-app" />
       <item itemvalue="CMake Application.__idf_gps" />
+      <item itemvalue="CMake Application.idf_component_homog2d" />
       <item itemvalue="CMake Application.__idf_minmea" />
+      <item itemvalue="CMake Application.idf_component_minmea" />
       <item itemvalue="CMake Application.__idf_route_planner" />
+      <item itemvalue="CMake Application.idf_component_route_planner" />
       <item itemvalue="CMake Application.__idf_lora_com" />
       <item itemvalue="CMake Application.__idf_cmock" />
       <item itemvalue="CMake Application.__idf_console" />
@@ -1325,6 +1331,8 @@
       <item itemvalue="CMake Application.__idf_wpa_supplicant" />
       <item itemvalue="CMake Application.__idf_xtensa" />
       <item itemvalue="CMake Application.__idf_serializer_helper" />
+      <item itemvalue="CMake Application.idf_component_serializer_helper" />
+      <item itemvalue="Google Test.flight_controller_test" />
     </list>
   </component>
   <component name="TaskManager">
@@ -1334,7 +1342,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1778106189288</updated>
-      <workItem from="1778106190300" duration="4175000" />
+      <workItem from="1778106190300" duration="6811000" />
+      <workItem from="1778182132809" duration="3546000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />
@@ -1344,7 +1353,23 @@
       <option name="project" value="LOCAL" />
       <updated>1778107035726</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="switch base station to esp idf, fix compile and cleanup">
+      <option name="closed" value="true" />
+      <created>1778141614353</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1778141614353</updated>
+    </task>
+    <task id="LOCAL-00003" summary="fix issues with esp idf 6.0">
+      <option name="closed" value="true" />
+      <created>1778141654668</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1778141654668</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1359,7 +1384,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="switch flight controller from platformio to esp idf project" />
     <MESSAGE value="switch base station to esp idf, fix compile and cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="switch base station to esp idf, fix compile and cleanup" />
+    <MESSAGE value="fix issues with esp idf 6.0" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix issues with esp idf 6.0" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
