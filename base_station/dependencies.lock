@@ -9,16 +9,8 @@ dependencies:
     source:
       type: idf
     version: 6.0.1
-  serializer_helper:
-    dependencies: []
-    source:
-      path: ../shared_components/serializer_helper
-      type: local
-    version: '*'
 direct_dependencies:
 - esp32-lora-library
-- idf
-- serializer_helper
-manifest_hash: 17124338bc9ecb18e5f093272e63b78bf499d88e64ca4c33ac8347ddd2ce4ae3
+manifest_hash: 96fd558a606356aac5391612a2be3e05fa415dcb4db3fcc71db0eae150d3731c
 target: esp32s3
 version: 3.0.0

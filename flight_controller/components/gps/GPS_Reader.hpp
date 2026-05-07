@@ -16,7 +16,7 @@ public:
     void begin();
     ~GPS_Reader();
 
-    bool available() const;
+    [[nodiscard]] bool available() const;
 
     void getCurrentCoordinates(float& x, float& y, float& z);
 
@@ -34,6 +34,11 @@ private:
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_CTS_RTS,
         .rx_flow_ctrl_thresh = 122,
+        .source_clk = UART_SCLK_DEFAULT,
+        .flags = {
+            .allow_pd = true,
+            .backup_before_sleep = false
+        }
     };
 
     minmea_sentence_rmc lastRMC;

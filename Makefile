@@ -21,4 +21,7 @@ clean_base_station:
 clean_all: clean_motor_controller clean_flight_controller clean_base_station
 
 create_links:
-	
+	cd flight_controller && rm -f motor_controller
+	cd flight_controller && ln -s ../shared_components shared_components
+	cd base_station && rm -f shared_components
+	cd base_station && ln -s ../shared_components shared_components

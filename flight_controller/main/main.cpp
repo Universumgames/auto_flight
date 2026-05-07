@@ -1,5 +1,3 @@
-#warning "Flight_controller_main"
-
 #include <esp_log.h>
 
 #include "GPS_Reader.hpp"

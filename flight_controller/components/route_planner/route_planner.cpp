@@ -1,7 +1,6 @@
 #include "route_planner.hpp"
 
 #include <cmath>
-#include <bits/valarray_after.h>
 
 #include "geo_helper.hpp"
 
@@ -21,7 +20,7 @@ RoutePlannerClass& RoutePlannerClass::getInstance() {
 }
 
 
-RoutePlannerClass::RoutePlannerClass() {}
+RoutePlannerClass::RoutePlannerClass() = default;
 
 std::pair<Coordinate, Coordinate> RoutePlannerClass::getShapeIntersection(
     const std::vector<Coordinate>& shape, const Coordinate& p1, const Coordinate& p2) {
@@ -65,15 +64,15 @@ std::vector<std::pair<Coordinate, Coordinate>> RoutePlannerClass::generateSimple
     Coordinate topLeft = {leftMost.longitude, topMost.latitude};
     Coordinate bottomRight = {rightMost.longitude, bottomMost.latitude};
 
-    const float latDiff = topMost.latitude - bottomMost.latitude - swathDistance * 0.9;
-    const float lineCount = std::ceil(latDiff / swathDistance);
-    const float lineDistance = latDiff / lineCount;
+    const float latDiff = topMost.latitude - bottomMost.latitude - swathDistance * 0.9f;
+    const int lineCount = std::ceil(latDiff / swathDistance);
+    const float lineDistance = latDiff / (float)lineCount;
 
     std::vector<std::pair<Coordinate, Coordinate>> lines;
     for (int i = 0; i < lineCount; i++) {
         std::pair<Coordinate, Coordinate> line = {
-            {topLeft.longitude, topLeft.latitude - i * lineDistance - 0.5f * swathDistance},
-            {bottomRight.longitude, topLeft.latitude - i * lineDistance - 0.5f * swathDistance}
+            {topLeft.longitude, topLeft.latitude - (float)i * lineDistance - 0.5f * swathDistance},
+            {bottomRight.longitude, topLeft.latitude - (float)i * lineDistance - 0.5f * swathDistance}
         };
         lines.push_back(line);
     }

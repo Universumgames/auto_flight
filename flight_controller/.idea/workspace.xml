@@ -83,11 +83,13 @@
       <config projectName="flight_controller" targetName="__idf_esp_rom" />
       <config projectName="flight_controller" targetName="__idf_log" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_gpio" />
+      <config projectName="flight_controller" targetName="__idf_lora_com" />
       <config projectName="flight_controller" targetName="__idf_esp_http_client" />
       <config projectName="flight_controller" targetName="custom_bundle" />
       <config projectName="flight_controller" targetName="uf2" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_twai" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_wdt" />
+      <config projectName="flight_controller" targetName="__idf_esp32-lora-library" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_gptimer" />
       <config projectName="flight_controller" targetName="__idf_serializer_helper" />
       <config projectName="flight_controller" targetName="__idf_bootloader_support" />
@@ -188,29 +190,54 @@
     </generated>
   </component>
   <component name="CMakeSettings">
-    <configurations>
-      <configuration PROFILE_NAME="Debug-ESP-IDF" ENABLED="true" GENERATION_DIR="build" CONFIG_NAME="Debug" TOOLCHAIN_NAME="ESP-IDF" GENERATION_OPTIONS="-DIDF_TARGET=esp32s3" />
-    </configurations>
+    <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="">
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="switch base station to esp idf, fix compile and cleanup">
+      <change afterPath="$PROJECT_DIR$/../base_station/.clangd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.devcontainer/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.devcontainer/devcontainer.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/base_station.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/cmake.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/deployment.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/editor.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/.vscode/settings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/main/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/main/main.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../base_station/shared_components" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/cmake.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitmodules" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/../Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/debugServers/ESP_IDF.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/c_cpp_properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/c_cpp_properties.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/extensions.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/launch.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/.vscode/c_cpp_properties.json" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.vscode/c_cpp_properties.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/.vscode/extensions.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/.vscode/launch.json" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/esp32-lora-library" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/lora_com" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/platformio.ini" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/sdkconfig.base_station" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/src/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/src/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/gps/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/gps/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/gps/GPS_Reader.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/gps/GPS_Reader.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sdkconfig.flight_controller.old" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shared_components" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lora32_pin_config.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/main/lora32_pin_config.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lora32_registers.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/main/lora32_registers.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library/idf_component.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library/lora.c" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library/lora.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/test_cmp/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/test_cmp/include/test_cmp.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/test_cmp/test_cmp.c" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -244,6 +271,9 @@
   "fromUser": false
 }]]></component>
   <component name="ProjectId" id="3DMyMsmDV5QJhpLVCSMWn4KRz55" />
+  <component name="ProjectStatusUIService"><![CDATA[{
+  "uiKindId": "Widget"
+}]]></component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -259,24 +289,25 @@
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller/main",
+    "last_opened_file_path": "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "settings.sync",
+    "settings.editor.selected.configurable": "CMakeSettings",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/main" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/main" />
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.flight_controller.elf">
@@ -825,11 +856,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="__idf_test_cmp" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_test_cmp" CONFIG_NAME="Debug-ESP-IDF">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="__idf_unity" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_unity" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1299,7 +1325,6 @@
       <item itemvalue="CMake Application.__idf_wpa_supplicant" />
       <item itemvalue="CMake Application.__idf_xtensa" />
       <item itemvalue="CMake Application.__idf_serializer_helper" />
-      <item itemvalue="CMake Application.__idf_test_cmp" />
     </list>
   </component>
   <component name="TaskManager">
@@ -1309,8 +1334,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1778106189288</updated>
-      <workItem from="1778106190300" duration="664000" />
+      <workItem from="1778106190300" duration="4175000" />
     </task>
+    <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
+      <option name="closed" value="true" />
+      <created>1778107035726</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1778107035726</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1321,6 +1355,11 @@
     <isAutomaticFoundErrors value="true" />
     <isAutomaticReloadCMake value="true" />
     <isAutomaticBootstrapAfterUpdate value="false" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="switch flight controller from platformio to esp idf project" />
+    <MESSAGE value="switch base station to esp idf, fix compile and cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="switch base station to esp idf, fix compile and cleanup" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

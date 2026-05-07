@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="Kali VM (22f748d1-07bf-4387-96c9-26146753ca91)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="Vagrant (ddd9ab6e-f236-4037-83ee-9a5ca9611778)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="hsnr_cluster (1) (2033a6f9-464a-40bd-bae0-a43b6116f2b2)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="hsnr_cluster (5734a114-da1b-455b-8b08-ab530f69494f)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="hsnr_gpu (016074f3-16a9-4181-ad4a-2e7820d471ae)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="mt32 (e19c260c-2014-41ac-af04-72506042d26d)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="raspi (23b25bc0-ed37-4ace-8aff-a43a4216aa96)">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
