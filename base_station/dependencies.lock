@@ -9,8 +9,27 @@ dependencies:
     source:
       type: idf
     version: 6.0.1
+  joltwallet/littlefs:
+    component_hash: 29eff7921c4e8bce021aeb7fff2723bfcafed661756de700646ea0f6223c2a32
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.21.1
+  serializer_helper:
+    dependencies: []
+    source:
+      path: ../shared_components/serializer_helper
+      type: local
+    version: '*'
 direct_dependencies:
 - esp32-lora-library
-manifest_hash: 96fd558a606356aac5391612a2be3e05fa415dcb4db3fcc71db0eae150d3731c
+- idf
+- joltwallet/littlefs
+- serializer_helper
+manifest_hash: 5decb390d7a0e2bca882763d8fa0762bf290534e513ec9dbeeb20db0546b582b
 target: esp32s3
 version: 3.0.0

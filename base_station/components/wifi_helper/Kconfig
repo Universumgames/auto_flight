@@ -1,0 +1,22 @@
+menu "WiFi Helper Configuration"
+
+config WIFI_AP_SSID
+    string "WiFi AP SSID"
+    default "Flight_Base_Station"
+    help
+      Set the SSID (network name) for the WiFi Access Point (AP) mode. This is the name that will be broadcasted to nearby devices when the ESP32 is in AP mode.
+
+config WIFI_AP_PASSWORD
+    string "WiFi AP Password"
+    default "password123"
+    help
+      Set the password for the WiFi Access Point (AP) mode. This password will be required for devices to connect to the ESP32 when it is in AP mode. Ensure that the password
+
+config WIFI_DEV_MODE
+    bool "Enable Developer Mode"
+    default n
+    help
+      Enable this connect to an existing WiFi network in station mode. When enabled, the ESP32 will attempt to connect to a WiFi network using the SSID and password provided in the configuration. If disabled, the ESP32 will operate in Access Point (AP) mode, allowing other devices to connect to it directly.
+      It will use the AP SSID and AP password defined in the configuration for AP mode to connect to the network.
+
+endmenu

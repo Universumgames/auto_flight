@@ -8,3 +8,5 @@ set(EXTRA_COMPONENT_DIRS components shared_components)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(base_station)
+
+littlefs_create_partition_image(storage static FLASH_IN_PROJECT)
