@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="8" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="11" type="long" />
     <option name="/Default/Environment/StickyLines/DisabledLanguageList/@EntryValue" value="Jupyter" type="string" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/RefactoringsMru/RenameRefactoring/DoRenameFile/@EntryValue" value="false" type="bool" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -37,6 +38,7 @@
       <config projectName="flight_controller" targetName="size-files" />
       <config projectName="flight_controller" targetName="__idf_minmea" />
       <config projectName="flight_controller" targetName="__idf_esp-tls" />
+      <config projectName="flight_controller" targetName="__idf_esp-idf-lib__mpu6050" />
       <config projectName="flight_controller" targetName="gen_flight_controller_binary" />
       <config projectName="flight_controller" targetName="lib" />
       <config projectName="flight_controller" targetName="__idf_wpa_supplicant" />
@@ -64,6 +66,7 @@
       <config projectName="flight_controller" targetName="__idf_esp_psram" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_mspi" />
       <config projectName="flight_controller" targetName="__idf_esp_blockdev_util" />
+      <config projectName="flight_controller" targetName="__idf_motor_com" />
       <config projectName="flight_controller" targetName="flash" />
       <config projectName="flight_controller" targetName="encrypted-app-flash" />
       <config projectName="flight_controller" targetName="__idf_xtensa" />
@@ -96,6 +99,7 @@
       <config projectName="flight_controller" targetName="__idf_bootloader_support" />
       <config projectName="flight_controller" targetName="__idf_console" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_lcd" />
+      <config projectName="flight_controller" targetName="__idf_motor_com_master" />
       <config projectName="flight_controller" targetName="__idf_esp_ringbuf" />
       <config projectName="flight_controller" targetName="__idf_esp_adc" />
       <config projectName="flight_controller" targetName="mbedtls" />
@@ -141,6 +145,7 @@
       <config projectName="flight_controller" targetName="app-flash" />
       <config projectName="flight_controller" targetName="_project_elf_src" />
       <config projectName="flight_controller" targetName="size" />
+      <config projectName="flight_controller" targetName="idf_component_motor_com" />
       <config projectName="flight_controller" targetName="bootloader" folderName="ExternalProjectTargets/bootloader" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_rmt" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_usb_serial_jtag" />
@@ -159,6 +164,7 @@
       <config projectName="flight_controller" targetName="__idf_esp_driver_cam" />
       <config projectName="flight_controller" targetName="idf_component_route_planner" />
       <config projectName="flight_controller" targetName="__idf_cmock" />
+      <config projectName="flight_controller" targetName="idf_component_flight_controller" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_usb" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_sd_intf" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_mcpwm" />
@@ -171,6 +177,7 @@
       <config projectName="flight_controller" targetName="__idf_cxx" />
       <config projectName="flight_controller" targetName="save-defconfig" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_pcnt" />
+      <config projectName="flight_controller" targetName="idf_component_motor_com_master" />
       <config projectName="flight_controller" targetName="__idf_nvs_sec_provider" />
       <config projectName="flight_controller" targetName="__idf_esp_hw_support" />
       <config projectName="flight_controller" targetName="__idf_esp_wifi" />
@@ -182,7 +189,9 @@
       <config projectName="flight_controller" targetName="__idf_vfs" />
       <config projectName="flight_controller" targetName="__idf_app_update" />
       <config projectName="flight_controller" targetName="__idf_esp_hid" />
+      <config projectName="flight_controller" targetName="__idf_flight_controller" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_sdm" />
+      <config projectName="flight_controller" targetName="__idf_esp-idf-lib__i2cdev" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_uart" />
       <config projectName="flight_controller" targetName="__idf_esp_lcd" />
       <config projectName="flight_controller" targetName="efuse-custom-table" />
@@ -200,18 +209,37 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix issues with esp idf 6.0">
-      <change afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix unit tests with native runtime">
+      <change afterPath="$PROJECT_DIR$/../base_station/components/frontend/websocket.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/flight_controller/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/flight_controller/idf_component.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/motor_com_master/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/motor_com_master/Kconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_native.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/motor_com_master/idf_component.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../frontend_web/src/views/MapView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/gps/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/gps/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/route_planner_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/route_planner_test.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/esp32-lora-library/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/gps/GPS_Reader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/gps/GPS_Reader.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/route_planner/route_planner.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/route_planner.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/main/idf_component.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/router/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/router/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/vite.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../learning.md" beforeDir="false" afterPath="$PROJECT_DIR$/../learning.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/idf_component.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -227,9 +255,16 @@
       <entry key="_/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller" value="3DMyMsmDV5QJhpLVCSMWn4KRz55" />
     </persistenceIdMap>
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-ESP-IDF" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CMakeLists.txt" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$USER_HOME$/.espressif/v6.0.1/esp-idf" />
     <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="McpProjectServerCommands">
@@ -270,8 +305,8 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller",
+    "git-widget-placeholder": "v6.0.1",
+    "last_opened_file_path": "/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller/components/flight_controller",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -283,11 +318,13 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/components/flight_controller" />
+      <recent name="$PROJECT_DIR$/components/motor_com_master" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/main" />
     </key>
   </component>
-  <component name="RunManager" selected="Google Test.flight_controller_test">
+  <component name="RunManager" selected="CMake Application.flight_controller.elf">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />
@@ -330,6 +367,16 @@
       </method>
     </configuration>
     <configuration name="__idf_efuse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_efuse" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_esp-idf-lib__i2cdev" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_esp-idf-lib__i2cdev" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_esp-idf-lib__mpu6050" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_esp-idf-lib__mpu6050" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -719,6 +766,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="__idf_flight_controller" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_flight_controller" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="__idf_freertos" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_freertos" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -770,6 +822,16 @@
       </method>
     </configuration>
     <configuration name="__idf_minmea" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_minmea" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_motor_com" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_motor_com" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_motor_com_master" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_motor_com_master" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -899,11 +961,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="bootloader" type="CMakeRunConfiguration" factoryName="Application" folderName="ExternalProjectTargets/bootloader" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="bootloader" CONFIG_NAME="Debug-ESP-IDF">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="builtin" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="builtin" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1014,12 +1071,27 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="idf_component_flight_controller" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_flight_controller" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="idf_component_homog2d" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_homog2d" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="idf_component_minmea" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_minmea" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_motor_com" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_motor_com" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_motor_com_master" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="idf_component_motor_com_master" CONFIG_NAME="Debug">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1160,7 +1232,6 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="CMake Application.bootloader" />
       <item itemvalue="CMake Application.__ldgen_output_sections.ld" />
       <item itemvalue="CMake Application._project_elf_src" />
       <item itemvalue="CMake Application.app" />
@@ -1187,12 +1258,18 @@
       <item itemvalue="CMake Application.size-files" />
       <item itemvalue="CMake Application.uf2" />
       <item itemvalue="CMake Application.uf2-app" />
+      <item itemvalue="CMake Application.__idf_flight_controller" />
+      <item itemvalue="CMake Application.idf_component_flight_controller" />
       <item itemvalue="CMake Application.__idf_gps" />
       <item itemvalue="CMake Application.idf_component_homog2d" />
       <item itemvalue="CMake Application.__idf_minmea" />
       <item itemvalue="CMake Application.idf_component_minmea" />
+      <item itemvalue="CMake Application.__idf_motor_com_master" />
+      <item itemvalue="CMake Application.idf_component_motor_com_master" />
       <item itemvalue="CMake Application.__idf_route_planner" />
       <item itemvalue="CMake Application.idf_component_route_planner" />
+      <item itemvalue="CMake Application.__idf_esp-idf-lib__i2cdev" />
+      <item itemvalue="CMake Application.__idf_esp-idf-lib__mpu6050" />
       <item itemvalue="CMake Application.__idf_lora_com" />
       <item itemvalue="CMake Application.__idf_cmock" />
       <item itemvalue="CMake Application.__idf_console" />
@@ -1324,12 +1401,14 @@
       <item itemvalue="CMake Application.__idf_log" />
       <item itemvalue="CMake Application.__idf_lwip" />
       <item itemvalue="CMake Application.__idf_main" />
+      <item itemvalue="CMake Application.__idf_motor_com" />
       <item itemvalue="CMake Application.__idf_nvs_sec_provider" />
       <item itemvalue="CMake Application.__idf_perfmon" />
       <item itemvalue="CMake Application.__idf_pthread" />
       <item itemvalue="CMake Application.__idf_wear_levelling" />
       <item itemvalue="CMake Application.__idf_wpa_supplicant" />
       <item itemvalue="CMake Application.__idf_xtensa" />
+      <item itemvalue="CMake Application.idf_component_motor_com" />
       <item itemvalue="CMake Application.__idf_serializer_helper" />
       <item itemvalue="CMake Application.idf_component_serializer_helper" />
       <item itemvalue="Google Test.flight_controller_test" />
@@ -1343,7 +1422,7 @@
       <option name="presentableId" value="Default" />
       <updated>1778106189288</updated>
       <workItem from="1778106190300" duration="6811000" />
-      <workItem from="1778182132809" duration="3546000" />
+      <workItem from="1778182132809" duration="23337000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />
@@ -1369,7 +1448,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778141654668</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fix unit tests with native runtime">
+      <option name="closed" value="true" />
+      <created>1778185832364</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1778185832364</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1385,7 +1472,8 @@
     <MESSAGE value="switch flight controller from platformio to esp idf project" />
     <MESSAGE value="switch base station to esp idf, fix compile and cleanup" />
     <MESSAGE value="fix issues with esp idf 6.0" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix issues with esp idf 6.0" />
+    <MESSAGE value="fix unit tests with native runtime" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix unit tests with native runtime" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

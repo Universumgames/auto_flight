@@ -16,7 +16,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://192.168.178.92',
-      '/socket.io': {
+      '/api/ws': {
         target: 'ws://192.168.178.92',
         ws: true,
       },
