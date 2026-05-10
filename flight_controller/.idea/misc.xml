@@ -4,9 +4,23 @@
     <option name="pythonIntegrationState" value="YES" />
   </component>
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
+  <component name="CidrRootsConfiguration">
+    <sourceRoots>
+      <file path="$PROJECT_DIR$/components" />
+      <file path="$PROJECT_DIR$/main" />
+      <file path="$PROJECT_DIR$/shared_components" />
+      <file path="$PROJECT_DIR$/test" />
+    </sourceRoots>
+    <libraryRoots>
+      <file path="$PROJECT_DIR$/managed_components" />
+    </libraryRoots>
+    <excludeRoots>
+      <file path="$PROJECT_DIR$/.vscode" />
+    </excludeRoots>
+  </component>
   <component name="DiscordProjectSettings">
     <option name="show" value="ASK" />
     <option name="description" value="" />
   </component>
-  <component name="WestSettings"><![CDATA[{}]]></component>
+  <component name="WestSettings">{}</component>
 </project>

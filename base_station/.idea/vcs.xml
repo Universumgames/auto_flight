@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$USER_HOME$/.espressif/v6.0.1/esp-idf" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../shared_components/esp32-lora-library" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../test/lib" vcs="Git" />
   </component>
 </project>

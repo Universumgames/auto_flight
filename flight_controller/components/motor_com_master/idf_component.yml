@@ -1,0 +1,2 @@
+dependencies:
+  esp-idf-lib/i2cdev: '*'

@@ -49,7 +49,7 @@ void FrontendHandlerClass::registerURIHandlers() {
 
 void FrontendHandlerClass::registerPing() {
     static httpd_uri_t ping_uri = {
-        .uri = "/ping",
+        .uri = "/api/ping",
         .method = HTTP_GET,
         .handler = [](httpd_req_t* req) -> esp_err_t {
             const char* resp_str = "pong";
@@ -61,21 +61,6 @@ void FrontendHandlerClass::registerPing() {
     };
 
     ESP_ERROR_CHECK(httpd_register_uri_handler(httpd_handle, &ping_uri));
-}
-
-static esp_err_t ws_handler(httpd_req_t *req) {
-    return ESP_OK;
-}
-
-void FrontendHandlerClass::registerWebsocket() {
-    static httpd_uri_t websocket_uri = {
-        .uri = "/socket.io",
-        .method = HTTP_GET,
-        .handler = ws_handler,
-        .is_websocket = true,
-    };
-
-    ESP_ERROR_CHECK(httpd_register_uri_handler(httpd_handle, &websocket_uri));
 }
 
 #pragma GCC diagnostic pop

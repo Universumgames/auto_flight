@@ -7,6 +7,7 @@ using namespace h2d;
 class RoutePlannerClass {
 private:
     RoutePlannerClass();
+public:
     ~RoutePlannerClass() = delete;
 public:
     static RoutePlannerClass *getInstancePtr();

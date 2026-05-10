@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
-#include <lora.h>
 #include <string>
+
+#include "route.hpp"
 
 class LoRa_Communication {
 
@@ -14,9 +15,15 @@ public:
 
     void sendData(const uint8_t* data, int size);
     int receiveData(uint8_t* buffer, int size);
-    bool hasReceivedData() const;
-    int getLastPacketRSSI() const;
-    float getLastPacketSNR() const;
+    [[nodiscard]] bool hasReceivedData() const;
+    [[nodiscard]] int getLastPacketRSSI() const;
+    [[nodiscard]] float getLastPacketSNR() const;
+
+    LoRa_Communication& operator<<(const Route& route);
+    LoRa_Communication& operator>>(Route& route);
+
+    LoRa_Communication& operator<<(const Coordinate& coordinates);
+    LoRa_Communication& operator>>(Coordinate& coordinates);
 
 private:
     uint8_t* encryptData(const uint8_t* originalData, int originalSize, int* encryptedSize);

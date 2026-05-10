@@ -9,4 +9,11 @@
 
 # Week 3
 - researching and implementing simple path planning algorithm
+
+# Week 4
+- switching to esp idf and getting everything to compile
+
+# Week 5
+- setting up webserver for configuration and control
+- get wifi working on base station
 - 

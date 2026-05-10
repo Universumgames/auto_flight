@@ -1,7 +1,3 @@
-//
-// Created by Tom Arlt on 21.04.26.
-//
-
 #include "GPS_Reader.hpp"
 
 #include <esp_err.h>
