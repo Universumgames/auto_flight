@@ -1,5 +1,5 @@
 #pragma once
-#include "route.hpp"
+#include "types.hpp"
 
 float latitudeDiffToMeters(float latitudeDiff);
 float longitudeDiffToMeters(float longitudeDiff);

@@ -1,0 +1,20 @@
+menu "I2C Manager Settings"
+
+    config I2C_PIN_SDA
+        int "I2C SDA Pin Number"
+        default 47
+        help
+            GPIO pin number for I2C SDA line. Common defaults:
+            - 21: ESP32 default SDA pin
+            - 4: Alternative SDA pin
+
+
+    config I2C_PIN_SCL
+        int "I2C SCL Pin Number"
+        default 48
+        help
+            GPIO pin number for I2C SCL line. Common defaults:
+            - 22: ESP32 default SCL pin
+            - 5: Alternative SCL pin
+
+endmenu

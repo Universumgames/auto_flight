@@ -3,26 +3,42 @@
 #include <hal/uart_types.h>
 #include <soc/gpio_num.h>
 #include <string>
+#include <vector>
 #include <driver/uart.h>
 #include <freertos/queue.h>
 
 #include "minmea.h"
+#include "types.hpp"
 
+using PositionUpdateCallbackFn = std::function<void(Coordinate, time_t)>;
 
-class GPS_Reader {
+class GPS_ReaderClass {
+private:
+    GPS_ReaderClass();
 public:
-    GPS_Reader(gpio_num_t rx_pin = (gpio_num_t) 39,  gpio_num_t tx_pin = (gpio_num_t) 6, uart_port_t uart_num = UART_NUM_2);
+    ~GPS_ReaderClass() = delete;
+
+    static GPS_ReaderClass* getInstancePtr();
+    static GPS_ReaderClass &getInstance();
+public:
 
     void begin();
-    ~GPS_Reader();
 
     [[nodiscard]] bool available() const;
 
     void getCurrentCoordinates(float& x, float& y, float& z);
 
+    Coordinate getCurrentPosition();
+
     float getCurrentSpeed();
 
-    [[nodiscard]] tm getCurrentTime() const;
+    [[nodiscard]] tm getLatestTimeStruct() const;
+
+    [[nodiscard]] time_t getGPSLatestTime() const;
+
+    bool hasValidPosition() const;
+
+    void addPositionUpdateCallback(const PositionUpdateCallbackFn& callback_fn);
 
 private:
     gpio_num_t rxPin, txPin;
@@ -36,7 +52,7 @@ private:
         .rx_flow_ctrl_thresh = 122,
         .source_clk = UART_SCLK_DEFAULT,
         .flags = {
-            .allow_pd = true,
+            .allow_pd = false,
             .backup_before_sleep = false
         }
     };
@@ -50,6 +66,11 @@ private:
 
     time_t lastUpdateTime;
 
+    std::vector<PositionUpdateCallbackFn> positionUpdateCallbacks;
+
+private:
+    void callPositionUpdateCallbacks();
+
 public:
     /// internal callback queue for UART events
     QueueHandle_t uart_queue;
@@ -57,5 +78,6 @@ public:
 
 
     void handleReceive(const std::string& line);
-
 };
+
+extern GPS_ReaderClass& GPS_Reader;

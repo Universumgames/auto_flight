@@ -4,6 +4,9 @@
 # CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.16)
 
+
+add_compile_definitions(FLIGHT_DEVICE_TYPE_PLANE)
+
 if(DEFINED ENV{ESP_IDF_VERSION})
     set(EXTRA_COMPONENT_DIRS components shared_components)
 

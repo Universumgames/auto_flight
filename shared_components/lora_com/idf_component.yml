@@ -2,6 +2,7 @@ dependencies:
   esp32-lora-library:
     path: ../esp32-lora-library
     require: public
-  serializer_helper:
-    path: ../serializer_helper
+  flight_data:
+    path: ../flight_data
     require: public
+  jgromes/radiolib: ^7.6.0

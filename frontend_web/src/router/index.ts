@@ -21,6 +21,11 @@ const router = createRouter({
       path: '/map',
       name: "Map",
       component: () => import('../views/MapView.vue'),
+    },
+    {
+      path: '/planner',
+      name: 'Route Planner',
+      component: () => import('../views/RoutePlanner.vue'),
     }
   ],
 })

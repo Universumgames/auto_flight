@@ -2,26 +2,36 @@
 import 'leaflet/dist/leaflet.css'
 import { LMap, LTileLayer, LMarker, LPolyline } from '@vue-leaflet/vue-leaflet'
 import { onBeforeMount, ref } from 'vue'
-import type L from 'leaflet'
-import type { PointExpression } from 'leaflet'
 import { store } from '@/stores/store.ts'
+import type { Coordinate } from '@/types/coordinates.ts'
 
-const zoom = ref(17)
+const zoom = ref(15)
 
-const coordinates = ref([51.316310347903176, 6.569530261539499] as L.LatLngExpression)
+const coordinates = ref<Coordinate>({
+  latitude: 51.316310347903176,
+  longitude: 6.569530261539499,
+})
 
-onBeforeMount(() => {})
 </script>
 
 <template>
   <div style="height: 600px; width: 800px">
-    <l-map ref="map" v-model:zoom="zoom" :center="store.position as PointExpression">
+    <l-map
+      ref="map"
+      v-model:zoom="zoom"
+      :center="[store.basePosition?.latitude ?? 0, store.basePosition?.longitude ?? 0]"
+    >
       <l-tile-layer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         layer-type="base"
         name="OpenStreetMap"
       ></l-tile-layer>
-      <l-marker :lat-lng="coordinates"></l-marker>
+      <l-marker :lat-lng="[coordinates.latitude, coordinates.longitude]"></l-marker>
+      <l-marker
+        v-if="store.basePosition != null"
+        :lat-lng="[store.basePosition.latitude, store.basePosition.longitude]"
+      ></l-marker
+      >
       <l-polyline
         :lat-lngs="[
           [47.334852, -1.509485],

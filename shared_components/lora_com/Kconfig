@@ -1,0 +1,122 @@
+menu "LoRa Communication Settings"
+
+    config LORA_FREQUENCY
+        int "LoRa Frequency (Hz)"
+        default 868000000
+        help
+            Carrier frequency in Hz. Common ISM bands:
+            - 433 MHz: 433e6 (Europe, Asia)
+            - 868 MHz: 868e6 (Europe)
+            - 915 MHz: 915e6 (Americas, Australia)
+
+    config LORA_TX_POWER
+        int "LoRa TX Power Level (2-17)"
+        default 17
+        range 2 17
+        help
+            Transmission power level. Higher = more power consumption & range.
+            - 2: Minimum power (lowest consumption)
+            - 17: Maximum power (longest range)
+
+    config LORA_SPREADING_FACTOR
+        int "LoRa Spreading Factor (6-12)"
+        default 7
+        range 6 12
+        help
+            Spreading factor controls range vs. speed tradeoff:
+            - SF6-7: ~2 km, fast transmission
+            - SF9: ~5 km, balanced
+            - SF10-12: ~15 km, slow but very robust
+            All devices must use same SF to communicate.
+
+    config LORA_BANDWIDTH
+        int "LoRa Bandwidth (Hz)"
+        default 125000
+        help
+            Bandwidth in Hz. Options: 7800, 10400, 15600, 20800, 31250, 41700, 62500, 125000, 250000
+            - 62500: Long range, slow data
+            - 125000: Standard, balanced (recommended)
+            - 250000: Short range, fast data
+
+    config LORA_CODING_RATE_DENOMINATOR
+        int "LoRa Coding Rate Denominator (5-8)"
+        default 6
+        range 5 8
+        help
+            Coding rate = 4/X (X is the denominator).
+            Higher = more error correction, slower transmission:
+            - 5: 4/5 (25% overhead, fastest)
+            - 6: 4/6 (50% overhead, balanced - recommended)
+            - 7: 4/7 (75% overhead, more robust)
+            - 8: 4/8 (100% overhead, maximum error correction)
+
+    config LORA_PREAMBLE_LENGTH
+        int "LoRa Preamble Length (symbols)"
+        default 8
+        help
+            Preamble symbols for packet detection.
+            - 8: Standard (recommended)
+            - Higher values increase detection range but use more energy
+
+    config LORA_PING_INTERVAL
+        int "LoRa Ping Interval (seconds)"
+        default 30
+        range 5 300
+        help
+            Send a PING packet if no data was sent for this duration.
+            Keeps the link alive and detects disconnections.
+            - 5-10 seconds: Frequent keepalive (high overhead)
+            - 30 seconds: Balanced (recommended)
+            - 60+ seconds: Low overhead but slower detection
+
+    config LORA_DIO0_PIN
+        int "LoRa DIO0 Pin Number"
+        default 14
+        help
+            GPIO pin number connected to LoRa DIO0 (used for interrupts).
+            - Set to -1 if not used or if using a different pin for interrupts.
+
+    config LORA_CS_GPIO
+        int "CS GPIO"
+        range 0 35
+        default 15
+        help
+            Pin Number where the NCS pin of the LoRa module is connected to.
+
+    config LORA_RST_GPIO
+        int "RST GPIO"
+        range 0 35
+        default 32
+        help
+        Pin Number where the NRST pin of the LoRa module is connected to.
+
+    config LORA_MISO_GPIO
+        int "MISO GPIO"
+        range 0 35
+        default 13
+        help
+        Pin Number to be used as the MISO SPI signal.
+
+    config LORA_MOSI_GPIO
+        int "MOSI GPIO"
+        range 0 35
+        default 12
+        help
+        Pin Number to be used as the MOSI SPI signal.
+
+    config LORA_SCK_GPIO
+        int "SCK GPIO"
+        range 0 35
+        default 14
+        help
+        Pin Number to be used as the SCK SPI signal.
+
+    config LORA_SYNC_WORD
+        hex "LoRa Sync Word"
+        default 0x34
+        help
+            Sync word for LoRa communication. Must match between devices.
+            - 0x34: Default sync word for private networks (recommended)
+            - 0x12: Sync word for LoRaWAN public networks
+
+endmenu

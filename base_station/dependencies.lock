@@ -5,10 +5,40 @@ dependencies:
       path: ../shared_components/esp32-lora-library
       type: local
     version: '*'
+  flight_data:
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
+    - name: johboh/nlohmann-json
+      version: ^3.12.0
+    source:
+      path: ../shared_components/flight_data
+      type: local
+    version: '*'
   idf:
     source:
       type: idf
     version: 6.0.1
+  jgromes/radiolib:
+    component_hash: 3baedfa4c97b2f9d97c8066f587ff425585f670bb22e8f039202a23924e94de7
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.1'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 7.6.0
+  johboh/nlohmann-json:
+    component_hash: 2a97e10124d755da820b0381e36a9a6504574328f262964ccea3f8b2f228fc66
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.4'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 3.12.0
   joltwallet/littlefs:
     component_hash: 29eff7921c4e8bce021aeb7fff2723bfcafed661756de700646ea0f6223c2a32
     dependencies:
@@ -19,17 +49,13 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 1.21.1
-  serializer_helper:
-    dependencies: []
-    source:
-      path: ../shared_components/serializer_helper
-      type: local
-    version: '*'
 direct_dependencies:
 - esp32-lora-library
+- flight_data
 - idf
+- jgromes/radiolib
+- johboh/nlohmann-json
 - joltwallet/littlefs
-- serializer_helper
-manifest_hash: 5decb390d7a0e2bca882763d8fa0762bf290534e513ec9dbeeb20db0546b582b
+manifest_hash: ed33fd079bcc762185634bd503a2d7a29c6489a74fb5c915b293255fb67c45cb
 target: esp32s3
 version: 3.0.0

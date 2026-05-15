@@ -1,15 +1,22 @@
 #include <esp_random.h>
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <array>
+#include <vector>
+#include <memory>
 
 #include "LoRa_Communication.hpp"
-#include "mbedtls/aes.h"
+#include "aes/esp_aes_gcm.h"
 
-#include "mbedtls/gcm.h"
-#include <string.h>
+static constexpr std::size_t KEY_SIZE = 16;
+static constexpr std::size_t NONCE_SIZE = 12;
+static constexpr std::size_t TAG_SIZE = 16;
+static constexpr std::size_t MAX_PAYLOAD = 64;
 
-#define KEY_SIZE 16
-#define NONCE_SIZE 12
-#define TAG_SIZE 16
-#define MAX_PAYLOAD 64
+// GCM mode constants (as expected by esp functions)
+static constexpr int GCM_ENCRYPT = 1;
+static constexpr int GCM_DECRYPT = 0;
 
 /**
  *
@@ -21,98 +28,113 @@
  * @param tag tag
  * @return 0 on success, -1 if plaintext is too long, -2 if null pointer provided
  */
-int encrypt(const uint8_t *key,
-             const uint8_t *nonce,
-             const uint8_t *plaintext, const size_t len,
-             uint8_t *ciphertext,
-             uint8_t *tag)
+int encrypt(const uint8_t* key,
+            const uint8_t* nonce,
+            const uint8_t* plaintext, const std::size_t len,
+            uint8_t* ciphertext,
+            uint8_t* tag)
 {
-    if (len > MAX_PAYLOAD) return -1;   // prevent overflow
-    if (!plaintext || !ciphertext || !tag) return -2;
+    if (!plaintext || !ciphertext || !tag || !key) return -2;
+    if (len > MAX_PAYLOAD) return -1; // prevent overflow
 
-    mbedtls_gcm_context gcm;
-    mbedtls_gcm_init(&gcm);
+    esp_gcm_context gcm;
+    esp_aes_gcm_init(&gcm);
+    esp_aes_gcm_setkey(&gcm, 0, key, static_cast<int>(KEY_SIZE * 8));
 
-    mbedtls_gcm_setkey(&gcm, MBEDTLS_CIPHER_ID_AES, key, KEY_SIZE * 8);
+    int ret = esp_aes_gcm_crypt_and_tag(&gcm,
+                                        GCM_ENCRYPT,
+                                        static_cast<int>(len),
+                                        nonce, static_cast<int>(NONCE_SIZE),
+                                        nullptr, 0, // no additional data
+                                        plaintext,
+                                        ciphertext,
+                                        static_cast<int>(TAG_SIZE),
+                                        tag);
 
-    mbedtls_gcm_crypt_and_tag(&gcm,
-        MBEDTLS_GCM_ENCRYPT,
-        len,
-        nonce, NONCE_SIZE,
-        NULL, 0,                 // no additional data
-        plaintext,
-        ciphertext,
-        TAG_SIZE,
-        tag);
-
-    mbedtls_gcm_free(&gcm);
-    return 0;
+    esp_aes_gcm_free(&gcm);
+    return ret;
 }
 
-int decrypt(const uint8_t *key,
-            const uint8_t *nonce,
-            const uint8_t *ciphertext, const size_t len,
-            const uint8_t *tag,
-            uint8_t *output)
+int decrypt(const uint8_t* key,
+            const uint8_t* nonce,
+            const uint8_t* ciphertext, const std::size_t len,
+            const uint8_t* tag,
+            uint8_t* output)
 {
-    mbedtls_gcm_context gcm;
-    mbedtls_gcm_init(&gcm);
+    if (!key || !nonce || !ciphertext || !tag || !output) return -2;
 
-    mbedtls_gcm_setkey(&gcm, MBEDTLS_CIPHER_ID_AES, key, 128);
+    esp_gcm_context gcm;
+    esp_aes_gcm_init(&gcm);
+    esp_aes_gcm_setkey(&gcm, 0, key, static_cast<int>(KEY_SIZE * 8));
 
-    int ret = mbedtls_gcm_auth_decrypt(&gcm,
-        len,
-        nonce, NONCE_SIZE,
-        NULL, 0,
-        tag, TAG_SIZE,
-        ciphertext,
-        output);
+    int ret = esp_aes_gcm_auth_decrypt(&gcm,
+                                       static_cast<int>(len),
+                                       nonce, static_cast<int>(NONCE_SIZE),
+                                       nullptr, 0,
+                                       tag, static_cast<int>(TAG_SIZE),
+                                       ciphertext,
+                                       output);
 
-    mbedtls_gcm_free(&gcm);
-
+    esp_aes_gcm_free(&gcm);
     return ret; // 0 = success, !=0 = tampered
 }
 
-uint8_t* LoRa_Communication::encryptData(const uint8_t* originalData, const int originalSize, int* encryptedSize) {
-    uint8_t encryptedData[originalSize];
-    uint8_t tag[TAG_SIZE];
-    uint8_t nonce[NONCE_SIZE];
+std::vector<uint8_t> LoRa_CommunicationClass::encryptData(const uint8_t* originalData, const int originalSize) {
+    if (!key || !originalData || originalSize <= 0) {
+        return {};
+    }
 
-    esp_fill_random(nonce, NONCE_SIZE); // Generate random nonce
+    if (static_cast<std::size_t>(originalSize) > MAX_PAYLOAD) {
+        return {}; // too large
+    }
 
-    // encrypt data
-    encrypt(key, nonce, originalData, originalSize, encryptedData, tag);
+    std::vector<uint8_t> ciphertext(static_cast<std::size_t>(originalSize));
+    std::array<uint8_t, TAG_SIZE> tag{};
+    std::array<uint8_t, NONCE_SIZE> nonce{};
 
-    // prepare encrypted packet
-    size_t encryptedDataSize = originalSize + TAG_SIZE + NONCE_SIZE; // ciphertext + tag + nonce
-    uint8_t* packetData = new uint8_t[encryptedDataSize];
-    memccpy(packetData, nonce, NONCE_SIZE, sizeof(uint8_t));
-    memccpy(packetData + NONCE_SIZE, encryptedData, originalSize, sizeof(uint8_t));
-    memccpy(packetData + NONCE_SIZE + originalSize, tag, TAG_SIZE, sizeof(uint8_t));
-    *encryptedSize = encryptedDataSize;
+    esp_fill_random(nonce.data(), static_cast<size_t>(NONCE_SIZE)); // Generate random nonce
 
-    return packetData;
+    int ret = encrypt(key, nonce.data(), originalData, static_cast<std::size_t>(originalSize), ciphertext.data(), tag.data());
+    if (ret != 0) {
+        return {};
+    }
+
+    // build packet: nonce | ciphertext | tag
+    const std::size_t packetSize = static_cast<std::size_t>(originalSize) + NONCE_SIZE + TAG_SIZE;
+    std::vector<uint8_t> packet(packetSize);
+    std::memcpy(packet.data(), nonce.data(), NONCE_SIZE);
+    std::memcpy(packet.data() + NONCE_SIZE, ciphertext.data(), static_cast<std::size_t>(originalSize));
+    std::memcpy(packet.data() + NONCE_SIZE + originalSize, tag.data(), TAG_SIZE);
+
+    return packet;
 }
 
-uint8_t* LoRa_Communication::decryptData(const uint8_t* encryptedData, const int encryptedSize, int* decryptedSize) {
-    if (encryptedSize < NONCE_SIZE + TAG_SIZE) return nullptr; // invalid packet
-
-    uint8_t* nonce = new uint8_t[NONCE_SIZE];
-    uint8_t* tag = new uint8_t[TAG_SIZE];
-    int ciphertextSize = encryptedSize - NONCE_SIZE - TAG_SIZE;
-    uint8_t* ciphertext = new uint8_t[ciphertextSize];
-
-    memccpy(nonce, encryptedData, NONCE_SIZE, sizeof(uint8_t));
-    memccpy(ciphertext, encryptedData + NONCE_SIZE, ciphertextSize, sizeof(uint8_t));
-    memccpy(tag, encryptedData + NONCE_SIZE + ciphertextSize, TAG_SIZE, sizeof(uint8_t));
-
-    uint8_t* decryptedData = new uint8_t[ciphertextSize];
-    int ret = decrypt(key, nonce, ciphertext, ciphertextSize, tag, decryptedData);
-    if (ret != 0) {
-        delete[] decryptedData;
-        return nullptr; // decryption failed (tampered)
+std::vector<uint8_t> LoRa_CommunicationClass::decryptData(const uint8_t* encryptedData, const int encryptedSize) {
+    if (!key || !encryptedData) {
+        return {};
     }
-    *decryptedSize = ciphertextSize;
-    return decryptedData;
+
+    if (encryptedSize < static_cast<int>(NONCE_SIZE + TAG_SIZE + 1)) {
+        return {}; // invalid or empty payload
+    }
+
+    const int ciphertextSize = encryptedSize - static_cast<int>(NONCE_SIZE) - static_cast<int>(TAG_SIZE);
+    if (ciphertextSize <= 0) return {};
+
+    std::array<uint8_t, NONCE_SIZE> nonce{};
+    std::array<uint8_t, TAG_SIZE> tag{};
+    std::vector<uint8_t> ciphertext(static_cast<std::size_t>(ciphertextSize));
+
+    std::memcpy(nonce.data(), encryptedData, NONCE_SIZE);
+    std::memcpy(ciphertext.data(), encryptedData + NONCE_SIZE, static_cast<std::size_t>(ciphertextSize));
+    std::memcpy(tag.data(), encryptedData + NONCE_SIZE + ciphertextSize, TAG_SIZE);
+
+    std::vector<uint8_t> output(static_cast<std::size_t>(ciphertextSize));
+    int ret = decrypt(key, nonce.data(), ciphertext.data(), static_cast<std::size_t>(ciphertextSize), tag.data(), output.data());
+    if (ret != 0) {
+        return {}; // decryption failed (tampered)
+    }
+
+    return output;
 }
 

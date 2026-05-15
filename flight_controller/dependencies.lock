@@ -71,16 +71,40 @@ dependencies:
       path: ../shared_components/esp32-lora-library
       type: local
     version: '*'
-  gps:
-    dependencies: []
+  flight_data:
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
+    - name: johboh/nlohmann-json
+      version: ^3.12.0
     source:
-      path: components/gps
+      path: ../shared_components/flight_data
       type: local
     version: '*'
   idf:
     source:
       type: idf
     version: 6.0.1
+  jgromes/radiolib:
+    component_hash: 3baedfa4c97b2f9d97c8066f587ff425585f670bb22e8f039202a23924e94de7
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.1'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 7.6.0
+  johboh/nlohmann-json:
+    component_hash: 2a97e10124d755da820b0381e36a9a6504574328f262964ccea3f8b2f228fc66
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.4'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 3.12.0
   motor_com:
     dependencies:
     - name: esp-idf-lib/i2cdev
@@ -89,20 +113,15 @@ dependencies:
       path: components/motor_com_master
       type: local
     version: '*'
-  serializer_helper:
-    dependencies: []
-    source:
-      path: ../shared_components/serializer_helper
-      type: local
-    version: '*'
 direct_dependencies:
 - esp-idf-lib/i2cdev
 - esp-idf-lib/mpu6050
 - esp32-lora-library
-- gps
+- flight_data
 - idf
+- jgromes/radiolib
+- johboh/nlohmann-json
 - motor_com
-- serializer_helper
-manifest_hash: 2e9f2342aa8080901e62f89573bafb878acb132437dfa97f8ee76ccb6e31ed2e
+manifest_hash: 8693a8d1ebda6622d5390c173139f35c63f6fdede8360104fa823836185e7885
 target: esp32s3
 version: 3.0.0

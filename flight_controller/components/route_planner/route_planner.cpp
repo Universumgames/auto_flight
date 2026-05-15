@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "geo_helper.hpp"
-#include "route.hpp"
+#include "types.hpp"
 
 static RoutePlannerClass* route_planner;
 

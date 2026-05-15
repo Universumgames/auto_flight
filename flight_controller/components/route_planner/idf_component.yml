@@ -1,4 +1,0 @@
-dependencies:
-  serializer_helper:
-    require: public
-    path: ../../shared_components/serializer_helper

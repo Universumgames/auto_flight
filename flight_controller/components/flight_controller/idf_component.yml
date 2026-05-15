@@ -3,6 +3,3 @@ dependencies:
     require: public
     path: ../motor_com_master
   esp-idf-lib/mpu6050: ^2.1.9
-  gps:
-    require: public
-    path: ../gps

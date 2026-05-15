@@ -14,8 +14,24 @@ constexpr int uart_buffer_size = (1024);
 
 const char* TAG_GPS_READER = "gps_reader";
 
+static GPS_ReaderClass* gps_reader = nullptr;
+
+GPS_ReaderClass& GPS_Reader = GPS_ReaderClass::getInstance();
+
+GPS_ReaderClass* GPS_ReaderClass::getInstancePtr() {
+    if (gps_reader == nullptr) {
+        gps_reader = new GPS_ReaderClass();
+    }
+    return gps_reader;
+}
+
+GPS_ReaderClass& GPS_ReaderClass::getInstance() {
+    return *getInstancePtr();
+}
+
+
 [[noreturn]] static void gps_readerTask(void* parameters) {
-    auto* gps_reader = (GPS_Reader*)parameters;
+    auto* gps_reader = (GPS_ReaderClass*)parameters;
 
     uart_event_t event;
     uint8_t data[128];
@@ -24,6 +40,8 @@ const char* TAG_GPS_READER = "gps_reader";
     int line_pos = 0;
 
     auto uart_queue = gps_reader->uart_queue;
+    ESP_LOGI(TAG_GPS_READER, "GPS Reader UART task started, waiting for data...");
+
 
     while (true) {
         if (xQueueReceive(uart_queue, &event, portMAX_DELAY)) {
@@ -79,23 +97,23 @@ const char* TAG_GPS_READER = "gps_reader";
     }
 }
 
-GPS_Reader::GPS_Reader(gpio_num_t rx_pin, gpio_num_t tx_pin, uart_port_t uart_num) {
-    this->rxPin = rx_pin;
-    this->txPin = tx_pin;
-    this->uartNum = uart_num;
+GPS_ReaderClass::GPS_ReaderClass() {
+    this->rxPin = (gpio_num_t) CONFIG_GPS_PIN_RX;
+    this->txPin = (gpio_num_t) CONFIG_GPS_PIN_TX;
+    this->uartNum = (uart_port_t) CONFIG_GPS_UART_NUM;
     lastUpdateTime = time(nullptr);;
 }
 
-GPS_Reader::~GPS_Reader() {
+/*GPS_ReaderClass::~GPS_ReaderClass() {
     // Clean up UART driver and event queue
     uart_driver_delete(uartNum);
     if (uart_queue) {
         vQueueDelete(uart_queue);
     }
-}
+}*/
 
-void GPS_Reader::begin() {
-
+void GPS_ReaderClass::begin() {
+    esp_log_level_set(TAG_GPS_READER, ESP_LOG_WARN);
     // Install UART driver using an event queue here
     ESP_ERROR_CHECK(uart_driver_install(uartNum, uart_buffer_size * 2, 0, 10, &uart_queue, 0));
     // Configure UART parameters
@@ -108,7 +126,7 @@ void GPS_Reader::begin() {
     ESP_LOGI(TAG_GPS_READER, "GPS Reader started on UART%d (RX: GPIO%d, TX: GPIO%d)", uartNum, rxPin, txPin);
 }
 
-void GPS_Reader::handleReceive(const std::string& line) {
+void GPS_ReaderClass::handleReceive(const std::string& line) {
     ESP_LOGD(TAG_GPS_READER, "Received GPS data: %s", line.c_str());
 
     switch (minmea_sentence_id(line.c_str(), false)) {
@@ -116,21 +134,21 @@ void GPS_Reader::handleReceive(const std::string& line) {
         minmea_sentence_rmc frame{};
         if (minmea_parse_rmc(&frame, line.c_str())) {
             this->lastRMC = frame;
-            ESP_LOGD(TAG_GPS_READER, "$xxRMC: raw coordinates and speed: (%d/%d,%d/%d) %d/%d\n",
+            ESP_LOGD(TAG_GPS_READER, "$xxRMC: raw coordinates and speed: (%d/%d,%d/%d) %d/%d",
                     frame.latitude.value, frame.latitude.scale,
                     frame.longitude.value, frame.longitude.scale,
                     frame.speed.value, frame.speed.scale);
-            ESP_LOGD(TAG_GPS_READER, "$xxRMC fixed-point coordinates and speed scaled to three decimal places: (%d,%d) %d\n",
+            ESP_LOGD(TAG_GPS_READER, "$xxRMC fixed-point coordinates and speed scaled to three decimal places: (%d,%d) %d",
                     minmea_rescale(&frame.latitude, 1000),
                     minmea_rescale(&frame.longitude, 1000),
                     minmea_rescale(&frame.speed, 1000));
-            ESP_LOGD(TAG_GPS_READER, "$xxRMC floating point degree coordinates and speed: (%f,%f) %f\n",
+            ESP_LOGD(TAG_GPS_READER, "$xxRMC floating point degree coordinates and speed: (%f,%f) %f",
                     minmea_tocoord(&frame.latitude),
                     minmea_tocoord(&frame.longitude),
                     minmea_tofloat(&frame.speed));
         }
         else {
-            ESP_LOGW(TAG_GPS_READER, "$xxRMC sentence is not parsed\n");
+            ESP_LOGW(TAG_GPS_READER, "$xxRMC sentence is not parsed");
         }
     } break;
 
@@ -138,10 +156,11 @@ void GPS_Reader::handleReceive(const std::string& line) {
         minmea_sentence_gga frame{};
         if (minmea_parse_gga(&frame, line.c_str())) {
             this->lastGGA = frame;
-            ESP_LOGD(TAG_GPS_READER, "$xxGGA: fix quality: %d\n", frame.fix_quality);
+            callPositionUpdateCallbacks();
+            ESP_LOGD(TAG_GPS_READER, "$xxGGA: fix quality: %d", frame.fix_quality);
         }
         else {
-            ESP_LOGW(TAG_GPS_READER, "$xxGGA sentence is not parsed\n");
+            ESP_LOGW(TAG_GPS_READER, "$xxGGA sentence is not parsed");
         }
     } break;
 
@@ -149,12 +168,12 @@ void GPS_Reader::handleReceive(const std::string& line) {
         minmea_sentence_gst frame{};
         if (minmea_parse_gst(&frame, line.c_str())) {
             this->lastGST = frame;
-            ESP_LOGD(TAG_GPS_READER, "$xxGST: raw latitude,longitude and altitude error deviation: (%d/%d,%d/%d,%d/%d)\n",
+            ESP_LOGD(TAG_GPS_READER, "$xxGST: raw latitude,longitude and altitude error deviation: (%d/%d,%d/%d,%d/%d)",
                     frame.latitude_error_deviation.value, frame.latitude_error_deviation.scale,
                     frame.longitude_error_deviation.value, frame.longitude_error_deviation.scale,
                     frame.altitude_error_deviation.value, frame.altitude_error_deviation.scale);
             ESP_LOGD(TAG_GPS_READER, "$xxGST fixed point latitude,longitude and altitude error deviation"
-                   " scaled to one decimal place: (%d,%d,%d)\n",
+                   " scaled to one decimal place: (%d,%d,%d)",
                     minmea_rescale(&frame.latitude_error_deviation, 10),
                     minmea_rescale(&frame.longitude_error_deviation, 10),
                     minmea_rescale(&frame.altitude_error_deviation, 10));
@@ -164,7 +183,7 @@ void GPS_Reader::handleReceive(const std::string& line) {
                     minmea_tofloat(&frame.altitude_error_deviation));
         }
         else {
-            ESP_LOGW(TAG_GPS_READER, "$xxGST sentence is not parsed\n");
+            ESP_LOGW(TAG_GPS_READER, "$xxGST sentence is not parsed");
         }
     } break;
 
@@ -172,17 +191,17 @@ void GPS_Reader::handleReceive(const std::string& line) {
         minmea_sentence_gsv frame{};
         if (minmea_parse_gsv(&frame, line.c_str())) {
             this->lastGSV = frame;
-            ESP_LOGD(TAG_GPS_READER, "$xxGSV: message %d of %d\n", frame.msg_nr, frame.total_msgs);
-            ESP_LOGD(TAG_GPS_READER, "$xxGSV: satellites in view: %d\n", frame.total_sats);
+            ESP_LOGD(TAG_GPS_READER, "$xxGSV: message %d of %d", frame.msg_nr, frame.total_msgs);
+            ESP_LOGD(TAG_GPS_READER, "$xxGSV: satellites in view: %d", frame.total_sats);
             for (int i = 0; i < 4; i++)
-                ESP_LOGI(TAG_GPS_READER, "$xxGSV: sat nr %d, elevation: %d, azimuth: %d, snr: %f dbm\n",
+                ESP_LOGD(TAG_GPS_READER, "$xxGSV: sat nr %d, elevation: %d, azimuth: %d, snr: %f dbm",
                     frame.sats[i].nr,
                     frame.sats[i].elevation,
                     frame.sats[i].azimuth,
                     minmea_tofloat(&frame.sats[i].snr));
         }
         else {
-            ESP_LOGW(TAG_GPS_READER, "$xxGSV sentence is not parsed\n");
+            ESP_LOGW(TAG_GPS_READER, "$xxGSV sentence is not parsed");
         }
     } break;
 
@@ -190,17 +209,17 @@ void GPS_Reader::handleReceive(const std::string& line) {
         minmea_sentence_vtg frame{};
         if (minmea_parse_vtg(&frame, line.c_str())) {
             this->lastVTG = frame;
-            ESP_LOGD(TAG_GPS_READER, "$xxVTG: true track degrees = %f\n",
+            ESP_LOGD(TAG_GPS_READER, "$xxVTG: true track degrees = %f",
                    minmea_tofloat(&frame.true_track_degrees));
-            ESP_LOGD(TAG_GPS_READER, "        magnetic track degrees = %f\n",
+            ESP_LOGD(TAG_GPS_READER, "        magnetic track degrees = %f",
                    minmea_tofloat(&frame.magnetic_track_degrees));
-            ESP_LOGD(TAG_GPS_READER, "        speed knots = %f\n",
+            ESP_LOGD(TAG_GPS_READER, "        speed knots = %f",
                     minmea_tofloat(&frame.speed_knots));
-            ESP_LOGD(TAG_GPS_READER, "        speed kph = %f\n",
+            ESP_LOGD(TAG_GPS_READER, "        speed kph = %f",
                     minmea_tofloat(&frame.speed_kph));
         }
         else {
-            ESP_LOGW(TAG_GPS_READER, "$xxVTG sentence is not parsed\n");
+            ESP_LOGW(TAG_GPS_READER, "$xxVTG sentence is not parsed");
         }
     } break;
 
@@ -208,7 +227,7 @@ void GPS_Reader::handleReceive(const std::string& line) {
         minmea_sentence_zda frame{};
         if (minmea_parse_zda(&frame, line.c_str())) {
             this->lastZDA = frame;
-            ESP_LOGD(TAG_GPS_READER, "$xxZDA: %d:%d:%d %02d.%02d.%d UTC%+03d:%02d\n",
+            ESP_LOGD(TAG_GPS_READER, "$xxZDA: %d:%d:%d %02d.%02d.%d UTC%+03d:%02d",
                    frame.time.hours,
                    frame.time.minutes,
                    frame.time.seconds,
@@ -219,16 +238,16 @@ void GPS_Reader::handleReceive(const std::string& line) {
                    frame.minute_offset);
         }
         else {
-            ESP_LOGW(TAG_GPS_READER, "$xxZDA sentence is not parsed\n");
+            ESP_LOGW(TAG_GPS_READER, "$xxZDA sentence is not parsed");
         }
     } break;
 
     case MINMEA_INVALID: {
-        ESP_LOGW(TAG_GPS_READER, "$xxxxx sentence is not valid\n");
+        ESP_LOGW(TAG_GPS_READER, "$xxxxx sentence is not valid: %s", line.c_str());
     } break;
 
     default: {
-        ESP_LOGW(TAG_GPS_READER, "$xxxxx sentence is not parsed\n");
+        ESP_LOGD(TAG_GPS_READER, "$xxxxx sentence is not parsed (%s)", line.c_str());
     } break;
     }
 
@@ -238,17 +257,24 @@ void GPS_Reader::handleReceive(const std::string& line) {
 }
 
 
-void GPS_Reader::getCurrentCoordinates(float& x, float& y, float& z) {
-    x = minmea_tocoord(&lastRMC.latitude);
-    y = minmea_tocoord(&lastRMC.longitude);
+void GPS_ReaderClass::getCurrentCoordinates(float& x, float& y, float& z) {
+    x = minmea_tocoord(&lastGGA.latitude);
+    y = minmea_tocoord(&lastGGA.longitude);
     z = minmea_tofloat(&lastGGA.altitude);
 }
 
-float GPS_Reader::getCurrentSpeed() {
+float GPS_ReaderClass::getCurrentSpeed() {
     return minmea_tofloat(&lastRMC.speed);
 }
 
-tm GPS_Reader::getCurrentTime() const {
+Coordinate GPS_ReaderClass::getCurrentPosition() {
+    return Coordinate{
+        .longitude = minmea_tocoord(&lastGGA.longitude),
+        .latitude = minmea_tocoord(&lastGGA.latitude)
+    };
+}
+
+tm GPS_ReaderClass::getLatestTimeStruct() const {
     tm currentTime{};
     currentTime.tm_year = lastZDA.date.year - 1900; // tm_year is years since 1900
     currentTime.tm_mon = lastZDA.date.month - 1;
@@ -260,7 +286,27 @@ tm GPS_Reader::getCurrentTime() const {
     return currentTime;
 }
 
+time_t GPS_ReaderClass::getGPSLatestTime() const {
+    return lastUpdateTime;
+}
 
-bool GPS_Reader::available() const {
+
+bool GPS_ReaderClass::available() const {
     return lastUpdateTime - time(nullptr) < 10000;
+}
+
+bool GPS_ReaderClass::hasValidPosition() const {
+    return lastGGA.fix_quality > 0;
+}
+
+void GPS_ReaderClass::addPositionUpdateCallback(const PositionUpdateCallbackFn& callback_fn) {
+    positionUpdateCallbacks.push_back(callback_fn);
+}
+
+void GPS_ReaderClass::callPositionUpdateCallbacks() {
+    auto coord = getCurrentPosition();
+    auto timestamp = getGPSLatestTime();
+    for (const auto& callback_fn : positionUpdateCallbacks) {
+        callback_fn(coord, timestamp);
+    }
 }

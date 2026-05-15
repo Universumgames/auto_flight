@@ -1,31 +1,34 @@
-import { reactive } from 'vue'
 import { useWebSocket } from '@vueuse/core'
+import { reactive } from 'vue'
 
-export const store = reactive({
-  position: [51.316310347903176, 6.569530261539499],
-})
+import { ConnectionState } from '@/types/connection.ts'
+import { createWebSocketStoreState, handleWebSocketMessage } from '@/stores/websocketMessage.ts'
 
+export const store = reactive(createWebSocketStoreState())
 
-const { status, data, send, open, close } = useWebSocket(`ws://${window.location.host}/api/ws`, {
+useWebSocket(`ws://${window.location.host}/api/ws`, {
   autoConnect: true,
   autoReconnect: true,
-  onConnected(ws) {
+  onConnected(_ws) {
     console.log('Connected!')
+    store.connectionStateBaseStation = ConnectionState.CONNECTED
   },
   onDisconnected(ws, event) {
     console.log('Disconnected!', event.code)
+    store.connectionStateBaseStation = ConnectionState.CONNECTING
   },
   onError(ws, event) {
     console.error('Error:', event)
   },
   onMessage(ws, event) {
-    console.log('Message:', event.data)
+    handleWebSocketMessage(store, event)
   },
   heartbeat: {
     message: 'ping',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     scheduler: (cb) => setInterval(cb, 2000),
-    pongTimeout: 1000,
+    pongTimeout: 5000,
   },
 })
+

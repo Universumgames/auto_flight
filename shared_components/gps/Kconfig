@@ -1,0 +1,22 @@
+menu "GPS Settings"
+
+config GPS_PIN_RX
+    int "GPS RX pin"
+    default 39
+    help
+      Set the GPIO pin number for the GPS RX (receive) line. This is the pin that will receive data from the GPS module.
+
+config GPS_PIN_TX
+    int "GPS TX pin"
+    default 6
+    help
+      Set the GPIO pin number for the GPS TX (transmit) line. This is the pin that will send data to the GPS module.
+
+
+config GPS_UART_NUM
+    int "GPS UART number"
+    default 2
+    help
+      Set the UART number for the GPS module. ESP32 typically has multiple UARTs (e.g., UART0, UART1, UART2), and you can choose which one to use for communication with the GPS module.
+
+endmenu
