@@ -1,7 +1,7 @@
 #include "LoRa_Communication.hpp"
 
 #include "esp_log.h"
-#include "lora.hpp"
+#include "mutex_helper.hpp"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "sdkconfig.h"
@@ -20,19 +20,13 @@ void LoRa_CommunicationClass::pingTaskLoop() {
     while (true) {
         vTaskDelay(LORA_PING_CHECK_INTERVAL);
 
-        if (lastSendTimeMutex == nullptr || radioMutex == nullptr) {
-            continue;
-        }
 
         TickType_t now = xTaskGetTickCount();
         TickType_t timeSinceLastSend = 0;
 
         // Check time since last send
-        if (xSemaphoreTake(lastSendTimeMutex, LORA_PING_CHECK_INTERVAL) == pdTRUE) {
+        WITH_MUTEX(lastSendTimeMutex){
             timeSinceLastSend = now - lastSendTime;
-            xSemaphoreGive(lastSendTimeMutex);
-        } else {
-            continue;
         }
 
         // If time exceeded ping interval, send a ping
@@ -46,9 +40,14 @@ void LoRa_CommunicationClass::pingTaskLoop() {
             };
 
             // Send ping
-            sendRawPacket(pingPacket, nullptr, true);
-            ESP_LOGI(TAG_LORA, "PING sent to maintain connection");
+            auto success = sendRawPacket(pingPacket, nullptr, true);
+            if (success) {
+                ESP_LOGI(TAG_LORA, "PING sent to maintain connection");
+            }else {
+                ESP_LOGE(TAG_LORA, "Failed PING");
+            }
             updateLastSendTime();
+
         }
     }
 }

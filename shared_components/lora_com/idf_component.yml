@@ -1,7 +1,4 @@
 dependencies:
-  esp32-lora-library:
-    path: ../esp32-lora-library
-    require: public
   flight_data:
     path: ../flight_data
     require: public

@@ -16,4 +16,7 @@
 # Week 5
 - setting up webserver for configuration and control
 - get wifi working on base station
-- 
+- get started with lora
+
+# Week 6
+- get lora connection working

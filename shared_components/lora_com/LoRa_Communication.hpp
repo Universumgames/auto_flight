@@ -10,7 +10,15 @@
 #include "freertos/task.h"
 
 #include "types.hpp"
-#include "modules/SX126x/SX126x.h"
+
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+#include "modules/SX126x/SX1262.h"
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 class LoRa_CommunicationClass {
 private:
@@ -19,8 +27,10 @@ private:
     enum class PacketType: uint8_t {
         HEADER,
         ACK,
-        PING,
+        PING
     };
+
+    static std::string toString(PacketType packetType);
 
     struct LoRa_Packet {
         PacketType type;
@@ -85,7 +95,7 @@ public:
      * Gets the RSSI (Received Signal Strength Indicator) of the last received packet
      * @return RSSI value in dBm
      */
-    [[nodiscard]] int getLastPacketRSSI() const;
+    [[nodiscard]] float getLastPacketRSSI() const;
 
     /**
      * Gets the SNR (Signal-to-Noise Ratio) of the last received packet
@@ -138,9 +148,9 @@ private:
      * @param packet The packet header to send
      * @param data Pointer to the payload data (can be nullptr if no payload)
      * @param requireAck If true, waits for acknowledgement; defaults to true
-     * @return Number of bytes sent, or -1 on failure
+     * @return true on success, false otherwise
      */
-    int sendRawPacket(const LoRa_Packet& packet, const uint8_t* data, bool requireAck = true);
+    bool sendRawPacket(const LoRa_Packet& packet, const uint8_t* data, bool requireAck = true);
 
     /**
      * Updates the timestamp of the last successful transmission
@@ -173,7 +183,7 @@ private:
      */
     void processPacket(const LoRa_Packet& receivedHeader);
 
-    uint8_t* key;// = new uint8_t[16]; // 128-bit key used for encryption
+    uint8_t* key = nullptr; // 128-bit key used for encryption
     TaskHandle_t receiveTaskHandle = nullptr;
     TaskHandle_t pingTaskHandle = nullptr;
     SemaphoreHandle_t radioMutex = nullptr;
@@ -187,7 +197,7 @@ private:
     // Whether a DIO0 ISR has been installed for the radio (used by the receive task)
     bool dio0IsrInstalled = false;
 
-    SX126x* loraRadio = nullptr;
+    SX1262* loraRadio = nullptr;
 
 };
 

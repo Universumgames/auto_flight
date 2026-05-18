@@ -1,10 +1,4 @@
 dependencies:
-  esp32-lora-library:
-    dependencies: []
-    source:
-      path: ../shared_components/esp32-lora-library
-      type: local
-    version: '*'
   flight_data:
     dependencies:
     - name: idf
@@ -20,14 +14,10 @@ dependencies:
       type: idf
     version: 6.0.1
   jgromes/radiolib:
-    component_hash: 3baedfa4c97b2f9d97c8066f587ff425585f670bb22e8f039202a23924e94de7
-    dependencies:
-    - name: idf
-      require: private
-      version: '>=4.1'
+    dependencies: []
     source:
-      registry_url: https://components.espressif.com/
-      type: service
+      path: ../shared_components/jgromes__radiolib
+      type: local
     version: 7.6.0
   johboh/nlohmann-json:
     component_hash: 2a97e10124d755da820b0381e36a9a6504574328f262964ccea3f8b2f228fc66
@@ -50,12 +40,11 @@ dependencies:
       type: service
     version: 1.21.1
 direct_dependencies:
-- esp32-lora-library
 - flight_data
 - idf
 - jgromes/radiolib
 - johboh/nlohmann-json
 - joltwallet/littlefs
-manifest_hash: ed33fd079bcc762185634bd503a2d7a29c6489a74fb5c915b293255fb67c45cb
+manifest_hash: eaba387db73bd1f7eadafd66b956bda42357a95408c50499ec06a6893be8efe5
 target: esp32s3
 version: 3.0.0

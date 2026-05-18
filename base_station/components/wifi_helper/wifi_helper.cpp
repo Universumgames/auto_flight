@@ -100,7 +100,7 @@ esp_err_t start_ap() {
             .password = CONFIG_WIFI_AP_PASSWORD,
             .ssid_len = sizeof(CONFIG_WIFI_AP_SSID) - 1,
             .channel = 0,
-            .authmode = WIFI_AUTH_WPA2_WPA3_ENTERPRISE,
+            .authmode = WIFI_AUTH_WPA2_PSK,
             .ssid_hidden = false,
         }
     };
