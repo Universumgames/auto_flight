@@ -224,16 +224,6 @@ void LoRa_CommunicationClass::sendData(const uint8_t* data, uint8_t size) {
     updateLastSendTime();
 }
 
-void LoRa_CommunicationClass::sendAck(uint8_t messageId) {
-    LoRa_Packet ackPacket = {
-        .type = PacketType::ACK,
-        .messageId = messageId,
-        .payloadLength = 0,
-    };
-    sendRawPacket(ackPacket, nullptr, false);
-    updateLastSendTime();
-}
-
 bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet& packet, const uint8_t* data, bool requireAck) {
     // Helper: wait for ACK with timeout
     auto waitForAckId = [&](uint8_t msgId, TickType_t timeout) -> bool {

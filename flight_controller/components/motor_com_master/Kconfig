@@ -1,25 +1,10 @@
 
-config MASTER_I2C_PIN_SCL
-    int "I2C SCL pin"
-    default 22
-    help
-      Set the I2C SCL pin number.
-
-config MASTER_I2C_PIN_SDA
-    int "I2C SDA pin"
-    default 21
-    help
-      Set the I2C SDA pin number.
-
-config MASTER_I2C_FREQUENCY
-    int "I2C frequency (Hz)"
-    default 100000
-    help
-      Set the I2C communication frequency in Hz. Common values are 100000 for standard mode and 400000 for fast mode.
+menu "Motor Controller I2C Configuration"
 
 config MOTOR_COM_I2C_ADDRESS
-    int "I2C address of the motor controller"
-    default 10
+    hex "I2C address of the motor controller"
+    default 0x42
     help
       Set the I2C address of the motor controller. Ensure this matches the address configured on the motor controller device.
 
+endmenu

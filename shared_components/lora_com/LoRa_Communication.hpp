@@ -72,12 +72,6 @@ public:
     void sendData(const uint8_t* data, uint8_t size);
 
     /**
-     * Sends an acknowledgement packet for a previously received message
-     * @param messageId The ID of the message being acknowledged
-     */
-    void sendAck(uint8_t messageId);
-
-    /**
      * Receives data from the received packets queue into the provided buffer
      * @param buffer Pointer to the destination buffer
      * @param size Maximum number of bytes to read into the buffer

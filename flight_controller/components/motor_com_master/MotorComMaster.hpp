@@ -1,7 +1,9 @@
 #pragma once
 #ifndef NATIVE_BUILD
-#include <driver/i2c_master.h>
+#include "i2c_bus.h"
 #endif
+#include <unordered_map>
+
 #include "MotorCommunication.hpp"
 
 class MotorComMasterClass {
@@ -32,22 +34,16 @@ private:
      * Send a command to the slave
      * @param command command to send
      * @param value the value
-     * @return return code of slave
+     * @return true on success, false otherwise
      */
-    ControlReturnCode sendCommand(ControlCommand command, uint8_t value) const;
-
-    /**
-     * Read a value from the slave
-     * @param command command to read
-     * @return value read from slave
-     */
-    uint8_t readValue(ControlCommand command) const;
+    bool sendCommand(ControlCommand command, uint8_t value);
 
 private:
 #ifndef NATIVE_BUILD
-    i2c_master_bus_handle_t busHandle;
-    i2c_master_dev_handle_t devHandle;
+    i2c_bus_device_handle_t devHandle = nullptr;
 #endif
+
+    std::unordered_map<ControlCommand, uint8_t> lastSentValues;
 };
 
 extern MotorComMasterClass& motorComMaster;

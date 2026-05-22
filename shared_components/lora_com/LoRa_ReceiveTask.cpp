@@ -34,6 +34,7 @@ void LoRa_CommunicationClass::sendAckPacketInternal(uint8_t messageId) {
         loraRadio->transmit(reinterpret_cast<uint8_t*>(&ackPacket), sizeof(ackPacket));
         loraRadio->startReceive();
     }
+    updateLastSendTime();
 }
 
 int LoRa_CommunicationClass::waitForPayload(uint8_t* dataBuffer, uint8_t expectedSize) {

@@ -14,7 +14,6 @@ public:
     void init();
 
 private:
-    mpu6050_dev_t dev;
 
 };
 

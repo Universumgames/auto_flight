@@ -128,3 +128,26 @@ void FlightStorageClass::updateBaseStationConnectionState(ConnectionState connec
     if (connectionState == ConnectionState::CONNECTED)
         this->lastBaseConnectedTime = lastUpdateTime;
 }
+
+void FlightStorageClass::registerDataChangeCallback(std::function<void()> callback, DataUpdateType type) {
+    dataChangeCallbacks[type].push_back(std::move(callback));
+}
+
+void FlightStorageClass::registerEventHandlersInSubComponents() {
+        GPS_Reader.addPositionUpdateCallback([this](Coordinate newPosition, time_t updateTime) {
+            if (isDeviceBaseStation()) {
+                updateBasePosition(newPosition, updateTime);
+            }else if (isDevicePlane()) {
+                updatePlanePosition(newPosition, updateTime);
+            }
+        });
+}
+
+void FlightStorageClass::callDataChangeCallbacks(DataUpdateType type) {
+    for (const auto& callback_fn : dataChangeCallbacks[type]) {
+        callback_fn();
+    }
+    for (const auto& callback_fn : dataChangeCallbacks[DataUpdateType::ANY]) {
+        callback_fn();
+    }
+}

@@ -2,7 +2,9 @@
 
 #include "i2c_manager.hpp"
 
-i2c_master_bus_handle_t I2CManager::getBus() {
+#include "esp_log.h"
+
+i2c_bus_handle_t I2CManager::getBus() {
     if (!initialized) {
         init();
     }
@@ -11,18 +13,20 @@ i2c_master_bus_handle_t I2CManager::getBus() {
 }
 
 void I2CManager::init() {
-    i2c_master_bus_config_t cfg = {
-        .i2c_port = I2C_NUM_0,
-        .sda_io_num = (gpio_num_t) CONFIG_I2C_PIN_SDA,
-        .scl_io_num = (gpio_num_t) CONFIG_I2C_PIN_SCL,
-        .clk_source = I2C_CLK_SRC_DEFAULT,
-        .glitch_ignore_cnt = 7,
-        .flags = {
-            .enable_internal_pullup = true,
-        },
+    ESP_LOGI("i2c_manager", "Initializing I2C bus");
+
+    i2c_config_t conf = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = (gpio_num_t)CONFIG_I2C_PIN_SDA,
+        .scl_io_num = (gpio_num_t)CONFIG_I2C_PIN_SCL,
+        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+        .scl_pullup_en = GPIO_PULLUP_ENABLE,
+        .master = {
+            .clk_speed = 100000,
+        }
     };
 
-    ESP_ERROR_CHECK(i2c_new_master_bus(&cfg, &bus));
+    bus = i2c_bus_create(I2C_NUM_0, &conf);
 
     initialized = true;
 }

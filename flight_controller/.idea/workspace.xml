@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="18" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="45" type="long" />
     <option name="/Default/Environment/StickyLines/DisabledLanguageList/@EntryValue" value="Jupyter" type="string" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
@@ -38,18 +38,19 @@
       <config projectName="flight_controller" targetName="size-files" />
       <config projectName="flight_controller" targetName="__idf_minmea" />
       <config projectName="flight_controller" targetName="__idf_esp-tls" />
-      <config projectName="flight_controller" targetName="__idf_esp-idf-lib__mpu6050" />
       <config projectName="flight_controller" targetName="gen_flight_controller_binary" />
       <config projectName="flight_controller" targetName="lib" />
       <config projectName="flight_controller" targetName="__idf_wpa_supplicant" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_i2c" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_pcnt" />
       <config projectName="flight_controller" targetName="dfu" />
+      <config projectName="flight_controller" targetName="__idf_barometer" />
       <config projectName="flight_controller" targetName="bootloader-flash" />
       <config projectName="flight_controller" targetName="__idf_nvs_flash" />
       <config projectName="flight_controller" targetName="__idf_esp_http_server" />
       <config projectName="flight_controller" targetName="efuse-common-table" />
       <config projectName="flight_controller" targetName="encrypted-bootloader-flash" />
+      <config projectName="flight_controller" targetName="__idf_espressif__mpu6050" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_tsens" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_cam" />
       <config projectName="flight_controller" targetName="partition_table-flash" />
@@ -89,6 +90,7 @@
       <config projectName="flight_controller" targetName="__idf_log" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_gpio" />
       <config projectName="flight_controller" targetName="__idf_lora_com" />
+      <config projectName="flight_controller" targetName="__idf_espressif__i2c_bus" />
       <config projectName="flight_controller" targetName="__idf_esp_http_client" />
       <config projectName="flight_controller" targetName="custom_bundle" />
       <config projectName="flight_controller" targetName="uf2" />
@@ -128,6 +130,7 @@
       <config projectName="flight_controller" targetName="__idf_route_planner" />
       <config projectName="flight_controller" targetName="__idf_i2c_manager" />
       <config projectName="flight_controller" targetName="p256m" />
+      <config projectName="flight_controller" targetName="__idf_espressif__bme280" />
       <config projectName="flight_controller" targetName="sections_ld_in_preprocess" />
       <config projectName="flight_controller" targetName="__idf_esp_system" />
       <config projectName="flight_controller" targetName="__idf_unity" />
@@ -139,6 +142,7 @@
       <config projectName="flight_controller" targetName="everest" />
       <config projectName="flight_controller" targetName="__idf_perfmon" />
       <config projectName="flight_controller" targetName="__idf_hal" />
+      <config projectName="flight_controller" targetName="__idf_gyroscope" />
       <config projectName="flight_controller" targetName="app-flash" />
       <config projectName="flight_controller" targetName="_project_elf_src" />
       <config projectName="flight_controller" targetName="size" />
@@ -185,7 +189,6 @@
       <config projectName="flight_controller" targetName="__idf_esp_hid" />
       <config projectName="flight_controller" targetName="__idf_flight_controller" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_sdm" />
-      <config projectName="flight_controller" targetName="__idf_esp-idf-lib__i2cdev" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_uart" />
       <config projectName="flight_controller" targetName="__idf_esp_lcd" />
       <config projectName="flight_controller" targetName="efuse-custom-table" />
@@ -204,18 +207,64 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix unit tests with native runtime">
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../motor_controller/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../motor_controller/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../resources/arduino-nano-pinout-pwm-lgr.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../resources/learning.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/barometer/Barometer.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/barometer/Barometer.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/barometer/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/barometer/idf_component.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/.component_hash" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/CHECKSUMS.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/idf_component.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/include/mpu6050.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/license.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/mpu6050.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/test/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/espressif__mpu6050/test/mpu6050_test.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/gyroscope/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroskope.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroskope.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/gyroscope/idf_component.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/idf_component.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../base_station/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/idf_component.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com/MotorCommunication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com/MotorCommunication.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/Kconfig" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/Kconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/idf_component.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/esp32-lora-library" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/Kconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/Kconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../learning.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../motor_controller/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../motor_controller/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../motor_controller/Readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/Readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../motor_controller/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/platformio.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../motor_controller/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/src/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/i2c_manager/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_PingTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_PingTask.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_ReceiveTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_ReceiveTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/idf_component.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/motor_com/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/motor_com/MotorCommunication.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/motor_com/MotorCommunication.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/motor_com/idf_component.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,7 +277,7 @@
   <component name="CopilotChats">
     <option name="panelChat">
       <chat>
-        <option name="activeSessionId" value="e9285f49-495e-4ef2-be6d-42b10d1e6993" />
+        <option name="activeSessionId" value="13e9f1fe-9e3b-415d-8bf0-e41080b85315" />
         <option name="sessions">
           <session>
             <option name="chatType" value="PANEL" />
@@ -256,6 +305,31 @@
             <option name="status" value="Completed" />
             <option name="targetType" value="LOCAL" />
           </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="e8d7dc13-df90-4b97-b56e-3813dfbdc1bc" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="status" value="Completed" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="894d14ac-e812-4c55-a83a-a9d7ec858878" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
+          <session>
+            <option name="chatType" value="PANEL" />
+            <option name="id" value="13e9f1fe-9e3b-415d-8bf0-e41080b85315" />
+            <option name="modeId" value="Agent" />
+            <option name="modelType" value="builtin_family" />
+            <option name="modelValue" value="auto" />
+            <option name="targetType" value="LOCAL" />
+          </session>
         </option>
         <option name="type" value="PANEL" />
       </chat>
@@ -265,6 +339,7 @@
     <persistenceIdMap>
       <entry key="_/Users/universum/.espressif/v6.0.1/esp-idf" value="3DPSIwC87DpoyHi6sOoRa44wmss" />
       <entry key="_/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller" value="3DMyMsmDV5QJhpLVCSMWn4KRz55" />
+      <entry key="_/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller/.idea" value="3DuvO8hY9O5SFNPFvt0n2lRNAbm" />
     </persistenceIdMap>
   </component>
   <component name="CopilotUserSelectedModel">
@@ -288,6 +363,65 @@
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000007034351053" />
+      <entry key="S2" value="1.045912332448701" />
+      <entry key="S5" value="1.4395920454624072" />
+      <entry key="S10" value="1.9382936513987101" />
+      <entry key="S30" value="3.911402396629329" />
+      <entry key="S60" value="10.680582395428644" />
+      <entry key="M2" value="23.046691118022892" />
+      <entry key="M5" value="41.08812299302295" />
+      <entry key="M10" value="51.882864973811316" />
+      <entry key="M15" value="56.50110762265346" />
+      <entry key="M30" value="61.81914964172174" />
+      <entry key="H1" value="64.78984513701573" />
+      <entry key="H2" value="66.39149279535029" />
+      <entry key="H4" value="69.5547007948391" />
+      <entry key="D1" value="182.18860609799268" />
+      <entry key="W1" value="295.9408278671519" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="1.555469264E-315" />
+      <entry key="MS500" value="1.0923763445227287E-63" />
+      <entry key="S2" value="1.8180892520873248E-16" />
+      <entry key="S5" value="5.153929751647309E-7" />
+      <entry key="S10" value="8.173253263048461E-4" />
+      <entry key="S30" value="0.16177814264417797" />
+      <entry key="S60" value="0.8264637962914853" />
+      <entry key="M2" value="2.5150806396713836" />
+      <entry key="M5" value="6.811337126547437" />
+      <entry key="M10" value="10.648706424520796" />
+      <entry key="M15" value="12.570208430965044" />
+      <entry key="M30" value="14.97297057412122" />
+      <entry key="H1" value="16.39787130750888" />
+      <entry key="H2" value="17.180821048330436" />
+      <entry key="H4" value="17.835561670706696" />
+      <entry key="D1" value="25.19797355747525" />
+      <entry key="W1" value="31.491914408728743" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.07588718027469044" />
+      <entry key="MS500" value="0.5970822725344115" />
+      <entry key="S2" value="0.9241617665411076" />
+      <entry key="S5" value="1.3858952850282473" />
+      <entry key="S10" value="1.909795042473998" />
+      <entry key="S30" value="4.056030921494887" />
+      <entry key="S60" value="11.478214030196693" />
+      <entry key="M2" value="25.514591061550185" />
+      <entry key="M5" value="47.84721499325309" />
+      <entry key="M10" value="62.49178562904116" />
+      <entry key="M15" value="69.04043197662904" />
+      <entry key="M30" value="76.77402011327239" />
+      <entry key="H1" value="81.17789286666687" />
+      <entry key="H2" value="83.56718884236265" />
+      <entry key="H4" value="87.38754742457924" />
+      <entry key="D1" value="207.3856603897822" />
+      <entry key="W1" value="327.4325543256163" />
+    </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
     <option name="ide" value="CLion" />
@@ -347,7 +481,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "CMakeSettings",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -359,14 +493,25 @@
       <recent name="$PROJECT_DIR$/main" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/components" />
       <recent name="$PROJECT_DIR$/shared_components" />
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="$USER_HOME$/.espressif/v6.0.1/esp-idf/tools/idf.py">
       <method v="2" />
     </configuration>
     <configuration name="__idf_app_update" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_app_update" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_barometer" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_barometer" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -397,16 +542,6 @@
       </method>
     </configuration>
     <configuration name="__idf_efuse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_efuse" CONFIG_NAME="Debug-ESP-IDF">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="__idf_esp-idf-lib__i2cdev" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_esp-idf-lib__i2cdev" CONFIG_NAME="Debug-ESP-IDF">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="__idf_esp-idf-lib__mpu6050" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_esp-idf-lib__mpu6050" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -786,6 +921,21 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="__idf_espressif__bme280" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_espressif__bme280" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_espressif__i2c_bus" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_espressif__i2c_bus" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_espressif__mpu6050" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_espressif__mpu6050" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="__idf_fatfs" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_fatfs" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -807,6 +957,11 @@
       </method>
     </configuration>
     <configuration name="__idf_gps" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_gps" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_gyroscope" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_gyroscope" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -972,11 +1127,6 @@
       </method>
     </configuration>
     <configuration name="_project_elf_src" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="_project_elf_src" CONFIG_NAME="Debug-ESP-IDF">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1270,10 +1420,11 @@
       <item itemvalue="CMake Application.__idf_minmea" />
       <item itemvalue="CMake Application.__idf_motor_com_master" />
       <item itemvalue="CMake Application.__idf_route_planner" />
-      <item itemvalue="CMake Application.__idf_esp-idf-lib__i2cdev" />
-      <item itemvalue="CMake Application.__idf_esp-idf-lib__mpu6050" />
+      <item itemvalue="CMake Application.__idf_espressif__bme280" />
+      <item itemvalue="CMake Application.__idf_espressif__i2c_bus" />
       <item itemvalue="CMake Application.__idf_jgromes__radiolib" />
       <item itemvalue="CMake Application.__idf_flight_data" />
+      <item itemvalue="CMake Application.__idf_gyroscope" />
       <item itemvalue="CMake Application.__idf_lora_com" />
       <item itemvalue="CMake Application.__idf_cmock" />
       <item itemvalue="CMake Application.__idf_console" />
@@ -1378,6 +1529,7 @@
       <item itemvalue="CMake Application.__idf_unity" />
       <item itemvalue="CMake Application.__idf_vfs" />
       <item itemvalue="CMake Application.__idf_app_update" />
+      <item itemvalue="CMake Application.__idf_barometer" />
       <item itemvalue="CMake Application.__idf_bootloader_support" />
       <item itemvalue="CMake Application.__idf_driver" />
       <item itemvalue="CMake Application.__idf_esp_driver_cam" />
@@ -1398,6 +1550,7 @@
       <item itemvalue="CMake Application.__idf_esp_http_server" />
       <item itemvalue="CMake Application.__idf_esp_partition" />
       <item itemvalue="CMake Application.__idf_esp_timer" />
+      <item itemvalue="CMake Application.__idf_espressif__mpu6050" />
       <item itemvalue="CMake Application.__idf_fatfs" />
       <item itemvalue="CMake Application.__idf_heap" />
       <item itemvalue="CMake Application.__idf_http_parser" />
@@ -1422,7 +1575,9 @@
       <updated>1778106189288</updated>
       <workItem from="1778106190300" duration="6811000" />
       <workItem from="1778182132809" duration="25751000" />
-      <workItem from="1778593277516" duration="24026000" />
+      <workItem from="1778593277516" duration="34295000" />
+      <workItem from="1779144735659" duration="930000" />
+      <workItem from="1779230289419" duration="15203000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />
@@ -1468,12 +1623,27 @@
     <isAutomaticReloadCMake value="true" />
     <isAutomaticBootstrapAfterUpdate value="false" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="switch flight controller from platformio to esp idf project" />
     <MESSAGE value="switch base station to esp idf, fix compile and cleanup" />
     <MESSAGE value="fix issues with esp idf 6.0" />
     <MESSAGE value="fix unit tests with native runtime" />
     <option name="LAST_COMMIT_MESSAGE" value="fix unit tests with native runtime" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

@@ -1,2 +1,4 @@
 dependencies:
-  esp-idf-lib/i2cdev: '*'
+  i2c_manager:
+    require: public
+    path: ../../shared_components/i2c_manager

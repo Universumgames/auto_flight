@@ -1,4 +1,52 @@
 dependencies:
+  espressif/bme280:
+    component_hash: 873d97d0bd30004f45d1653f078a4bafe39c1767e57d4bae0f0a13bc3a4d5e3d
+    dependencies:
+    - name: espressif/cmake_utilities
+      registry_url: https://components.espressif.com
+      require: private
+      version: 0.*
+    - name: espressif/i2c_bus
+      registry_url: https://components.espressif.com
+      require: public
+      version: '*'
+    - name: idf
+      require: private
+      version: '>=4.4'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.1.1
+  espressif/cmake_utilities:
+    component_hash: 351350613ceafba240b761b4ea991e0f231ac7a9f59a9ee901f751bddc0bb18f
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.1'
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 0.5.3
+  espressif/i2c_bus:
+    component_hash: 804ec068d163570fd367b279a310ca383484630d2310c586b50def0bcf21de13
+    dependencies:
+    - name: espressif/cmake_utilities
+      registry_url: https://components.espressif.com
+      require: private
+      version: '*'
+    - name: idf
+      require: private
+      version: '>=4.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.5.1
+  espressif/mpu6050:
+    dependencies: []
+    source:
+      path: ../shared_components/espressif__mpu6050
+      type: local
+    version: 1.2.1
   flight_data:
     dependencies:
     - name: idf
@@ -40,11 +88,14 @@ dependencies:
       type: service
     version: 1.21.1
 direct_dependencies:
+- espressif/bme280
+- espressif/i2c_bus
+- espressif/mpu6050
 - flight_data
 - idf
 - jgromes/radiolib
 - johboh/nlohmann-json
 - joltwallet/littlefs
-manifest_hash: eaba387db73bd1f7eadafd66b956bda42357a95408c50499ec06a6893be8efe5
+manifest_hash: 35a7cb9996c2c0318921ca4777797210c71bde4f5cc561c8e358719d9977a288
 target: esp32s3
 version: 3.0.0

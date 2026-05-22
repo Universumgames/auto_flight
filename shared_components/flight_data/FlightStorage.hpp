@@ -13,6 +13,22 @@ public:
     static FlightStorageClass* getInstancePtr();
     static FlightStorageClass& getInstance();
 
+    /// Specifying which kind of stored data got updated
+    enum class DataUpdateType {
+        /// Any update
+        ANY,
+        /// Updates to position, pressure, rotation
+        POSITION,
+        /// Connection updates regarding base-plane connection, gps' or other sensors
+        CONNECTION,
+
+    };
+
+    void registerEventHandlersInSubComponents();
+    void registerDataChangeCallback(std::function<void()> callback, DataUpdateType type = DataUpdateType::ANY);
+
+
+
 private:
     PlannedRoute latestPlannedRoute;
     time_t lastPlannedRouteUpdateTime = 0;
@@ -28,6 +44,10 @@ private:
     time_t lastBaseConnectedTime = 0;
     ConnectionState planeConnectionState = ConnectionState::CONNECTING;
     time_t lastPlaneConnectedTime = 0;
+
+    std::unordered_map<DataUpdateType,std::vector<std::function<void()>>> dataChangeCallbacks;
+
+    void callDataChangeCallbacks(DataUpdateType type);
 
 public:
     /**
