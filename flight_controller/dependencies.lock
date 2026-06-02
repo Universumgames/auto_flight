@@ -83,16 +83,6 @@ dependencies:
       path: ../shared_components/gyroscope
       type: local
     version: '*'
-  i2c_manager:
-    dependencies:
-    - name: idf
-      version: '>=4.1.0'
-    - name: espressif/i2c_bus
-      version: ^1.5.1
-    source:
-      path: ../shared_components/i2c_manager
-      type: local
-    version: '*'
   idf:
     source:
       type: idf
@@ -114,10 +104,7 @@ dependencies:
       type: service
     version: 3.12.0
   motor_com:
-    dependencies:
-    - name: i2c_manager
-      path: ../../shared_components/i2c_manager
-      require: public
+    dependencies: []
     source:
       path: components/motor_com_master
       type: local
@@ -130,11 +117,10 @@ direct_dependencies:
 - flight_data
 - gps
 - gyroscope
-- i2c_manager
 - idf
 - jgromes/radiolib
 - johboh/nlohmann-json
 - motor_com
-manifest_hash: 5975ab101785e05a93f4a5f48497fcda2cd9f07b0c21760bfeedf439dd406c16
+manifest_hash: d1947a5e64d8f3f3ef90402f70a003f740bae7e61c039e365d551a714ee90289
 target: esp32s3
 version: 3.0.0

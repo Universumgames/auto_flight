@@ -11,16 +11,34 @@ void MotorComMasterClass::init() {
 
 bool MotorComMasterClass::sendCommand(const ControlCommand command, const uint8_t value) {
     lastSentValues[command] = value;
-    uint8_t packet[4] = {
-        // servo value 1,
-        // servo value 2,
-        // servo value 3,
-        // servo value 4,
-    };
 
+
+    return sendPacketInternal();
+}
+
+bool MotorComMasterClass::sendFullControlPacket(uint8_t aileronDiff, uint8_t pitch, uint8_t thrust, uint8_t rudder) {
+    lastSentValues[ControlCommand::AILERON_DIFF] = aileronDiff;
+    lastSentValues[ControlCommand::PITCH] = pitch;
+    lastSentValues[ControlCommand::THRUST] = thrust;
+    lastSentValues[ControlCommand::RUDDER] = rudder;
+    return sendPacketInternal();
+}
+
+bool MotorComMasterClass::sendPacketInternal() {
+    uint8_t packet[4] = {
+        /// from futba my RC remote, order defined via the servo connections on the plane
+        /// channel 1
+        lastSentValues[ControlCommand::AILERON_DIFF],
+        /// channel 2
+        lastSentValues[ControlCommand::PITCH],
+        /// channel 3
+        lastSentValues[ControlCommand::THRUST],
+        /// channel 4
+        lastSentValues[ControlCommand::RUDDER],
+    };
     esp_err_t errorCode = (i2c_bus_write_bytes(devHandle, NULL_I2C_MEM_ADDR, sizeof(packet), packet));
 
-    return errorCode == ESP_OK ? ESP_OK : ESP_FAIL;
+    return errorCode == ESP_OK;
 }
 
 bool MotorComMasterClass::isSlaveConnected() const {

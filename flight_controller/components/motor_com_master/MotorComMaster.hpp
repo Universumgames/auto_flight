@@ -27,16 +27,19 @@ public:
      */
     [[nodiscard]] bool isSlaveConnected() const;
 
+    /**
+         * Send a command to the slave
+         * @param command command to send
+         * @param value the value
+         * @return true on success, false otherwise
+         */
+    bool sendCommand(ControlCommand command, uint8_t value);
 
+    bool sendFullControlPacket(uint8_t aileronDiff, uint8_t pitch, uint8_t thrust, uint8_t rudder);
 
 private:
-    /**
-     * Send a command to the slave
-     * @param command command to send
-     * @param value the value
-     * @return true on success, false otherwise
-     */
-    bool sendCommand(ControlCommand command, uint8_t value);
+
+    bool sendPacketInternal();
 
 private:
 #ifndef NATIVE_BUILD
@@ -46,4 +49,4 @@ private:
     std::unordered_map<ControlCommand, uint8_t> lastSentValues;
 };
 
-extern MotorComMasterClass& motorComMaster;
+extern MotorComMasterClass& MotorComMaster;

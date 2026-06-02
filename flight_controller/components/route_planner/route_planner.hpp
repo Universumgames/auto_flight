@@ -17,9 +17,9 @@ public:
     /**
      * Plan a waypoint mission to cover the given shape. The shape is defined as a list of coordinates (longitude, latitude) that form a closed polygon. The returned route is a list of waypoints that the drone should follow to cover the area defined by the shape.
      * @param shape coordinate array defining shape to cover
-     * @param maxPointDistance maximum distance between points on calculated path
-     * @param maxSwathWidth the maximum distance between two paths
-     * @param overlapFactor the percentage of overlap between two paths (0.0 - 1.0)
+     * @param maxPointDistance maximum distance between points on calculated path (in m)
+     * @param maxSwathWidth the maximum distance between two paths (in degree)
+     * @param overlapFactor the percentage of overlap between two paths (0.0 - 0.9)
      * @return list of points to cover the given shape
      */
     std::vector<Coordinate> planRoute(const std::vector<Coordinate>& shape, float maxPointDistance, float maxSwathWidth, float overlapFactor);

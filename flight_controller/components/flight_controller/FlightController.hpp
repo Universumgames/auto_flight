@@ -1,6 +1,5 @@
 #pragma once
-#include "mpu6050.h"
-
+#include "LoRa_Communication.hpp"
 
 class FlightControllerClass {
 private:
@@ -13,7 +12,27 @@ public:
 
     void init();
 
+    Coordinate getNextWaypoint();
+
 private:
+
+    bool plannedAreaChanged = false;
+    size_t nextWaypointIndex = 0;
+
+    void communicationCallback(LoRaPacket packet);
+
+    static void flightTaskEntry(void* param);
+
+    [[noreturn]] void flightTask();
+
+    static void sendUpdateTaskEntry(void* param);
+
+    [[noreturn]] void sendUpdateTask();
+
+    void recalculateRoute();
+
+    void steerToWaypoint(Coordinate waypoint, int height);
+
 
 };
 

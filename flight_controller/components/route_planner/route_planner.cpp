@@ -161,3 +161,33 @@ std::vector<Coordinate> RoutePlannerClass::generateSimpleSweepPath(const std::ve
     }
     return path;
 }
+
+
+std::vector<Coordinate> RoutePlannerClass::planRoute(const std::vector<Coordinate>& shape, float maxPointDistance, float maxSwathWidth, float overlapFactor) {
+    auto rawPath = generateSimpleSweepPath(shape, maxSwathWidth * (1.0f - overlapFactor));
+    std::vector<Coordinate> path;
+
+    Coordinate lastPoint = rawPath.front();
+    for (const auto& point : rawPath) {
+        auto distMeters = distanceInMeters(lastPoint, point);
+        if (distMeters < maxPointDistance) {
+            path.push_back(point);
+            lastPoint = point;
+            continue;
+        }
+
+        auto interpolationPointCount = std::ceil(distMeters / maxPointDistance);
+        for (int i = 1; i < interpolationPointCount; i++) {
+            float t = (float)i / (float)interpolationPointCount;
+            Coordinate interpolatedPoint = {
+                lastPoint.latitude + t * (point.latitude - lastPoint.latitude),
+                lastPoint.longitude + t * (point.longitude - lastPoint.longitude)
+            };
+            path.push_back(interpolatedPoint);
+        }
+        path.push_back(point);
+        lastPoint = point;
+    }
+
+    return path;
+}

@@ -1,0 +1,9 @@
+menu "Flight Controller Settings"
+
+    config SEND_UPDATE_INTERVAL_MS
+        int "Send Update Interval (ms)"
+        default 5000
+        help
+         "Interval in milliseconds to send updates to the base station over lora"
+
+endmenu

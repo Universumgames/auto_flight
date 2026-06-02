@@ -5,6 +5,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 add_compile_definitions(FLIGHT_DEVICE_TYPE_PLANE)
+set(FLIGHT_DEVICE_TYPE_PLANE 1)
 
 if(DEFINED ENV{ESP_IDF_VERSION})
     set(EXTRA_COMPONENT_DIRS components shared_components)

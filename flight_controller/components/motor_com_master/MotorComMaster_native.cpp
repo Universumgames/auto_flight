@@ -5,8 +5,8 @@ void MotorComMasterClass::init() {
 
 }
 
-ControlReturnCode MotorComMasterClass::sendCommand(ControlCommand command, uint8_t value) const {
-    return ControlReturnCode::OK;
+bool MotorComMasterClass::sendCommand(ControlCommand command, uint8_t value) const {
+    return true;
 }
 
 uint8_t MotorComMasterClass::readValue(ControlCommand command) const {
@@ -16,4 +16,9 @@ uint8_t MotorComMasterClass::readValue(ControlCommand command) const {
 bool MotorComMasterClass::isSlaveConnected() {
     return true;
 }
+
+bool MotorComMasterClass::sendFullControlPacket(uint8_t aileronDiff, uint8_t pitch, uint8_t thrust, uint8_t rudder) {
+    return true;
+}
+
 #endif
