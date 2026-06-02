@@ -1,5 +1,6 @@
 #pragma once
-#include "bme280.h"
+#include "esp_err.h"
+
 
 class BarometerClass {
 private:
@@ -13,6 +14,8 @@ public:
 
     void begin();
 
+    bool initialized() const;
+
     /// Get current temperature in C
     float getTemperature() const;
     /// Get current pressure in hPa
@@ -23,8 +26,11 @@ public:
     float getEstimatedAltitude() const;
     float getAltitude(float groundPressure) const;
 
+    static float calculateAltitude(float groundPressure, float currentPressure);
+
 private:
-    bme280_handle_t bme280Handle = nullptr;
+    void* bme280Handle = nullptr;
+    esp_err_t err = ESP_FAIL;
 
     static constexpr float p_0 = 1013.25; //hPa, assumed standard sea level pressure
 };

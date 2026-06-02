@@ -1,11 +1,11 @@
 #include "Barometer.hpp"
 
 #include "i2c_manager.hpp"
+#include "bme280.h"
 
 static BarometerClass* barometerInstance = nullptr;
 
 BarometerClass& Barometer = BarometerClass::getInstance();
-
 
 BarometerClass* BarometerClass::getInstancePtr() {
     if (!barometerInstance) {
@@ -22,7 +22,8 @@ void BarometerClass::begin() {
     auto bus = I2CManager::getBus();
 
     bme280Handle = bme280_create(bus, BME280_I2C_ADDRESS_DEFAULT);
-    bme280_default_init(bme280Handle);
+    err = bme280_default_init(bme280Handle);
+    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
 }
 
 
@@ -44,10 +45,12 @@ float BarometerClass::getHumidity() const {
     return humidity;
 }
 
-float BarometerClass::getAltitude(float groundPressure) const {
-    float pressure = getPressure();
+float BarometerClass::getAltitude(const float groundPressure) const {
+    const float pressure = getPressure();
+    return calculateAltitude(groundPressure, pressure);
+}
 
-
+float BarometerClass::calculateAltitude(const float groundPressure, const float currentPressure) {
     // Calculate altitude using the hydrostatic formula
     // h = (p0 - p) / (rho * g)
     // where:
@@ -59,10 +62,14 @@ float BarometerClass::getAltitude(float groundPressure) const {
     constexpr float rho = 1.225; // kg/m^3
     constexpr float g = 9.80665; // m/s^2
 
-    float altitude = (groundPressure - pressure) / (rho * g);
+    float altitude = (groundPressure - currentPressure) / (rho * g);
     return altitude;
 }
 
 float BarometerClass::getEstimatedAltitude() const {
     return getAltitude(p_0);
+}
+
+bool BarometerClass::initialized() const {
+    return err == ESP_OK;
 }

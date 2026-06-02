@@ -153,7 +153,7 @@ void LoRa_CommunicationClass::begin() {
         BaseType_t created = xTaskCreate(
             &LoRa_CommunicationClass::pingTaskEntry,
             "lora_ping_task",
-            2048,
+            4096,
             this,
             tskIDLE_PRIORITY + 1,
             &pingTaskHandle
@@ -161,6 +161,22 @@ void LoRa_CommunicationClass::begin() {
         if (created != pdPASS) {
             ESP_LOGE(TAG_LORA, "Failed to start LoRa ping task");
             pingTaskHandle = nullptr;
+            return;
+        }
+    }
+
+    if (callbackWorkerHandle == nullptr) {
+        BaseType_t created = xTaskCreate(
+            &LoRa_CommunicationClass::callbackWorkerEntry,
+            "lora_callback_worker",
+            4096,
+            this,
+            tskIDLE_PRIORITY + 1,
+            &callbackWorkerHandle
+        );
+        if (created != pdPASS) {
+            ESP_LOGE(TAG_LORA, "Failed to start LoRa callback worker task");
+            callbackWorkerHandle = nullptr;
             return;
         }
     }
@@ -206,6 +222,13 @@ int LoRa_CommunicationClass::receiveData(uint8_t* buffer, int size) {
     }
 
     int copyLen = std::min(size, static_cast<int>(packet.header.payloadLength));
+    // if available size is smaller than packet siz, throw error
+    if (packet.header.payloadLength < size) {
+        WITH_MUTEX(receivedPacketsMutex) {
+            receivedPackets.emplace_back(std::move(packet));
+        }
+        return -1;
+    }
     if (copyLen > 0 && packet.payload != nullptr) {
         std::memcpy(buffer, packet.payload.get(), static_cast<size_t>(copyLen));
     }
@@ -255,6 +278,7 @@ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet& packet, const uin
             WITH_MUTEX(radioMutex) {
                 // transmit is blocking; ignore return value here but could be checked for errors
                 loraRadio->transmit(buf, len);
+                loraRadio->finishTransmit();
                 // re-enter receive mode after transmit
                 loraRadio->startReceive();
             }
@@ -297,7 +321,7 @@ void LoRa_CommunicationClass::updateConnectionState(ConnectionState state) {
         FlightStorage.updatePlaneConnectionState(state);
     }
     else if (isDevicePlane()) {
-        FlightStorage.updateBaseStationConnectionState(state);
+        FlightStorage.updateBaseConnectionState(state);
     }
 }
 
@@ -314,4 +338,9 @@ std::string LoRa_CommunicationClass::LoRa_Packet::toString() const {
     return "LoRa_Packet{type=" + LoRa_CommunicationClass::toString(type) +
         ", messageId=" + std::to_string(messageId) +
         ", payloadLength=" + std::to_string(payloadLength) + "}";
+}
+
+
+void LoRa_CommunicationClass::registerReceivePacketCallback(std::function<void(const LoRaPacket&)> callback) {
+    receivePacketCallbacks.push_back(std::move(callback));
 }

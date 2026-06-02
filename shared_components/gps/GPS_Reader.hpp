@@ -24,8 +24,6 @@ public:
 
     void begin();
 
-    [[nodiscard]] bool available() const;
-
     void getCurrentCoordinates(float& x, float& y, float& z);
 
     Coordinate getCurrentPosition();
@@ -41,6 +39,7 @@ public:
     void addPositionUpdateCallback(const PositionUpdateCallbackFn& callback_fn);
 
 private:
+    bool initialized = false;
     gpio_num_t rxPin, txPin;
 
     uart_config_t uart_config = {

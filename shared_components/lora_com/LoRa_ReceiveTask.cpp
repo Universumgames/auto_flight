@@ -32,6 +32,7 @@ void LoRa_CommunicationClass::sendAckPacketInternal(uint8_t messageId) {
         ackPacket.payloadLength = 0;
         // transmit the ACK and return the radio to receive mode
         loraRadio->transmit(reinterpret_cast<uint8_t*>(&ackPacket), sizeof(ackPacket));
+        loraRadio->finishTransmit();
         loraRadio->startReceive();
     }
     updateLastSendTime();
@@ -166,5 +167,6 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
             std::memcpy(&receivedHeader, packetBuffer, sizeof(receivedHeader));
             processPacket(receivedHeader);
         }
+        vTaskDelay(1);
     }
 }

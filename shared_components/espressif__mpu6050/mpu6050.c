@@ -52,20 +52,14 @@ static esp_err_t mpu6050_write(mpu6050_handle_t sensor, const uint8_t reg_start_
         return ESP_ERR_INVALID_ARG;
     }
 
-    uint8_t write_buf[data_len + 1];
-    write_buf[0] = reg_start_addr;
-    for (uint8_t i = 0; i < data_len; ++i) {
-        write_buf[i + 1] = data_buf[i];
-    }
-
-    return i2c_master_transmit((i2c_master_dev_handle_t) sens->i2c_dev, write_buf, sizeof(write_buf), pdMS_TO_TICKS(1000));
+    return i2c_bus_write_bytes(sens->i2c_dev, reg_start_addr, data_len, data_buf);
 }
 
 static esp_err_t mpu6050_read(mpu6050_handle_t sensor, const uint8_t reg_start_addr, uint8_t *const data_buf, const uint8_t data_len)
 {
     mpu6050_dev_t *sens = (mpu6050_dev_t *) sensor;
 
-    return i2c_master_transmit_receive((i2c_master_dev_handle_t) sens->i2c_dev, &reg_start_addr, 1, data_buf, data_len, pdMS_TO_TICKS(1000));
+    return i2c_bus_read_bytes(sens->i2c_dev, reg_start_addr, data_len, data_buf);
 }
 
 mpu6050_handle_t mpu6050_create(i2c_bus_handle_t bus, const uint16_t dev_addr)

@@ -9,8 +9,8 @@ public:
     static i2c_bus_handle_t getBus();
 
 private:
-    static void init();
+    void init();
 
-    static inline bool initialized = false;
-    static inline i2c_bus_handle_t bus = nullptr;
+    bool initialized = false;
+    i2c_bus_handle_t bus = nullptr;
 };

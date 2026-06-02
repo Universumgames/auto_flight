@@ -6,6 +6,6 @@ if (NOT NATIVE_BUILD)
             SRCS ${lora_com_srcs}
             #SRCS "LoRa_Communication.cpp"
             INCLUDE_DIRS "."
-            REQUIRES driver freertos esp_timer mbedtls esp_driver_gpio radiolib
+            REQUIRES driver freertos esp_timer mbedtls esp_driver_gpio radiolib pthread
     )
 endif ()

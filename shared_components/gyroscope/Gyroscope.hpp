@@ -13,8 +13,13 @@ public:
 
     void begin();
 
+    bool initialized() const;
+
+    complimentary_angle_t getAngle();
+
 private:
     mpu6050_handle_t gyroscopeHandle;
+    esp_err_t err = ESP_FAIL;
 };
 
 

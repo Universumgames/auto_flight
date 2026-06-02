@@ -20,6 +20,12 @@
 #pragma GCC diagnostic pop
 #endif
 
+struct LoRaPacket {
+    size_t length;
+    uint8_t* payload;
+};
+
+
 class LoRa_CommunicationClass {
 private:
     LoRa_CommunicationClass() = default;
@@ -44,6 +50,7 @@ private:
         LoRa_Packet header;
         std::unique_ptr<uint8_t[]> payload;
     };
+
 public:
     ~LoRa_CommunicationClass() = delete;
 
@@ -75,9 +82,9 @@ public:
      * Receives data from the received packets queue into the provided buffer
      * @param buffer Pointer to the destination buffer
      * @param size Maximum number of bytes to read into the buffer
-     * @return Number of bytes actually received, or -1 on error
+     * @return Number of bytes actually received, -1 when buffer size too small, 0 on other error
      */
-    int receiveData(uint8_t* buffer, int size);
+    [[deprecated]] int receiveData(uint8_t* buffer, int size);
 
     /**
      * Checks if there is received data waiting in the queue
@@ -96,6 +103,8 @@ public:
      * @return SNR value in dB
      */
     [[nodiscard]] float getLastPacketSNR() const;
+
+    void registerReceivePacketCallback(std::function<void(const LoRaPacket&)> callback);
 
 private:
     /**
@@ -136,6 +145,10 @@ private:
      * Main ping task loop that periodically sends ping packets to maintain connection
      */
     [[noreturn]] void pingTaskLoop();
+
+    static void callbackWorkerEntry(void* param);
+
+    [[noreturn]] void callbackWorkerLoop();
 
     /**
      * Sends a raw LoRa packet with optional acknowledgement requirement
@@ -180,6 +193,7 @@ private:
     uint8_t* key = nullptr; // 128-bit key used for encryption
     TaskHandle_t receiveTaskHandle = nullptr;
     TaskHandle_t pingTaskHandle = nullptr;
+    TaskHandle_t callbackWorkerHandle = nullptr;
     SemaphoreHandle_t radioMutex = nullptr;
     SemaphoreHandle_t receivedPacketsMutex = nullptr;
     SemaphoreHandle_t ackMutex = nullptr;
@@ -193,6 +207,7 @@ private:
 
     SX1262* loraRadio = nullptr;
 
+    std::vector<std::function<void(const LoRaPacket&)>> receivePacketCallbacks;
 };
 
 extern LoRa_CommunicationClass& LoRa_Communication;

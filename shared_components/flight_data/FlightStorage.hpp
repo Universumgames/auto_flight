@@ -1,6 +1,22 @@
 #pragma once
 #include "types.hpp"
-#include <time.h>
+#include <ctime>
+
+#include <functional>
+#include <unordered_map>
+#include <vector>
+
+#include "freertos/FreeRTOS.h"
+
+/// Helper macro to define a variable, update time, getter and setter
+#define FLIGHT_VARIABLE(name, Name, type, initialValue)\
+    private:\
+        type name = initialValue;\
+        time_t last##Name##UpdateTime = 0;\
+    public:\
+        type update##Name(type value, time_t lastUpdateTime = 0);\
+        [[nodiscard]] type get##Name() const;\
+        [[nodiscard]] time_t getLast##Name##UpdateTime() const;
 
 class FlightStorageClass {
 private:
@@ -13,6 +29,8 @@ public:
     static FlightStorageClass* getInstancePtr();
     static FlightStorageClass& getInstance();
 
+    void init();
+
     /// Specifying which kind of stored data got updated
     enum class DataUpdateType {
         /// Any update
@@ -21,89 +39,50 @@ public:
         POSITION,
         /// Connection updates regarding base-plane connection, gps' or other sensors
         CONNECTION,
-
+        /// Route changes
+        ROUTE,
+        /// area changes
+        AREA,
+        /// Sensor changes
+        SENSOR
     };
 
     void registerEventHandlersInSubComponents();
     void registerDataChangeCallback(std::function<void()> callback, DataUpdateType type = DataUpdateType::ANY);
 
+private:
+    FLIGHT_VARIABLE(plannedRoute, PlannedRoute, PlannedRoute, PlannedRoute{})
+    FLIGHT_VARIABLE(flightRoute, FlightRoute, FlightRoute, FlightRoute{})
 
+    FLIGHT_VARIABLE(basePosition, BasePosition, Coordinate, COORDINATE_INIT_INVALID())
+    FLIGHT_VARIABLE(planePosition, PlanePosition, Coordinate, COORDINATE_INIT_INVALID())
+
+    FLIGHT_VARIABLE(baseConnectionState, BaseConnectionState, ConnectionState, ConnectionState::CONNECTING)
+    FLIGHT_VARIABLE(planeConnectionState, PlaneConnectionState, ConnectionState, ConnectionState::CONNECTING)
+
+    FLIGHT_VARIABLE(basePressure, BasePressure, float, 0.0f)
+    FLIGHT_VARIABLE(planePressure, PlanePressure, float, 0.0f)
+
+    FLIGHT_VARIABLE(plannedArea, PlannedArea, std::vector<Coordinate>, std::vector<Coordinate>{})
+
+    FLIGHT_VARIABLE(baseBarometerConnectionState, BaseBarometerConnectionState, ConnectionState, ConnectionState::CONNECTING)
+    FLIGHT_VARIABLE(planeBarometerConnectionState, PlaneBarometerConnectionState, ConnectionState, ConnectionState::CONNECTING)
+    FLIGHT_VARIABLE(planeGyroscopeConnectionState, PlaneGyroscopeConnectionState, ConnectionState, ConnectionState::CONNECTING)
+    FLIGHT_VARIABLE(planeMotorControlConnectionState, PlaneMotorControlConnectionState, ConnectionState, ConnectionState::CONNECTING)
 
 private:
-    PlannedRoute latestPlannedRoute;
-    time_t lastPlannedRouteUpdateTime = 0;
-    FlightRoute latestFlightRoute;
-    time_t lastFlightRouteUpdateTime = 0;
 
-    Coordinate basePosition = COORDINATE_INIT_INVALID();
-    time_t lastBasePositionUpdateTime = 0;
-    Coordinate currentPlanePosition = COORDINATE_INIT_INVALID();
-    time_t lastCurrentPlanePositionUpdateTime = 0;
-
-    ConnectionState baseConnectionState = ConnectionState::CONNECTING;
-    time_t lastBaseConnectedTime = 0;
-    ConnectionState planeConnectionState = ConnectionState::CONNECTING;
-    time_t lastPlaneConnectedTime = 0;
+    QueueHandle_t dataUpdateQueue;
+    SemaphoreHandle_t queueMutex = nullptr;
 
     std::unordered_map<DataUpdateType,std::vector<std::function<void()>>> dataChangeCallbacks;
 
     void callDataChangeCallbacks(DataUpdateType type);
 
-public:
-    /**
-     * Store new planned route and update the last update time. If lastUpdateTime is 0, the current GPS time will be used as the update time.
-     * @param plannedRoute the planned route to fly
-     * @param lastUpdateTime the timestamp of the update
-     */
-    void updatePlannedRoute(PlannedRoute plannedRoute, time_t lastUpdateTime = 0);
+    static void callbackLoopEntry(void* param);
 
-    /**
-     * Store update flight route and update last update time. If lastUpdateTime is 0, the current GPS time will be used as the update time.
-     * @param flightRoute the flown route
-     * @param lastUpdateTime the timestamp of the update
-     */
-    void updateFlightRoute(FlightRoute flightRoute, time_t lastUpdateTime = 0);
+    [[noreturn]] void callbackLoop();
 
-    /**
-     * Get latest stored planned route
-     * @return planned route
-     */
-    PlannedRoute getPlannedRoute();
-
-    /**
-     * Get timestamp of planned route update
-     * @return gps timestamp of update or 0 if uninitialized
-     */
-    [[nodiscard]] time_t getLastPlannedRouteUpdateTime() const;
-
-    /**
-     * Get latest stored flown route
-     * @return flown route
-     */
-    FlightRoute getFlightRoute();
-
-    /**
-     * Get timestamp of last flown update
-     * @return gps timestamp of update or 0 if uninitialized
-     */
-    [[nodiscard]] time_t getLastFlightRouteUpdateTime() const;
-
-    void updateBasePosition(Coordinate basePosition, time_t lastUpdateTime = 0);
-    [[nodiscard]] Coordinate getBasePosition() const;
-    [[nodiscard]] time_t getLastBasePositionUpdateTime() const;
-    void updatePlanePosition(Coordinate currentPlanePosition, time_t lastUpdateTime = 0);
-    [[nodiscard]] Coordinate getLastPlanePosition() const;
-    [[nodiscard]] time_t getLastPlanePositionUpdateTime() const;
-
-    [[nodiscard]] ConnectionState getPlaneConnectionState() const;
-    [[nodiscard]] ConnectionState getBaseStationConnectionState() const;
-
-    [[nodiscard]] time_t getLastConnectionTimestampPlane() const;
-    [[nodiscard]] time_t getLastConnectionTimestampBaseStation() const;
-
-    void updatePlaneConnectionState(ConnectionState connectionState, time_t lastUpdateTime = 0);
-    void updateBaseStationConnectionState(ConnectionState connectionState, time_t lastUpdateTime = 0);
 };
-
 
 extern FlightStorageClass& FlightStorage;

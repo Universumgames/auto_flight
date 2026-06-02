@@ -6,6 +6,10 @@ struct Coordinate {
     float latitude;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Coordinate, longitude, latitude);
+
+    static bool isInvalid(Coordinate coord) {
+        return coord.latitude < -91 || coord.latitude > 91 || coord.longitude < -181 || coord.longitude > 181;
+    }
 };
 
 #define COORDINATE_INIT_INVALID() (Coordinate{-400, -400})

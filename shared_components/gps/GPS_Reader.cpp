@@ -94,6 +94,7 @@ GPS_ReaderClass& GPS_ReaderClass::getInstance() {
                 break;
             }
         }
+        vTaskDelay(1);
     }
 }
 
@@ -113,6 +114,7 @@ GPS_ReaderClass::GPS_ReaderClass() {
 }*/
 
 void GPS_ReaderClass::begin() {
+    if (initialized) return;
     esp_log_level_set(TAG_GPS_READER, ESP_LOG_WARN);
     // Install UART driver using an event queue here
     ESP_ERROR_CHECK(uart_driver_install(uartNum, uart_buffer_size * 2, 0, 10, &uart_queue, 0));
@@ -124,6 +126,7 @@ void GPS_ReaderClass::begin() {
 
     xTaskCreate(gps_readerTask, "gps_readerTask", 4096, this, 10, nullptr);
     ESP_LOGI(TAG_GPS_READER, "GPS Reader started on UART%d (RX: GPIO%d, TX: GPIO%d)", uartNum, rxPin, txPin);
+    initialized = true;
 }
 
 void GPS_ReaderClass::handleReceive(const std::string& line) {
@@ -134,6 +137,7 @@ void GPS_ReaderClass::handleReceive(const std::string& line) {
         minmea_sentence_rmc frame{};
         if (minmea_parse_rmc(&frame, line.c_str())) {
             this->lastRMC = frame;
+            callPositionUpdateCallbacks();
             ESP_LOGD(TAG_GPS_READER, "$xxRMC: raw coordinates and speed: (%d/%d,%d/%d) %d/%d",
                     frame.latitude.value, frame.latitude.scale,
                     frame.longitude.value, frame.longitude.scale,
@@ -156,8 +160,7 @@ void GPS_ReaderClass::handleReceive(const std::string& line) {
         minmea_sentence_gga frame{};
         if (minmea_parse_gga(&frame, line.c_str())) {
             this->lastGGA = frame;
-            callPositionUpdateCallbacks();
-            ESP_LOGD(TAG_GPS_READER, "$xxGGA: fix quality: %d", frame.fix_quality);
+            ESP_LOGI(TAG_GPS_READER, "$xxGGA: fix quality: %d", frame.fix_quality);
         }
         else {
             ESP_LOGW(TAG_GPS_READER, "$xxGGA sentence is not parsed");
@@ -227,6 +230,8 @@ void GPS_ReaderClass::handleReceive(const std::string& line) {
         minmea_sentence_zda frame{};
         if (minmea_parse_zda(&frame, line.c_str())) {
             this->lastZDA = frame;
+            auto tm = getLatestTimeStruct();
+            lastUpdateTime = mktime(&tm);
             ESP_LOGD(TAG_GPS_READER, "$xxZDA: %d:%d:%d %02d.%02d.%d UTC%+03d:%02d",
                    frame.time.hours,
                    frame.time.minutes,
@@ -251,8 +256,9 @@ void GPS_ReaderClass::handleReceive(const std::string& line) {
     } break;
     }
 
-    if (lastRMC.valid) {
+    if (!lastRMC.valid) {
         lastUpdateTime = time(nullptr);
+        ESP_LOGW(TAG_GPS_READER, "No valid GPS fix");
     }
 }
 
@@ -269,8 +275,8 @@ float GPS_ReaderClass::getCurrentSpeed() {
 
 Coordinate GPS_ReaderClass::getCurrentPosition() {
     return Coordinate{
-        .longitude = minmea_tocoord(&lastGGA.longitude),
-        .latitude = minmea_tocoord(&lastGGA.latitude)
+        .longitude = minmea_tocoord(&lastRMC.longitude),
+        .latitude = minmea_tocoord(&lastRMC.latitude)
     };
 }
 
@@ -290,13 +296,8 @@ time_t GPS_ReaderClass::getGPSLatestTime() const {
     return lastUpdateTime;
 }
 
-
-bool GPS_ReaderClass::available() const {
-    return lastUpdateTime - time(nullptr) < 10000;
-}
-
 bool GPS_ReaderClass::hasValidPosition() const {
-    return lastGGA.fix_quality > 0;
+    return lastGSV.total_sats >= 3 && lastRMC.valid;
 }
 
 void GPS_ReaderClass::addPositionUpdateCallback(const PositionUpdateCallbackFn& callback_fn) {
