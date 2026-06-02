@@ -18,14 +18,19 @@ const router = createRouter({
       component: () => import('../views/AboutView.vue'),
     },
     {
+      path:"/connection",
+      name: "Connection",
+      component: () => import('../views/ConnectionOverview.vue')
+    },
+    {
       path: '/map',
       name: "Map",
       component: () => import('../views/MapView.vue'),
     },
     {
-      path: '/planner',
-      name: 'Route Planner',
-      component: () => import('../views/RoutePlanner.vue'),
+      path: '/area',
+      name: 'Area Planner',
+      component: () => import('../views/AreaPlanner.vue'),
     }
   ],
 })

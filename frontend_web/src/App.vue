@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import ConnectionStatusButton from '@/components/ConnectionStatusButton.vue'
+import StepView from '@/components/StepView.vue'
 </script>
 
 <template>
-  <div>
+  <div class="appShell">
     <header style="position:relative; padding: 0.75rem 1rem;">
       <div style="position:absolute; right:1rem; top:0.5rem;">
         <ConnectionStatusButton />
       </div>
     </header>
 
-    <main>
-      <RouterView />
+    <main class="appMain">
+      <div class="routePane">
+        <RouterView />
+      </div>
+      <StepView />
     </main>
   </div>
 </template>
@@ -20,65 +24,33 @@ import ConnectionStatusButton from '@/components/ConnectionStatusButton.vue'
 <style scoped>
 @import "leaflet/dist/leaflet.css";
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.appShell {
+  display: flex;
+  flex-direction: column;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+main,
+.appMain {
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+.routePane {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+@media (max-width: 56rem) {
+  .appMain {
+    flex-direction: column-reverse;
   }
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+  .routePane {
+    width: 100%;
   }
 }
 </style>

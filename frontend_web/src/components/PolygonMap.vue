@@ -6,6 +6,7 @@ import 'leaflet-draw'
 import 'leaflet-draw/dist/leaflet.draw.css'
 
 import type { Coordinate } from '@/types/coordinates.ts'
+import IconLocator from '@/components/icons/IconLocator.vue'
 
 type DrawEvents = {
   CREATED: 'draw:created'
@@ -56,7 +57,7 @@ const props = withDefaults(
   }>(),
   {
     center: () => ({ latitude: 51.316310347903176, longitude: 6.569530261539499 }),
-    zoom: 16,
+    zoom: 15,
     height: '600px',
     modelValue: null,
     baseStationPosition: null,
@@ -77,6 +78,11 @@ let map: L.Map | null = null
 let drawnItems: L.FeatureGroup | null = null
 let positionMarkers: L.LayerGroup | null = null
 let activePolygon: L.Polygon | null = null
+
+function fitToHome() {
+  if (!map) return
+  map.setView([props.baseStationPosition?.latitude ?? props.center.latitude, props.baseStationPosition?.longitude ?? props.center.longitude], props.zoom)
+}
 
 function createPositionIcon(label: string, color: string): L.DivIcon {
   return L.divIcon({
@@ -158,26 +164,6 @@ function syncPositionMarkers() {
   if (props.planePosition) {
     positionMarkers.addLayer(createPositionMarker(props.planePosition, 'PL', '#d97706'))
   }
-
-  const markerLayers = positionMarkers.getLayers()
-  if (markerLayers.length > 0) {
-    const bounds = L.latLngBounds([])
-
-    markerLayers.forEach((layer) => {
-      if (layer instanceof L.Marker) {
-        const latLng = layer.getLatLng()
-        bounds.extend(latLng)
-      }
-    })
-
-    if (activePolygon) {
-      bounds.extend(activePolygon.getBounds())
-    }
-
-    if (bounds.isValid()) {
-      map.fitBounds(bounds.pad(0.15))
-    }
-  }
 }
 
 function emitPolygonState(coords: Coordinate[] | null) {
@@ -192,14 +178,12 @@ onMounted(() => {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-expect-error
-  (window as unknown).type = true
+  ;(window as unknown).type = true
 
   const leafletMap = L.map(mapContainer.value)
-  leafletMap.setView([props.center.latitude, props.center.longitude], props.zoom)
   map = leafletMap
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
     attribution: '&copy; OpenStreetMap contributors',
   }).addTo(leafletMap)
 
@@ -263,6 +247,8 @@ onMounted(() => {
   if (props.modelValue?.length) {
     setPolygonFromCoordinates(props.modelValue)
     emit('update:modelValue', props.modelValue)
+  } else {
+    fitToHome()
   }
 
   syncPositionMarkers()
@@ -298,6 +284,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="polygon-map-shell">
+    <button @click="fitToHome" class="return-home-btn" title="Return to home view">
+      <IconLocator/>
+    </button>
     <div ref="mapContainer" class="polygon-map"></div>
   </div>
 </template>
@@ -305,6 +294,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .polygon-map-shell {
   width: 100%;
+  position: relative;
 }
 
 .polygon-map {
@@ -312,5 +302,34 @@ onBeforeUnmount(() => {
   height: v-bind(height);
   border-radius: 12px;
   overflow: hidden;
+}
+
+.return-home-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.return-home-btn:hover {
+  background: #f1f5f9;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+  transform: scale(1.05);
+}
+
+.return-home-btn:active {
+  transform: scale(0.95);
 }
 </style>

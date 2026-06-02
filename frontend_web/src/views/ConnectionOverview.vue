@@ -1,5 +1,16 @@
 <script setup lang="ts">
 import { connectionItems, isConnected, formatStatus } from '@/composables/useConnectionItems'
+import { computed, onMounted } from 'vue'
+import { ConfigurationState, store } from '@/stores/store.ts'
+import NextStepBtn from '@/components/NextStepBtn.vue'
+
+onMounted(() => {
+  store.configurationState = ConfigurationState.CONNECTION
+})
+
+const allConnected = computed(() => {
+  return connectionItems.value.every(item => isConnected(item.status))
+})
 </script>
 
 <template>
@@ -76,6 +87,7 @@ import { connectionItems, isConnected, formatStatus } from '@/composables/useCon
           </div>
         </div>
       </li>
+      <NextStepBtn @next="$router.push('/area')" :disabled="!allConnected" />
     </ul>
   </section>
 </template>
@@ -232,7 +244,6 @@ import { connectionItems, isConnected, formatStatus } from '@/composables/useCon
   stroke-dasharray: 18 40;
   stroke-dashoffset: 0;
 }
-
 
 @media (max-width: 640px) {
   .connection-overview {

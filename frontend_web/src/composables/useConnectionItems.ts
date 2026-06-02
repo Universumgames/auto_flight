@@ -35,8 +35,8 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
         state: isConnected(store.gpsConnectionBase) ? 'done' : 'loading',
       },
       {
-        label: 'Barometer',
-        state: 'loading',
+        label: 'Barometer' + (store.pressureBase != 0 ? ` (${store.pressureBase}hPa)` : ''),
+        state: isConnected(store.barometerConnectionBase) ? 'done' : 'loading',
       },
     ],
   },
@@ -65,8 +65,8 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
         state: 'loading',
       },
       {
-        label: 'Barometer',
-        state: 'loading',
+        label: 'Barometer' + (store.pressurePlane != 0 ? ` (${store.pressurePlane}hPa)` : ''),
+        state: isConnected(store.barometerConnectionPlane) ? 'done' : 'loading',
       },
     ],
   },

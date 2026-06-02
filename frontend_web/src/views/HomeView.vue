@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-import ConnectionOverview from '@/components/ConnectionOverview.vue'
+import ConnectionOverview from '@/views/ConnectionOverview.vue'
 </script>
 
 <template>
-  <main>
-    <TheWelcome />
+  <div>
     <ConnectionOverview/>
-  </main>
+  </div>
 </template>
+
+<style scoped></style>

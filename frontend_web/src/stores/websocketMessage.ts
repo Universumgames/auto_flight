@@ -5,34 +5,14 @@ import type { FlightRoute, FlightUpdatePacket, PlannedRoute } from '@/types/flig
 import {
   applyConnectionPacket,
   applyFlightPacket,
+  applySensorPacket,
   isRecord,
   normalizeWebSocketPayload,
 } from '@/stores/websocketMessageParser.ts'
+import type { StoreState } from '@/stores/store.ts'
+import type { SensorUpdatePacket } from '@/types/sensor.ts'
 
-export function createWebSocketStoreState() {
-  return {
-    position: { latitude: 51.316310347903176, longitude: 6.569530261539499 } as Coordinate,
-    connectionStatePlane: ConnectionState.CONNECTING,
-    connectionStateBaseStation: ConnectionState.CONNECTING,
-    basePosition: null as Coordinate | null,
-    basePositionUpdateTime: null as number | null,
-    planePosition: null as Coordinate | null,
-    planePositionUpdateTime: null as number | null,
-    flightRoute: null as FlightRoute | null,
-    flightRouteUpdateTime: null as number | null,
-    plannedRoute: null as PlannedRoute | null,
-    plannedRouteUpdateTime: null as number | null,
-    lastContactBaseStationTimestamp: null as number | null,
-    lastContactPlaneTimestamp: null as number | null,
-    gpsConnectionBase: ConnectionState.CONNECTING,
-    gpsConnectionPlane: ConnectionState.CONNECTING,
-  }
-}
-
-export type WebSocketStoreState = ReturnType<typeof createWebSocketStoreState>
-
-
-export function handleWebSocketMessage(store: WebSocketStoreState, event: MessageEvent): void {
+export function handleWebSocketMessage(store: StoreState, event: MessageEvent): void {
   try {
     const raw = typeof event.data === 'string' ? normalizeWebSocketPayload(event.data) : null
     if (!raw) return
@@ -52,6 +32,8 @@ export function handleWebSocketMessage(store: WebSocketStoreState, event: Messag
       applyFlightPacket(store, parsed as unknown as FlightUpdatePacket)
     } else if (typeField === 'connection') {
       applyConnectionPacket(store, parsed as unknown as ConnectionUpdatePacket)
+    } else if (typeField === 'sensor') {
+      applySensorPacket(store, parsed as unknown as SensorUpdatePacket)
     } else {
       console.debug('Unknown packet type received', parsed.type, parsed)
     }

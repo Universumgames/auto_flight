@@ -11,5 +11,7 @@ export interface ConnectionUpdatePacket {
   lastContactPlaneTimestamp: number
   gpsConnectionBase?: ConnectionState
   gpsConnectionPlane?: ConnectionState
+  barometerConnectionBase?: ConnectionState
+  barometerConnectionPlane?: ConnectionState
 }
 

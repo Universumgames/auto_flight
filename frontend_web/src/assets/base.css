@@ -33,6 +33,11 @@
   --color-heading: var(--vt-c-text-light-1);
   --color-text: var(--vt-c-text-light-1);
 
+  --color-primary-action: #16a34a;
+  --color-primary-action-disabled: rgb(35 46 38);
+  --color-text-primary-action: white;
+  --color-text-primary-action-disabled: #8a8a8a;
+
   --section-gap: 160px;
 }
 
@@ -59,7 +64,7 @@
 }
 
 body {
-  min-height: 100vh;
+  height: 100%;
   color: var(--color-text);
   background: var(--color-background);
   transition:

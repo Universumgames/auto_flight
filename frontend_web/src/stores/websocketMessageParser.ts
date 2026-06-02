@@ -2,7 +2,8 @@ import { ConnectionState, type ConnectionUpdatePacket } from '@/types/connection
 import type { Coordinate } from '@/types/coordinates.ts'
 import type { FlightUpdatePacket } from '@/types/flight.ts'
 
-import type { WebSocketStoreState } from '@/stores/websocketMessage.ts'
+import type { StoreState } from '@/stores/store.ts'
+import type { SensorUpdatePacket } from '@/types/sensor.ts'
 
 /**
  * Normalizes Unix timestamps or ISO date strings into seconds since epoch.
@@ -82,17 +83,17 @@ export function normalizeWebSocketPayload(raw: string): string {
 /**
  * Applies a flight packet to the shared store state.
  */
-export function applyFlightPacket(store: WebSocketStoreState, packet: FlightUpdatePacket): void {
+export function applyFlightPacket(store: StoreState, packet: FlightUpdatePacket): void {
   const basePos = toCoordinate(packet.basePosition)
   const planePos = toCoordinate(packet.planePosition)
 
   if (basePos) store.basePosition = basePos
+
   store.basePositionUpdateTime = toTimeT(packet.basePositionUpdateTime)
 
-  if (planePos) {
+  if (planePos)
     store.planePosition = planePos
-    store.position = planePos
-  }
+
   store.planePositionUpdateTime = toTimeT(packet.planePositionUpdateTime)
 
   store.flightRoute = packet.flightRoute ?? null
@@ -105,7 +106,7 @@ export function applyFlightPacket(store: WebSocketStoreState, packet: FlightUpda
 /**
  * Applies a connection packet to the shared store state.
  */
-export function applyConnectionPacket(store: WebSocketStoreState, packet: ConnectionUpdatePacket): void {
+export function applyConnectionPacket(store: StoreState, packet: ConnectionUpdatePacket): void {
   const baseState = parseConnectionState(packet.baseConnectionState)
   if (baseState) store.connectionStateBaseStation = baseState
   store.lastContactBaseStationTimestamp = toTimeT(packet.lastContactBaseStationTimestamp)
@@ -118,4 +119,20 @@ export function applyConnectionPacket(store: WebSocketStoreState, packet: Connec
   if (gpsBase) store.gpsConnectionBase = gpsBase
   const gpsPlane = parseConnectionState(packet.gpsConnectionPlane)
   if (gpsPlane) store.gpsConnectionPlane = gpsPlane
+
+  const barometerBase = parseConnectionState(packet.barometerConnectionBase)
+  if(barometerBase) store.barometerConnectionBase = barometerBase
+  const barometerPlane = parseConnectionState(packet.barometerConnectionPlane)
+  if(barometerPlane) store.barometerConnectionPlane = barometerPlane
+}
+
+
+export function applySensorPacket(store: StoreState, packet: SensorUpdatePacket): void {
+  const pressureBase = packet.barometerPressureBase
+  if (pressureBase) store.pressureBase = pressureBase
+  const pressurePlane = packet.barometerPressurePlane
+  if (pressurePlane) store.pressurePlane = pressurePlane
+
+  const calculatedAltitude = packet.calculatedAltitude
+  if (calculatedAltitude) store.calculatedAltitude = calculatedAltitude
 }
