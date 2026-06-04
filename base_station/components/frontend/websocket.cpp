@@ -134,6 +134,7 @@ esp_err_t FrontendHandlerClass::sendWSPacketAsync(const WebsocketClient& client,
 }
 
 void FrontendHandlerClass::registerWebsocket() {
+    ESP_LOGI(TAG_FRONTEND, "Registering /api/ws WebSocket URI handler");
     static httpd_uri_t websocket_uri = {
         .uri = "/api/ws",
         .method = HTTP_GET,

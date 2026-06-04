@@ -19,4 +19,10 @@ config WIFI_DEV_MODE
       Enable this connect to an existing WiFi network in station mode. When enabled, the ESP32 will attempt to connect to a WiFi network using the SSID and password provided in the configuration. If disabled, the ESP32 will operate in Access Point (AP) mode, allowing other devices to connect to it directly.
       It will use the AP SSID and AP password defined in the configuration for AP mode to connect to the network.
 
+config WIFI_DEVICE_HOSTNAME
+    string "Device Hostname"
+    default "ESP32-Flight-Base-Station"
+    help
+      Set the hostname for the ESP32 when it connects to a WiFi network in station mode. This is the name that will be used to identify the device on the network.
+
 endmenu

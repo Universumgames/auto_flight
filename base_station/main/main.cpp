@@ -1,23 +1,22 @@
-#include <cstdio>
-
+#include "BaseController.hpp"
 #include "esp_log.h"
-#include "Frontend.hpp"
-#include "GPS_Reader.hpp"
-#include "i2c_manager.hpp"
-#include "LoRa_Communication.hpp"
 #include "wifi_helper.hpp"
 
+static void checkSystemStats(void* param) {
+    char buffer[2048];
+    while (true) {
+        vTaskGetRunTimeStats(buffer);
+        printf("%s\n", buffer);
+        vTaskDelay(pdMS_TO_TICKS(2000));
+    }
+}
+
 extern "C" void app_main(void) {
-    auto i2cBus = I2CManager::getBus();
     init_wifi();
-
-    ESP_LOGI("main", "Hello, world!");
-
-    FrontendHandler.init();
 
     ESP_LOGI("main", "IP Address: %s", get_ip_address().c_str());
 
-    GPS_Reader.begin();
+    //xTaskCreate(checkSystemStats, "SystemStatsTask", 4096, nullptr, tskIDLE_PRIORITY + 1, nullptr);
 
-    LoRa_Communication.begin();
+    BaseController.init();
 }

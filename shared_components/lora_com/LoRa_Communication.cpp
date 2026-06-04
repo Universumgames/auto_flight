@@ -18,7 +18,8 @@ const char* TAG_LORA = "LoRa_Communication";
 constexpr size_t LORA_MAX_PACKET_SIZE = 255;
 
 constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
-constexpr TickType_t LORA_ACK_TIMEOUT = pdMS_TO_TICKS(3000);
+/// ACK timeout in seconds
+constexpr time_t LORA_ACK_TIMEOUT = 2;
 constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second
 constexpr TickType_t LORA_PAYLOAD_TIMEOUT = pdMS_TO_TICKS(3000);
 constexpr int LORA_MAX_SEND_RETRIES = 3;
@@ -73,11 +74,14 @@ void LoRa_CommunicationClass::begin() {
         return;
     }
 
+    receivedAcks.reserve(20);
+
     ESP_LOGI(TAG_LORA, "initializing LoRa radio");
 
     // Construct RadioLib HAL/Module and SX1262 instance
     auto* hal = new EspHal(CONFIG_LORA_SCK_GPIO, CONFIG_LORA_MISO_GPIO, CONFIG_LORA_MOSI_GPIO);
-    auto module = new Module(hal, CONFIG_LORA_CS_GPIO, CONFIG_LORA_DIO0_PIN, CONFIG_LORA_RST_GPIO, CONFIG_LORA_BUSY_GPIO);
+    auto module = new Module(hal, CONFIG_LORA_CS_GPIO, CONFIG_LORA_DIO0_PIN, CONFIG_LORA_RST_GPIO,
+                             CONFIG_LORA_BUSY_GPIO);
     this->loraRadio = new SX1262(module);
 
     // create SX1262 instance and initialize with RadioLib
@@ -194,7 +198,6 @@ float LoRa_CommunicationClass::getLastPacketSNR() const {
 }
 
 bool LoRa_CommunicationClass::hasReceivedData() const {
-
     bool hasData = false;
     WITH_MUTEX(receivedPacketsMutex) {
         hasData = !receivedPackets.empty();
@@ -236,7 +239,7 @@ int LoRa_CommunicationClass::receiveData(uint8_t* buffer, int size) {
 }
 
 void LoRa_CommunicationClass::sendData(const uint8_t* data, uint8_t size) {
-    LoRa_Packet packetHeader = {};
+    LoRa_Packet_Internal packetHeader = {};
     packetHeader.type = PacketType::HEADER;
     // generate a non-zero message id
     uint8_t mid = nextMessageId.fetch_add(1);
@@ -244,18 +247,18 @@ void LoRa_CommunicationClass::sendData(const uint8_t* data, uint8_t size) {
     packetHeader.messageId = mid;
     packetHeader.payloadLength = size; // size of next data packet
     sendRawPacket(packetHeader, data, true);
-    updateLastSendTime();
 }
 
-bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet& packet, const uint8_t* data, bool requireAck) {
+bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck) {
     // Helper: wait for ACK with timeout
-    auto waitForAckId = [&](uint8_t msgId, TickType_t timeout) -> bool {
-        TickType_t start = xTaskGetTickCount();
-        while ((xTaskGetTickCount() - start) < timeout) {
+    auto waitForAckId = [&](uint8_t msgId, time_t timeout) -> bool {
+        vTaskDelay(pdMS_TO_TICKS(10)); // small initial
+        time_t start = time(nullptr);
+        while ((time(nullptr) - start) < timeout) {
             auto found = false;
             WITH_MUTEX(ackMutex) {
-                auto it = std::ranges::find(receivedAcks, msgId);
-                found = it != receivedAcks.end();
+                found = std::ranges::contains(receivedAcks, msgId);
+                erase_if(receivedAcks, [msgId](const uint8_t& id) { return id > msgId + 10 || id == msgId; });
             }
             if (found) {
                 return true;
@@ -266,7 +269,7 @@ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet& packet, const uin
     };
 
     // Helper: send a buffer with retry logic. Returns true if (no ACK required) or ack received.
-    auto sendBufferWithRetries = [&](const uint8_t* buf, size_t len, uint8_t msgId) -> bool {
+    auto sendBufferWithRetries = [&](const std::unique_ptr<uint8_t[]>& buf, size_t len, uint8_t msgId) -> bool {
         if (len == 0) return true;
         if (len > LORA_MAX_PACKET_SIZE) {
             ESP_LOGE(TAG_LORA, "Packet too large: %zu > %zu", len, LORA_MAX_PACKET_SIZE);
@@ -276,11 +279,12 @@ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet& packet, const uin
         int attempts = 0;
         while (attempts <= LORA_MAX_SEND_RETRIES) {
             WITH_MUTEX(radioMutex) {
+                sending = true;
                 // transmit is blocking; ignore return value here but could be checked for errors
-                loraRadio->transmit(buf, len);
-                loraRadio->finishTransmit();
+                loraRadio->transmit(buf.get(), len);
                 // re-enter receive mode after transmit
                 loraRadio->startReceive();
+                sending = false;
             }
 
             if (!requireAck) return true;
@@ -292,27 +296,33 @@ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet& packet, const uin
         return false;
     };
 
-    // Send header first
-    if (!sendBufferWithRetries(reinterpret_cast<const uint8_t*>(&packet), sizeof(packet), packet.messageId)) {
-        loraRadio->startReceive();
-        updateConnectionState(ConnectionState::CONNECTING);
-        return false;
+    size_t sendSize = sizeof(LoRa_Packet_Internal) + packet.payloadLength;
+    auto sendBuffer = std::make_unique<uint8_t[]>(sendSize);
+    memcpy(sendBuffer.get(), &packet, sizeof(LoRa_Packet_Internal));
+    if (packet.payloadLength > 0 && data != nullptr) {
+        memcpy(sendBuffer.get() + sizeof(LoRa_Packet_Internal), data, packet.payloadLength);
     }
 
-    // Send payload if present
-    if (packet.payloadLength > 0 && data != nullptr) {
-        if (!sendBufferWithRetries(data, packet.payloadLength, packet.messageId)) {
-            loraRadio->startReceive();
-            return false;
-        }
+    // Send header first
+    ESP_LOGI(TAG_LORA, "Sending packet: %s", packet.toString().c_str());
+    lastSentPacket = packet;
+    auto success = sendBufferWithRetries(sendBuffer, sendSize, packet.messageId);
+    if (!success) {
+        updateConnectionState(ConnectionState::CONNECTING);
+        ESP_LOGE(TAG_LORA, "Failed to send packet after retries, giving up");
     }
-    loraRadio->startReceive();
-    return true;
+    else {
+        updateConnectionState(ConnectionState::CONNECTED);
+        updateLastSendTime();
+        ESP_LOGD(TAG_LORA, "Packet msgId=%d sent successfully", packet.messageId);
+    }
+
+    return success;
 }
 
 void LoRa_CommunicationClass::updateLastSendTime() {
     WITH_MUTEX(lastSendTimeMutex) {
-        lastSendTime = xTaskGetTickCount();
+        lastSendTime = time(nullptr);
     }
 }
 
@@ -327,14 +337,14 @@ void LoRa_CommunicationClass::updateConnectionState(ConnectionState state) {
 
 std::string LoRa_CommunicationClass::toString(PacketType packetType) {
     switch (packetType) {
-        case PacketType::HEADER: return "HEADER";
-        case PacketType::ACK: return "ACK";
-        case PacketType::PING: return "PING";
-        default: return "UNKNOWN";
+    case PacketType::HEADER: return "HEADER";
+    case PacketType::ACK: return "ACK";
+    case PacketType::PING: return "PING";
+    default: return "UNKNOWN";
     }
 }
 
-std::string LoRa_CommunicationClass::LoRa_Packet::toString() const {
+std::string LoRa_CommunicationClass::LoRa_Packet_Internal::toString() const {
     return "LoRa_Packet{type=" + LoRa_CommunicationClass::toString(type) +
         ", messageId=" + std::to_string(messageId) +
         ", payloadLength=" + std::to_string(payloadLength) + "}";

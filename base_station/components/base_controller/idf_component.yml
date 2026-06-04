@@ -1,0 +1,7 @@
+dependencies:
+  barometer:
+    require: public
+    path: ../../shared_components/barometer
+  gps:
+    require: public
+    path: ../../shared_components/gps

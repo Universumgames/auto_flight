@@ -13,131 +13,118 @@ constexpr const char* TAG_FLIGHT_COMMUNICATION = "Flight_Communication";
 
 void Flight_Communication::begin() {}
 
-std::unique_ptr<FlightPacket> Flight_Communication::decodePacket(const LoRaPacket& packet) {
+std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const LoRaPacket& packet) {
     return decodePacket(packet.payload, packet.length);
 }
 
-std::unique_ptr<FlightPacket> Flight_Communication::decodePacket(const uint8_t* data, std::size_t len) {
-    if (len < 1) {
+std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* data, std::size_t len) {
+    if (len < sizeof(BasePacket)) {
+        ESP_LOGE(TAG_FLIGHT_COMMUNICATION, "Received packet too small: %d bytes, should be at least %d bytes", len,
+                 static_cast<int>(sizeof(BasePacket)));
         return nullptr; // invalid packet
     }
 
-    BasePacket basePacket = {};
-    std::memcpy(&basePacket, data, sizeof(BasePacket));
-
-    switch (basePacket.type) {
+    switch (auto type = ((BasePacket*)data)->type) {
     case PacketType::SENSOR_UPDATE: {
         if (len < sizeof(SensorUpdate)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid SENSOR_UPDATE packet size: %d, should be at least %d", len,
+                     static_cast<int>(sizeof(SensorUpdate)));
             return nullptr; // invalid packet
         }
-        SensorUpdate sensorUpdate = {};
-        std::memcpy(&sensorUpdate, data, sizeof(SensorUpdate));
-        return std::make_unique<FlightPacket>(sensorUpdate);
+        auto sensorUpdate = new SensorUpdate(data);
+
+        return std::unique_ptr<BasePacket>(sensorUpdate);
     }
     case PacketType::POSITION: {
         if (len < sizeof(PositionUpdate)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid POSITION packet size: %d, should be at least %d", len,
+                     static_cast<int>(sizeof(PositionUpdate)));
             return nullptr; // invalid packet
         }
-        PositionUpdate positionUpdate = {};
-        std::memcpy(&positionUpdate, data, sizeof(PositionUpdate));
-        return std::make_unique<FlightPacket>(positionUpdate);
+        auto positionUpdate = new PositionUpdate(data);
+        return std::unique_ptr<BasePacket>(positionUpdate);
     }
     case PacketType::ROUTE_HISTORY_REQUEST: {
-        return std::make_unique<FlightPacket>(basePacket);
+        auto routeHistoryRequest = new BasePacket(data);
+        return std::unique_ptr<BasePacket>(routeHistoryRequest);
     }
     case PacketType::PLANNED_AREA: {
         if (len < sizeof(BasePacket) + sizeof(size_t)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid PLANNED_AREA packet size: %d, should be at least %d", len,
+                     static_cast<int>(sizeof(BasePacket) + sizeof(size_t)));
             return nullptr; // invalid packet
         }
-        size_t length = 0;
-        std::memcpy(&length, data + sizeof(BasePacket), sizeof(size_t));
-        if (len < sizeof(BasePacket) + sizeof(size_t) + length * sizeof(Coordinate)) {
-            return nullptr; // invalid packet
-        }
-        PlannedAreaPacket plannedArea = {};
-        std::memcpy(&plannedArea, data, sizeof(BasePacket));
-        plannedArea.shape.resize(length);
-        std::memcpy(plannedArea.shape.data(), data + sizeof(BasePacket) + sizeof(size_t), length * sizeof(Coordinate));
-        return std::make_unique<FlightPacket>(plannedArea);
+        auto plannedArea = new PlannedAreaPacket(data);
+        return std::unique_ptr<BasePacket>(plannedArea);
     }
     case PacketType::ROUTE_HISTORY: {
         if (len < sizeof(BasePacket) + sizeof(size_t)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid ROUTE_HISTORY packet size: %d, should be at least %d", len,
+                     static_cast<int>(sizeof(BasePacket) + sizeof(size_t)));
             return nullptr;
         }
-        size_t length = 0;
-        std::memcpy(&length, data + sizeof(BasePacket), sizeof(size_t));
-        if (len < sizeof(BasePacket) + sizeof(size_t) + length * sizeof(Coordinate)) {
-            return nullptr;
-        }
-        FlightHistoryPacket flightHistory = {};
-        std::memcpy(&flightHistory, data, sizeof(BasePacket));
-        flightHistory.history.resize(length);
-        std::memcpy(flightHistory.history.data(), data + sizeof(BasePacket) + sizeof(size_t),
-                    length * sizeof(Coordinate));
-        return std::make_unique<FlightPacket>(flightHistory);
+        auto flightHistory = new FlightHistoryPacket(data);
+        return std::unique_ptr<BasePacket>(flightHistory);
     }
     case PacketType::PLANNED_ROUTE: {
         if (len < sizeof(BasePacket) + sizeof(size_t)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid PLANNED_ROUTE packet size: %d, should be at least %d", len,
+                     static_cast<int>(sizeof(BasePacket) + sizeof(size_t)));
             return nullptr;
         }
-        size_t length = 0;
-        std::memcpy(&length, data + sizeof(BasePacket), sizeof(size_t));
-        if (len < sizeof(BasePacket) + sizeof(size_t) + length * sizeof(Coordinate)) {
-            return nullptr;
-        }
-        PlannedRoutePacket plannedRoute = {};
-        std::memcpy(&plannedRoute, data, sizeof(BasePacket));
-        plannedRoute.route.resize(length);
-        std::memcpy(plannedRoute.route.data(), data + sizeof(BasePacket) + sizeof(size_t), length * sizeof(Coordinate));
-        return std::make_unique<FlightPacket>(plannedRoute);
+        auto plannedRoute = new PlannedRoutePacket(data);
+        return std::unique_ptr<BasePacket>(plannedRoute);
     }
     case PacketType::COMPONENT_STATUS: {
         if (len < sizeof(ComponentStatus)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid COMPONENT_STATUS packet size: %d, should be %d", len,
+                     static_cast<int>(sizeof(ComponentStatus)));
             return nullptr; // invalid packet
         }
-        ComponentStatus status = {};
-        std::memcpy(&status, data, sizeof(ComponentStatus));
-        return std::make_unique<FlightPacket>(status);
+        auto status = new ComponentStatus(data);
+        return std::unique_ptr<BasePacket>(status);
     }
     default:
-        ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Unknown packet type: %xd", static_cast<int>(basePacket.type));
+        ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Unknown packet type: %02x", static_cast<int>(type));
         return nullptr;
     }
 }
 
 void Flight_Communication::sendPosition() {
     Coordinate position = GPS_Reader.getCurrentPosition();
-    PositionUpdate packet = {};
-    packet.timestamp = GPS_Reader.getGPSLatestTime();
-    packet.type = PacketType::POSITION;
-    packet.position = position;
+    PositionUpdate packet = {
+        GPS_Reader.getGPSLatestTime(),
+        position
+    };
 
     LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&packet), sizeof(packet));
 }
 
 void Flight_Communication::sendSensorUpdate() {
     float pressure = Barometer.getPressure();
-    SensorUpdate packet = {};
-    packet.timestamp = GPS_Reader.getGPSLatestTime();
-    packet.type = PacketType::SENSOR_UPDATE;
-    packet.pressure = pressure;
+    SensorUpdate packet = {
+        GPS_Reader.getGPSLatestTime(),
+        pressure,
+    };
 
     LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&packet), sizeof(packet));
 }
 
 #ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
 void Flight_Communication::requestRouteHistory() {
-    BasePacket packet = {};
-    packet.timestamp = GPS_Reader.getGPSLatestTime();
-    packet.type = PacketType::ROUTE_HISTORY_REQUEST;
+    BasePacket packet = {
+        GPS_Reader.getGPSLatestTime(),
+        PacketType::ROUTE_HISTORY_REQUEST
+    };
 
     LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&packet), sizeof(packet));
 }
 
-void Flight_Communication::sendPlannedArea(std::vector<Coordinate> shape) {
-    BasePacket packet = {};
-    packet.timestamp = GPS_Reader.getGPSLatestTime();
-    packet.type = PacketType::PLANNED_AREA;
+void Flight_Communication::sendPlannedArea(const std::vector<Coordinate>& shape) {
+    BasePacket packet = {
+        GPS_Reader.getGPSLatestTime(),
+        PacketType::PLANNED_AREA
+    };
     size_t length = shape.size();
     size_t dataSize = sizeof(BasePacket) + sizeof(int) + shape.size() * sizeof(Coordinate);
     auto data = new uint8_t[dataSize];
@@ -159,9 +146,10 @@ void Flight_Communication::sendRouteHistory() {
     size_t length = flightRoute.size();
     size_t dataSize = sizeof(BasePacket) + sizeof(int) + flightRoute.size() * sizeof(Coordinate);
     auto data = new uint8_t[dataSize];
-    BasePacket packet = {};
-    packet.timestamp = GPS_Reader.getGPSLatestTime();
-    packet.type = PacketType::ROUTE_HISTORY;
+    BasePacket packet = {
+        GPS_Reader.getGPSLatestTime(),
+        PacketType::ROUTE_HISTORY
+    };
     uint8_t dataOffset = 0;
     memccpy(data, &packet, 1, sizeof(BasePacket));
     dataOffset += sizeof(BasePacket);
@@ -178,9 +166,10 @@ void Flight_Communication::sendPlannedRoute() {
     size_t length = plannedRoute.size();
     size_t dataSize = sizeof(BasePacket) + sizeof(int) + plannedRoute.size() * sizeof(Coordinate);
     auto data = new uint8_t[dataSize];
-    BasePacket packet = {};
-    packet.timestamp = GPS_Reader.getGPSLatestTime();
-    packet.type = PacketType::PLANNED_ROUTE;
+    BasePacket packet = {
+        GPS_Reader.getGPSLatestTime(),
+        PacketType::PLANNED_ROUTE
+    };
     uint8_t dataOffset = 0;
     memccpy(data, &packet, 1, sizeof(BasePacket));
     dataOffset += sizeof(BasePacket);
@@ -193,15 +182,16 @@ void Flight_Communication::sendPlannedRoute() {
 }
 
 void Flight_Communication::sendComponentStatus() {
-    ComponentStatus status = {};
+    ComponentStatus status = {
+    };
     status.timestamp = GPS_Reader.getGPSLatestTime();
     status.type = PacketType::COMPONENT_STATUS;
-    status.gps = GPS_Reader.hasValidPosition() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING;
+    status.gps = FlightStorage.getPlaneGPSConnectionState();
     // for simplicity, we assume other components are always connected in this example
-    status.barometer = Barometer.initialized() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING;
-    status.gyroscope = Gyroscope.initialized() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING;
-    status.motorControl = MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING;
+    status.barometer = FlightStorage.getPlaneBarometerConnectionState();
+    status.gyroscope = FlightStorage.getPlaneGyroscopeConnectionState();
+    status.motorControl = FlightStorage.getPlaneMotorControlConnectionState();
 
-    LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&status), sizeof(status));
+    LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&status), sizeof(ComponentStatus));
 }
 #endif

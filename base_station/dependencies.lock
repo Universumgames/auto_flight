@@ -1,4 +1,14 @@
 dependencies:
+  barometer:
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
+    - name: espressif/bme280
+      version: ^0.1.1
+    source:
+      path: ../shared_components/barometer
+      type: local
+    version: '*'
   espressif/bme280:
     component_hash: 873d97d0bd30004f45d1653f078a4bafe39c1767e57d4bae0f0a13bc3a4d5e3d
     dependencies:
@@ -57,6 +67,12 @@ dependencies:
       path: ../shared_components/flight_data
       type: local
     version: '*'
+  gps:
+    dependencies: []
+    source:
+      path: ../shared_components/gps
+      type: local
+    version: '*'
   idf:
     source:
       type: idf
@@ -88,14 +104,16 @@ dependencies:
       type: service
     version: 1.21.1
 direct_dependencies:
+- barometer
 - espressif/bme280
 - espressif/i2c_bus
 - espressif/mpu6050
 - flight_data
+- gps
 - idf
 - jgromes/radiolib
 - johboh/nlohmann-json
 - joltwallet/littlefs
-manifest_hash: 35a7cb9996c2c0318921ca4777797210c71bde4f5cc561c8e358719d9977a288
+manifest_hash: 19c91c6840b3505bc2c57d0340ff402d1fc397ba1acd10d567be619bf86481cc
 target: esp32s3
 version: 3.0.0

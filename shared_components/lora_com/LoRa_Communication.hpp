@@ -15,6 +15,8 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 #endif
+#include <functional>
+
 #include "modules/SX126x/SX1262.h"
 #if defined(__GNUC__)
 #pragma GCC diagnostic pop
@@ -33,21 +35,30 @@ private:
     enum class PacketType: uint8_t {
         HEADER,
         ACK,
-        PING
+        PING,
+        DATA
     };
 
     static std::string toString(PacketType packetType);
 
-    struct LoRa_Packet {
+    struct LoRa_Packet_Internal {
         PacketType type;
         uint8_t messageId;
         uint8_t payloadLength;
 
         [[nodiscard]] std::string toString() const;
+
+        static bool equals(const LoRa_Packet_Internal& a, const LoRa_Packet_Internal& b) {
+            return a.type == b.type && a.messageId == b.messageId && a.payloadLength == b.payloadLength;
+        }
+
+        constexpr bool operator==(const LoRa_Packet_Internal& b) const {
+            return equals(*this, b);
+        }
     };
 
     struct ReceivedPacket {
-        LoRa_Packet header;
+        LoRa_Packet_Internal header;
         std::unique_ptr<uint8_t[]> payload;
     };
 
@@ -80,6 +91,7 @@ public:
 
     /**
      * Receives data from the received packets queue into the provided buffer
+     * @deprecated This method is deprecated in favor of using registerReceivePacketCallback() for more efficient and flexible packet processing. This method may block if no packets are available and does not support concurrent calls.
      * @param buffer Pointer to the destination buffer
      * @param size Maximum number of bytes to read into the buffer
      * @return Number of bytes actually received, -1 when buffer size too small, 0 on other error
@@ -88,9 +100,10 @@ public:
 
     /**
      * Checks if there is received data waiting in the queue
+     * @deprecated This method is deprecated in favor of using registerReceivePacketCallback() for more efficient and flexible packet processing. This method does not support concurrent calls and may not reflect real-time state if called from multiple contexts.
      * @return true if data is available, false otherwise
      */
-    [[nodiscard]] bool hasReceivedData() const;
+    [[nodiscard]] [[deprecated]] bool hasReceivedData() const;
 
     /**
      * Gets the RSSI (Received Signal Strength Indicator) of the last received packet
@@ -157,7 +170,7 @@ private:
      * @param requireAck If true, waits for acknowledgement; defaults to true
      * @return true on success, false otherwise
      */
-    bool sendRawPacket(const LoRa_Packet& packet, const uint8_t* data, bool requireAck = true);
+    bool sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck = true);
 
     /**
      * Updates the timestamp of the last successful transmission
@@ -172,23 +185,18 @@ private:
 
     /**
      * Sends an ACK packet for a received message
+     * Does not have a mutex check for the lora module, caller must ensure thread safety
      * @param messageId The ID of the message being acknowledged
      */
     void sendAckPacketInternal(uint8_t messageId);
 
     /**
-     * Waits for a payload packet with the expected size
-     * @param dataBuffer Buffer to store received payload
-     * @param expectedSize Expected size of the payload
-     * @return Number of bytes received, or -1 on timeout
-     */
-    int waitForPayload(uint8_t* dataBuffer, uint8_t expectedSize);
-
-    /**
      * Processes a received LoRa packet header
      * @param receivedHeader The received packet header
      */
-    void processPacket(const LoRa_Packet& receivedHeader);
+    void processPacket(const LoRa_Packet_Internal& receivedHeader);
+
+    void processDataPacket(const LoRa_Packet_Internal& header, const uint8_t* data, int size);
 
     uint8_t* key = nullptr; // 128-bit key used for encryption
     TaskHandle_t receiveTaskHandle = nullptr;
@@ -204,6 +212,9 @@ private:
     std::atomic<uint8_t> nextMessageId{1};
     // Whether a DIO0 ISR has been installed for the radio (used by the receive task)
     bool dio0IsrInstalled = false;
+
+    bool sending = false;\
+    LoRa_Packet_Internal lastSentPacket;
 
     SX1262* loraRadio = nullptr;
 

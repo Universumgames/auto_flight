@@ -69,11 +69,12 @@ private:
     FLIGHT_VARIABLE(planeBarometerConnectionState, PlaneBarometerConnectionState, ConnectionState, ConnectionState::CONNECTING)
     FLIGHT_VARIABLE(planeGyroscopeConnectionState, PlaneGyroscopeConnectionState, ConnectionState, ConnectionState::CONNECTING)
     FLIGHT_VARIABLE(planeMotorControlConnectionState, PlaneMotorControlConnectionState, ConnectionState, ConnectionState::CONNECTING)
+    FLIGHT_VARIABLE(baseGPSConnectionState, BaseGPSConnectionState, ConnectionState, ConnectionState::CONNECTING)
+    FLIGHT_VARIABLE(planeGPSConnectionState, PlaneGPSConnectionState, ConnectionState, ConnectionState::CONNECTING)
 
 private:
 
     QueueHandle_t dataUpdateQueue;
-    SemaphoreHandle_t queueMutex = nullptr;
 
     std::unordered_map<DataUpdateType,std::vector<std::function<void()>>> dataChangeCallbacks;
 

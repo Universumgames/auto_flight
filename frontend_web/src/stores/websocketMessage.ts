@@ -25,6 +25,8 @@ export function handleWebSocketMessage(store: StoreState, event: MessageEvent): 
     const parsed = JSON.parse(raw) as unknown
     if (!isRecord(parsed)) return
 
+    console.log(parsed)
+
     const typeField = typeof parsed.type === 'string' ? parsed.type : undefined
     if (!typeField) return
 

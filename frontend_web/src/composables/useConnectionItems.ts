@@ -30,12 +30,12 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
         label:
           'GPS Position' +
           (store.basePosition != null
-            ? ` (${store.basePosition!.latitude}, ${store.basePosition!.longitude})`
+            ? ` (${store.basePosition!.latitude.toFixed(6)}, ${store.basePosition!.longitude.toFixed(6)})`
             : ''),
         state: isConnected(store.gpsConnectionBase) ? 'done' : 'loading',
       },
       {
-        label: 'Barometer' + (store.pressureBase != 0 ? ` (${store.pressureBase}hPa)` : ''),
+        label: 'Barometer' + (store.pressureBase != 0 ? ` (${store.pressureBase.toFixed(2)}hPa)` : ''),
         state: isConnected(store.barometerConnectionBase) ? 'done' : 'loading',
       },
     ],
@@ -52,7 +52,7 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
         label:
           'GPS Position' +
           (store.planePosition != null
-            ? ` (${store.planePosition!.latitude}, ${store.planePosition!.longitude})`
+            ? ` (${store.planePosition!.latitude.toFixed(6)}, ${store.planePosition!.longitude.toFixed(6)})`
             : ''),
         state: isConnected(store.gpsConnectionPlane) ? 'done' : 'loading',
       },
@@ -65,7 +65,7 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
         state: 'loading',
       },
       {
-        label: 'Barometer' + (store.pressurePlane != 0 ? ` (${store.pressurePlane}hPa)` : ''),
+        label: 'Barometer' + (store.pressurePlane != 0 ? ` (${store.pressurePlane.toFixed(2)}hPa)` : ''),
         state: isConnected(store.barometerConnectionPlane) ? 'done' : 'loading',
       },
     ],

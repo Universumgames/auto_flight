@@ -21,3 +21,7 @@ elseCode                   \
 } while (0)
 
 
+#define WITH_MUTEX_ISR(mutex)        \
+    for(bool _once = (xSemaphoreTakeFromISR((mutex), nullptr) == pdTRUE); \
+    _once; \
+    _once = false, xSemaphoreGiveFromISR((mutex), nullptr))

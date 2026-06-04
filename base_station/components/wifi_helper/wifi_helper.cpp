@@ -1,5 +1,10 @@
 #include "wifi_helper.hpp"
 
+#ifdef HAVE_WIFI_SECRETS_H
+/// Used to overwrite settings for debugging and development
+#include "secrets.h"
+#endif
+
 #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 
 #include "esp_log.h"
@@ -114,6 +119,10 @@ esp_err_t start_ap() {
     err = esp_wifi_start();
     ESP_ERROR_CHECK_SOFT(err);
 
+    esp_wifi_set_ps(WIFI_PS_NONE);
+
+    esp_netif_set_hostname(esp_netif_get_default_netif(), CONFIG_WIFI_DEVICE_HOSTNAME);
+
     current_wifi_mode = WIFI_MODE_AP;
 
     return ESP_OK;
@@ -155,7 +164,6 @@ esp_err_t connect_wifi() {
             .password = CONFIG_WIFI_AP_PASSWORD,
             .scan_method = WIFI_ALL_CHANNEL_SCAN,
             .failure_retry_cnt = UINT8_MAX,
-
         }
     };
 
@@ -168,13 +176,16 @@ esp_err_t connect_wifi() {
     err = esp_wifi_start();
     ESP_ERROR_CHECK_SOFT(err);
 
+    esp_wifi_set_ps(WIFI_PS_NONE);
+
     /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
      * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
+    // Use 30 second timeout instead of portMAX_DELAY to avoid infinite blocking
     EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
                                            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
                                            pdFALSE,
                                            pdFALSE,
-                                           portMAX_DELAY);
+                                           pdMS_TO_TICKS(30000));
 
     /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
      * happened. */
@@ -189,6 +200,8 @@ esp_err_t connect_wifi() {
     else {
         ESP_LOGE(TAG_WIFI_HELPER, "UNEXPECTED EVENT");
     }
+
+    esp_netif_set_hostname(esp_netif_get_default_netif(), CONFIG_WIFI_DEVICE_HOSTNAME);
 
     current_wifi_mode = WIFI_MODE_STA;
 

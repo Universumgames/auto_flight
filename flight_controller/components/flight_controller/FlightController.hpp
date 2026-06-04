@@ -4,6 +4,8 @@
 class FlightControllerClass {
 private:
     FlightControllerClass();
+
+    static const char* TAG_FLIGHT_CONTROLLER;
 public:
     ~FlightControllerClass() = delete;
 

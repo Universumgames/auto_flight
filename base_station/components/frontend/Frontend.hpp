@@ -36,14 +36,33 @@ struct ConnectionUpdatePacket{
     ConnectionState gpsConnectionBase;
     ConnectionState gpsConnectionPlane;
 
+    ConnectionState barometerConnectionBase;
+    ConnectionState barometerConnectionPlane;
+
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectionUpdatePacket, type, baseConnectionState, lastContactBaseStationTimestamp,
                                    planeConnectionState, lastContactPlaneTimestamp, gpsConnectionBase,
-                                   gpsConnectionPlane)
+                                   gpsConnectionPlane, barometerConnectionBase, barometerConnectionPlane)
+};
+
+struct AreaDefinePacket {
+    std::vector<Coordinate> shape;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(AreaDefinePacket, shape)
+};
+
+struct SensorPacket {
+    static constexpr const char* type = "sensor";
+    float barometerPressureBase;
+    float barometerPressurePlane;
+    float calculatedAltitude;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(SensorPacket, type, barometerPressureBase, barometerPressurePlane, calculatedAltitude)
 };
 
 class FrontendHandlerClass {
 private:
     FrontendHandlerClass();
+    static const char* TAG_FRONTEND;
 
 public:
     ~FrontendHandlerClass() = delete;
@@ -98,6 +117,8 @@ public:
 
     void sendWSUpdate();
 
+    [[noreturn]] static void sendWSTaskEntry(void* param);
+
 private:
     /**
      * Creates a new websocket frame containing the current flight update data. The caller is responsible for freeing the returned frame after use.
@@ -105,7 +126,9 @@ private:
      */
     httpd_ws_frame_t* prepareFlightPacket();
 
-    static httpd_ws_frame_t* prepareConnectionPacket();
+    httpd_ws_frame_t* prepareConnectionPacket();
+
+    httpd_ws_frame_t* prepareSensorPacket();
 
 private:
     httpd_handle_t httpd_handle = nullptr;

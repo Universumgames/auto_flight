@@ -11,12 +11,12 @@ void LoRa_CommunicationClass::callbackWorkerEntry(void* param) {
     while (true) {
         // Process received packets and invoke callbacks
         std::vector<ReceivedPacket> packetsToProcess;
-        {
-            WITH_MUTEX(receivedPacketsMutex) {
-                packetsToProcess = std::move(receivedPackets);
-                receivedPackets.clear();
-            }
+
+        WITH_MUTEX(receivedPacketsMutex) {
+            packetsToProcess = std::move(receivedPackets);
+            receivedPackets.clear();
         }
+
         for (const auto& packet : packetsToProcess) {
             for (const auto& callback : receivePacketCallbacks) {
                 callback({packet.header.payloadLength, packet.payload.get()});

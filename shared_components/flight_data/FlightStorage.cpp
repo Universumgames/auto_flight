@@ -32,7 +32,10 @@ FlightStorageClass& FlightStorageClass::getInstance() {
 
 void FlightStorageClass::init() {
     dataUpdateQueue = xQueueCreate(20, sizeof(DataUpdateType));
-    queueMutex = xSemaphoreCreateMutex();
+    if (dataUpdateQueue == nullptr) {
+        ESP_LOGE("FlightStorage", "Failed to create data update queue");
+        return;
+    }
 
     registerEventHandlersInSubComponents();
 
@@ -45,13 +48,19 @@ void FlightStorageClass::registerDataChangeCallback(std::function<void()> callba
 
 void FlightStorageClass::registerEventHandlersInSubComponents() {
     GPS_Reader.addPositionUpdateCallback([this](Coordinate newPosition, time_t updateTime) {
-       //ESP_LOGW(__FUNCTION__, "Position update callback triggered with new position: (%.6f, %.6f) at time %ld",
-       //          newPosition.latitude, newPosition.longitude, updateTime);
+        //ESP_LOGW(__FUNCTION__, "Position update callback triggered with new position: (%.6f, %.6f) at time %ld",
+        //          newPosition.latitude, newPosition.longitude, updateTime);
         if (isDeviceBaseStation()) {
             updateBasePosition(newPosition, updateTime);
+            updateBaseGPSConnectionState(GPS_Reader.hasValidPosition()
+                                             ? ConnectionState::CONNECTED
+                                             : ConnectionState::CONNECTING);
         }
         else if (isDevicePlane()) {
             updatePlanePosition(newPosition, updateTime);
+            updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()
+                                              ? ConnectionState::CONNECTED
+                                              : ConnectionState::CONNECTING);
         }
     });
 }
@@ -73,10 +82,8 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
 [[noreturn]] void FlightStorageClass::callbackLoop() {
     DataUpdateType updateType;
     while (true) {
-        WITH_MUTEX(queueMutex) {
-            if (xQueueReceive(dataUpdateQueue, &updateType, portMAX_DELAY) == pdTRUE) {
-                callDataChangeCallbacks(updateType);
-            }
+        if (xQueueReceive(dataUpdateQueue, &updateType, portMAX_DELAY) == pdTRUE) {
+            callDataChangeCallbacks(updateType);
         }
         vTaskDelay(pdMS_TO_TICKS(50));
     }
@@ -97,8 +104,7 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
         this->last##Name##UpdateTime = lastUpdateTime;\
         auto updateTypeVar = DataUpdateType::updateType;\
         {additionalCalls;}\
-        WITH_MUTEX(queueMutex) \
-        xQueueSend(dataUpdateQueue, &updateTypeVar, portMAX_DELAY);\
+        xQueueSendToBack(dataUpdateQueue, &updateTypeVar, portMAX_DELAY);\
         return value;\
     }
 
@@ -118,3 +124,9 @@ FLIGHT_VARIABLE_IMPL(planePressure, PlanePressure, float, SENSOR)
 
 FLIGHT_VARIABLE_IMPL_COMPLEX(plannedArea, PlannedArea, std::vector<Coordinate>, AREA, {plannedRoute.clear();})
 
+FLIGHT_VARIABLE_IMPL(baseBarometerConnectionState, BaseBarometerConnectionState, ConnectionState, CONNECTION)
+FLIGHT_VARIABLE_IMPL(planeBarometerConnectionState, PlaneBarometerConnectionState, ConnectionState, CONNECTION)
+FLIGHT_VARIABLE_IMPL(planeGyroscopeConnectionState, PlaneGyroscopeConnectionState, ConnectionState, CONNECTION)
+FLIGHT_VARIABLE_IMPL(planeMotorControlConnectionState, PlaneMotorControlConnectionState, ConnectionState, CONNECTION)
+FLIGHT_VARIABLE_IMPL(baseGPSConnectionState, BaseGPSConnectionState, ConnectionState, CONNECTION)
+FLIGHT_VARIABLE_IMPL(planeGPSConnectionState, PlaneGPSConnectionState, ConnectionState, CONNECTION)

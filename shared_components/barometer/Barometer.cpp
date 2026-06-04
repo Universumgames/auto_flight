@@ -26,26 +26,28 @@ void BarometerClass::begin() {
     ESP_ERROR_CHECK_WITHOUT_ABORT(err);
 }
 
-
-float BarometerClass::getPressure() const {
+float BarometerClass::getPressure() {
     float pressure;
-    bme280_read_pressure(bme280Handle, &pressure);
+    err = bme280_read_pressure(bme280Handle, &pressure);
+    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
     return pressure;
 }
 
-float BarometerClass::getTemperature() const {
+float BarometerClass::getTemperature() {
     float temperature;
-    bme280_read_temperature(bme280Handle, &temperature);
+    err = bme280_read_temperature(bme280Handle, &temperature);
+    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
     return temperature;
 }
 
-float BarometerClass::getHumidity() const {
+float BarometerClass::getHumidity() {
     float humidity;
-    bme280_read_humidity(bme280Handle, &humidity);
+    err = bme280_read_humidity(bme280Handle, &humidity);
+    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
     return humidity;
 }
 
-float BarometerClass::getAltitude(const float groundPressure) const {
+float BarometerClass::getAltitude(const float groundPressure) {
     const float pressure = getPressure();
     return calculateAltitude(groundPressure, pressure);
 }
@@ -66,10 +68,10 @@ float BarometerClass::calculateAltitude(const float groundPressure, const float 
     return altitude;
 }
 
-float BarometerClass::getEstimatedAltitude() const {
+float BarometerClass::getEstimatedAltitude() {
     return getAltitude(p_0);
 }
 
-bool BarometerClass::initialized() const {
+bool BarometerClass::available() const {
     return err == ESP_OK;
 }

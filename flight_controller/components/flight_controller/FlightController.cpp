@@ -23,6 +23,8 @@ static FlightControllerClass* flight_controller = nullptr;
 
 FlightControllerClass& FlightController = FlightControllerClass::getInstance();
 
+const char* FlightControllerClass::TAG_FLIGHT_CONTROLLER = "FlightController";
+
 FlightControllerClass* FlightControllerClass::getInstancePtr() {
     if (flight_controller == nullptr) {
         flight_controller = new FlightControllerClass();
@@ -51,6 +53,7 @@ void FlightControllerClass::init() {
     Flight_Communication::begin();
 
     xTaskCreate(flightTaskEntry, "FlightControllerFlightTask", 4096, this, tskIDLE_PRIORITY + 1, nullptr);
+    xTaskCreate(sendUpdateTaskEntry, "FlightControllerSendUpdateTask", 4096, this, 10, nullptr);
 
     LoRa_Communication.registerReceivePacketCallback([this](const LoRaPacket packet) {
         communicationCallback(packet);
@@ -69,11 +72,16 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         }
 
         auto currentTime = GPS_Reader.getGPSLatestTime();
-        auto planeAngle = Gyroscope.getAngle();
+        //auto planeAngle = Gyroscope.getAngle();
         auto position = FlightStorage.updatePlanePosition(GPS_Reader.getCurrentPosition(), currentTime);
         auto pressure = FlightStorage.updatePlanePressure(Barometer.getPressure(), currentTime);
         auto groundPressure = FlightStorage.getBasePressure();
         auto currentAltitude = BarometerClass::calculateAltitude(groundPressure, pressure);
+
+        FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        FlightStorage.updatePlaneBarometerConnectionState(Barometer.available() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        //FlightStorage.updatePlaneGyroscopeConnectionState(Gyroscope.available() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        FlightStorage.updatePlaneMotorControlConnectionState(MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
 
         // steer to next waypoint, keep current height
         steerToWaypoint(getNextWaypoint(), currentAltitude);
@@ -88,6 +96,7 @@ void FlightControllerClass::sendUpdateTaskEntry(void* param) {
 
 [[noreturn]] void FlightControllerClass::sendUpdateTask() {
     while (true) {
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Sending updates: position, sensor, component status");
         Flight_Communication::sendPosition();
         Flight_Communication::sendSensorUpdate();
         Flight_Communication::sendComponentStatus();
@@ -98,39 +107,36 @@ void FlightControllerClass::sendUpdateTaskEntry(void* param) {
 void FlightControllerClass::communicationCallback(LoRaPacket packet) {
     auto decodedPacket = Flight_Communication::decodePacket(packet);
     if (!decodedPacket) {
+        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Received invalid packet");
         return; // invalid packet, ignore
     }
+    auto basePacket = (BasePacket*)&decodedPacket;
+    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type, basePacket->timestamp);
 
-    // decode variant and get actual object
-    std::visit(Overloaded{
-                   [](const BasePacket& basePacket) {
-                       switch (basePacket.type) {
-                       case PacketType::ROUTE_HISTORY_REQUEST:
-                           // handle route history request, send back route history
-                           break;
-                       default:
-                           break; // ignore other base packets for now
-                       }
-                   },
-                   [](const SensorUpdate& sensorUpdate) {
-                       // handle sensor update
-                       FlightStorage.updateBasePressure(sensorUpdate.pressure, sensorUpdate.timestamp);
-                   },
-                   [](const PositionUpdate& positionUpdate) {
-                       // handle position update
-                       FlightStorage.updateBasePosition(positionUpdate.position, positionUpdate.timestamp);
-                   },
-                   [this](const PlannedAreaPacket& plannedArea) {
-                       FlightStorage.updatePlannedArea(plannedArea.shape);
-                       plannedAreaChanged = true;
-                   },
-                   [](const FlightHistoryPacket& flightHistory) {
-                       // cannot happen
-                   },
-                   [](const PlannedRoutePacket& plannedRoute) {
-                       // cannot happen
-                   }
-               }, *decodedPacket);
+    switch (basePacket->type) {
+    case PacketType::SENSOR_UPDATE: {
+        auto sensorUpdate = reinterpret_cast<SensorUpdate*>(decodedPacket.get());
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received sensor update: pressure=%.2f", sensorUpdate->pressure);
+        FlightStorage.updateBasePressure(sensorUpdate->pressure, sensorUpdate->timestamp);
+        break;
+    }
+    case PacketType::POSITION: {
+        auto positionUpdate = reinterpret_cast<PositionUpdate*>(decodedPacket.get());
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received position update: %s", positionUpdate->position.toString().c_str());
+        FlightStorage.updateBasePosition(positionUpdate->position, positionUpdate->timestamp);
+        break;
+    }
+    case PacketType::PLANNED_AREA: {
+        auto plannedArea = reinterpret_cast<PlannedAreaPacket*>(decodedPacket.get());
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area with %d points", plannedArea->shape.size());
+        FlightStorage.updatePlannedArea(plannedArea->shape);
+        plannedAreaChanged = true;
+        break;
+    }
+    default:
+        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unknown packet type: %xd", basePacket->type);
+        break;
+    }
 }
 
 

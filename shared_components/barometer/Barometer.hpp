@@ -14,17 +14,17 @@ public:
 
     void begin();
 
-    bool initialized() const;
+    bool available() const;
 
     /// Get current temperature in C
-    float getTemperature() const;
+    float getTemperature();
     /// Get current pressure in hPa
-    float getPressure() const;
+    float getPressure();
     /// Get current relative humidity
-    float getHumidity() const;
+    float getHumidity();
 
-    float getEstimatedAltitude() const;
-    float getAltitude(float groundPressure) const;
+    float getEstimatedAltitude();
+    float getAltitude(float groundPressure);
 
     static float calculateAltitude(float groundPressure, float currentPressure);
 

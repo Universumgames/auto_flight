@@ -258,7 +258,7 @@ void GPS_ReaderClass::handleReceive(const std::string& line) {
 
     if (!lastRMC.valid) {
         lastUpdateTime = time(nullptr);
-        ESP_LOGW(TAG_GPS_READER, "No valid GPS fix");
+        ESP_LOGD(TAG_GPS_READER, "No valid GPS fix");
     }
 }
 
