@@ -45,6 +45,7 @@ void BaseControllerClass::init() {
     });
 
     FlightStorage.registerDataChangeCallback([]() {
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d", FlightStorage.getPlannedArea().size());
         Flight_Communication::sendPlannedArea(FlightStorage.getPlannedArea());
     }, FlightStorageClass::DataUpdateType::AREA);
 }
@@ -76,7 +77,7 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     auto basePacket = decodedPacket.get();
 
     assert(((BasePacket*)packet.payload)->type == basePacket->type); // sanity check, should always hold
-    ESP_LOGI(TAG_BASE_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type,
+    ESP_LOGD(TAG_BASE_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type,
              basePacket->timestamp);
 
     switch (basePacket->type) {

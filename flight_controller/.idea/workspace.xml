@@ -207,44 +207,25 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get remote control switch/proxy working, prepare flight communication from esp to arduino">
-      <change afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/components/base_controller/idf_component.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/CMakeLists.txt" afterDir="false" />
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="add sdk config">
+      <change afterPath="$PROJECT_DIR$/../frontend_web/src/views/RoutePreviewView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/websocket.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/websocket.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/Kconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/Kconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/main/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/motor_com/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessage.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/vite.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/barometer/Barometer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/barometer/Barometer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/barometer/Barometer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/barometer/Barometer.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/route_planner/geo_helper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/geo_helper.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/route_planner/geo_helper.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/geo_helper.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/AreaPlanner.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/views/AreaPlanner.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/ConnectionOverview.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/views/ConnectionOverview.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Packets.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Packets.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/types.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/types.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/gps/GPS_Reader.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/gps/GPS_Reader.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_CallbackWorkerTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_CallbackWorkerTask.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_PingTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_PingTask.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_ReceiveTask.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_ReceiveTask.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/mutex_helper.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/mutex_helper.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -386,61 +367,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.000000000073168" />
-      <entry key="MS500" value="1.009394291007017" />
-      <entry key="S2" value="1.3113264376717395" />
-      <entry key="S5" value="1.6270272292952521" />
-      <entry key="S10" value="1.7918505094367572" />
-      <entry key="S30" value="1.9251547866363161" />
-      <entry key="S60" value="1.9618496913331596" />
-      <entry key="M2" value="1.9810754228026788" />
-      <entry key="M5" value="2.1990194335465434" />
-      <entry key="M10" value="4.758258241619339" />
-      <entry key="M15" value="9.12796050554303" />
-      <entry key="M30" value="22.075445436457418" />
-      <entry key="H1" value="43.998297368560046" />
-      <entry key="H2" value="77.6693799683653" />
-      <entry key="H4" value="125.09561462071362" />
-      <entry key="D1" value="542.8200928616415" />
-      <entry key="W1" value="1540.1062442495634" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.000000000024953" />
+      <entry key="S5" value="1.0000573916352793" />
+      <entry key="S10" value="1.0075770816427114" />
+      <entry key="S30" value="1.2411588285435844" />
+      <entry key="S60" value="2.122616817370699" />
+      <entry key="M2" value="4.745009379326145" />
+      <entry key="M5" value="12.589761715075284" />
+      <entry key="M10" value="28.48924997435043" />
+      <entry key="M15" value="44.75094329114877" />
+      <entry key="M30" value="79.10754509988132" />
+      <entry key="H1" value="110.26683411413904" />
+      <entry key="H2" value="132.41225077285142" />
+      <entry key="H4" value="153.09729496827705" />
+      <entry key="D1" value="511.70094586599447" />
+      <entry key="W1" value="1701.9220821176523" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="8.142234425272916E-8" />
-      <entry key="MS500" value="0.03820750867787714" />
-      <entry key="S2" value="0.44211696504674913" />
-      <entry key="S5" value="0.7214643434308141" />
-      <entry key="S10" value="0.8493905717812119" />
-      <entry key="S30" value="0.947041794041855" />
-      <entry key="S60" value="0.9731607370994092" />
-      <entry key="M2" value="0.9867176287357591" />
-      <entry key="M5" value="1.11228352010019" />
-      <entry key="M10" value="2.2696086950012107" />
-      <entry key="M15" value="4.0684762971585196" />
-      <entry key="M30" value="9.429041538155225" />
-      <entry key="H1" value="20.097288052780485" />
-      <entry key="H2" value="38.06236612583513" />
-      <entry key="H4" value="60.279049739941584" />
-      <entry key="D1" value="172.1669728137786" />
-      <entry key="W1" value="386.2822734548175" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="4.874679810242336E-126" />
+      <entry key="S2" value="5.642400516276046E-32" />
+      <entry key="S5" value="4.493115790322798E-13" />
+      <entry key="S10" value="9.50433962896949E-7" />
+      <entry key="S30" value="0.02056813178590833" />
+      <entry key="S60" value="0.30884182708354" />
+      <entry key="M2" value="1.3210413969882677" />
+      <entry key="M5" value="4.8046544953563926" />
+      <entry key="M10" value="15.721932076472626" />
+      <entry key="M15" value="28.23154200318175" />
+      <entry key="M30" value="55.785538146698684" />
+      <entry key="H1" value="81.26433082662248" />
+      <entry key="H2" value="99.2043959321246" />
+      <entry key="H4" value="112.84864997491678" />
+      <entry key="D1" value="235.28255454038845" />
+      <entry key="W1" value="523.2718012170345" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.002879432143451046" />
-      <entry key="MS500" value="0.3214687337656325" />
-      <entry key="S2" value="1.2583710730053344" />
-      <entry key="S5" value="2.0423377254956643" />
-      <entry key="S10" value="2.460047356458451" />
-      <entry key="S30" value="2.80418930531039" />
-      <entry key="S60" value="2.899956398405849" />
-      <entry key="M2" value="2.9499926394465827" />
-      <entry key="M5" value="3.3035606620418063" />
-      <entry key="M10" value="7.0208604410481135" />
-      <entry key="M15" value="13.188296794801643" />
-      <entry key="M30" value="31.495037288206625" />
-      <entry key="H1" value="64.08517974127963" />
-      <entry key="H2" value="115.72148976899705" />
-      <entry key="H4" value="185.36582768716" />
-      <entry key="D1" value="714.9815596079956" />
-      <entry key="W1" value="1926.3867648914304" />
+      <entry key="MS100" value="8.081962782821949E-18" />
+      <entry key="MS500" value="3.815077539903891E-4" />
+      <entry key="S2" value="0.1397577313857926" />
+      <entry key="S5" value="0.45519248290786757" />
+      <entry key="S10" value="0.681494929496978" />
+      <entry key="S30" value="1.1306293437949801" />
+      <entry key="S60" value="2.3475438565303395" />
+      <entry key="M2" value="5.998088060076251" />
+      <entry key="M5" value="17.336312935497467" />
+      <entry key="M10" value="44.15182157588465" />
+      <entry key="M15" value="72.92262181441237" />
+      <entry key="M30" value="134.84170231695157" />
+      <entry key="H1" value="191.4956643819001" />
+      <entry key="H2" value="231.59540116972332" />
+      <entry key="H4" value="265.93367710225294" />
+      <entry key="D1" value="746.9775084970909" />
+      <entry key="W1" value="2225.1917092608246" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -525,11 +506,17 @@
       <recent name="$PROJECT_DIR$/main" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/shared_components/flight_com" />
       <recent name="$PROJECT_DIR$/components" />
       <recent name="$PROJECT_DIR$/shared_components" />
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="$USER_HOME$/.espressif/v6.0.1/esp-idf/tools/idf.py">
       <method v="2" />
     </configuration>
@@ -1613,7 +1600,7 @@
       <workItem from="1779230289419" duration="23262000" />
       <workItem from="1779809879631" duration="40557000" />
       <workItem from="1780419322646" duration="2383000" />
-      <workItem from="1780438195032" duration="25898000" />
+      <workItem from="1780438195032" duration="54687000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />
@@ -1655,7 +1642,23 @@
       <option name="project" value="LOCAL" />
       <updated>1779436029563</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="fix lora communication bugs">
+      <option name="closed" value="true" />
+      <created>1780585089138</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1780585089138</updated>
+    </task>
+    <task id="LOCAL-00007" summary="add sdk config">
+      <option name="closed" value="true" />
+      <created>1780585117743</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1780585117743</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1684,7 +1687,9 @@
     <MESSAGE value="fix issues with esp idf 6.0" />
     <MESSAGE value="fix unit tests with native runtime" />
     <MESSAGE value="get remote control switch/proxy working, prepare flight communication from esp to arduino" />
-    <option name="LAST_COMMIT_MESSAGE" value="get remote control switch/proxy working, prepare flight communication from esp to arduino" />
+    <MESSAGE value="fix lora communication bugs" />
+    <MESSAGE value="add sdk config" />
+    <option name="LAST_COMMIT_MESSAGE" value="add sdk config" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

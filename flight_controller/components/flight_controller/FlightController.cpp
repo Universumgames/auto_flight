@@ -16,6 +16,7 @@
 #include "freertos/task.h"
 #include <variant>
 
+#include "geo_helper.hpp"
 #include "route_planner.hpp"
 #include "MotorComMaster.hpp"
 
@@ -58,6 +59,11 @@ void FlightControllerClass::init() {
     LoRa_Communication.registerReceivePacketCallback([this](const LoRaPacket packet) {
         communicationCallback(packet);
     });
+
+    FlightStorage.registerDataChangeCallback([]() {
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route changed, sending update with size %d", FlightStorage.getPlannedRoute().size());
+        Flight_Communication::sendPlannedRoute();
+    }, FlightStorageClass::DataUpdateType::ROUTE);
 }
 
 void FlightControllerClass::flightTaskEntry(void* param) {
@@ -110,8 +116,11 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
         ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Received invalid packet");
         return; // invalid packet, ignore
     }
-    auto basePacket = (BasePacket*)&decodedPacket;
-    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type, basePacket->timestamp);
+    auto basePacket = decodedPacket.get();
+
+    assert(((BasePacket*)packet.payload)->type == basePacket->type); // sanity check, should always hold
+    ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type,
+             basePacket->timestamp);
 
     switch (basePacket->type) {
     case PacketType::SENSOR_UPDATE: {
@@ -151,7 +160,11 @@ Coordinate FlightControllerClass::getNextWaypoint() {
 
 void FlightControllerClass::recalculateRoute() {
     plannedAreaChanged = false;
-    auto plannedRoute = RoutePlanner.planRoute(FlightStorage.getPlannedArea(), 20, 40, 0.2);
+    if (FlightStorage.getPlannedArea().empty()) {
+        ESP_LOGE(TAG_FLIGHT_CONTROLLER, "Cannot recalculate route: planned area is empty");
+        return;
+    }
+    auto plannedRoute = RoutePlanner.planRoute(FlightStorage.getPlannedArea(), 60, metersToLatitudeDegree(40), 0.2);
     FlightStorage.updatePlannedRoute(plannedRoute);
     nextWaypointIndex = 0;
     Flight_Communication::sendPlannedRoute();

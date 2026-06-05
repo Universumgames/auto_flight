@@ -24,3 +24,8 @@ float distanceInMeters(const Coordinate coordA, const Coordinate coordB) {
     double d = R * c;
     return d * 1000.0; // meters
 }
+
+float metersToLatitudeDegree(float meters) {
+    // 1 degree of latitude is approximately 111.32 km
+    return meters / 111320.0f;
+}

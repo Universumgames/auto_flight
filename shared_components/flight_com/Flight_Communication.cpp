@@ -7,6 +7,8 @@
 #ifdef FLIGHT_DEVICE_TYPE_PLANE
 #include "MotorComMaster.hpp"
 #endif
+#include <iostream>
+
 #include "Gyroscope.hpp"
 
 constexpr const char* TAG_FLIGHT_COMMUNICATION = "Flight_Communication";
@@ -86,8 +88,17 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
     }
     default:
         ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Unknown packet type: %02x", static_cast<int>(type));
+        for (int i = 0; i < len; i++) {
+            std::cout << std::hex << data[i];
+        }
+        std::cout << std::dec << std::endl;
         return nullptr;
     }
+}
+
+void Flight_Communication::sendPacket(const BasePacket& packet) {
+    auto data = packet.serialize();
+    LoRa_Communication.sendData(data.first.get(), data.second);
 }
 
 void Flight_Communication::sendPosition() {
@@ -96,8 +107,7 @@ void Flight_Communication::sendPosition() {
         GPS_Reader.getGPSLatestTime(),
         position
     };
-
-    LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&packet), sizeof(packet));
+    sendPacket(packet);
 }
 
 void Flight_Communication::sendSensorUpdate() {
@@ -107,7 +117,7 @@ void Flight_Communication::sendSensorUpdate() {
         pressure,
     };
 
-    LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&packet), sizeof(packet));
+    sendPacket(packet);
 }
 
 #ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
@@ -117,68 +127,35 @@ void Flight_Communication::requestRouteHistory() {
         PacketType::ROUTE_HISTORY_REQUEST
     };
 
-    LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&packet), sizeof(packet));
+    sendPacket(packet);
 }
 
 void Flight_Communication::sendPlannedArea(const std::vector<Coordinate>& shape) {
-    BasePacket packet = {
+    PlannedAreaPacket packet = {
         GPS_Reader.getGPSLatestTime(),
-        PacketType::PLANNED_AREA
+        shape
     };
-    size_t length = shape.size();
-    size_t dataSize = sizeof(BasePacket) + sizeof(int) + shape.size() * sizeof(Coordinate);
-    auto data = new uint8_t[dataSize];
-    uint8_t dataOffset = 0;
-    memccpy(data, &packet, 1, sizeof(BasePacket));
-    dataOffset += sizeof(BasePacket);
-    memcpy(data + dataOffset, &length, sizeof(size_t));
-    dataOffset += sizeof(size_t);
-    memcpy(data + dataOffset, shape.data(), sizeof(Coordinate) * shape.size());
-
-    LoRa_Communication.sendData(data, dataSize);
-    delete[] data;
+    sendPacket(packet);
 }
 #endif
 
 #ifdef FLIGHT_DEVICE_TYPE_PLANE
 void Flight_Communication::sendRouteHistory() {
     FlightRoute flightRoute = FlightStorage.getFlightRoute();
-    size_t length = flightRoute.size();
-    size_t dataSize = sizeof(BasePacket) + sizeof(int) + flightRoute.size() * sizeof(Coordinate);
-    auto data = new uint8_t[dataSize];
-    BasePacket packet = {
+    FlightHistoryPacket packet = {
         GPS_Reader.getGPSLatestTime(),
-        PacketType::ROUTE_HISTORY
+        flightRoute
     };
-    uint8_t dataOffset = 0;
-    memccpy(data, &packet, 1, sizeof(BasePacket));
-    dataOffset += sizeof(BasePacket);
-    memcpy(data + dataOffset, &length, sizeof(size_t));
-    dataOffset += sizeof(size_t);
-    memcpy(data + dataOffset, flightRoute.data(), sizeof(Coordinate) * flightRoute.size());
-
-    LoRa_Communication.sendData(data, dataSize);
-    delete[] data;
+    sendPacket(packet);
 }
 
 void Flight_Communication::sendPlannedRoute() {
     PlannedRoute plannedRoute = FlightStorage.getPlannedRoute();
-    size_t length = plannedRoute.size();
-    size_t dataSize = sizeof(BasePacket) + sizeof(int) + plannedRoute.size() * sizeof(Coordinate);
-    auto data = new uint8_t[dataSize];
-    BasePacket packet = {
+    PlannedRoutePacket packet = {
         GPS_Reader.getGPSLatestTime(),
-        PacketType::PLANNED_ROUTE
+        plannedRoute
     };
-    uint8_t dataOffset = 0;
-    memccpy(data, &packet, 1, sizeof(BasePacket));
-    dataOffset += sizeof(BasePacket);
-    memcpy(data + dataOffset, &length, sizeof(size_t));
-    dataOffset += sizeof(size_t);
-    memcpy(data + dataOffset, plannedRoute.data(), sizeof(Coordinate) * plannedRoute.size());
-
-    LoRa_Communication.sendData(data, dataSize);
-    delete[] data;
+    sendPacket(packet);
 }
 
 void Flight_Communication::sendComponentStatus() {
@@ -192,6 +169,6 @@ void Flight_Communication::sendComponentStatus() {
     status.gyroscope = FlightStorage.getPlaneGyroscopeConnectionState();
     status.motorControl = FlightStorage.getPlaneMotorControlConnectionState();
 
-    LoRa_Communication.sendData(reinterpret_cast<const uint8_t*>(&status), sizeof(ComponentStatus));
+    sendPacket(status);
 }
 #endif

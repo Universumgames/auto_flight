@@ -14,11 +14,6 @@
 #include "freertos/task.h"
 #include "sdkconfig.h"
 
-constexpr size_t LORA_MAX_PACKET_SIZE = 255;
-
-constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
-constexpr TickType_t LORA_PAYLOAD_TIMEOUT = pdMS_TO_TICKS(5000);
-
 void LoRa_CommunicationClass::receiveTaskEntry(void* param) {
     auto* instance = static_cast<LoRa_CommunicationClass*>(param);
     instance->receiveTaskLoop();
@@ -40,7 +35,7 @@ void LoRa_CommunicationClass::sendAckPacketInternal(uint8_t messageId) {
 }
 
 void LoRa_CommunicationClass::processPacket(const LoRa_Packet_Internal& receivedHeader) {
-    ESP_LOGI(TAG_LORA, "Received packet: %s", receivedHeader.toString().c_str());
+    ESP_LOGD(TAG_LORA, "Received packet: %s", receivedHeader.toString().c_str());
 
     if (receivedHeader.type == PacketType::ACK) {
         WITH_MUTEX(receivedPacketsMutex) {
@@ -135,6 +130,7 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
                     processDataPacket(receivedHeader, packetBuffer + sizeof(LoRa_Packet_Internal),
                                       packetSize - sizeof(LoRa_Packet_Internal));
                 }
+                updateLastSendTime();
             }
             else {
                 ESP_LOGE(TAG_LORA, "Received packet without header or malformed packet");

@@ -9,7 +9,7 @@ onMounted(() => {
 })
 
 const allConnected = computed(() => {
-  return connectionItems.value.every(item => isConnected(item.status))
+  return connectionItems.value.every((item) => isConnected(item.status))
 })
 </script>
 
@@ -87,7 +87,7 @@ const allConnected = computed(() => {
           </div>
         </div>
       </li>
-      <NextStepBtn @next="$router.push('/area')" :disabled="!allConnected" />
+      <NextStepBtn @next="$router.push({ name: 'AreaPlanner' })" :disabled="!allConnected" />
     </ul>
   </section>
 </template>

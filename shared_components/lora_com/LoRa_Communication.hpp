@@ -62,6 +62,15 @@ private:
         std::unique_ptr<uint8_t[]> payload;
     };
 
+    static constexpr size_t LORA_MAX_PACKET_SIZE = 255;
+    const char* TAG_LORA = "LoRa_Communication";
+
+    static constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
+    /// ACK timeout in seconds
+    static constexpr time_t LORA_ACK_TIMEOUT = 2;
+    static constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second
+    static constexpr int LORA_MAX_SEND_RETRIES = 3;
+
 public:
     ~LoRa_CommunicationClass() = delete;
 
@@ -87,16 +96,7 @@ public:
      * @param data Pointer to the data to be sent
      * @param size Number of bytes to send
      */
-    void sendData(const uint8_t* data, uint8_t size);
-
-    /**
-     * Receives data from the received packets queue into the provided buffer
-     * @deprecated This method is deprecated in favor of using registerReceivePacketCallback() for more efficient and flexible packet processing. This method may block if no packets are available and does not support concurrent calls.
-     * @param buffer Pointer to the destination buffer
-     * @param size Maximum number of bytes to read into the buffer
-     * @return Number of bytes actually received, -1 when buffer size too small, 0 on other error
-     */
-    [[deprecated]] int receiveData(uint8_t* buffer, int size);
+    void sendData(const uint8_t* data, size_t size);
 
     /**
      * Checks if there is received data waiting in the queue
@@ -222,5 +222,3 @@ private:
 };
 
 extern LoRa_CommunicationClass& LoRa_Communication;
-
-extern const char* TAG_LORA;

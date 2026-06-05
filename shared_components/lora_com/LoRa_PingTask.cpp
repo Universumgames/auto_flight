@@ -6,9 +6,6 @@
 #include "freertos/task.h"
 #include "sdkconfig.h"
 
-constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000);  // Check every 1 second
-
-
 void LoRa_CommunicationClass::pingTaskEntry(void* param) {
     auto* instance = static_cast<LoRa_CommunicationClass*>(param);
     instance->pingTaskLoop();

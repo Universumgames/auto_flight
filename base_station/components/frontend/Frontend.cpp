@@ -233,24 +233,41 @@ void FrontendHandlerClass::registerAPISockets() {
         .uri = "/api/area",
         .method = HTTP_POST,
         .handler = [](httpd_req_t* req) -> esp_err_t {
-            auto body = req->content_len > 0 ? std::make_unique<char[]>(req->content_len) : nullptr;
+            auto strLen = req->content_len + 1;
+            auto body = req->content_len > 0 ? std::make_unique<char[]>(strLen) : nullptr;
             int returnNr = -1;
             if (body) {
-                int ret = httpd_req_recv(req, body.get(), req->content_len);
+                int ret = httpd_req_recv(req, body.get(), strLen);
                 if (ret <= 0) {
                     return ESP_FAIL;
                 }
+                ESP_LOGI(TAG_FRONTEND, "Received body: %d %s", req->content_len, body.get());
                 auto shape = nlohmann::json::parse(body.get()).get<AreaDefinePacket>().shape;
                 body.release();
                 FlightStorage.updatePlannedArea(shape);
                 returnNr = shape.size();
             }
             auto retStr = std::to_string(returnNr);
-            return httpd_resp_send(req, retStr.c_str(), retStr.size() + 1);
+            return httpd_resp_send(req, retStr.c_str(), retStr.size());
         }
     };
 
     ESP_ERROR_CHECK(httpd_register_uri_handler(httpd_handle, &area_uri));
+
+    static httpd_uri_t area_get_uri = {
+        .uri = "/api/area",
+        .method = HTTP_GET,
+        .handler = [](httpd_req_t* req) -> esp_err_t {
+            AreaDefinePacket areaPacket = {
+                .shape = FlightStorage.getPlannedArea()
+            };
+            nlohmann::json json = areaPacket;
+            std::string jsonString = json.dump();
+            return httpd_resp_send(req, jsonString.c_str(), jsonString.size());
+        }
+    };
+
+    ESP_ERROR_CHECK(httpd_register_uri_handler(httpd_handle, &area_get_uri));
 
     ESP_LOGI(TAG_FRONTEND, "Registering /api/route handler");
     static httpd_uri_t planned_route_uri = {
@@ -258,9 +275,12 @@ void FrontendHandlerClass::registerAPISockets() {
         .method = HTTP_GET,
         .handler = [](httpd_req_t* req) -> esp_err_t {
             PlannedRoute plannedRoute = FlightStorage.getPlannedRoute();
-            nlohmann::json json = plannedRoute;
+            auto pRPacket = PlannedRoutePacket{
+                .route = plannedRoute,
+            };
+            nlohmann::json json = pRPacket;
             std::string jsonString = json.dump();
-            return httpd_resp_send(req, jsonString.c_str(), jsonString.size() + 1);
+            return httpd_resp_send(req, jsonString.c_str(), jsonString.size());
         }
     };
 

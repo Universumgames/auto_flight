@@ -29,8 +29,13 @@ const router = createRouter({
     },
     {
       path: '/area',
-      name: 'Area Planner',
+      name: 'AreaPlanner',
       component: () => import('../views/AreaPlanner.vue'),
+    },
+    {
+      path:"/route",
+      name: "RoutePreview",
+      component: () => import("../views/RoutePreviewView.vue")
     }
   ],
 })

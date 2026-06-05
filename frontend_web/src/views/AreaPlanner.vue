@@ -5,12 +5,30 @@ import { ConfigurationState, store } from '@/stores/store.ts'
 import type { Coordinate } from '@/types/coordinates.ts'
 import NextStepBtn from '@/components/NextStepBtn.vue'
 import IconLoader from '@/components/icons/IconLoader.vue'
+import { useRouter } from 'vue-router'
 
 const polygon = ref<Coordinate[] | null>(null)
 const loading = ref(false)
 
-onMounted(() => {
+const router = useRouter()
+
+const retrievePolygon = async (): Promise<Coordinate[] | null> => {
+  const response = await fetch("/api/area", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+  if(!response.ok) {
+    return null
+  }
+  const json = await response.json()
+  return json.shape
+}
+
+onMounted(async () => {
   store.configurationState = ConfigurationState.AREA_SELECTION
+  polygon.value = await retrievePolygon();
 })
 
 const submitPolygon = async () => {
@@ -27,13 +45,21 @@ const submitPolygon = async () => {
 
     if (!response.ok) {
       const text = await response.text().catch(() => '')
-      throw new Error(`Failed to submit polygon - ${response.status} ${response.statusText} ${text}`)
+      throw new Error(
+        `Failed to submit polygon - ${response.status} ${response.statusText} ${text}`,
+      )
     }
 
-    const data = await response.json().catch(() => null)
-    console.log('Polygon submitted successfully:', data)
-    // only change the configuration state on successful (2xx) response
-    store.configurationState = ConfigurationState.ROUTE_APPROVAL
+    const data = await response.text().catch(() => null)
+    const countResponse = parseInt(data ?? '', 10)
+    if (countResponse == polygon.value.length) {
+      console.log('Polygon submitted successfully:', data)
+      // only change the configuration state on successful (2xx) response
+      store.configurationState = ConfigurationState.ROUTE_APPROVAL
+      await router.push({name: 'RoutePreview'})
+    }else{
+      console.error(`Unexpected response from server: expected ${polygon.value.length} but got ${data}`)
+    }
   } catch (error) {
     console.error('Error submitting polygon:', error)
   } finally {
@@ -55,7 +81,7 @@ const submitPolygon = async () => {
       :plane-position="store.planePosition"
     />
 
-    <NextStepBtn :disabled="!polygon || loading" @next="submitPolygon"/>
+    <NextStepBtn :disabled="!polygon || loading" @next="submitPolygon" />
 
     <!-- Loading overlay shown while waiting for API response -->
     <div v-if="loading" class="route-planner__overlay" aria-hidden="true">
@@ -119,7 +145,7 @@ const submitPolygon = async () => {
 }
 
 .route-planner__spinner {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   padding: 1rem;
   border-radius: 12px;
   display: inline-flex;

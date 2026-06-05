@@ -28,4 +28,7 @@ public:
     static std::unique_ptr<BasePacket> decodePacket(const uint8_t* data, std::size_t len);
     static std::unique_ptr<BasePacket> decodePacket(const LoRaPacket& packet);
 
+private:
+    static void sendPacket(const BasePacket& packet);
+
 };

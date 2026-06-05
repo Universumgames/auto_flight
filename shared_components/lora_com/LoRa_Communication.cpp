@@ -14,16 +14,6 @@
 #include "EspHal.h"
 #include "mutex_helper.hpp"
 
-const char* TAG_LORA = "LoRa_Communication";
-constexpr size_t LORA_MAX_PACKET_SIZE = 255;
-
-constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
-/// ACK timeout in seconds
-constexpr time_t LORA_ACK_TIMEOUT = 2;
-constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second
-constexpr TickType_t LORA_PAYLOAD_TIMEOUT = pdMS_TO_TICKS(3000);
-constexpr int LORA_MAX_SEND_RETRIES = 3;
-
 static LoRa_CommunicationClass* lo_ra_communication = nullptr;
 
 LoRa_CommunicationClass& LoRa_Communication = LoRa_CommunicationClass::getInstance();
@@ -205,47 +195,21 @@ bool LoRa_CommunicationClass::hasReceivedData() const {
     return hasData;
 }
 
-int LoRa_CommunicationClass::receiveData(uint8_t* buffer, int size) {
-    if (buffer == nullptr || size <= 0) {
-        return 0;
-    }
+void LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
 
-    ReceivedPacket packet = {};
-    bool hasPacket = false;
-    WITH_MUTEX(receivedPacketsMutex) {
-        if (!receivedPackets.empty()) {
-            packet = std::move(receivedPackets.front());
-            receivedPackets.erase(receivedPackets.begin());
-            hasPacket = true;
-        }
+    if (data == nullptr || size == 0) {
+        ESP_LOGE(TAG_LORA, "Invalid arguments passed");
     }
-
-    if (!hasPacket || packet.header.type != PacketType::HEADER) {
-        return 0;
+    if (size > UINT8_MAX) {
+        ESP_LOGE(TAG_LORA, "Data size exceeds maximum payload size: %zu > %d", size, UINT8_MAX);
     }
-
-    int copyLen = std::min(size, static_cast<int>(packet.header.payloadLength));
-    // if available size is smaller than packet siz, throw error
-    if (packet.header.payloadLength < size) {
-        WITH_MUTEX(receivedPacketsMutex) {
-            receivedPackets.emplace_back(std::move(packet));
-        }
-        return -1;
-    }
-    if (copyLen > 0 && packet.payload != nullptr) {
-        std::memcpy(buffer, packet.payload.get(), static_cast<size_t>(copyLen));
-    }
-    return copyLen;
-}
-
-void LoRa_CommunicationClass::sendData(const uint8_t* data, uint8_t size) {
     LoRa_Packet_Internal packetHeader = {};
     packetHeader.type = PacketType::HEADER;
     // generate a non-zero message id
     uint8_t mid = nextMessageId.fetch_add(1);
     if (mid == 0) mid = nextMessageId.fetch_add(1);
     packetHeader.messageId = mid;
-    packetHeader.payloadLength = size; // size of next data packet
+    packetHeader.payloadLength = size; // size of data packet
     sendRawPacket(packetHeader, data, true);
 }
 
@@ -296,6 +260,7 @@ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, 
         return false;
     };
 
+
     size_t sendSize = sizeof(LoRa_Packet_Internal) + packet.payloadLength;
     auto sendBuffer = std::make_unique<uint8_t[]>(sendSize);
     memcpy(sendBuffer.get(), &packet, sizeof(LoRa_Packet_Internal));
@@ -304,7 +269,7 @@ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, 
     }
 
     // Send header first
-    ESP_LOGI(TAG_LORA, "Sending packet: %s", packet.toString().c_str());
+    ESP_LOGD(TAG_LORA, "Sending packet: %s", packet.toString().c_str());
     lastSentPacket = packet;
     auto success = sendBufferWithRetries(sendBuffer, sendSize, packet.messageId);
     if (!success) {
