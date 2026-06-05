@@ -183,20 +183,12 @@ float LoRa_CommunicationClass::getLastPacketSNR() const {
     return (loraRadio == nullptr) ? 0.0f : loraRadio->getSNR();
 }
 
-bool LoRa_CommunicationClass::hasReceivedData() const {
-    bool hasData = false;
-    WITH_MUTEX(receivedPacketsMutex) {
-        hasData = !receivedPackets.empty();
-    }
-    return hasData;
-}
-
 void LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
 
     if (data == nullptr || size == 0) {
         ESP_LOGE(TAG_LORA, "Invalid arguments passed");
     }
-    if (size > UINT8_MAX) {
+    if (size > LORA_MAX_DATA_LENGTH) {
         ESP_LOGE(TAG_LORA, "Data size exceeds maximum payload size: %zu > %d", size, UINT8_MAX);
     }
     LoRa_Packet_Internal packetHeader = {};
@@ -212,13 +204,13 @@ void LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
 bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck) {
     // Helper: wait for ACK with timeout
     auto waitForAckId = [&](uint8_t msgId, time_t timeout) -> bool {
-        vTaskDelay(pdMS_TO_TICKS(10)); // small initial
+        vTaskDelay(pdMS_TO_TICKS(20)); // small initial
         time_t start = time(nullptr);
         while ((time(nullptr) - start) < timeout) {
             auto found = false;
             WITH_MUTEX(ackMutex) {
                 found = std::ranges::contains(receivedAcks, msgId);
-                erase_if(receivedAcks, [msgId](const uint8_t& id) { return id > msgId + 10 || id == msgId; });
+                erase_if(receivedAcks, [msgId](const uint8_t& id) { return id == msgId; });
             }
             if (found) {
                 return true;
@@ -242,6 +234,7 @@ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, 
                 sending = true;
                 // transmit is blocking; ignore return value here but could be checked for errors
                 loraRadio->transmit(buf.get(), len);
+                loraRadio->finishTransmit();
                 // re-enter receive mode after transmit
                 loraRadio->startReceive();
                 sending = false;

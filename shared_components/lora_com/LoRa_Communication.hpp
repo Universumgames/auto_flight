@@ -63,6 +63,7 @@ private:
     };
 
     static constexpr size_t LORA_MAX_PACKET_SIZE = 255;
+    static constexpr size_t LORA_MAX_DATA_LENGTH = LORA_MAX_PACKET_SIZE - sizeof(LoRa_Packet_Internal);
     const char* TAG_LORA = "LoRa_Communication";
 
     static constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
@@ -97,13 +98,6 @@ public:
      * @param size Number of bytes to send
      */
     void sendData(const uint8_t* data, size_t size);
-
-    /**
-     * Checks if there is received data waiting in the queue
-     * @deprecated This method is deprecated in favor of using registerReceivePacketCallback() for more efficient and flexible packet processing. This method does not support concurrent calls and may not reflect real-time state if called from multiple contexts.
-     * @return true if data is available, false otherwise
-     */
-    [[nodiscard]] [[deprecated]] bool hasReceivedData() const;
 
     /**
      * Gets the RSSI (Received Signal Strength Indicator) of the last received packet
@@ -215,7 +209,7 @@ private:
     // Whether a DIO0 ISR has been installed for the radio (used by the receive task)
     bool dio0IsrInstalled = false;
 
-    bool sending = false;\
+    bool sending = false;
     LoRa_Packet_Internal lastSentPacket;
 
     SX1262* loraRadio = nullptr;

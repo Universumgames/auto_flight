@@ -25,13 +25,7 @@ void LoRa_CommunicationClass::sendAckPacketInternal(uint8_t messageId) {
     ackPacket.messageId = messageId;
     ackPacket.payloadLength = 0;
 
-    lastSentPacket = ackPacket;
-    // transmit the ACK and return the radio to receive mode
-    sending = true;
-    loraRadio->transmit(reinterpret_cast<uint8_t*>(&ackPacket), sizeof(ackPacket));
-    loraRadio->startReceive();
-    updateLastSendTime();
-    sending = false;
+    sendRawPacket(ackPacket, nullptr, false);
 }
 
 void LoRa_CommunicationClass::processPacket(const LoRa_Packet_Internal& receivedHeader) {
@@ -44,7 +38,8 @@ void LoRa_CommunicationClass::processPacket(const LoRa_Packet_Internal& received
     }
     else if (receivedHeader.type == PacketType::PING) {
         sendAckPacketInternal(receivedHeader.messageId);
-    }else {
+    }
+    else {
         ESP_LOGW(TAG_LORA, "Received packet with unsupported type: %d", static_cast<int>(receivedHeader.type));
     }
     updateConnectionState(ConnectionState::CONNECTED);
@@ -88,7 +83,8 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
             ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
             ESP_LOGD(TAG_LORA, "DIO0 interrupt received, checking for packet...");
         }
-        bool wasSendingOnIsr = sending;
+        if (sending)
+            continue;
 
         int packetSize = 0;
         WITH_MUTEX(radioMutex) {
@@ -108,34 +104,32 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
                     packetSize = 0;
                 }
             }
+        }
 
-            if (wasSendingOnIsr) {
+        if (packetSize >= static_cast<int>(sizeof(LoRa_Packet_Internal))) {
+            LoRa_Packet_Internal receivedHeader{};
+            std::memcpy(&receivedHeader, packetBuffer, sizeof(LoRa_Packet_Internal));
+
+            if (lastSentPacket == receivedHeader) {
+                ESP_LOGW(TAG_LORA, "Received own packet (type=%d, msgId=%d), ignoring", receivedHeader.type,
+                         receivedHeader.messageId);
                 continue;
             }
 
-            if (packetSize >= static_cast<int>(sizeof(LoRa_Packet_Internal))) {
-                LoRa_Packet_Internal receivedHeader{};
-                std::memcpy(&receivedHeader, packetBuffer, sizeof(LoRa_Packet_Internal));
-
-                if (lastSentPacket == receivedHeader) {
-                    ESP_LOGD(TAG_LORA, "Received own packet (type=%d, msgId=%d), ignoring", receivedHeader.type, receivedHeader.messageId);
-                    continue;
-                }
-
-                updateConnectionState(ConnectionState::CONNECTED);
-                if (receivedHeader.type == PacketType::ACK || receivedHeader.type == PacketType::PING) {
-                    processPacket(receivedHeader);
-                }
-                else {
-                    processDataPacket(receivedHeader, packetBuffer + sizeof(LoRa_Packet_Internal),
-                                      packetSize - sizeof(LoRa_Packet_Internal));
-                }
-                updateLastSendTime();
+            updateConnectionState(ConnectionState::CONNECTED);
+            if (receivedHeader.type == PacketType::ACK || receivedHeader.type == PacketType::PING) {
+                processPacket(receivedHeader);
             }
             else {
-                ESP_LOGE(TAG_LORA, "Received packet without header or malformed packet");
+                processDataPacket(receivedHeader, packetBuffer + sizeof(LoRa_Packet_Internal),
+                                  packetSize - sizeof(LoRa_Packet_Internal));
             }
+            updateLastSendTime();
         }
+        else {
+            ESP_LOGE(TAG_LORA, "Received packet without header or malformed packet");
+        }
+
         vTaskDelay(LORA_RX_POLL_DELAY);
     }
 }
