@@ -3,9 +3,9 @@
 #include "freertos/task.h"
 
 #define WITH_MUTEX_CUSTOM_DELAY(mutex, delay)        \
-for (bool _once = (xSemaphoreTake((mutex), delay) == pdTRUE); \
-_once; \
-_once = false, xSemaphoreGive((mutex)))
+for (bool _once##mutex = (xSemaphoreTake((mutex), delay) == pdTRUE); \
+_once##mutex; \
+_once##mutex = false, xSemaphoreGive((mutex)))
 
 #define WITH_MUTEX(mutex) \
 WITH_MUTEX_CUSTOM_DELAY(mutex, portMAX_DELAY)

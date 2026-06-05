@@ -136,6 +136,8 @@ private:
      */
     std::vector<uint8_t> decryptData(const uint8_t* encryptedData, int encryptedSize);
 
+    static void dio0_isr_handler();
+
     /**
      * FreeRTOS task entry point for the receive task (static wrapper)
      * @param param Pointer to the LoRa_CommunicationClass instance

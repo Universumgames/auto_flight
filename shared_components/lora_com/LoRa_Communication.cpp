@@ -25,13 +25,9 @@ LoRa_CommunicationClass* LoRa_CommunicationClass::getInstancePtr() {
     return lo_ra_communication;
 }
 
-static void IRAM_ATTR dio0_isr_handler(void* arg) {
-    // arg is expected to be a TaskHandle_t passed during registration
-    if (arg == nullptr) return;
-    auto task = static_cast<TaskHandle_t>(arg);
-
+void IRAM_ATTR LoRa_CommunicationClass::dio0_isr_handler() {
     BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    vTaskNotifyGiveFromISR(task, &xHigherPriorityTaskWoken);
+    vTaskNotifyGiveFromISR(getInstance().receiveTaskHandle, &xHigherPriorityTaskWoken);
     if (xHigherPriorityTaskWoken == pdTRUE) {
         portYIELD_FROM_ISR();
     }
@@ -128,7 +124,7 @@ void LoRa_CommunicationClass::begin() {
         gpio_config(&io_conf);
 
         if (gpio_install_isr_service(0) == ESP_OK) {
-            if (gpio_isr_handler_add((gpio_num_t)CONFIG_LORA_DIO0_PIN, dio0_isr_handler, (void*)receiveTaskHandle) ==
+            if (gpio_isr_handler_add((gpio_num_t)CONFIG_LORA_DIO0_PIN, (void (*)(void*))dio0_isr_handler, (void*)receiveTaskHandle) ==
                 ESP_OK) {
                 this->dio0IsrInstalled = true;
                 ESP_LOGI(TAG_LORA, "DIO0 ISR installed on pin %d", CONFIG_LORA_DIO0_PIN);
