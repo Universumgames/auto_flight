@@ -33,9 +33,9 @@ public:
          * @param value the value
          * @return true on success, false otherwise
          */
-    bool sendCommand(ControlCommand command, uint8_t value);
+    bool sendCommand(ControlCommand command, int8_t value);
 
-    bool sendFullControlPacket(uint8_t aileronDiff, uint8_t pitch, uint8_t thrust, uint8_t rudder);
+    bool sendFullControlPacket(int8_t aileronDiff, int8_t pitch, int8_t thrust, int8_t rudder);
 
 private:
 
@@ -46,7 +46,7 @@ private:
     i2c_bus_device_handle_t devHandle = nullptr;
 #endif
 
-    std::unordered_map<ControlCommand, uint8_t> lastSentValues;
+    std::unordered_map<ControlCommand, int8_t> lastSentValues;
 };
 
 extern MotorComMasterClass& MotorComMaster;

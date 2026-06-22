@@ -41,6 +41,8 @@ public:
         CONNECTION,
         /// Route changes
         ROUTE,
+        /// Flight History/route changes
+        HISTORY,
         /// area changes
         AREA,
         /// Sensor changes
@@ -53,6 +55,7 @@ public:
 private:
     FLIGHT_VARIABLE(plannedRoute, PlannedRoute, PlannedRoute, PlannedRoute{})
     FLIGHT_VARIABLE(flightRoute, FlightRoute, FlightRoute, FlightRoute{})
+    void addPointToFlightRoute(const Coordinate &point);
 
     FLIGHT_VARIABLE(basePosition, BasePosition, Coordinate, COORDINATE_INIT_INVALID())
     FLIGHT_VARIABLE(planePosition, PlanePosition, Coordinate, COORDINATE_INIT_INVALID())
@@ -79,6 +82,7 @@ private:
     std::unordered_map<DataUpdateType,std::vector<std::function<void()>>> dataChangeCallbacks;
 
     void callDataChangeCallbacks(DataUpdateType type);
+    static void callDataChangeCallbacksTaskEntry(void* args);
 
     static void callbackLoopEntry(void* param);
 

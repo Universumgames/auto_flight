@@ -98,6 +98,7 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
 
 void Flight_Communication::sendPacket(const BasePacket& packet) {
     auto data = packet.serialize();
+    ESP_LOGI("test", "sending packet 0x%02x", packet.type);
     LoRa_Communication.sendData(data.first.get(), data.second);
 }
 

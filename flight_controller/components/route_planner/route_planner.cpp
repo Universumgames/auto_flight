@@ -3,7 +3,7 @@
 #include <cmath>
 
 #include "esp_log.h"
-#include "geo_helper.hpp"
+#include "../../shared_components/flight_data/geo_helper.hpp"
 #include "types.hpp"
 
 static RoutePlannerClass* route_planner;
@@ -67,8 +67,8 @@ std::vector<std::pair<Coordinate, Coordinate>> RoutePlannerClass::generateSimple
     }
     Coordinate leftMost{}, rightMost{}, topMost{}, bottomMost{};
     getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
-    Coordinate topLeft = {leftMost.longitude, topMost.latitude};
-    Coordinate bottomRight = {rightMost.longitude, bottomMost.latitude};
+    Coordinate topLeft = {.longitude = leftMost.longitude, .latitude = topMost.latitude};
+    Coordinate bottomRight = {.longitude = rightMost.longitude, .latitude = bottomMost.latitude};
 
     ESP_LOGI("RoutePlanner", "Shape bounds: leftMost=(%.6f, %.6f), rightMost=(%.6f, %.6f), topMost=(%.6f, %.6f), bottomMost=(%.6f, %.6f)",
              leftMost.longitude, leftMost.latitude, rightMost.longitude, rightMost.latitude,
@@ -117,7 +117,6 @@ Point2d RoutePlannerClass::intersection(const Point2d& a, const Point2d& b, cons
     }
     return {NAN, NAN};
 }
-
 
 void RoutePlannerClass::getMostOuterPoints(const std::vector<Coordinate>& shape, Coordinate& leftMost,
                                            Coordinate& rightMost, Coordinate& topMost, Coordinate& bottomMost) {
@@ -208,8 +207,8 @@ std::vector<Coordinate> RoutePlannerClass::planRoute(const std::vector<Coordinat
         for (int i = 1; i < interpolationPointCount; i++) {
             float t = (float)i / (float)interpolationPointCount;
             Coordinate interpolatedPoint = {
-                lastPoint.latitude + t * (point.latitude - lastPoint.latitude),
-                lastPoint.longitude + t * (point.longitude - lastPoint.longitude)
+                .longitude = lastPoint.longitude + t * (point.longitude - lastPoint.longitude),
+                .latitude = lastPoint.latitude + t * (point.latitude - lastPoint.latitude)
             };
             path.push_back(interpolatedPoint);
         }

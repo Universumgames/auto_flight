@@ -137,7 +137,7 @@ void GPS_ReaderClass::handleReceive(const std::string& line) {
         minmea_sentence_rmc frame{};
         if (minmea_parse_rmc(&frame, line.c_str())) {
             this->lastRMC = frame;
-            callPositionUpdateCallbacks();
+            if (frame.valid) callPositionUpdateCallbacks();
             ESP_LOGD(TAG_GPS_READER, "$xxRMC: raw coordinates and speed: (%d/%d,%d/%d) %d/%d",
                     frame.latitude.value, frame.latitude.scale,
                     frame.longitude.value, frame.longitude.scale,

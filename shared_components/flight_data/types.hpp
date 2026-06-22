@@ -14,6 +14,10 @@ struct Coordinate {
     std::string toString() const {
         return "Coordinate{latitude=" + std::to_string(latitude) + ", longitude=" + std::to_string(longitude) + "}";
     }
+
+    bool operator==(const Coordinate& b) const {
+        return longitude == b.longitude && latitude == b.latitude;
+    }
 };
 
 #define COORDINATE_INIT_INVALID() (Coordinate{-400, -400})

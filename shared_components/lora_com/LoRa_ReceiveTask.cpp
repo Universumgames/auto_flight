@@ -33,7 +33,7 @@ void LoRa_CommunicationClass::processPacket(const LoRa_Packet_Internal& received
 
     if (receivedHeader.type == PacketType::ACK) {
         WITH_MUTEX(receivedPacketsMutex) {
-            receivedAcks.push_back(receivedHeader.messageId);
+            erase_if(outstandingAcks, [&receivedHeader](const uint8_t& id) { return id == receivedHeader.messageId; });
         }
     }
     else if (receivedHeader.type == PacketType::PING) {
@@ -42,28 +42,52 @@ void LoRa_CommunicationClass::processPacket(const LoRa_Packet_Internal& received
     else {
         ESP_LOGW(TAG_LORA, "Received packet with unsupported type: %d", static_cast<int>(receivedHeader.type));
     }
-    updateConnectionState(ConnectionState::CONNECTED);
     nextMessageId.exchange(receivedHeader.messageId + 1);
-
-    WITH_MUTEX_ISR(lastSendTimeMutex) {
-        lastSendTime = time(nullptr);
-    }
 }
 
 void LoRa_CommunicationClass::processDataPacket(const LoRa_Packet_Internal& header, const uint8_t* data,
                                                 const int size) {
-    ReceivedPacket receivedPacket = {};
-    receivedPacket.header = header;
-
     bool validPayload = true;
     validPayload &= size == header.payloadLength;
 
     if (validPayload) {
-        receivedPacket.payload = std::make_unique<uint8_t[]>(header.payloadLength);
-        std::memcpy(receivedPacket.payload.get(), data, header.payloadLength);
         sendAckPacketInternal(header.messageId);
-        WITH_MUTEX(receivedPacketsMutex) {
-            receivedPackets.emplace_back(std::move(receivedPacket));
+
+        auto payload = std::make_unique<uint8_t[]>(header.payloadLength);
+        std::memcpy(payload.get(), data, header.payloadLength);
+        if (header.totalFragments == 1) {
+            ReceivedPacket receivedPacket{
+                .header = header,
+                .payload = std::move(payload),
+            };
+            WITH_MUTEX(receivedPacketsMutex) {
+                receivedPackets.emplace_back(std::move(receivedPacket));
+            }
+        }
+        else {
+            PacketFragment fragment{
+                .messageId = header.messageId,
+                .fragmentId = header.fragmentId,
+                .payloadLength = header.payloadLength,
+                .payload = std::move(payload),
+            };
+            ESP_LOGI(TAG_LORA, "Received fragment %d/%d for messageId=%d with payload size %d",
+                 header.fragmentId + 1, header.totalFragments, header.messageId,
+                 header.payloadLength);
+            WITH_MUTEX(receivedFragmentsMutex) {
+                if (!receivedFragments.contains(header.messageId)) {
+                    receivedFragments[header.messageId] = ReceivedFragmentsCache{
+                        .header = header,
+                        .fragments = {}
+                    };
+                }
+                if (std::ranges::contains(receivedFragments[header.messageId].fragments, fragment)) {
+                    ESP_LOGE(TAG_LORA, "Received fragment %u for message %u multiple times", header.fragmentId,
+                             header.messageId);
+                }
+                else
+                    receivedFragments[header.messageId].fragments.emplace_back(std::move(fragment));
+            }
         }
     }
     else {
@@ -83,8 +107,6 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
             ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
             ESP_LOGD(TAG_LORA, "DIO0 interrupt received, checking for packet...");
         }
-        if (sending)
-            continue;
 
         int packetSize = 0;
         WITH_MUTEX(radioMutex) {
@@ -110,13 +132,12 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
             LoRa_Packet_Internal receivedHeader{};
             std::memcpy(&receivedHeader, packetBuffer, sizeof(LoRa_Packet_Internal));
 
-            if (lastSentPacket == receivedHeader) {
-                ESP_LOGW(TAG_LORA, "Received own packet (type=%d, msgId=%d), ignoring", receivedHeader.type,
+            if (isOwnPacket(receivedHeader)) {
+                ESP_LOGD(TAG_LORA, "Received own packet (type=%d, msgId=%d), ignoring", receivedHeader.type,
                          receivedHeader.messageId);
                 continue;
             }
 
-            updateConnectionState(ConnectionState::CONNECTED);
             if (receivedHeader.type == PacketType::ACK || receivedHeader.type == PacketType::PING) {
                 processPacket(receivedHeader);
             }
@@ -124,6 +145,7 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
                 processDataPacket(receivedHeader, packetBuffer + sizeof(LoRa_Packet_Internal),
                                   packetSize - sizeof(LoRa_Packet_Internal));
             }
+            updateConnectionState(ConnectionState::CONNECTED);
             updateLastSendTime();
         }
         else {

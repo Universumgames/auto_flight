@@ -4,6 +4,7 @@
 
 #include "GPS_Reader.hpp"
 #include "helper.hpp"
+#include "geo_helper.hpp"
 
 #define WITH_MUTEX_CUSTOM_DELAY(mutex, delay)        \
 for (bool _once = (xSemaphoreTake((mutex), delay) == pdTRUE); \
@@ -31,7 +32,7 @@ FlightStorageClass& FlightStorageClass::getInstance() {
 }
 
 void FlightStorageClass::init() {
-    dataUpdateQueue = xQueueCreate(20, sizeof(DataUpdateType));
+    dataUpdateQueue = xQueueCreate(50, sizeof(DataUpdateType));
     if (dataUpdateQueue == nullptr) {
         ESP_LOGE("FlightStorage", "Failed to create data update queue");
         return;
@@ -74,8 +75,13 @@ void FlightStorageClass::callDataChangeCallbacks(DataUpdateType type) {
     }
 }
 
+void FlightStorageClass::callDataChangeCallbacksTaskEntry(void* args) {
+    getInstancePtr()->callDataChangeCallbacks(*static_cast<DataUpdateType*>(args));
+    vTaskDelete(nullptr);
+}
+
 void FlightStorageClass::callbackLoopEntry(void* param) {
-    FlightStorageClass* instance = static_cast<FlightStorageClass*>(param);
+    auto* instance = static_cast<FlightStorageClass*>(param);
     instance->callbackLoop();
 }
 
@@ -83,9 +89,10 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
     DataUpdateType updateType;
     while (true) {
         if (xQueueReceive(dataUpdateQueue, &updateType, portMAX_DELAY) == pdTRUE) {
+            //xTaskCreate(callbackLoopEntry, "FlightStorageCallbackLoop", 8192, &updateType, 10, nullptr);
             callDataChangeCallbacks(updateType);
         }
-        vTaskDelay(pdMS_TO_TICKS(50));
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
 
@@ -100,21 +107,33 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
         if (lastUpdateTime == 0) {\
             lastUpdateTime = GPS_Reader.getGPSLatestTime();\
         }\
+        if(this->name == value)\
+            return value;\
+        auto originalValue = this->name;\
         this->name = value;\
         this->last##Name##UpdateTime = lastUpdateTime;\
         auto updateTypeVar = DataUpdateType::updateType;\
         {additionalCalls;}\
-        xQueueSendToBack(dataUpdateQueue, &updateTypeVar, portMAX_DELAY);\
+        xQueueSendToBack(dataUpdateQueue, &updateTypeVar, pdMS_TO_TICKS(2));\
         return value;\
     }
 
 #define FLIGHT_VARIABLE_IMPL(name, Name, type, updateType) FLIGHT_VARIABLE_IMPL_COMPLEX(name, Name, type, updateType, {})
 
 FLIGHT_VARIABLE_IMPL(plannedRoute, PlannedRoute, PlannedRoute, ROUTE)
-FLIGHT_VARIABLE_IMPL(flightRoute, FlightRoute, FlightRoute, ROUTE)
+FLIGHT_VARIABLE_IMPL(flightRoute, FlightRoute, FlightRoute, HISTORY)
 
 FLIGHT_VARIABLE_IMPL(basePosition, BasePosition, Coordinate, POSITION)
-FLIGHT_VARIABLE_IMPL(planePosition, PlanePosition, Coordinate, POSITION)
+FLIGHT_VARIABLE_IMPL_COMPLEX(planePosition, PlanePosition, Coordinate, POSITION, {
+if (distanceInMeters(originalValue, value) > 15) { // only trigger update if position changed significantly to avoid flooding updates})
+    addPointToFlightRoute(value);
+}})
+
+void FlightStorageClass::addPointToFlightRoute(const Coordinate& point) {
+    flightRoute.push_back(point);
+    auto updateTypeVar = DataUpdateType::HISTORY;
+    xQueueSendToBack(dataUpdateQueue, &updateTypeVar, portMAX_DELAY);
+}
 
 FLIGHT_VARIABLE_IMPL(baseConnectionState, BaseConnectionState, ConnectionState, CONNECTION)
 FLIGHT_VARIABLE_IMPL(planeConnectionState, PlaneConnectionState, ConnectionState, CONNECTION)

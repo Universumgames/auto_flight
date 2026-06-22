@@ -63,7 +63,7 @@ private:
     minmea_sentence_vtg lastVTG;
     minmea_sentence_zda lastZDA;
 
-    time_t lastUpdateTime;
+    time_t lastUpdateTime = 0;
 
     std::vector<PositionUpdateCallbackFn> positionUpdateCallbacks;
 

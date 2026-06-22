@@ -9,14 +9,14 @@ void MotorComMasterClass::init() {
     devHandle = i2c_bus_device_create(I2CManager::getBus(), CONFIG_MOTOR_COM_I2C_ADDRESS, i2c_bus_get_current_clk_speed(I2CManager::getBus()));
 }
 
-bool MotorComMasterClass::sendCommand(const ControlCommand command, const uint8_t value) {
+bool MotorComMasterClass::sendCommand(const ControlCommand command, const int8_t value) {
     lastSentValues[command] = value;
 
 
     return sendPacketInternal();
 }
 
-bool MotorComMasterClass::sendFullControlPacket(uint8_t aileronDiff, uint8_t pitch, uint8_t thrust, uint8_t rudder) {
+bool MotorComMasterClass::sendFullControlPacket(int8_t aileronDiff, int8_t pitch, int8_t thrust, int8_t rudder) {
     lastSentValues[ControlCommand::AILERON_DIFF] = aileronDiff;
     lastSentValues[ControlCommand::PITCH] = pitch;
     lastSentValues[ControlCommand::THRUST] = thrust;
@@ -25,7 +25,7 @@ bool MotorComMasterClass::sendFullControlPacket(uint8_t aileronDiff, uint8_t pit
 }
 
 bool MotorComMasterClass::sendPacketInternal() {
-    uint8_t packet[4] = {
+    int8_t packet[4] = {
         /// from futba my RC remote, order defined via the servo connections on the plane
         /// channel 1
         lastSentValues[ControlCommand::AILERON_DIFF],
@@ -36,7 +36,7 @@ bool MotorComMasterClass::sendPacketInternal() {
         /// channel 4
         lastSentValues[ControlCommand::RUDDER],
     };
-    esp_err_t errorCode = (i2c_bus_write_bytes(devHandle, NULL_I2C_MEM_ADDR, sizeof(packet), packet));
+    esp_err_t errorCode = (i2c_bus_write_bytes(devHandle, NULL_I2C_MEM_ADDR, sizeof(packet), reinterpret_cast<uint8_t *>(packet)));
 
     return errorCode == ESP_OK;
 }

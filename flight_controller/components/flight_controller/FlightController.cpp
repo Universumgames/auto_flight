@@ -61,7 +61,8 @@ void FlightControllerClass::init() {
     });
 
     FlightStorage.registerDataChangeCallback([]() {
-        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route changed, sending update with size %d", FlightStorage.getPlannedRoute().size());
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route changed, sending update with size %d",
+                 FlightStorage.getPlannedRoute().size());
         Flight_Communication::sendPlannedRoute();
     }, FlightStorageClass::DataUpdateType::ROUTE);
 }
@@ -83,14 +84,22 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         auto pressure = FlightStorage.updatePlanePressure(Barometer.getPressure(), currentTime);
         auto groundPressure = FlightStorage.getBasePressure();
         auto currentAltitude = BarometerClass::calculateAltitude(groundPressure, pressure);
+        auto planeAngle = Gyroscope.getPlaneAngle();
 
-        FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
-        FlightStorage.updatePlaneBarometerConnectionState(Barometer.available() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        ESP_LOGI("GNDANG", "roll: %f, pitch: %f, yaw deg: %f", planeAngle.roll, planeAngle.pitch, planeAngle.yaw);
+
+        FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()
+                                                        ? ConnectionState::CONNECTED
+                                                        : ConnectionState::CONNECTING);
+        FlightStorage.updatePlaneBarometerConnectionState(Barometer.available()
+                                                              ? ConnectionState::CONNECTED
+                                                              : ConnectionState::CONNECTING);
         //FlightStorage.updatePlaneGyroscopeConnectionState(Gyroscope.available() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
-        FlightStorage.updatePlaneMotorControlConnectionState(MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        FlightStorage.updatePlaneMotorControlConnectionState(
+            MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
 
         // steer to next waypoint, keep current height
-        steerToWaypoint(getNextWaypoint(), currentAltitude);
+        steerToWaypoint(getNextWaypoint(), currentAltitude, planeAngle);
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
@@ -138,6 +147,12 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
     case PacketType::PLANNED_AREA: {
         auto plannedArea = reinterpret_cast<PlannedAreaPacket*>(decodedPacket.get());
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area with %d points", plannedArea->shape.size());
+        if (plannedArea->shape.size() == FlightStorage.getPlannedArea().size() && std::equal(
+            plannedArea->shape.begin(), plannedArea->shape.end(), FlightStorage.getPlannedArea().begin(),
+            FlightStorage.getPlannedArea().end(), [](const Coordinate& a, const Coordinate& b) { return a == b; })) {
+            ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area is the same as current, ignoring");
+            break;
+        }
         FlightStorage.updatePlannedArea(plannedArea->shape);
         plannedAreaChanged = true;
         break;
@@ -149,7 +164,7 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
 }
 
 
-Coordinate FlightControllerClass::getNextWaypoint() {
+Coordinate FlightControllerClass::getNextWaypoint() const {
     auto plannedRoute = FlightStorage.getPlannedRoute();
     if (nextWaypointIndex < plannedRoute.size()) {
         return plannedRoute[nextWaypointIndex];
@@ -167,10 +182,7 @@ void FlightControllerClass::recalculateRoute() {
     auto plannedRoute = RoutePlanner.planRoute(FlightStorage.getPlannedArea(), 60, metersToLatitudeDegree(40), 0.2);
     FlightStorage.updatePlannedRoute(plannedRoute);
     nextWaypointIndex = 0;
-    Flight_Communication::sendPlannedRoute();
 }
 
 
-void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height) {
-
-}
+void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::PlaneAngle angle) {}

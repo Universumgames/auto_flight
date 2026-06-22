@@ -43,3 +43,17 @@
 # Week 8
 - fixing serialization issues
 - further integrating components and testing, fixing bugs
+- issues:
+  - trying to fix lora message fragmentation for packages larger than 255 bytes -> writing custom packet splitter
+  - event handler queue deadlock
+
+# Week 9
+- writing orientation helpers for auto pilot
+- get accellerometer working
+- issues:
+  - accelerometer not outputting correctly
+  - calculate yaw and yaw drift
+  
+# Week 10
+- soldering pcbs
+-

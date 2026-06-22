@@ -45,11 +45,14 @@ private:
         PacketType type;
         uint8_t messageId;
         uint8_t payloadLength;
+        uint8_t fragmentId;
+        uint8_t totalFragments;
 
         [[nodiscard]] std::string toString() const;
 
         static bool equals(const LoRa_Packet_Internal& a, const LoRa_Packet_Internal& b) {
-            return a.type == b.type && a.messageId == b.messageId && a.payloadLength == b.payloadLength;
+            return a.type == b.type && a.messageId == b.messageId && a.payloadLength == b.payloadLength && a.fragmentId
+                == b.fragmentId && a.totalFragments == b.totalFragments;
         }
 
         constexpr bool operator==(const LoRa_Packet_Internal& b) const {
@@ -62,6 +65,27 @@ private:
         std::unique_ptr<uint8_t[]> payload;
     };
 
+    struct PacketFragment {
+        uint8_t messageId;
+        uint8_t fragmentId;
+        uint8_t payloadLength;
+        std::unique_ptr<uint8_t[]> payload;
+
+        bool operator==(const PacketFragment& b) const {
+            return messageId == b.messageId && fragmentId == b.fragmentId;
+        }
+    };
+
+    struct ReceivedFragmentsCache {
+        LoRa_Packet_Internal header;
+        std::vector<PacketFragment> fragments;
+    };
+
+    struct SentPacketData {
+        LoRa_Packet_Internal header;
+        time_t timestamp;
+    };
+
     static constexpr size_t LORA_MAX_PACKET_SIZE = 255;
     static constexpr size_t LORA_MAX_DATA_LENGTH = LORA_MAX_PACKET_SIZE - sizeof(LoRa_Packet_Internal);
     const char* TAG_LORA = "LoRa_Communication";
@@ -71,6 +95,8 @@ private:
     static constexpr time_t LORA_ACK_TIMEOUT = 2;
     static constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second
     static constexpr int LORA_MAX_SEND_RETRIES = 3;
+
+    static constexpr time_t SENT_PACKET_HISTORY_TIMEOUT = 10; // seconds to keep sent packet history for ACK matching
 
 public:
     ~LoRa_CommunicationClass() = delete;
@@ -130,7 +156,7 @@ private:
      */
     std::vector<uint8_t> decryptData(const uint8_t* encryptedData, int encryptedSize);
 
-    static void dio0_isr_handler();
+    static void dio0_isr_handler(void* args);
 
     /**
      * FreeRTOS task entry point for the receive task (static wrapper)
@@ -158,6 +184,10 @@ private:
     static void callbackWorkerEntry(void* param);
 
     [[noreturn]] void callbackWorkerLoop();
+
+    static void joinFragmentsEntry(void* param);
+
+    [[noreturn]] void joinFragmentsLoop();
 
     /**
      * Sends a raw LoRa packet with optional acknowledgement requirement
@@ -194,23 +224,34 @@ private:
 
     void processDataPacket(const LoRa_Packet_Internal& header, const uint8_t* data, int size);
 
+    bool isOwnPacket(const LoRa_Packet_Internal& packet);
+
+    void cleanupSendHistory();
+
+    std::vector<LoRa_Packet_Internal> splitData(size_t size);
+
+    ReceivedPacket joinData(ReceivedFragmentsCache& fragmentCache) const;
+
     uint8_t* key = nullptr; // 128-bit key used for encryption
     TaskHandle_t receiveTaskHandle = nullptr;
     TaskHandle_t pingTaskHandle = nullptr;
     TaskHandle_t callbackWorkerHandle = nullptr;
+    TaskHandle_t joinFragmentsHandle = nullptr;
     SemaphoreHandle_t radioMutex = nullptr;
     SemaphoreHandle_t receivedPacketsMutex = nullptr;
+    SemaphoreHandle_t receivedFragmentsMutex = nullptr;
     SemaphoreHandle_t ackMutex = nullptr;
     SemaphoreHandle_t lastSendTimeMutex = nullptr;
     std::vector<ReceivedPacket> receivedPackets;
-    std::vector<uint8_t> receivedAcks;
+    std::unordered_map<uint8_t, ReceivedFragmentsCache> receivedFragments; // messageId -> received fragment data
+    std::vector<uint8_t> outstandingAcks;
     TickType_t lastSendTime = 0;
     std::atomic<uint8_t> nextMessageId{1};
     // Whether a DIO0 ISR has been installed for the radio (used by the receive task)
     bool dio0IsrInstalled = false;
 
     bool sending = false;
-    LoRa_Packet_Internal lastSentPacket;
+    std::vector<SentPacketData> sentPackets;
 
     SX1262* loraRadio = nullptr;
 

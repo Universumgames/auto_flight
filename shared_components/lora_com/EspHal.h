@@ -86,17 +86,24 @@ class EspHal : public RadioLibHal {
         return;
       }
 
-      esp_err_t err = gpio_install_isr_service((int)ESP_INTR_FLAG_IRAM);
+      gpio_config_t io_conf{};
+      io_conf.intr_type = (gpio_int_type_t) GPIO_INTR_POSEDGE;
+      io_conf.mode = GPIO_MODE_INPUT;
+      io_conf.pin_bit_mask = 1ULL << CONFIG_LORA_DIO0_PIN;
+      io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;
+      io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
+      gpio_config(&io_conf);
+
+      esp_err_t err = gpio_install_isr_service(0);
       if(err != ESP_OK && err != ESP_ERR_INVALID_STATE) {
         ESP_LOGE(TAG_LORA_ESP_HAL, "Failed to install GPIO ISR service: %s", esp_err_to_name(err));
         return;
       }
 
-      gpio_set_intr_type((gpio_num_t)interruptNum, (gpio_int_type_t)(mode & 0x7));
-
-      // this uses function typecasting, which is not defined when the functions have different signatures
-      // untested and might not work
-      gpio_isr_handler_add((gpio_num_t)interruptNum, (void (*)(void*))interruptCb, NULL);
+      err = gpio_isr_handler_add((gpio_num_t)interruptNum, (void (*)(void*))interruptCb, nullptr);
+      if(err != ESP_OK) {
+        ESP_LOGE(TAG_LORA_ESP_HAL, "Failed to add ISR handler for DIO0 pin %d: %s", interruptNum, esp_err_to_name(err));
+      }
     }
 
     void detachInterrupt(uint32_t interruptNum) override {

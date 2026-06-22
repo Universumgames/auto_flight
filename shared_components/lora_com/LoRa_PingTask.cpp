@@ -42,8 +42,9 @@ void LoRa_CommunicationClass::pingTaskLoop() {
                 ESP_LOGE(TAG_LORA, "Failed PING");
             }
             updateLastSendTime();
-
         }
+
+        cleanupSendHistory();
     }
 }
 

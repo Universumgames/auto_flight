@@ -5,19 +5,15 @@ void MotorComMasterClass::init() {
 
 }
 
-bool MotorComMasterClass::sendCommand(ControlCommand command, uint8_t value) const {
+bool MotorComMasterClass::sendCommand(ControlCommand command, int8_t value) {
     return true;
 }
 
-uint8_t MotorComMasterClass::readValue(ControlCommand command) const {
-    return 0;
-}
-
-bool MotorComMasterClass::isSlaveConnected() {
+bool MotorComMasterClass::isSlaveConnected() const {
     return true;
 }
 
-bool MotorComMasterClass::sendFullControlPacket(uint8_t aileronDiff, uint8_t pitch, uint8_t thrust, uint8_t rudder) {
+bool MotorComMasterClass::sendFullControlPacket(int8_t aileronDiff, int8_t pitch, int8_t thrust, int8_t rudder) {
     return true;
 }
 

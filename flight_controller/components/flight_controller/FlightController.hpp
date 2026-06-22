@@ -1,4 +1,5 @@
 #pragma once
+#include "Gyroscope.hpp"
 #include "LoRa_Communication.hpp"
 
 class FlightControllerClass {
@@ -14,7 +15,7 @@ public:
 
     void init();
 
-    Coordinate getNextWaypoint();
+    Coordinate getNextWaypoint() const;
 
 private:
 
@@ -33,7 +34,7 @@ private:
 
     void recalculateRoute();
 
-    void steerToWaypoint(Coordinate waypoint, int height);
+    void steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::PlaneAngle angle);
 
 
 };
