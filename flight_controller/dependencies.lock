@@ -109,6 +109,17 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 3.12.0
+  magnetometer:
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
+    - name: duruofu/qmc5883p
+      public: true
+      version: ^0.1.0
+    source:
+      path: ../shared_components/magnetometer
+      type: local
+    version: '*'
   motor_com:
     dependencies: []
     source:
@@ -127,7 +138,8 @@ direct_dependencies:
 - idf
 - jgromes/radiolib
 - johboh/nlohmann-json
+- magnetometer
 - motor_com
-manifest_hash: 20cc04f157b17d2f35df310afd575683ccaa81576cf193eadb4ddb5ab1834b7d
+manifest_hash: b3735a3fdb08c4c8151e319c00e47f0190f15cd47f30d1297229a848320209f0
 target: esp32s3
 version: 3.0.0

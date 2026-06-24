@@ -9,6 +9,30 @@ dependencies:
       path: ../shared_components/barometer
       type: local
     version: '*'
+  duruofu/qmc5883p:
+    dependencies: []
+    source:
+      path: ../shared_components/duruofu__qmc5883p
+      type: local
+    version: 0.1.0
+  esp-idf-lib/esp_idf_lib_helpers:
+    component_hash: 689853bb8993434f9556af0f2816e808bf77b5d22100144b21f3519993daf237
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    targets:
+    - esp32
+    - esp32c2
+    - esp32c3
+    - esp32c5
+    - esp32c6
+    - esp32c61
+    - esp32h2
+    - esp32p4
+    - esp32s2
+    - esp32s3
+    version: 1.4.0
   espressif/bme280:
     component_hash: 873d97d0bd30004f45d1653f078a4bafe39c1767e57d4bae0f0a13bc3a4d5e3d
     dependencies:
@@ -38,7 +62,7 @@ dependencies:
       type: service
     version: 0.5.3
   espressif/i2c_bus:
-    component_hash: 804ec068d163570fd367b279a310ca383484630d2310c586b50def0bcf21de13
+    component_hash: 483112c1619c54c38d0b734fb25f1678733267858a77b7af2f48cc7db6dbbd84
     dependencies:
     - name: espressif/cmake_utilities
       registry_url: https://components.espressif.com
@@ -50,7 +74,7 @@ dependencies:
     source:
       registry_url: https://components.espressif.com/
       type: service
-    version: 1.5.1
+    version: 1.5.2
   espressif/mpu6050:
     dependencies: []
     source:
@@ -105,6 +129,8 @@ dependencies:
     version: 1.21.1
 direct_dependencies:
 - barometer
+- duruofu/qmc5883p
+- esp-idf-lib/esp_idf_lib_helpers
 - espressif/bme280
 - espressif/i2c_bus
 - espressif/mpu6050
@@ -114,6 +140,6 @@ direct_dependencies:
 - jgromes/radiolib
 - johboh/nlohmann-json
 - joltwallet/littlefs
-manifest_hash: 19c91c6840b3505bc2c57d0340ff402d1fc397ba1acd10d567be619bf86481cc
+manifest_hash: 23d3874e37624b6112e91d32e6e4b0fbfb94fa9c6301e5737128a38c7e884789
 target: esp32s3
 version: 3.0.0

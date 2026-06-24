@@ -14,4 +14,6 @@ dependencies:
   #   # `public` flag doesn't have an effect dependencies of the `main` component.
   #   # All dependencies of `main` are public by default.
   #   public: true
-  duruofu/qmc5883p: ^0.1.0
+  duruofu/qmc5883p:
+    version: ^0.1.0
+    public: true

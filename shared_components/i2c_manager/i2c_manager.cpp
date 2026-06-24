@@ -32,4 +32,8 @@ void I2CManager::init() {
 
     ESP_LOGI("i2c_manager", "I2C bus created");
     initialized = true;
+
+    uint8_t found[8] = {};
+    uint8_t count = i2c_bus_scan(I2CManager::getBus(), found, sizeof(found));
+    ESP_LOGI("i2c_manager", "I2C scan: %d device(s) found", count);
 }

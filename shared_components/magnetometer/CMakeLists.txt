@@ -5,6 +5,6 @@ if (NOT NATIVE_BUILD)
     idf_component_register(
             SRCS ${magnetometer_srcs}
             INCLUDE_DIRS "."
-            REQUIRES driver freertos esp_timer mbedtls esp_driver_gpio pthread i2c_manager
+            REQUIRES driver freertos esp_timer mbedtls esp_driver_gpio pthread i2c_manager qmc5883p
     )
 endif ()

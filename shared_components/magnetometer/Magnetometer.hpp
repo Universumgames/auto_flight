@@ -5,7 +5,7 @@ class MagnetometerClass {
 private:
     MagnetometerClass() = default;
 
-    static constexpr int QMC5883P_I2C_ADDR = 0x2C;
+    static constexpr uint8_t MAGNETOMETER_ADDR = 0x2C;
 public:
     ~MagnetometerClass() = delete;
 
@@ -15,10 +15,22 @@ public:
 
     void begin();
 
+    bool isAvailable();
+
+    bool isOverflowing();
+
+    qmc5883p_data_t readData();
+
+    // Returns compass heading in degrees [0, 360), 0 = magnetic north
+    float getHeading();
+
+    uint8_t getRegCTRL1();
+    uint8_t getRegCTRL2();
+
 private:
     qmc5883p_dev_t magnetometerHandle;
 
-    qmc5883p_data_t readData();
+
 
 };
 

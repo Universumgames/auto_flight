@@ -43,6 +43,7 @@ void I2C_RxHandler(int numBytes) {
     if (numBytes != 4) {
         return;
     }
+    int8_t address = Wire.read();
     desiredValueServo1 = (int8_t)Wire.read();
     desiredValueServo2 = (int8_t)Wire.read();
     desiredValueServo3 = (int8_t)Wire.read();

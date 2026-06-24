@@ -35,7 +35,7 @@ void GyroscopeClass::begin() {
     err = mpu6050_wake_up(gyroscopeHandle);
     SOFT_ERROR_CHECK(err);
 
-    measureGyroBias();
+    //measureGyroBias();
 
     xTaskCreate(gyroReadTaskEntry, "gyroReadTaskEntry", 2048, gyroscopeHandle, 5, NULL);
 }

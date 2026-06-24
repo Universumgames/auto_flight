@@ -49,10 +49,10 @@ typedef enum {
  * Output data rate (ODR)
  */
 typedef enum {
-    QMC5883P_ODR_10HZ  = 0,
-    QMC5883P_ODR_50HZ  = 1,
-    QMC5883P_ODR_100HZ = 2,
-    QMC5883P_ODR_200HZ = 3
+    QMC5883P_ODR_10HZ  = 0b00,
+    QMC5883P_ODR_50HZ  = 0b01,
+    QMC5883P_ODR_100HZ = 0b10,
+    QMC5883P_ODR_200HZ = 0b11
 } qmc5883p_odr_t;
 
 /**
@@ -61,33 +61,32 @@ typedef enum {
  * This enum simplifies common configurations.
  */
 typedef enum {
-    QMC5883P_OSR_512 = 0, // OSR2=00, OSR1=00
-    QMC5883P_OSR_256 = 1, 
-    QMC5883P_OSR_128 = 2,
-    QMC5883P_OSR_64  = 3
+    QMC5883P_OSR_512 = 0b00, // OSR2=00, OSR1=00
+    QMC5883P_OSR_256 = 0b01,
+    QMC5883P_OSR_128 = 0b10,
+    QMC5883P_OSR_64  = 0b11
 } qmc5883p_osr_t;
 
 /**
  * Field range
- * Note: Check datasheet for exact mapping.
- * Commonly: 00=2G, 01=8G, 10=12G, 11=30G
+ * CTRL2 bits 3:2: 00=30G, 01=12G, 10=8G, 11=2G
  */
 typedef enum {
-    QMC5883P_RNG_2G  = 0, // 00
-    QMC5883P_RNG_8G  = 1, // 01
-    QMC5883P_RNG_12G = 2, // 10
-    QMC5883P_RNG_30G = 3  // 11
+    QMC5883P_RNG_30G = 0b00, // 00
+    QMC5883P_RNG_12G = 0b01, // 01
+    QMC5883P_RNG_8G  = 0b10, // 10
+    QMC5883P_RNG_2G  = 0b11  // 11
 } qmc5883p_range_t;
 
 /**
  * Operation mode
+ * CTRL1 bits 1:0: 00=Suspend, 01=Normal(single), 10=Single, 11=Continuous
  */
 typedef enum {
-    QMC5883P_MODE_SUSPEND    = 0, // 00
-    QMC5883P_MODE_CONTINUOUS = 1, // 01
-    // 10 and 11 are reserved usually, but some drivers use them differently.
-    // We will stick to 01 for Continuous.
-    QMC5883P_MODE_NORMAL     = 1  // Alias
+    QMC5883P_MODE_SUSPEND    = 0b00, // 00
+    QMC5883P_MODE_NORMAL     = 0b01, // 01
+    QMC5883P_MODE_SINGLE     = 0b10, // 10
+    QMC5883P_MODE_CONTINUOUS = 0b11  // 11
 } qmc5883p_mode_t;
 
 /**

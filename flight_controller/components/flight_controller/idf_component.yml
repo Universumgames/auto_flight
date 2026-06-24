@@ -11,3 +11,6 @@ dependencies:
   gps:
     require: public
     path: ../../shared_components/gps
+  magnetometer:
+    require: public
+    path: ../../shared_components/magnetometer
