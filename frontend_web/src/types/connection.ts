@@ -13,5 +13,7 @@ export interface ConnectionUpdatePacket {
   gpsConnectionPlane?: ConnectionState
   barometerConnectionBase?: ConnectionState
   barometerConnectionPlane?: ConnectionState
+  motorComConnectionPlane?: ConnectionState
+  magnetometerConnectionPlane?: ConnectionState
 }
 

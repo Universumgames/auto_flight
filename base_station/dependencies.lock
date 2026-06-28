@@ -15,24 +15,6 @@ dependencies:
       path: ../shared_components/duruofu__qmc5883p
       type: local
     version: 0.1.0
-  esp-idf-lib/esp_idf_lib_helpers:
-    component_hash: 689853bb8993434f9556af0f2816e808bf77b5d22100144b21f3519993daf237
-    dependencies: []
-    source:
-      registry_url: https://components.espressif.com/
-      type: service
-    targets:
-    - esp32
-    - esp32c2
-    - esp32c3
-    - esp32c5
-    - esp32c6
-    - esp32c61
-    - esp32h2
-    - esp32p4
-    - esp32s2
-    - esp32s3
-    version: 1.4.0
   espressif/bme280:
     component_hash: 873d97d0bd30004f45d1653f078a4bafe39c1767e57d4bae0f0a13bc3a4d5e3d
     dependencies:
@@ -130,7 +112,6 @@ dependencies:
 direct_dependencies:
 - barometer
 - duruofu/qmc5883p
-- esp-idf-lib/esp_idf_lib_helpers
 - espressif/bme280
 - espressif/i2c_bus
 - espressif/mpu6050
@@ -140,6 +121,6 @@ direct_dependencies:
 - jgromes/radiolib
 - johboh/nlohmann-json
 - joltwallet/littlefs
-manifest_hash: 23d3874e37624b6112e91d32e6e4b0fbfb94fa9c6301e5737128a38c7e884789
+manifest_hash: 40ab71e3132ed0100af7f2380ea114678f80bc75d112dbfa51e7fd7f08dbab7e
 target: esp32s3
 version: 3.0.0

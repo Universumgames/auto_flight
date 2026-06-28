@@ -23,27 +23,27 @@ void BarometerClass::begin() {
 
     bme280Handle = bme280_create(bus, BME280_I2C_ADDRESS_DEFAULT);
     err = bme280_default_init(bme280Handle);
-    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
+    I2C_ERROR_LOG("Barometer", "setup failed", err);
 }
 
 float BarometerClass::getPressure() {
     float pressure;
     err = bme280_read_pressure(bme280Handle, &pressure);
-    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
+    I2C_ERROR_LOG("Barometer", "read pressure failed", err);
     return pressure;
 }
 
 float BarometerClass::getTemperature() {
     float temperature;
     err = bme280_read_temperature(bme280Handle, &temperature);
-    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
+    I2C_ERROR_LOG("Barometer", "read temperature failed", err);
     return temperature;
 }
 
 float BarometerClass::getHumidity() {
     float humidity;
     err = bme280_read_humidity(bme280Handle, &humidity);
-    ESP_ERROR_CHECK_WITHOUT_ABORT(err);
+    I2C_ERROR_LOG("Barometer", "read humidity failed", err);
     return humidity;
 }
 

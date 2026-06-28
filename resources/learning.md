@@ -56,4 +56,13 @@
   
 # Week 10
 - soldering pcbs
--
+- getting magnetometer working
+- issues:
+  - getting correct library working
+  - non functional magnetometer
+
+# Week 11
+- issues:
+  - I2C stopped working on flight controller completely
+  - Magnetometer answering to different addresses each time
+  - 

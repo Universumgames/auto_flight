@@ -165,10 +165,10 @@ void Flight_Communication::sendComponentStatus() {
     status.timestamp = GPS_Reader.getGPSLatestTime();
     status.type = PacketType::COMPONENT_STATUS;
     status.gps = FlightStorage.getPlaneGPSConnectionState();
-    // for simplicity, we assume other components are always connected in this example
     status.barometer = FlightStorage.getPlaneBarometerConnectionState();
     status.gyroscope = FlightStorage.getPlaneGyroscopeConnectionState();
     status.motorControl = FlightStorage.getPlaneMotorControlConnectionState();
+    status.magnetometer = FlightStorage.getPlaneMagnetometerConnectionState();
 
     sendPacket(status);
 }

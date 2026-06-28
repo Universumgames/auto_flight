@@ -96,7 +96,7 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
     }
 }
 
-#define FLIGHT_VARIABLE_IMPL_COMPLEX(name, Name, type, updateType, additionalCalls)\
+#define FLIGHT_VAR(name, Name, type, initialValue, updateType, additionalCalls)\
     time_t FlightStorageClass::getLast##Name##UpdateTime() const {\
         return last##Name##UpdateTime;\
     }\
@@ -107,45 +107,21 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
         if (lastUpdateTime == 0) {\
             lastUpdateTime = GPS_Reader.getGPSLatestTime();\
         }\
-        if(this->name == value)\
+        if (this->name == value)\
             return value;\
-        auto originalValue = this->name;\
+        [[maybe_unused]] auto originalValue = this->name;\
         this->name = value;\
         this->last##Name##UpdateTime = lastUpdateTime;\
         auto updateTypeVar = DataUpdateType::updateType;\
-        {additionalCalls;}\
+        additionalCalls\
         xQueueSendToBack(dataUpdateQueue, &updateTypeVar, pdMS_TO_TICKS(2));\
         return value;\
     }
-
-#define FLIGHT_VARIABLE_IMPL(name, Name, type, updateType) FLIGHT_VARIABLE_IMPL_COMPLEX(name, Name, type, updateType, {})
-
-FLIGHT_VARIABLE_IMPL(plannedRoute, PlannedRoute, PlannedRoute, ROUTE)
-FLIGHT_VARIABLE_IMPL(flightRoute, FlightRoute, FlightRoute, HISTORY)
-
-FLIGHT_VARIABLE_IMPL(basePosition, BasePosition, Coordinate, POSITION)
-FLIGHT_VARIABLE_IMPL_COMPLEX(planePosition, PlanePosition, Coordinate, POSITION, {
-if (distanceInMeters(originalValue, value) > 15) { // only trigger update if position changed significantly to avoid flooding updates})
-    addPointToFlightRoute(value);
-}})
+#include "FlightVariables.inc"
+#undef FLIGHT_VAR
 
 void FlightStorageClass::addPointToFlightRoute(const Coordinate& point) {
     flightRoute.push_back(point);
     auto updateTypeVar = DataUpdateType::HISTORY;
     xQueueSendToBack(dataUpdateQueue, &updateTypeVar, portMAX_DELAY);
 }
-
-FLIGHT_VARIABLE_IMPL(baseConnectionState, BaseConnectionState, ConnectionState, CONNECTION)
-FLIGHT_VARIABLE_IMPL(planeConnectionState, PlaneConnectionState, ConnectionState, CONNECTION)
-
-FLIGHT_VARIABLE_IMPL(basePressure, BasePressure, float, SENSOR)
-FLIGHT_VARIABLE_IMPL(planePressure, PlanePressure, float, SENSOR)
-
-FLIGHT_VARIABLE_IMPL_COMPLEX(plannedArea, PlannedArea, std::vector<Coordinate>, AREA, {plannedRoute.clear();})
-
-FLIGHT_VARIABLE_IMPL(baseBarometerConnectionState, BaseBarometerConnectionState, ConnectionState, CONNECTION)
-FLIGHT_VARIABLE_IMPL(planeBarometerConnectionState, PlaneBarometerConnectionState, ConnectionState, CONNECTION)
-FLIGHT_VARIABLE_IMPL(planeGyroscopeConnectionState, PlaneGyroscopeConnectionState, ConnectionState, CONNECTION)
-FLIGHT_VARIABLE_IMPL(planeMotorControlConnectionState, PlaneMotorControlConnectionState, ConnectionState, CONNECTION)
-FLIGHT_VARIABLE_IMPL(baseGPSConnectionState, BaseGPSConnectionState, ConnectionState, CONNECTION)
-FLIGHT_VARIABLE_IMPL(planeGPSConnectionState, PlaneGPSConnectionState, ConnectionState, CONNECTION)

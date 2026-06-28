@@ -6,8 +6,8 @@ float latitudeDiffToMeters(float latitudeDiff) {
     return distanceInMeters({0, 0}, {.longitude = 0, .latitude = latitudeDiff});
 }
 
-float longitudeDiffToMeters(float longitudeDiff) {
-    return distanceInMeters({0, 0}, {.longitude = longitudeDiff, .latitude = 0});
+float longitudeDiffToMeters(float longitudeDiff, float atLatitude) {
+    return distanceInMeters({.longitude = 0, .latitude = atLatitude}, {.longitude = longitudeDiff, .latitude = atLatitude});
 }
 
 // Source - https://stackoverflow.com/a/11172685

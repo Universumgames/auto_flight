@@ -6,4 +6,28 @@ menu "Flight Controller Settings"
         help
          "Interval in milliseconds to send updates to the base station over lora"
 
+    config WAYPOINT_REACHED_RADIUS_M
+        int "Waypoint reached radius (meters)"
+        range 5 500
+        default 30
+        help
+          "Distance in meters within which the current waypoint is considered reached
+          and the flight controller advances to the next waypoint."
+
+    config RUDDER_SERVO_MIN
+        int "Rudder servo minimum value"
+        range -100 -1
+        default -100
+        help
+          "Minimum (full left) servo control value for the rudder. Adjust to match the
+          physical servo travel limit. Must be in range [-100, -1]."
+
+    config RUDDER_SERVO_MAX
+        int "Rudder servo maximum value"
+        range 1 100
+        default 100
+        help
+          "Maximum (full right) servo control value for the rudder. Adjust to match the
+          physical servo travel limit. Must be in range [1, 100]."
+
 endmenu

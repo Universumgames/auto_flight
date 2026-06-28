@@ -165,6 +165,8 @@ httpd_ws_frame_t* FrontendHandlerClass::prepareConnectionPacket() {
         .gpsConnectionPlane = FlightStorage.getPlaneGPSConnectionState(),
         .barometerConnectionBase = FlightStorage.getBaseBarometerConnectionState(),
         .barometerConnectionPlane = FlightStorage.getPlaneBarometerConnectionState(),
+        .motorComConnectionPlane = FlightStorage.getPlaneMotorControlConnectionState(),
+        .magnetometerConnectionPlane = FlightStorage.getPlaneMagnetometerConnectionState(),
     };
     nlohmann::json json = rawPacket;
     std::string jsonString = json.dump();
@@ -215,7 +217,11 @@ void FrontendHandlerClass::registerAPISockets() {
                 .planeConnectionState = FlightStorage.getPlaneConnectionState(),
                 .lastContactPlaneTimestamp = FlightStorage.getLastPlaneConnectionStateUpdateTime(),
                 .gpsConnectionBase = GPS_Reader.hasValidPosition() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING,
-                .gpsConnectionPlane = GPS_Reader.getGPSLatestTime() - FlightStorage.getLastPlaneConnectionStateUpdateTime() < 1000 ? ConnectionState::CONNECTED : ConnectionState::CONNECTING,
+                .gpsConnectionPlane = FlightStorage.getPlaneGPSConnectionState(),
+                .barometerConnectionBase = FlightStorage.getBaseBarometerConnectionState(),
+                .barometerConnectionPlane = FlightStorage.getPlaneBarometerConnectionState(),
+                .motorComConnectionPlane = FlightStorage.getPlaneMotorControlConnectionState(),
+                .magnetometerConnectionPlane = FlightStorage.getPlaneMagnetometerConnectionState(),
             };
             nlohmann::json json = rawPacket;
             std::string jsonString = json.dump();

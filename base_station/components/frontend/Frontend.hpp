@@ -2,73 +2,16 @@
 #include <vector>
 
 #include "esp_http_server.h"
-#include "types.hpp"
-
-
+#include "FrontendPackets.hpp"
 
 class FrontendHandlerClass {
-public:
-    struct BaseUpdatePacket {
-        static constexpr const char* type = "base";
+    using BaseUpdatePacket = Frontend::BaseUpdatePacket;
+    using FlightUpdatePacket = Frontend::FlightUpdatePacket;
+    using ConnectionUpdatePacket = Frontend::ConnectionUpdatePacket;
+    using AreaDefinePacket = Frontend::AreaDefinePacket;
+    using SensorPacket = Frontend::SensorPacket;
+    using PlannedRoutePacket = Frontend::PlannedRoutePacket;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(BaseUpdatePacket, type)
-    };
-
-    struct FlightUpdatePacket {
-        static constexpr const char* type = "flight";
-        Coordinate basePosition;
-        time_t basePositionUpdateTime;
-        Coordinate planePosition;
-        time_t planePositionUpdateTime;
-        FlightRoute flightRoute;
-        time_t flightRouteUpdateTime;
-        PlannedRoute plannedRoute;
-        time_t plannedRouteUpdateTime;
-
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(FlightUpdatePacket, type, basePosition, basePositionUpdateTime, planePosition,
-                                       planePositionUpdateTime, flightRoute, flightRouteUpdateTime, plannedRoute,
-                                       plannedRouteUpdateTime)
-    };
-
-    struct ConnectionUpdatePacket{
-        static constexpr const char* type = "connection";
-        ConnectionState baseConnectionState;
-        time_t lastContactBaseStationTimestamp;
-        ConnectionState planeConnectionState;
-        time_t lastContactPlaneTimestamp;
-
-        ConnectionState gpsConnectionBase;
-        ConnectionState gpsConnectionPlane;
-
-        ConnectionState barometerConnectionBase;
-        ConnectionState barometerConnectionPlane;
-
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectionUpdatePacket, type, baseConnectionState, lastContactBaseStationTimestamp,
-                                       planeConnectionState, lastContactPlaneTimestamp, gpsConnectionBase,
-                                       gpsConnectionPlane, barometerConnectionBase, barometerConnectionPlane)
-    };
-
-    struct AreaDefinePacket {
-        std::vector<Coordinate> shape;
-
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AreaDefinePacket, shape)
-    };
-
-    struct SensorPacket {
-        static constexpr const char* type = "sensor";
-        float barometerPressureBase;
-        float barometerPressurePlane;
-        float calculatedAltitude;
-
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(SensorPacket, type, barometerPressureBase, barometerPressurePlane, calculatedAltitude)
-    };
-
-    struct PlannedRoutePacket {
-        static constexpr const char* type = "plannedRoute";
-        std::vector<Coordinate> route;
-
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlannedRoutePacket, type, route)
-    };
 private:
     FrontendHandlerClass();
     static const char* TAG_FRONTEND;

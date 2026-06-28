@@ -124,6 +124,11 @@ export function applyConnectionPacket(store: StoreState, packet: ConnectionUpdat
   if(barometerBase) store.barometerConnectionBase = barometerBase
   const barometerPlane = parseConnectionState(packet.barometerConnectionPlane)
   if(barometerPlane) store.barometerConnectionPlane = barometerPlane
+
+  const motorCom = parseConnectionState(packet.motorComConnectionPlane)
+  if (motorCom) store.motorComConnectionPlane = motorCom
+  const magnetometer = parseConnectionState(packet.magnetometerConnectionPlane)
+  if (magnetometer) store.magnetometerConnectionPlane = magnetometer
 }
 
 

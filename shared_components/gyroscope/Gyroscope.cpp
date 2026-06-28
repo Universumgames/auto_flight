@@ -31,9 +31,9 @@ GyroscopeClass& GyroscopeClass::getInstance() {
 void GyroscopeClass::begin() {
     gyroscopeHandle = mpu6050_create(I2CManager::getBus(), MPU6050_I2C_ADDRESS);
     err = mpu6050_config(gyroscopeHandle, ACCE_FS_2G, GYRO_FS_250DPS);
-    SOFT_ERROR_CHECK(err);
+    I2C_ERROR_LOG("Gyroscope", "setup failed", err);
     err = mpu6050_wake_up(gyroscopeHandle);
-    SOFT_ERROR_CHECK(err);
+    I2C_ERROR_LOG("Gyroscope", "wake up failed", err);
 
     //measureGyroBias();
 
@@ -46,7 +46,7 @@ complimentary_angle_t GyroscopeClass::getComplAngle() {
     mpu6050_acce_value_t acce = accBuffer[ringBufferIndex];
     mpu6050_gyro_value_t gyro = gyroBuffer[ringBufferIndex];
     err = mpu6050_complimentory_filter(gyroscopeHandle, &acce, &gyro, &angle);
-    ESP_ERROR_CHECK(err);
+    I2C_ERROR_LOG("Gyroscope", "complimentary filter failed", err);
     return angle;
 }
 

@@ -1,0 +1,176 @@
+Index: ../shared_components/lora_com/LoRa_Communication.hpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#pragma once\n#include <cstdint>\n#include <memory>\n#include <atomic>\n#include <string>\n#include <vector>\n\n#include \"freertos/FreeRTOS.h\"\n#include \"freertos/semphr.h\"\n#include \"freertos/task.h\"\n\n#include \"types.hpp\"\n\n#if defined(__GNUC__)\n#pragma GCC diagnostic push\n#pragma GCC diagnostic ignored \"-Woverloaded-virtual\"\n#endif\n#include <functional>\n\n#include \"modules/SX126x/SX1262.h\"\n#if defined(__GNUC__)\n#pragma GCC diagnostic pop\n#endif\n\nstruct LoRaPacket {\n    size_t length;\n    uint8_t* payload;\n};\n\n\nclass LoRa_CommunicationClass {\nprivate:\n    LoRa_CommunicationClass() = default;\n\n    enum class PacketType: uint8_t {\n        HEADER,\n        ACK,\n        PING,\n        DATA\n    };\n\n    static std::string toString(PacketType packetType);\n\n    struct LoRa_Packet_Internal {\n        PacketType type;\n        uint8_t messageId;\n        uint8_t payloadLength;\n\n        [[nodiscard]] std::string toString() const;\n\n        static bool equals(const LoRa_Packet_Internal& a, const LoRa_Packet_Internal& b) {\n            return a.type == b.type && a.messageId == b.messageId && a.payloadLength == b.payloadLength;\n        }\n\n        constexpr bool operator==(const LoRa_Packet_Internal& b) const {\n            return equals(*this, b);\n        }\n    };\n\n    struct ReceivedPacket {\n        LoRa_Packet_Internal header;\n        std::unique_ptr<uint8_t[]> payload;\n    };\n\n    static constexpr size_t LORA_MAX_PACKET_SIZE = 255;\n    const char* TAG_LORA = \"LoRa_Communication\";\n\n    static constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);\n    /// ACK timeout in seconds\n    static constexpr time_t LORA_ACK_TIMEOUT = 2;\n    static constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second\n    static constexpr int LORA_MAX_SEND_RETRIES = 3;\n\npublic:\n    ~LoRa_CommunicationClass() = delete;\n\n    /**\n     * Returns a reference to the singleton instance of LoRa_CommunicationClass\n     * @return Reference to the singleton instance\n     */\n    static LoRa_CommunicationClass& getInstance();\n\n    /**\n     * Returns a pointer to the singleton instance of LoRa_CommunicationClass\n     * @return Pointer to the singleton instance\n     */\n    static LoRa_CommunicationClass* getInstancePtr();\n\n    /**\n     * Initializes the LoRa communication module and starts background tasks\n     */\n    void begin();\n\n    /**\n     * Sends data packet via LoRa radio with encryption and optional acknowledgement\n     * @param data Pointer to the data to be sent\n     * @param size Number of bytes to send\n     */\n    void sendData(const uint8_t* data, size_t size);\n\n    /**\n     * Checks if there is received data waiting in the queue\n     * @deprecated This method is deprecated in favor of using registerReceivePacketCallback() for more efficient and flexible packet processing. This method does not support concurrent calls and may not reflect real-time state if called from multiple contexts.\n     * @return true if data is available, false otherwise\n     */\n    [[nodiscard]] [[deprecated]] bool hasReceivedData() const;\n\n    /**\n     * Gets the RSSI (Received Signal Strength Indicator) of the last received packet\n     * @return RSSI value in dBm\n     */\n    [[nodiscard]] float getLastPacketRSSI() const;\n\n    /**\n     * Gets the SNR (Signal-to-Noise Ratio) of the last received packet\n     * @return SNR value in dB\n     */\n    [[nodiscard]] float getLastPacketSNR() const;\n\n    void registerReceivePacketCallback(std::function<void(const LoRaPacket&)> callback);\n\nprivate:\n    /**\n     * Encrypts data using AES-128-GCM algorithm\n     * @param originalData Pointer to the plaintext data to encrypt\n     * @param originalSize Size of the plaintext data in bytes\n     * @return Vector containing encrypted packet (nonce|ciphertext|tag), or empty vector on failure\n     */\n    std::vector<uint8_t> encryptData(const uint8_t* originalData, int originalSize);\n\n    /**\n     * Decrypts data encrypted with encryptData()\n     * @param encryptedData Pointer to the encrypted packet (nonce|ciphertext|tag)\n     * @param encryptedSize Size of the encrypted data in bytes\n     * @return Vector containing decrypted plaintext, or empty vector on failure\n     */\n    std::vector<uint8_t> decryptData(const uint8_t* encryptedData, int encryptedSize);\n\n    /**\n     * FreeRTOS task entry point for the receive task (static wrapper)\n     * @param param Pointer to the LoRa_CommunicationClass instance\n     */\n    static void receiveTaskEntry(void* param);\n\n    /**\n     * Main receive task loop that continuously monitors for incoming packets\n     * Blocks until data is available or timeout occurs\n     */\n    [[noreturn]] void receiveTaskLoop();\n\n    /**\n     * FreeRTOS task entry point for the ping task (static wrapper)\n     * @param param Pointer to the LoRa_CommunicationClass instance\n     */\n    static void pingTaskEntry(void* param);\n\n    /**\n     * Main ping task loop that periodically sends ping packets to maintain connection\n     */\n    [[noreturn]] void pingTaskLoop();\n\n    static void callbackWorkerEntry(void* param);\n\n    [[noreturn]] void callbackWorkerLoop();\n\n    /**\n     * Sends a raw LoRa packet with optional acknowledgement requirement\n     * @param packet The packet header to send\n     * @param data Pointer to the payload data (can be nullptr if no payload)\n     * @param requireAck If true, waits for acknowledgement; defaults to true\n     * @return true on success, false otherwise\n     */\n    bool sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck = true);\n\n    /**\n     * Updates the timestamp of the last successful transmission\n     */\n    void updateLastSendTime();\n\n    /**\n     * Updates the current connection state and notifies listeners if state changed\n     * @param state The new connection state\n     */\n    void updateConnectionState(ConnectionState state);\n\n    /**\n     * Sends an ACK packet for a received message\n     * Does not have a mutex check for the lora module, caller must ensure thread safety\n     * @param messageId The ID of the message being acknowledged\n     */\n    void sendAckPacketInternal(uint8_t messageId);\n\n    /**\n     * Processes a received LoRa packet header\n     * @param receivedHeader The received packet header\n     */\n    void processPacket(const LoRa_Packet_Internal& receivedHeader);\n\n    void processDataPacket(const LoRa_Packet_Internal& header, const uint8_t* data, int size);\n\n    uint8_t* key = nullptr; // 128-bit key used for encryption\n    TaskHandle_t receiveTaskHandle = nullptr;\n    TaskHandle_t pingTaskHandle = nullptr;\n    TaskHandle_t callbackWorkerHandle = nullptr;\n    SemaphoreHandle_t radioMutex = nullptr;\n    SemaphoreHandle_t receivedPacketsMutex = nullptr;\n    SemaphoreHandle_t ackMutex = nullptr;\n    SemaphoreHandle_t lastSendTimeMutex = nullptr;\n    std::vector<ReceivedPacket> receivedPackets;\n    std::vector<uint8_t> receivedAcks;\n    TickType_t lastSendTime = 0;\n    std::atomic<uint8_t> nextMessageId{1};\n    // Whether a DIO0 ISR has been installed for the radio (used by the receive task)\n    bool dio0IsrInstalled = false;\n\n    bool sending = false;\\\n    LoRa_Packet_Internal lastSentPacket;\n\n    SX1262* loraRadio = nullptr;\n\n    std::vector<std::function<void(const LoRaPacket&)>> receivePacketCallbacks;\n};\n\nextern LoRa_CommunicationClass& LoRa_Communication;\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../shared_components/lora_com/LoRa_Communication.hpp b/../shared_components/lora_com/LoRa_Communication.hpp
+--- a/../shared_components/lora_com/LoRa_Communication.hpp	(revision 3ffb89ad3c06ca2e9d8b9bdd600a3fd05e998195)
++++ b/../shared_components/lora_com/LoRa_Communication.hpp	(date 1780682852785)
+@@ -45,11 +45,14 @@
+         PacketType type;
+         uint8_t messageId;
+         uint8_t payloadLength;
++        uint8_t fragmentNumber;      // Current fragment number (0-based)
++        uint8_t totalFragments;       // Total number of fragments for this message
+ 
+         [[nodiscard]] std::string toString() const;
+ 
+         static bool equals(const LoRa_Packet_Internal& a, const LoRa_Packet_Internal& b) {
+-            return a.type == b.type && a.messageId == b.messageId && a.payloadLength == b.payloadLength;
++            return a.type == b.type && a.messageId == b.messageId && a.payloadLength == b.payloadLength &&
++                   a.fragmentNumber == b.fragmentNumber && a.totalFragments == b.totalFragments;
+         }
+ 
+         constexpr bool operator==(const LoRa_Packet_Internal& b) const {
+@@ -62,7 +65,16 @@
+         std::unique_ptr<uint8_t[]> payload;
+     };
+ 
++    struct FragmentedMessage {
++        uint8_t messageId;
++        uint8_t totalFragments;
++        std::vector<std::unique_ptr<uint8_t[]>> fragments;
++        std::vector<size_t> fragmentSizes;
++        time_t lastUpdateTime;
++    };
++
+     static constexpr size_t LORA_MAX_PACKET_SIZE = 255;
++    static constexpr size_t LORA_MAX_PAYLOAD_PER_PACKET = LORA_MAX_PACKET_SIZE - sizeof(LoRa_Packet_Internal);
+     const char* TAG_LORA = "LoRa_Communication";
+ 
+     static constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
+@@ -198,7 +210,22 @@
+ 
+     void processDataPacket(const LoRa_Packet_Internal& header, const uint8_t* data, int size);
+ 
+-    uint8_t* key = nullptr; // 128-bit key used for encryption
++    /**
++     * Attempts to reassemble a fragmented message
++     * @param header The packet header containing fragment info
++     * @param fragmentData The fragment data
++     * @param fragmentDataSize The size of the fragment data
++     * @return true if the message is complete and has been added to receivedPackets, false otherwise
++     */
++    bool tryReassembleFragmentedMessage(const LoRa_Packet_Internal& header, const uint8_t* fragmentData, int fragmentDataSize);
++
++    /**
++     * Cleans up incomplete fragmented messages that have timed out
++     * @param timeoutSeconds Messages not updated within this time are discarded
++     */
++    void cleanupIncompleteFragmentedMessages(time_t timeoutSeconds = 30);
++
++     uint8_t* key = nullptr; // 128-bit key used for encryption
+     TaskHandle_t receiveTaskHandle = nullptr;
+     TaskHandle_t pingTaskHandle = nullptr;
+     TaskHandle_t callbackWorkerHandle = nullptr;
+@@ -206,8 +233,10 @@
+     SemaphoreHandle_t receivedPacketsMutex = nullptr;
+     SemaphoreHandle_t ackMutex = nullptr;
+     SemaphoreHandle_t lastSendTimeMutex = nullptr;
++    SemaphoreHandle_t fragmentedMessagesMutex = nullptr;
+     std::vector<ReceivedPacket> receivedPackets;
+     std::vector<uint8_t> receivedAcks;
++    std::vector<FragmentedMessage> fragmentedMessages;
+     TickType_t lastSendTime = 0;
+     std::atomic<uint8_t> nextMessageId{1};
+     // Whether a DIO0 ISR has been installed for the radio (used by the receive task)
+Index: ../shared_components/lora_com/LoRa_Communication.cpp
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#include \"LoRa_Communication.hpp\"\n\n#include \"esp_log.h\"\n#include <algorithm>\n#include <cstring>\n\n#include \"driver/gpio.h\"\n\n#include \"FlightStorage.hpp\"\n#include \"helper.hpp\"\n#include \"freertos/FreeRTOS.h\"\n#include \"freertos/task.h\"\n#include \"sdkconfig.h\"\n#include \"EspHal.h\"\n#include \"mutex_helper.hpp\"\n\nstatic LoRa_CommunicationClass* lo_ra_communication = nullptr;\n\nLoRa_CommunicationClass& LoRa_Communication = LoRa_CommunicationClass::getInstance();\n\nLoRa_CommunicationClass* LoRa_CommunicationClass::getInstancePtr() {\n    if (lo_ra_communication == nullptr) {\n        lo_ra_communication = new LoRa_CommunicationClass();\n    }\n    return lo_ra_communication;\n}\n\nstatic void IRAM_ATTR dio0_isr_handler(void* arg) {\n    // arg is expected to be a TaskHandle_t passed during registration\n    if (arg == nullptr) return;\n    auto task = static_cast<TaskHandle_t>(arg);\n\n    BaseType_t xHigherPriorityTaskWoken = pdFALSE;\n    vTaskNotifyGiveFromISR(task, &xHigherPriorityTaskWoken);\n    if (xHigherPriorityTaskWoken == pdTRUE) {\n        portYIELD_FROM_ISR();\n    }\n}\n\nLoRa_CommunicationClass& LoRa_CommunicationClass::getInstance() {\n    return *getInstancePtr();\n}\n\nvoid LoRa_CommunicationClass::begin() {\n    ESP_LOGI(TAG_LORA, \"LoRa communication initializing\");\n\n    ESP_LOGI(TAG_LORA, \"creating semaphores\");\n\n    if (radioMutex == nullptr) {\n        radioMutex = xSemaphoreCreateMutex();\n    }\n    if (receivedPacketsMutex == nullptr) {\n        receivedPacketsMutex = xSemaphoreCreateMutex();\n    }\n    if (ackMutex == nullptr) {\n        ackMutex = xSemaphoreCreateMutex();\n    }\n    if (lastSendTimeMutex == nullptr) {\n        lastSendTimeMutex = xSemaphoreCreateMutex();\n    }\n    if (radioMutex == nullptr || receivedPacketsMutex == nullptr || lastSendTimeMutex == nullptr || ackMutex ==\n        nullptr) {\n        ESP_LOGE(TAG_LORA, \"Failed to create LoRa mutexes\");\n        return;\n    }\n\n    receivedAcks.reserve(20);\n\n    ESP_LOGI(TAG_LORA, \"initializing LoRa radio\");\n\n    // Construct RadioLib HAL/Module and SX1262 instance\n    auto* hal = new EspHal(CONFIG_LORA_SCK_GPIO, CONFIG_LORA_MISO_GPIO, CONFIG_LORA_MOSI_GPIO);\n    auto module = new Module(hal, CONFIG_LORA_CS_GPIO, CONFIG_LORA_DIO0_PIN, CONFIG_LORA_RST_GPIO,\n                             CONFIG_LORA_BUSY_GPIO);\n    this->loraRadio = new SX1262(module);\n\n    // create SX1262 instance and initialize with RadioLib\n    int16_t initRes = this->loraRadio->begin(\n        static_cast<float>(CONFIG_LORA_FREQUENCY) / 1e6f, // freq in MHz\n        static_cast<float>(CONFIG_LORA_BANDWIDTH) / 1000.0f, // bw in kHz\n        static_cast<uint8_t>(CONFIG_LORA_SPREADING_FACTOR), // SF\n        static_cast<uint8_t>(CONFIG_LORA_CODING_RATE_DENOMINATOR), // coding rate denom\n        static_cast<uint8_t>(CONFIG_LORA_SYNC_WORD), // sync word\n        static_cast<int8_t>(CONFIG_LORA_TX_POWER), // tx power dBm\n        static_cast<uint16_t>(CONFIG_LORA_PREAMBLE_LENGTH) // preamble length\n    );\n    if (initRes != RADIOLIB_ERR_NONE) {\n        ESP_LOGE(TAG_LORA, \"LoRa RadioLib initialization failed (err=%d); skipping task startup\", initRes);\n        return;\n    }\n\n    // Enable CRC (2 bytes) and explicit header mode\n    this->loraRadio->setCRC(2);\n    this->loraRadio->explicitHeader();\n\n    // Ensure the radio is in receive (interrupt) mode\n    this->loraRadio->startReceive();\n\n    ESP_LOGI(TAG_LORA, \"LoRa configured: freq=%ld Hz, tx_power=%d, SF=%d, BW=%ld Hz, CR=4/%d, ping_interval=%d sec\",\n             CONFIG_LORA_FREQUENCY, CONFIG_LORA_TX_POWER, CONFIG_LORA_SPREADING_FACTOR,\n             CONFIG_LORA_BANDWIDTH, CONFIG_LORA_CODING_RATE_DENOMINATOR, CONFIG_LORA_PING_INTERVAL);\n\n    // Initialize last send time to now\n    updateLastSendTime();\n\n    if (receiveTaskHandle == nullptr) {\n        BaseType_t created = xTaskCreate(\n            &LoRa_CommunicationClass::receiveTaskEntry,\n            \"lora_rx_task\",\n            4096,\n            this,\n            tskIDLE_PRIORITY + 1,\n            &receiveTaskHandle\n        );\n        if (created != pdPASS) {\n            ESP_LOGE(TAG_LORA, \"Failed to start LoRa receive task\");\n            receiveTaskHandle = nullptr;\n            return;\n        }\n        // If a DIO0 pin is configured, install ISR service and attach handler to notify the receive task\n#ifdef CONFIG_LORA_DIO0_PIN\n        gpio_config_t io_conf{};\n        io_conf.intr_type = GPIO_INTR_POSEDGE;\n        io_conf.mode = GPIO_MODE_INPUT;\n        io_conf.pin_bit_mask = 1ULL << CONFIG_LORA_DIO0_PIN;\n        io_conf.pull_down_en = GPIO_PULLDOWN_DISABLE;\n        io_conf.pull_up_en = GPIO_PULLUP_ENABLE;\n        gpio_config(&io_conf);\n\n        if (gpio_install_isr_service(0) == ESP_OK) {\n            if (gpio_isr_handler_add((gpio_num_t)CONFIG_LORA_DIO0_PIN, dio0_isr_handler, (void*)receiveTaskHandle) ==\n                ESP_OK) {\n                this->dio0IsrInstalled = true;\n                ESP_LOGI(TAG_LORA, \"DIO0 ISR installed on pin %d\", CONFIG_LORA_DIO0_PIN);\n            }\n            else {\n                ESP_LOGW(TAG_LORA, \"Failed to add ISR handler for DIO0 pin %d\", CONFIG_LORA_DIO0_PIN);\n            }\n        }\n        else {\n            ESP_LOGW(TAG_LORA, \"Failed to install GPIO ISR service for DIO0\");\n        }\n#endif\n    }\n\n    if (pingTaskHandle == nullptr) {\n        BaseType_t created = xTaskCreate(\n            &LoRa_CommunicationClass::pingTaskEntry,\n            \"lora_ping_task\",\n            4096,\n            this,\n            tskIDLE_PRIORITY + 1,\n            &pingTaskHandle\n        );\n        if (created != pdPASS) {\n            ESP_LOGE(TAG_LORA, \"Failed to start LoRa ping task\");\n            pingTaskHandle = nullptr;\n            return;\n        }\n    }\n\n    if (callbackWorkerHandle == nullptr) {\n        BaseType_t created = xTaskCreate(\n            &LoRa_CommunicationClass::callbackWorkerEntry,\n            \"lora_callback_worker\",\n            4096,\n            this,\n            tskIDLE_PRIORITY + 1,\n            &callbackWorkerHandle\n        );\n        if (created != pdPASS) {\n            ESP_LOGE(TAG_LORA, \"Failed to start LoRa callback worker task\");\n            callbackWorkerHandle = nullptr;\n            return;\n        }\n    }\n\n    ESP_LOGI(TAG_LORA, \"LoRa communication initialized\");\n}\n\n\nfloat LoRa_CommunicationClass::getLastPacketRSSI() const {\n    return (loraRadio == nullptr) ? 0.0f : loraRadio->getRSSI(true);\n}\n\nfloat LoRa_CommunicationClass::getLastPacketSNR() const {\n    return (loraRadio == nullptr) ? 0.0f : loraRadio->getSNR();\n}\n\nbool LoRa_CommunicationClass::hasReceivedData() const {\n    bool hasData = false;\n    WITH_MUTEX(receivedPacketsMutex) {\n        hasData = !receivedPackets.empty();\n    }\n    return hasData;\n}\n\nvoid LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {\n\n    if (data == nullptr || size == 0) {\n        ESP_LOGE(TAG_LORA, \"Invalid arguments passed\");\n    }\n    if (size > UINT8_MAX) {\n        ESP_LOGE(TAG_LORA, \"Data size exceeds maximum payload size: %zu > %d\", size, UINT8_MAX);\n    }\n    LoRa_Packet_Internal packetHeader = {};\n    packetHeader.type = PacketType::HEADER;\n    // generate a non-zero message id\n    uint8_t mid = nextMessageId.fetch_add(1);\n    if (mid == 0) mid = nextMessageId.fetch_add(1);\n    packetHeader.messageId = mid;\n    packetHeader.payloadLength = size; // size of data packet\n    sendRawPacket(packetHeader, data, true);\n}\n\nbool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck) {\n    // Helper: wait for ACK with timeout\n    auto waitForAckId = [&](uint8_t msgId, time_t timeout) -> bool {\n        vTaskDelay(pdMS_TO_TICKS(10)); // small initial\n        time_t start = time(nullptr);\n        while ((time(nullptr) - start) < timeout) {\n            auto found = false;\n            WITH_MUTEX(ackMutex) {\n                found = std::ranges::contains(receivedAcks, msgId);\n                erase_if(receivedAcks, [msgId](const uint8_t& id) { return id > msgId + 10 || id == msgId; });\n            }\n            if (found) {\n                return true;\n            }\n            vTaskDelay(LORA_RX_POLL_DELAY);\n        }\n        return false;\n    };\n\n    // Helper: send a buffer with retry logic. Returns true if (no ACK required) or ack received.\n    auto sendBufferWithRetries = [&](const std::unique_ptr<uint8_t[]>& buf, size_t len, uint8_t msgId) -> bool {\n        if (len == 0) return true;\n        if (len > LORA_MAX_PACKET_SIZE) {\n            ESP_LOGE(TAG_LORA, \"Packet too large: %zu > %zu\", len, LORA_MAX_PACKET_SIZE);\n            return false;\n        }\n\n        int attempts = 0;\n        while (attempts <= LORA_MAX_SEND_RETRIES) {\n            WITH_MUTEX(radioMutex) {\n                sending = true;\n                // transmit is blocking; ignore return value here but could be checked for errors\n                loraRadio->transmit(buf.get(), len);\n                // re-enter receive mode after transmit\n                loraRadio->startReceive();\n                sending = false;\n            }\n\n            if (!requireAck) return true;\n            if (waitForAckId(msgId, LORA_ACK_TIMEOUT)) return true;\n\n            attempts++;\n            ESP_LOGW(TAG_LORA, \"No ACK for msgId=%d (attempt %d)\", msgId, attempts);\n        }\n        return false;\n    };\n\n\n    size_t sendSize = sizeof(LoRa_Packet_Internal) + packet.payloadLength;\n    auto sendBuffer = std::make_unique<uint8_t[]>(sendSize);\n    memcpy(sendBuffer.get(), &packet, sizeof(LoRa_Packet_Internal));\n    if (packet.payloadLength > 0 && data != nullptr) {\n        memcpy(sendBuffer.get() + sizeof(LoRa_Packet_Internal), data, packet.payloadLength);\n    }\n\n    // Send header first\n    ESP_LOGD(TAG_LORA, \"Sending packet: %s\", packet.toString().c_str());\n    lastSentPacket = packet;\n    auto success = sendBufferWithRetries(sendBuffer, sendSize, packet.messageId);\n    if (!success) {\n        updateConnectionState(ConnectionState::CONNECTING);\n        ESP_LOGE(TAG_LORA, \"Failed to send packet after retries, giving up\");\n    }\n    else {\n        updateConnectionState(ConnectionState::CONNECTED);\n        updateLastSendTime();\n        ESP_LOGD(TAG_LORA, \"Packet msgId=%d sent successfully\", packet.messageId);\n    }\n\n    return success;\n}\n\nvoid LoRa_CommunicationClass::updateLastSendTime() {\n    WITH_MUTEX(lastSendTimeMutex) {\n        lastSendTime = time(nullptr);\n    }\n}\n\nvoid LoRa_CommunicationClass::updateConnectionState(ConnectionState state) {\n    if (isDeviceBaseStation()) {\n        FlightStorage.updatePlaneConnectionState(state);\n    }\n    else if (isDevicePlane()) {\n        FlightStorage.updateBaseConnectionState(state);\n    }\n}\n\nstd::string LoRa_CommunicationClass::toString(PacketType packetType) {\n    switch (packetType) {\n    case PacketType::HEADER: return \"HEADER\";\n    case PacketType::ACK: return \"ACK\";\n    case PacketType::PING: return \"PING\";\n    default: return \"UNKNOWN\";\n    }\n}\n\nstd::string LoRa_CommunicationClass::LoRa_Packet_Internal::toString() const {\n    return \"LoRa_Packet{type=\" + LoRa_CommunicationClass::toString(type) +\n        \", messageId=\" + std::to_string(messageId) +\n        \", payloadLength=\" + std::to_string(payloadLength) + \"}\";\n}\n\n\nvoid LoRa_CommunicationClass::registerReceivePacketCallback(std::function<void(const LoRaPacket&)> callback) {\n    receivePacketCallbacks.push_back(std::move(callback));\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../shared_components/lora_com/LoRa_Communication.cpp b/../shared_components/lora_com/LoRa_Communication.cpp
+--- a/../shared_components/lora_com/LoRa_Communication.cpp	(revision 3ffb89ad3c06ca2e9d8b9bdd600a3fd05e998195)
++++ b/../shared_components/lora_com/LoRa_Communication.cpp	(date 1780682852791)
+@@ -58,8 +58,11 @@
+     if (lastSendTimeMutex == nullptr) {
+         lastSendTimeMutex = xSemaphoreCreateMutex();
+     }
++    if (fragmentedMessagesMutex == nullptr) {
++        fragmentedMessagesMutex = xSemaphoreCreateMutex();
++    }
+     if (radioMutex == nullptr || receivedPacketsMutex == nullptr || lastSendTimeMutex == nullptr || ackMutex ==
+-        nullptr) {
++        nullptr || fragmentedMessagesMutex == nullptr) {
+         ESP_LOGE(TAG_LORA, "Failed to create LoRa mutexes");
+         return;
+     }
+@@ -199,18 +202,40 @@
+ 
+     if (data == nullptr || size == 0) {
+         ESP_LOGE(TAG_LORA, "Invalid arguments passed");
++        return;
+     }
+-    if (size > UINT8_MAX) {
+-        ESP_LOGE(TAG_LORA, "Data size exceeds maximum payload size: %zu > %d", size, UINT8_MAX);
+-    }
+-    LoRa_Packet_Internal packetHeader = {};
+-    packetHeader.type = PacketType::HEADER;
+-    // generate a non-zero message id
+-    uint8_t mid = nextMessageId.fetch_add(1);
+-    if (mid == 0) mid = nextMessageId.fetch_add(1);
+-    packetHeader.messageId = mid;
+-    packetHeader.payloadLength = size; // size of data packet
+-    sendRawPacket(packetHeader, data, true);
++
++    // Calculate number of fragments needed
++    size_t maxPayloadPerPacket = LORA_MAX_PAYLOAD_PER_PACKET;
++    uint8_t totalFragments = (size + maxPayloadPerPacket - 1) / maxPayloadPerPacket;
++
++    // Generate a non-zero message id
++    uint8_t messageId = nextMessageId.fetch_add(1);
++    if (messageId == 0) messageId = nextMessageId.fetch_add(1);
++
++    ESP_LOGI(TAG_LORA, "Sending data: size=%zu, fragments=%d, maxPayloadPerPacket=%zu",
++             size, totalFragments, maxPayloadPerPacket);
++
++    // Send each fragment
++    for (uint8_t fragmentNum = 0; fragmentNum < totalFragments; fragmentNum++) {
++        size_t offset = fragmentNum * maxPayloadPerPacket;
++        size_t fragmentLength = std::min(maxPayloadPerPacket, size - offset);
++
++        LoRa_Packet_Internal packetHeader = {};
++        packetHeader.type = PacketType::HEADER;
++        packetHeader.messageId = messageId;
++        packetHeader.payloadLength = fragmentLength;
++        packetHeader.fragmentNumber = fragmentNum;
++        packetHeader.totalFragments = totalFragments;
++
++        const uint8_t* fragmentData = data + offset;
++        if (!sendRawPacket(packetHeader, fragmentData, true)) {
++            ESP_LOGE(TAG_LORA, "Failed to send fragment %d/%d", fragmentNum + 1, totalFragments);
++            return;
++        }
++    }
++
++    ESP_LOGD(TAG_LORA, "Successfully sent all %d fragments", totalFragments);
+ }
+ 
+ bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck) {
+@@ -222,7 +247,7 @@
+             auto found = false;
+             WITH_MUTEX(ackMutex) {
+                 found = std::ranges::contains(receivedAcks, msgId);
+-                erase_if(receivedAcks, [msgId](const uint8_t& id) { return id > msgId + 10 || id == msgId; });
++                erase_if(receivedAcks, [msgId](const uint8_t& id) { return id == msgId; });
+             }
+             if (found) {
+                 return true;
+@@ -312,10 +337,12 @@
+ std::string LoRa_CommunicationClass::LoRa_Packet_Internal::toString() const {
+     return "LoRa_Packet{type=" + LoRa_CommunicationClass::toString(type) +
+         ", messageId=" + std::to_string(messageId) +
+-        ", payloadLength=" + std::to_string(payloadLength) + "}";
++        ", payloadLength=" + std::to_string(payloadLength) +
++        ", fragment=" + std::to_string(fragmentNumber) + "/" + std::to_string(totalFragments) + "}";
+ }
+ 
+ 
+ void LoRa_CommunicationClass::registerReceivePacketCallback(std::function<void(const LoRaPacket&)> callback) {
+     receivePacketCallbacks.push_back(std::move(callback));
+ }
++

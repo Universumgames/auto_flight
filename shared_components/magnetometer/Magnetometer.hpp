@@ -28,9 +28,7 @@ public:
     uint8_t getRegCTRL2();
 
 private:
-    qmc5883p_dev_t magnetometerHandle;
-
-
+    qmc5883p_dev_t magnetometerHandle = {};
 
 };
 

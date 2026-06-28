@@ -34,6 +34,8 @@ export function createStoreState() {
     configurationState: ConfigurationState.CONNECTION,
     barometerConnectionBase: ConnectionState.CONNECTING,
     barometerConnectionPlane: ConnectionState.CONNECTING,
+    motorComConnectionPlane: ConnectionState.CONNECTING,
+    magnetometerConnectionPlane: ConnectionState.CONNECTING,
     pressureBase: 0.0,
     pressurePlane: 0.0,
     calculatedAltitude: 0.0

@@ -3,6 +3,7 @@
 #include "i2c_manager.hpp"
 
 #include "esp_log.h"
+#include "freertos/FreeRTOS.h"
 
 static I2CManager* instance = new I2CManager();
 
@@ -28,12 +29,16 @@ void I2CManager::init() {
         }
     };
 
+    vTaskDelay(pdMS_TO_TICKS(100));  // let devices finish power-on reset before bus creation
+
     bus = i2c_bus_create(I2C_NUM_0, &conf);
+    vTaskDelay(pdMS_TO_TICKS(100));
 
     ESP_LOGI("i2c_manager", "I2C bus created");
-    initialized = true;
 
     uint8_t found[8] = {};
-    uint8_t count = i2c_bus_scan(I2CManager::getBus(), found, sizeof(found));
+    uint8_t count = i2c_bus_scan(bus, found, sizeof(found));
     ESP_LOGI("i2c_manager", "I2C scan: %d device(s) found", count);
+
+    initialized = true;
 }

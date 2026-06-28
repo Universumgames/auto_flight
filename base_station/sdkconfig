@@ -3616,13 +3616,6 @@ CONFIG_WIFI_DEVICE_HOSTNAME="ESP32-Flight-Base-Station"
 # end of WiFi Helper Configuration
 
 #
-# HMC5883L
-#
-# default:
-CONFIG_HMC5883L_MEAS_TIMEOUT=6000
-# end of HMC5883L
-
-#
 # GPS Settings
 #
 # default:

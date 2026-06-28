@@ -10,6 +10,9 @@
 
 #define I2C_ADDRESS 0x42
 
+#define DEBUG_I2C
+#define DEBUG_PLANE
+
 SBUS sbus(Serial);
 Servo servo1;
 Servo servo2;
@@ -26,9 +29,16 @@ int getChannel(int channel) {
     return (int)sbus.getNormalizedChannel(channel);
 }
 
-// Maps [-100, 100] to [0, 180]
+int clamp(int value, int min, int max) {
+    if (value < min) value = min;
+    if (value > max) value = max;
+    return value;
+}
+
+// Maps [-100, 100] to RC PWM range [1000, 2000] µs (center 0 → 1500 µs)
 int mapToServo(int value) {
-    return (value + 100) * 180 / 200;
+    int clamped = clamp(value, -100, 100);
+    return 1500 + clamped * 5;
 }
 
 bool isManualOverride() {
@@ -40,20 +50,43 @@ void I2C_TxHandler() {
 }
 
 void I2C_RxHandler(int numBytes) {
-    if (numBytes != 4) {
+#ifdef DEBUG_I2C
+    Serial.print("I2C_RxHandler called with ");
+    Serial.print(numBytes);
+    Serial.println(" bytes");
+#endif
+
+    char buf[4];
+    int bytesRead = Wire.readBytes(buf, 4);
+    if (bytesRead != 4) {
+        // Handle error: not enough bytes received
         return;
     }
-    int8_t address = Wire.read();
-    desiredValueServo1 = (int8_t)Wire.read();
-    desiredValueServo2 = (int8_t)Wire.read();
-    desiredValueServo3 = (int8_t)Wire.read();
-    desiredValueServo4 = (int8_t)Wire.read();
+    desiredValueServo1 = (int8_t)buf[0];
+    desiredValueServo2 = (int8_t)buf[1];
+    desiredValueServo3 = (int8_t)buf[2];
+    desiredValueServo4 = (int8_t)buf[3];
+#ifdef DEBUG_I2C
+    Serial.print("desiredValueServo1: ");
+    Serial.print(desiredValueServo1);
+    Serial.print(", desiredValueServo2: ");
+    Serial.print(desiredValueServo2);
+    Serial.print(" , desiredValueServo3: ");
+    Serial.print(desiredValueServo3);
+    Serial.print(", desiredValueServo4: ");
+    Serial.println(desiredValueServo4);
+#endif
 }
 
 void setup() {
+#ifndef DEBUG_I2C
     sbus.begin();
+#else
+    Serial.begin(115200);
+#endif
 
     Wire.begin(I2C_ADDRESS);
+    Wire.setClock(100000);
     Wire.onRequest(I2C_TxHandler);
     Wire.onReceive(I2C_RxHandler);
 
@@ -63,10 +96,12 @@ void setup() {
     servo4.attach(PIN_SERVO4);
 }
 
+#ifndef DEBUG_I2C
 ISR(TIMER2_COMPA_vect)
 {
     sbus.process();
 }
+#endif
 
 // value in [-100, 100]
 void writeServo(Servo& servo, int value) {
@@ -75,6 +110,9 @@ void writeServo(Servo& servo, int value) {
 
 void loop() {
     bool manualOverride = isManualOverride();
+#if defined(DEBUG_PLANE) || defined(DEBUG_I2C)
+    manualOverride = false;
+#endif
 
     if (manualOverride) {
         writeServo(servo1, getChannel(1));

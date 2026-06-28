@@ -58,11 +58,11 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
       },
       {
         label: 'Motor Controller',
-        state: 'loading',
+        state: isConnected(store.motorComConnectionPlane) ? 'done' : 'loading',
       },
       {
-        label: 'Accelerometer',
-        state: 'loading',
+        label: 'Magnetometer',
+        state: isConnected(store.magnetometerConnectionPlane) ? 'done' : 'loading',
       },
       {
         label: 'Barometer' + (store.pressurePlane != 0 ? ` (${store.pressurePlane.toFixed(2)}hPa)` : ''),

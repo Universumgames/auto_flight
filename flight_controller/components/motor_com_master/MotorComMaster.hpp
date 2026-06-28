@@ -27,6 +27,8 @@ public:
      */
     [[nodiscard]] bool isSlaveConnected() const;
 
+    [[nodiscard]] bool isManualOverride() const;
+
     /**
          * Send a command to the slave
          * @param command command to send

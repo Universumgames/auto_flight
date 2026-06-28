@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="29" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="7" type="long" />
     <option name="/Default/Environment/StickyLines/DisabledLanguageList/@EntryValue" value="Jupyter" type="string" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
@@ -113,7 +113,6 @@
       <config projectName="flight_controller" targetName="merge-bin" />
       <config projectName="flight_controller" targetName="__idf_tcp_transport" />
       <config projectName="flight_controller" targetName="__idf_protocomm" />
-      <config projectName="flight_controller" targetName="__idf_esp-idf-lib__hmc5883l" />
       <config projectName="flight_controller" targetName="__idf_duruofu__qmc5883p" />
       <config projectName="flight_controller" targetName="__idf_esp_libc" />
       <config projectName="flight_controller" targetName="__idf_efuse" />
@@ -211,24 +210,38 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="cleanup bugfixes, motor communication/servo fixes, integration fixes">
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer working">
+      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../base_station/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../base_station/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/sdkconfig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/idf_component.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/Kconfig" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/Kconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/sdkconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessageParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessageParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/connection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/types/connection.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../motor_controller/platformio.ini" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/platformio.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../motor_controller/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/include/qmc5883p.h" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/include/qmc5883p.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/qmc5883p.c" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/qmc5883p.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../resources/learning.md" beforeDir="false" afterPath="$PROJECT_DIR$/../resources/learning.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/barometer/Barometer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/barometer/Barometer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/geo_helper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/geo_helper.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/geo_helper.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/geo_helper.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/magnetometer/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/magnetometer/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/magnetometer/idf_component.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/magnetometer/idf_component.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -353,7 +366,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="29128" />
+    <option name="cachedIndexableFilesCount" value="2175" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-ESP-IDF" />
   <component name="FileTemplateManagerImpl">
@@ -368,7 +381,13 @@
     <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/components/flight_controller/FlightController.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/components/route_planner/route_planner.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/shared_components/gyroscope/Gyroscope.hpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.hpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/qmc5883p.c" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -376,61 +395,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0000000029029041" />
-      <entry key="MS500" value="1.022721189253459" />
-      <entry key="S2" value="1.6103356650369398" />
-      <entry key="S5" value="2.236286132595083" />
-      <entry key="S10" value="2.570783650894368" />
-      <entry key="S30" value="2.8792608148069334" />
-      <entry key="S60" value="3.265330764265192" />
-      <entry key="M2" value="4.357122154105129" />
-      <entry key="M5" value="9.319821937741354" />
-      <entry key="M10" value="17.445205148821408" />
-      <entry key="M15" value="23.706141232007216" />
-      <entry key="M30" value="35.75210507500519" />
-      <entry key="H1" value="52.246256330491605" />
-      <entry key="H2" value="90.1889709992944" />
-      <entry key="H4" value="155.50169356084186" />
-      <entry key="D1" value="442.23013170443545" />
-      <entry key="W1" value="2295.366711915059" />
+      <entry key="MS100" value="1.0000000000000007" />
+      <entry key="MS500" value="1.000940685443379" />
+      <entry key="S2" value="1.1751302251052662" />
+      <entry key="S5" value="1.4981320007490964" />
+      <entry key="S10" value="1.7057846702423454" />
+      <entry key="S30" value="1.8903431199172824" />
+      <entry key="S60" value="1.9435799497509612" />
+      <entry key="M2" value="1.9715650983419715" />
+      <entry key="M5" value="2.3372725275993567" />
+      <entry key="M10" value="6.427123231670131" />
+      <entry key="M15" value="12.368563782134737" />
+      <entry key="M30" value="26.304975720386825" />
+      <entry key="H1" value="39.93186488188104" />
+      <entry key="H2" value="55.902160888338265" />
+      <entry key="H4" value="80.38779802578685" />
+      <entry key="D1" value="340.82565401958516" />
+      <entry key="W1" value="2229.782410270537" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="7.912409666935737E-54" />
-      <entry key="MS500" value="2.3969653332244236E-11" />
-      <entry key="S2" value="0.002212663838468355" />
-      <entry key="S5" value="0.08668943557128526" />
-      <entry key="S10" value="0.2944314548203979" />
-      <entry key="S30" value="0.6743812978416723" />
-      <entry key="S60" value="0.9132811909749975" />
-      <entry key="M2" value="1.3271130150534622" />
-      <entry key="M5" value="3.0280177520443288" />
-      <entry key="M10" value="5.390451484915161" />
-      <entry key="M15" value="6.972862106218888" />
-      <entry key="M30" value="9.949775350988297" />
-      <entry key="H1" value="14.68738006644335" />
-      <entry key="H2" value="27.300854864527103" />
-      <entry key="H4" value="50.28167500994394" />
-      <entry key="D1" value="153.4265662664269" />
-      <entry key="W1" value="739.6659846563003" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="6.671571659161392E-283" />
+      <entry key="S5" value="1.6694835966367623E-113" />
+      <entry key="S10" value="5.520790502992977E-57" />
+      <entry key="S30" value="3.547455771768186E-19" />
+      <entry key="S60" value="1.4700305585907156E-9" />
+      <entry key="M2" value="1.2029302362520811E-4" />
+      <entry key="M5" value="0.12118541756942725" />
+      <entry key="M10" value="1.2465265785131763" />
+      <entry key="M15" value="2.7192004795594134" />
+      <entry key="M30" value="5.942711910705818" />
+      <entry key="H1" value="8.933506278182435" />
+      <entry key="H2" value="12.141782207613922" />
+      <entry key="H4" value="16.70753066152275" />
+      <entry key="D1" value="89.28361819872764" />
+      <entry key="W1" value="681.8814810871144" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="3.437232064582606E-8" />
-      <entry key="MS500" value="0.04323235182879651" />
-      <entry key="S2" value="0.8895142214215522" />
-      <entry key="S5" value="1.8561312712948153" />
-      <entry key="S10" value="2.5440558529648416" />
-      <entry key="S30" value="3.401601096947375" />
-      <entry key="S60" value="4.068104893444729" />
-      <entry key="M2" value="5.51761803875555" />
-      <entry key="M5" value="12.116389023063169" />
-      <entry key="M10" value="22.64574118831132" />
-      <entry key="M15" value="30.52717968503129" />
-      <entry key="M30" value="45.60745692450428" />
-      <entry key="H1" value="66.87650640097092" />
-      <entry key="H2" value="117.45175611998916" />
-      <entry key="H4" value="205.7565331692014" />
-      <entry key="D1" value="595.6478922258287" />
-      <entry key="W1" value="3035.0288356356355" />
+      <entry key="MS100" value="0.003043611639299494" />
+      <entry key="MS500" value="0.3147406023528847" />
+      <entry key="S2" value="0.9227440394943909" />
+      <entry key="S5" value="1.387735590605439" />
+      <entry key="S10" value="1.6487999685197452" />
+      <entry key="S30" value="1.8709248197780415" />
+      <entry key="S60" value="1.9338159907796906" />
+      <entry key="M2" value="1.9667870965110474" />
+      <entry key="M5" value="2.455265348875141" />
+      <entry key="M10" value="7.665774518909236" />
+      <entry key="M15" value="15.076782448397003" />
+      <entry key="M30" value="32.23572967662551" />
+      <entry key="H1" value="48.85637772841195" />
+      <entry key="H2" value="68.03806520171433" />
+      <entry key="H4" value="97.09151644137788" />
+      <entry key="D1" value="430.10479849650955" />
+      <entry key="W1" value="2911.6603449101535" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -523,11 +542,6 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="$USER_HOME$/.espressif/v6.0.1/esp-idf/tools/idf.py">
       <method v="2" />
     </configuration>
@@ -572,11 +586,6 @@
       </method>
     </configuration>
     <configuration name="__idf_efuse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_efuse" CONFIG_NAME="Debug-ESP-IDF">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="__idf_esp-idf-lib__hmc5883l" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_esp-idf-lib__hmc5883l" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1176,6 +1185,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="app-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="app-flash" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1580,7 +1594,6 @@
       <item itemvalue="CMake Application.__idf_barometer" />
       <item itemvalue="CMake Application.__idf_bootloader_support" />
       <item itemvalue="CMake Application.__idf_driver" />
-      <item itemvalue="CMake Application.__idf_esp-idf-lib__hmc5883l" />
       <item itemvalue="CMake Application.__idf_esp_driver_cam" />
       <item itemvalue="CMake Application.__idf_esp_driver_gpio" />
       <item itemvalue="CMake Application.__idf_esp_driver_i2s" />
@@ -1635,7 +1648,9 @@
       <workItem from="1781461315913" duration="2704000" />
       <workItem from="1781870130668" duration="2457000" />
       <workItem from="1782165771069" duration="2333000" />
-      <workItem from="1782250690051" duration="23216000" />
+      <workItem from="1782250690051" duration="38882000" />
+      <workItem from="1782480340124" duration="383000" />
+      <workItem from="1782480787439" duration="24871000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />
@@ -1717,7 +1732,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782168002244</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="get magnetometer working">
+      <option name="closed" value="true" />
+      <created>1782314297082</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1782314297082</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1751,7 +1774,8 @@
     <MESSAGE value="fix serialization" />
     <MESSAGE value="cleanup" />
     <MESSAGE value="cleanup bugfixes, motor communication/servo fixes, integration fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleanup bugfixes, motor communication/servo fixes, integration fixes" />
+    <MESSAGE value="get magnetometer working" />
+    <option name="LAST_COMMIT_MESSAGE" value="get magnetometer working" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
