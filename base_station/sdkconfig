@@ -3616,6 +3616,13 @@ CONFIG_WIFI_DEVICE_HOSTNAME="ESP32-Flight-Base-Station"
 # end of WiFi Helper Configuration
 
 #
+# HMC5883L
+#
+# default:
+CONFIG_HMC5883L_MEAS_TIMEOUT=6000
+# end of HMC5883L
+
+#
 # GPS Settings
 #
 # default:
@@ -3663,6 +3670,25 @@ CONFIG_LORA_BUSY_GPIO=13
 # default:
 CONFIG_LORA_SYNC_WORD=0x34
 # end of LoRa Communication Settings
+
+#
+# I2C Device Library
+#
+# default:
+# CONFIG_I2CDEV_USE_LEGACY_DRIVER is not set
+# default:
+# CONFIG_I2CDEV_AUTO_ENABLE_PULLUPS is not set
+# default:
+CONFIG_I2CDEV_DEFAULT_SDA_PIN=21
+# default:
+CONFIG_I2CDEV_DEFAULT_SCL_PIN=22
+# default:
+CONFIG_I2CDEV_MAX_DEVICES_PER_PORT=8
+# default:
+CONFIG_I2CDEV_TIMEOUT=1000
+# default:
+# CONFIG_I2CDEV_NOLOCK is not set
+# end of I2C Device Library
 
 #
 # CMake Utilities

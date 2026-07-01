@@ -9,12 +9,46 @@ dependencies:
       path: ../shared_components/barometer
       type: local
     version: '*'
-  duruofu/qmc5883p:
+  esp-idf-lib/esp_idf_lib_helpers:
+    component_hash: 689853bb8993434f9556af0f2816e808bf77b5d22100144b21f3519993daf237
     dependencies: []
     source:
-      path: ../shared_components/duruofu__qmc5883p
-      type: local
-    version: 0.1.0
+      registry_url: https://components.espressif.com/
+      type: service
+    targets:
+    - esp32
+    - esp32c2
+    - esp32c3
+    - esp32c5
+    - esp32c6
+    - esp32c61
+    - esp32h2
+    - esp32p4
+    - esp32s2
+    - esp32s3
+    version: 1.4.0
+  esp-idf-lib/i2cdev:
+    component_hash: 9e22a91420695242ceac2c00788820ae45826224d38ef003a1a894367c55ede4
+    dependencies:
+    - name: esp-idf-lib/esp_idf_lib_helpers
+      registry_url: https://components.espressif.com
+      require: private
+      version: '*'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    targets:
+    - esp32
+    - esp32c2
+    - esp32c3
+    - esp32c5
+    - esp32c6
+    - esp32c61
+    - esp32h2
+    - esp32p4
+    - esp32s2
+    - esp32s3
+    version: 2.1.1
   espressif/bme280:
     component_hash: 873d97d0bd30004f45d1653f078a4bafe39c1767e57d4bae0f0a13bc3a4d5e3d
     dependencies:
@@ -113,9 +147,6 @@ dependencies:
     dependencies:
     - name: idf
       version: '>=4.1.0'
-    - name: duruofu/qmc5883p
-      public: true
-      version: ^0.1.0
     source:
       path: ../shared_components/magnetometer
       type: local
@@ -128,7 +159,8 @@ dependencies:
     version: '*'
 direct_dependencies:
 - barometer
-- duruofu/qmc5883p
+- esp-idf-lib/esp_idf_lib_helpers
+- esp-idf-lib/i2cdev
 - espressif/bme280
 - espressif/i2c_bus
 - espressif/mpu6050
@@ -140,6 +172,6 @@ direct_dependencies:
 - johboh/nlohmann-json
 - magnetometer
 - motor_com
-manifest_hash: b3735a3fdb08c4c8151e319c00e47f0190f15cd47f30d1297229a848320209f0
+manifest_hash: 15cd0555e3223129526c18b19260582fd032fffb028bf3442958a5e6a49d007f
 target: esp32s3
 version: 3.0.0
