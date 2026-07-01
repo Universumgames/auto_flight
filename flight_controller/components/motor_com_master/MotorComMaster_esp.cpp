@@ -51,7 +51,7 @@ bool MotorComMasterClass::sendPacketInternal() {
         lastSentValues[ControlCommand::RUDDER],
     };
     esp_err_t errorCode = (i2c_bus_write_bytes(devHandle, NULL_I2C_MEM_ADDR, 4, reinterpret_cast<uint8_t *>(packet)));
-    I2C_ERROR_LOG("MotorCom", "write packet failed", errorCode);
+    //I2C_ERROR_LOG("MotorCom", "write packet failed", errorCode);
 
     return errorCode == ESP_OK;
 }
@@ -59,14 +59,14 @@ bool MotorComMasterClass::sendPacketInternal() {
 bool MotorComMasterClass::isSlaveConnected() const {
     uint8_t response;
     esp_err_t errorCode = i2c_bus_read_byte(devHandle, NULL_I2C_MEM_ADDR, &response);
-    I2C_ERROR_LOG("MotorCom", "read slave connected failed", errorCode);
+    //I2C_ERROR_LOG("MotorCom", "read slave connected failed", errorCode);
     return errorCode == ESP_OK;
 }
 
 bool MotorComMasterClass::isManualOverride() const {
     bool isManualOverride;
     esp_err_t errorCode = i2c_bus_read_byte(devHandle, NULL_I2C_MEM_ADDR, (uint8_t*)&isManualOverride);
-    I2C_ERROR_LOG("MotorCom", "read manual override failed", errorCode);
+    //I2C_ERROR_LOG("MotorCom", "read manual override failed", errorCode);
     return errorCode == ESP_OK && isManualOverride;
 }
 #endif

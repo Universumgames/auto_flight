@@ -1,11 +1,10 @@
 #pragma once
-#include "qmc5883p.h"
+#include "hmc5883l.h"
 
 class MagnetometerClass {
 private:
     MagnetometerClass() = default;
 
-    static constexpr uint8_t MAGNETOMETER_ADDR = 0x2C;
 public:
     ~MagnetometerClass() = delete;
 
@@ -17,19 +16,15 @@ public:
 
     bool isAvailable();
 
-    bool isOverflowing();
+    bool isLocked();
 
-    qmc5883p_data_t readData();
+    hmc5883l_data_t readData();
 
     // Returns compass heading in degrees [0, 360), 0 = magnetic north
     float getHeading();
 
-    uint8_t getRegCTRL1();
-    uint8_t getRegCTRL2();
-
 private:
-    qmc5883p_dev_t magnetometerHandle = {};
-
+    hmc5883l_dev_t dev = {};
 };
 
 extern MagnetometerClass& Magnetometer;

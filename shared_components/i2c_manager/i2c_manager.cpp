@@ -25,13 +25,20 @@ void I2CManager::init() {
         .sda_pullup_en = GPIO_PULLUP_ENABLE,
         .scl_pullup_en = GPIO_PULLUP_ENABLE,
         .master = {
-            .clk_speed = 100000,
+            .clk_speed = 400000,
         }
     };
 
     vTaskDelay(pdMS_TO_TICKS(100));  // let devices finish power-on reset before bus creation
 
     bus = i2c_bus_create(I2C_NUM_0, &conf);
+
+    i2c_master_bus_handle_t master_handle = i2c_bus_get_internal_bus_handle(bus);
+    if (master_handle) {
+        i2c_master_bus_reset(master_handle);
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+
     vTaskDelay(pdMS_TO_TICKS(100));
 
     ESP_LOGI("i2c_manager", "I2C bus created");

@@ -94,7 +94,7 @@ int i = -100;
         auto compassHeading = Magnetometer.getHeading();
 
         //ESP_LOGI("GNDANG", "roll: %f, pitch: %f, yaw deg: %f", planeAngle.roll, planeAngle.pitch, planeAngle.yaw);
-        ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ctrl1: 0x%02x, ctrl2: 0x%02x, ready: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.getRegCTRL1(), Magnetometer.getRegCTRL2(), Magnetometer.isAvailable());
+        ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ready: %d, locked: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.isAvailable(), Magnetometer.isLocked());
 
         FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()
                                                         ? ConnectionState::CONNECTED
