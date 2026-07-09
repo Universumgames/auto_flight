@@ -41,11 +41,14 @@ struct ConnectionUpdatePacket {
 
     ConnectionState motorComConnectionPlane;
     ConnectionState magnetometerConnectionPlane;
+    ConnectionState accelerometerConnectionPlane;
+    bool manualOverridePlane;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectionUpdatePacket, type, baseConnectionState, lastContactBaseStationTimestamp,
                                    planeConnectionState, lastContactPlaneTimestamp, gpsConnectionBase,
                                    gpsConnectionPlane, barometerConnectionBase, barometerConnectionPlane,
-                                   motorComConnectionPlane, magnetometerConnectionPlane)
+                                   motorComConnectionPlane, magnetometerConnectionPlane, accelerometerConnectionPlane,
+                                   manualOverridePlane)
 };
 
 struct AreaDefinePacket {

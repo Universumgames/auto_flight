@@ -167,6 +167,8 @@ httpd_ws_frame_t* FrontendHandlerClass::prepareConnectionPacket() {
         .barometerConnectionPlane = FlightStorage.getPlaneBarometerConnectionState(),
         .motorComConnectionPlane = FlightStorage.getPlaneMotorControlConnectionState(),
         .magnetometerConnectionPlane = FlightStorage.getPlaneMagnetometerConnectionState(),
+        .accelerometerConnectionPlane = FlightStorage.getPlaneAccelerometerConnectionState(),
+        .manualOverridePlane = FlightStorage.getPlaneManualOverride(),
     };
     nlohmann::json json = rawPacket;
     std::string jsonString = json.dump();
@@ -222,6 +224,8 @@ void FrontendHandlerClass::registerAPISockets() {
                 .barometerConnectionPlane = FlightStorage.getPlaneBarometerConnectionState(),
                 .motorComConnectionPlane = FlightStorage.getPlaneMotorControlConnectionState(),
                 .magnetometerConnectionPlane = FlightStorage.getPlaneMagnetometerConnectionState(),
+                .accelerometerConnectionPlane = FlightStorage.getPlaneAccelerometerConnectionState(),
+                .manualOverridePlane = FlightStorage.getPlaneManualOverride(),
             };
             nlohmann::json json = rawPacket;
             std::string jsonString = json.dump();

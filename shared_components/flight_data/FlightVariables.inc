@@ -19,3 +19,5 @@ FLIGHT_VAR(planeMotorControlConnectionState,  PlaneMotorControlConnectionState, 
 FLIGHT_VAR(baseGPSConnectionState,            BaseGPSConnectionState,            ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
 FLIGHT_VAR(planeGPSConnectionState,           PlaneGPSConnectionState,           ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
 FLIGHT_VAR(planeMagnetometerConnectionState,  PlaneMagnetometerConnectionState,  ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
+FLIGHT_VAR(planeAccelerometerConnectionState, PlaneAccelerometerConnectionState, ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
+FLIGHT_VAR(planeManualOverride,               PlaneManualOverride,               bool,                      false,                         CONNECTION, {})

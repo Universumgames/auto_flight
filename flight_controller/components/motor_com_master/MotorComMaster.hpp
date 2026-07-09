@@ -27,7 +27,7 @@ public:
      */
     [[nodiscard]] bool isSlaveConnected() const;
 
-    [[nodiscard]] bool isManualOverride() const;
+    [[nodiscard]] bool isManualOverride();
 
     /**
          * Send a command to the slave
@@ -46,6 +46,7 @@ private:
 private:
 #ifndef NATIVE_BUILD
     i2c_bus_device_handle_t devHandle = nullptr;
+    esp_err_t errorCode = ESP_FAIL;
 #endif
 
     std::unordered_map<ControlCommand, int8_t> lastSentValues;

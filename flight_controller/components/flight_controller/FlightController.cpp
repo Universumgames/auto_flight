@@ -67,6 +67,8 @@ void FlightControllerClass::init() {
                  FlightStorage.getPlannedRoute().size());
         Flight_Communication::sendPlannedRoute();
     }, FlightStorageClass::DataUpdateType::ROUTE);
+
+    vTaskDelay(pdMS_TO_TICKS(200));
 }
 
 void FlightControllerClass::flightTaskEntry(void* param) {
@@ -83,15 +85,17 @@ int i = -100;
         }
 
         auto currentTime = GPS_Reader.getGPSLatestTime();
-        auto hasControl = !MotorComMaster.isManualOverride();
         //auto planeAngle = Gyroscope.getAngle();
         auto position = FlightStorage.updatePlanePosition(GPS_Reader.getCurrentPosition(), currentTime);
         auto pressure = FlightStorage.updatePlanePressure(Barometer.getPressure(), currentTime);
+        vTaskDelay(1);
         auto groundPressure = FlightStorage.getBasePressure();
         auto currentAltitude = BarometerClass::calculateAltitude(groundPressure, pressure);
         auto planeAngle = Gyroscope.getPlaneAngle();
+        vTaskDelay(1);
         auto magnetHeading = Magnetometer.readData();
         auto compassHeading = Magnetometer.getHeading();
+        vTaskDelay(1);
 
         //ESP_LOGI("GNDANG", "roll: %f, pitch: %f, yaw deg: %f", planeAngle.roll, planeAngle.pitch, planeAngle.yaw);
         ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ready: %d, locked: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.isAvailable(), Magnetometer.isLocked());
@@ -107,6 +111,9 @@ int i = -100;
             MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
         FlightStorage.updatePlaneMagnetometerConnectionState(
             Magnetometer.isAvailable() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        FlightStorage.updatePlaneAccelerometerConnectionState(
+            Gyroscope.initialized() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        FlightStorage.updatePlaneManualOverride(MotorComMaster.isManualOverride());
         FlightStorage.updatePlaneMotorControlConnectionState(
             MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
 

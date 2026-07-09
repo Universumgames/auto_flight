@@ -5,6 +5,7 @@
 #include "i2c_manager.hpp"
 
 extern "C" int app_main() {
+    vTaskDelay(pdMS_TO_TICKS(300));
     I2CManager::getBus();
 
     FlightController.init();

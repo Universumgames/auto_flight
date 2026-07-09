@@ -10,6 +10,8 @@
 
 #define I2C_ADDRESS 0x42
 
+#define I2C_RESET_TIMEOUT_MILLIS (1000L)
+
 #define DEBUG_I2C
 #define DEBUG_PLANE
 
@@ -23,6 +25,8 @@ int desiredValueServo1 = 0;
 int desiredValueServo2 = 0;
 int desiredValueServo3 = 0;
 int desiredValueServo4 = 0;
+
+unsigned long lastI2CMessageTime = 0;
 
 // Returns normalized channel value in [-100, 100]
 int getChannel(int channel) {
@@ -46,7 +50,11 @@ bool isManualOverride() {
 }
 
 void I2C_TxHandler() {
+#ifdef DEBUG_PLANE
+    Wire.write(false);
+#else
     Wire.write(isManualOverride());
+#endif
 }
 
 void I2C_RxHandler(int numBytes) {
@@ -76,6 +84,32 @@ void I2C_RxHandler(int numBytes) {
     Serial.print(", desiredValueServo4: ");
     Serial.println(desiredValueServo4);
 #endif
+    lastI2CMessageTime = millis();
+}
+
+// Hardware I2C pins on the Nano (ATmega328) - not remappable.
+#define PIN_I2C_SDA A4
+#define PIN_I2C_SCL A5
+
+void setupI2C() {
+    // clear internal I2C state machine
+    Wire.end();
+
+    // Wire.end() disables the TWI peripheral but doesn't guarantee SDA/SCL
+    // come back up cleanly - if the AVR was clock-stretching (holding SCL
+    // low) at the moment TWEN got cleared, the pin can stay low afterward.
+    // Explicitly release both lines to inputs with pull-ups so we never hand
+    // a stuck-low line back to a bus shared with other devices (magnetometer
+    // etc.) while TWI is offline.
+    pinMode(PIN_I2C_SDA, INPUT_PULLUP);
+    pinMode(PIN_I2C_SCL, INPUT_PULLUP);
+    delay(10);
+
+    Wire.begin(I2C_ADDRESS);
+    Wire.onRequest(I2C_TxHandler);
+    Wire.onReceive(I2C_RxHandler);
+
+    lastI2CMessageTime = millis();
 }
 
 void setup() {
@@ -85,10 +119,7 @@ void setup() {
     Serial.begin(115200);
 #endif
 
-    Wire.begin(I2C_ADDRESS);
-    Wire.setClock(100000);
-    Wire.onRequest(I2C_TxHandler);
-    Wire.onReceive(I2C_RxHandler);
+    setupI2C();
 
     servo1.attach(PIN_SERVO1);
     servo2.attach(PIN_SERVO2);
@@ -124,5 +155,9 @@ void loop() {
         writeServo(servo2, desiredValueServo2);
         writeServo(servo3, desiredValueServo3);
         writeServo(servo4, desiredValueServo4);
+    }
+
+    if (lastI2CMessageTime < (millis() - I2C_RESET_TIMEOUT_MILLIS)) {
+        setupI2C();
     }
 }

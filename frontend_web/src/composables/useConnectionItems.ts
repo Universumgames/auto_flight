@@ -61,8 +61,16 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
         state: isConnected(store.motorComConnectionPlane) ? 'done' : 'loading',
       },
       {
+        label: 'Autopilot Control' + (store.manualOverridePlane ? ' (manual override active)' : ''),
+        state: store.manualOverridePlane ? 'loading' : 'done',
+      },
+      {
         label: 'Magnetometer',
         state: isConnected(store.magnetometerConnectionPlane) ? 'done' : 'loading',
+      },
+      {
+        label: 'Accelerometer',
+        state: isConnected(store.accelerometerConnectionPlane) ? 'done' : 'loading',
       },
       {
         label: 'Barometer' + (store.pressurePlane != 0 ? ` (${store.pressurePlane.toFixed(2)}hPa)` : ''),
@@ -78,4 +86,17 @@ export const formatStatus = (status: ConnectionState) =>
 // total connected flag — true only when all items are CONNECTED
 export const totalIsConnected = computed(() =>
   connectionItems.value.every((i) => isConnected(i.status)),
+)
+
+// true when the plane and its motor controller are connected but autopilot control is disabled (manual override active)
+export const autopilotDisabledWarning = computed(
+  () =>
+    isConnected(store.connectionStatePlane) &&
+    isConnected(store.motorComConnectionPlane) &&
+    store.manualOverridePlane,
+)
+
+// true when the plane is connected but its motor controller is not
+export const motorControllerDisconnectedError = computed(
+  () => isConnected(store.connectionStatePlane) && !isConnected(store.motorComConnectionPlane),
 )

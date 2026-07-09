@@ -105,15 +105,18 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     case PacketType::COMPONENT_STATUS: {
         auto status = reinterpret_cast<ComponentStatus*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER,
-                                "Component status - GPS: %d, Barometer: %d, Gyroscope: %d, MotorControl: %d, Magnetometer: %d",
+                                "Component status - GPS: %d, Barometer: %d, Gyroscope: %d, MotorControl: %d, Magnetometer: %d, Accelerometer: %d, ManualOverride: %d",
                                 static_cast<int>(status->gps), static_cast<int>(status->barometer),
                                 static_cast<int>(status->gyroscope), static_cast<int>(status->motorControl),
-                                static_cast<int>(status->magnetometer));
+                                static_cast<int>(status->magnetometer), static_cast<int>(status->accelerometer),
+                                static_cast<int>(status->manualOverride));
         FlightStorage.updatePlaneBarometerConnectionState(status->barometer);
         FlightStorage.updatePlaneGyroscopeConnectionState(status->gyroscope);
         FlightStorage.updatePlaneMotorControlConnectionState(status->motorControl);
         FlightStorage.updatePlaneGPSConnectionState(status->gps);
         FlightStorage.updatePlaneMagnetometerConnectionState(status->magnetometer);
+        FlightStorage.updatePlaneAccelerometerConnectionState(status->accelerometer);
+        FlightStorage.updatePlaneManualOverride(status->manualOverride);
         break;
     }
     default:

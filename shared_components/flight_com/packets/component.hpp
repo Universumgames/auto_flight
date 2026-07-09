@@ -8,6 +8,8 @@ struct ComponentStatus : public BasePacket {
     ConnectionState gyroscope;
     ConnectionState motorControl;
     ConnectionState magnetometer;
+    ConnectionState accelerometer;
+    bool manualOverride;
 
     std::string toString() override {
         return "ComponentStatus{timestamp=" + std::to_string(timestamp) + ", type=" + std::to_string(
@@ -16,7 +18,9 @@ struct ComponentStatus : public BasePacket {
             ", barometer=" + (barometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", gyroscope=" + (gyroscope == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", motorControl=" + (motorControl == ConnectionState::CONNECTED ? "connected" : "connecting") +
-            ", magnetometer=" + (magnetometer == ConnectionState::CONNECTED ? "connected" : "connecting") + "}";
+            ", magnetometer=" + (magnetometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
+            ", accelerometer=" + (accelerometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
+            ", manualOverride=" + (manualOverride ? "true" : "false") + "}";
     }
 
     ComponentStatus(const ComponentStatus& packet) : BasePacket(packet) {
@@ -25,6 +29,8 @@ struct ComponentStatus : public BasePacket {
         this->gyroscope = packet.gyroscope;
         this->motorControl = packet.motorControl;
         this->magnetometer = packet.magnetometer;
+        this->accelerometer = packet.accelerometer;
+        this->manualOverride = packet.manualOverride;
     }
 
     ComponentStatus(RawSerializedPacket packet) : BasePacket(packet) {
@@ -34,12 +40,15 @@ struct ComponentStatus : public BasePacket {
         this->gyroscope = gpsPacket->gyroscope;
         this->motorControl = gpsPacket->motorControl;
         this->magnetometer = gpsPacket->magnetometer;
+        this->accelerometer = gpsPacket->accelerometer;
+        this->manualOverride = gpsPacket->manualOverride;
     }
 
     ComponentStatus(time_t time = 0, ConnectionState gps = ConnectionState::CONNECTING, ConnectionState barometer = ConnectionState::CONNECTING, ConnectionState gyroscope = ConnectionState::CONNECTING,
-                    ConnectionState motorControl = ConnectionState::CONNECTING, ConnectionState magnetometer = ConnectionState::CONNECTING) :
+                    ConnectionState motorControl = ConnectionState::CONNECTING, ConnectionState magnetometer = ConnectionState::CONNECTING, ConnectionState accelerometer = ConnectionState::CONNECTING,
+                    bool manualOverride = false) :
         BasePacket(time, PacketType::COMPONENT_STATUS), gps(gps), barometer(barometer), gyroscope(gyroscope),
-        motorControl(motorControl), magnetometer(magnetometer) {}
+        motorControl(motorControl), magnetometer(magnetometer), accelerometer(accelerometer), manualOverride(manualOverride) {}
 
     std::pair<std::unique_ptr<uint8_t[]>, size_t> serialize() const override {
         auto packet = std::make_unique<uint8_t[]>(sizeof(ComponentStatus));

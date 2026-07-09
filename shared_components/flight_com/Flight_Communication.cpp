@@ -169,6 +169,8 @@ void Flight_Communication::sendComponentStatus() {
     status.gyroscope = FlightStorage.getPlaneGyroscopeConnectionState();
     status.motorControl = FlightStorage.getPlaneMotorControlConnectionState();
     status.magnetometer = FlightStorage.getPlaneMagnetometerConnectionState();
+    status.accelerometer = FlightStorage.getPlaneAccelerometerConnectionState();
+    status.manualOverride = FlightStorage.getPlaneManualOverride();
 
     sendPacket(status);
 }

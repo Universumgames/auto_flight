@@ -15,5 +15,7 @@ export interface ConnectionUpdatePacket {
   barometerConnectionPlane?: ConnectionState
   motorComConnectionPlane?: ConnectionState
   magnetometerConnectionPlane?: ConnectionState
+  accelerometerConnectionPlane?: ConnectionState
+  manualOverridePlane?: boolean
 }
 

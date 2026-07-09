@@ -73,7 +73,7 @@ const allConnected = computed(() => {
                       attributeName="transform"
                       type="rotate"
                       from="0 12 12"
-                      to="360 12 12
+                      to="360 12 12"
                       dur="0.9s"
                       repeatCount="indefinite"
                     />

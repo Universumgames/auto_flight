@@ -129,6 +129,11 @@ export function applyConnectionPacket(store: StoreState, packet: ConnectionUpdat
   if (motorCom) store.motorComConnectionPlane = motorCom
   const magnetometer = parseConnectionState(packet.magnetometerConnectionPlane)
   if (magnetometer) store.magnetometerConnectionPlane = magnetometer
+  const accelerometer = parseConnectionState(packet.accelerometerConnectionPlane)
+  if (accelerometer) store.accelerometerConnectionPlane = accelerometer
+
+  if (typeof packet.manualOverridePlane === 'boolean')
+    store.manualOverridePlane = packet.manualOverridePlane
 }
 
 
