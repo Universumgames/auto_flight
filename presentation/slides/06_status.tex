@@ -1,0 +1,30 @@
+\begin{frame}{Status \& outlook}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.5\textwidth}
+      \textbf{\faCheckCircle\; Working today}
+      \begin{itemize}
+        \item Route planner + host unit tests (GoogleTest)
+        \item LoRa link with custom packet protocol
+        \item Web UI: area drawing, route preview, live status
+        \item I\textsuperscript{2}C sensor stack incl. magnetometer
+        \item SBUS manual override path
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{\faRoad\; Next steps}
+      \begin{itemize}
+        \item Full closed-loop autonomous flight testing
+        \item Camera payload for aerial imagery
+        \item Precise landing (ToF rangefinder)
+        \item WiFi image offload on landing
+        \item Field trials \& tuning
+      \end{itemize}
+    \end{column}
+  \end{columns}
+
+  \vfill
+  \begin{center}
+    \chip{leaf}{firmware} \chip{skyblue}{comms} \chip{signal}{web ui}
+    \;$\Rightarrow$\; \hilite{integration \& flight tests}
+  \end{center}
+\end{frame}

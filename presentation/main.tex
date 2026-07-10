@@ -1,0 +1,35 @@
+%% Auto Flight — project presentation
+%% Build with:  make        (uses latexmk + xelatex)
+%% Theme: metropolis (modern beamer theme, Fira fonts)
+
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usetheme{metropolis}
+\usepackage{preamble}
+
+%% ---- Title metadata ----
+\title{Auto Flight}
+\subtitle{An autonomous survey glider with a LoRa ground station}
+\author{Tobias\,/\,Universumgames}
+\institute{Semester 12 · MRB · Student Project}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% Individual slides live in slides/*.tex
+\input{slides/01_idea}
+\input{slides/02_architecture}
+\input{slides/03_flight}
+\input{slides/04_communication}
+\input{slides/05_hardware}
+\input{slides/06_status}
+
+%% ---- Closing ----
+\begin{frame}[standout]
+  Thank you.\\[0.4em]
+  \small\normalfont Questions welcome.
+\end{frame}
+
+\end{document}

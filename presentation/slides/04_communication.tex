@@ -1,0 +1,34 @@
+\begin{frame}{Communication \& ground control}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.5\textwidth}
+      \textbf{\faBroadcastTower\; Long-range telemetry}
+      \begin{itemize}
+        \item Plane $\leftrightarrow$ base over \hilite{LoRa} (RadioLib / SX1262)
+        \item Custom \hilite{packet + fragmentation} protocol
+              (\texttt{lora\_com}, \texttt{flight\_com})
+        \item Carries position, sensor, route \& component-status
+              updates, ACKs and keep-alive pings
+        \item \emph{Long range, low bandwidth} — so only essentials go
+              over the air
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{\faGlobe\; Web ground control}
+      \begin{itemize}
+        \item Base station ESP32 hosts a \hilite{WiFi access point}
+        \item Serves a \hilite{Vue 3 + TypeScript + Leaflet} app
+        \item Draw the target area, preview the generated route
+        \item Live map, telemetry \& connection status over a
+              \alert{WebSocket}
+      \end{itemize}
+
+      \vspace{0.4em}
+      \chip{signal}{position} \chip{skyblue}{sensors}
+      \chip{leaf}{route} \chip{slate}{status}
+    \end{column}
+  \end{columns}
+
+  \vfill
+  {\footnotesize\color{slate} UI is built to static files and shipped from
+  the base station's LittleFS partition.}
+\end{frame}

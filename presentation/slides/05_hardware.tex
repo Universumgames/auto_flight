@@ -1,0 +1,25 @@
+\begin{frame}{Hardware}
+  \centering
+  \renewcommand{\arraystretch}{1.35}
+  \begin{tabular}{@{}l l l@{}}
+    \toprule
+    \textbf{Role} & \textbf{Part} & \textbf{Interface} \\
+    \midrule
+    Flight controller & Heltec LoRa32 V3 (ESP32-S3 + SX1262) & — \\
+    Base station      & Heltec LoRa32 V3 (ESP32-S3 + SX1262) & WiFi AP \\
+    Servo / RC driver & Arduino Nano (ATmega328)             & I\textsuperscript{2}C · SBUS \\
+    Position          & GPS module (NMEA, \texttt{minmea})   & UART \\
+    Attitude          & MPU6050 IMU                          & I\textsuperscript{2}C \\
+    Heading           & HMC5883L / QMC5883P magnetometer     & I\textsuperscript{2}C \\
+    Altitude          & Barometer                            & I\textsuperscript{2}C \\
+    Storage           & SD card (LittleFS)                   & SPI \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{0.8em}
+  \begin{center}
+    \chip{skyblue}{2× ESP32-S3}\; \chip{leaf}{1× Arduino Nano}\;
+    \chip{signal}{RC receiver}\;
+    {\footnotesize\color{slate} + airframe, battery, servos}
+  \end{center}
+\end{frame}

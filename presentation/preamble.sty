@@ -1,0 +1,62 @@
+\ProvidesPackage{preamble}[2026/07/10 Auto Flight presentation preamble]
+
+\usepackage{fontspec}
+\usepackage{tikz}
+
+%% ---- Fonts ----
+%% metropolis wants Fira; the fonts ship inside the TeX tree but are not
+%% registered with the OS, so load them by file name (found via kpathsea).
+\setsansfont{FiraSans}[
+  Extension      = .otf,
+  UprightFont    = *-Regular,
+  BoldFont       = *-Medium,
+  ItalicFont     = *-Italic,
+  BoldItalicFont = *-MediumItalic ]
+\setmonofont{FiraMono}[
+  Extension   = .otf,
+  UprightFont = *-Regular,
+  BoldFont    = *-Bold ]
+
+\usepackage{booktabs}
+\usepackage{fontawesome5}
+\usetikzlibrary{arrows.meta, positioning, shapes.geometric, backgrounds, shadows, fit}
+
+%% ---- Colour palette (aviation-inspired) ----
+\definecolor{skyblue}{HTML}{2A6FDB}
+\definecolor{deepnavy}{HTML}{16324F}
+\definecolor{signal}{HTML}{E4572E}
+\definecolor{leaf}{HTML}{2F9E44}
+\definecolor{cloud}{HTML}{F4F6F8}
+\definecolor{slate}{HTML}{55606B}
+
+%% ---- Metropolis tweaks ----
+\setbeamercolor{normal text}{fg=deepnavy}
+\setbeamercolor{alerted text}{fg=signal}
+\setbeamercolor{progress bar}{fg=skyblue}
+\setbeamercolor{title separator}{fg=skyblue}
+\setbeamercolor{frametitle}{bg=deepnavy, fg=cloud}
+\setbeamercolor{progress bar in head/foot}{fg=skyblue}
+\setbeamercolor{progress bar in section page}{fg=skyblue}
+
+\metroset{numbering=fraction, progressbar=frametitle, block=fill}
+
+%% Slightly tighter default itemize markers in accent colour
+\setbeamercolor{itemize item}{fg=skyblue}
+\setbeamercolor{itemize subitem}{fg=slate}
+\setbeamertemplate{itemize item}{\faAngleRight}
+\setbeamertemplate{itemize subitem}{\textendash}
+
+%% ---- Handy shortcuts ----
+\newcommand{\hilite}[1]{\textcolor{skyblue}{\textbf{#1}}}
+\newcommand{\chip}[2]{% #1 = colour, #2 = text
+  \tikz[baseline=(x.base)]\node[fill=#1!12, draw=#1, rounded corners=2pt,
+    inner xsep=5pt, inner ysep=2pt, text=#1!75!black, font=\footnotesize\bfseries] (x) {#2};}
+
+%% Reusable node style for the architecture diagram
+\tikzset{
+  box/.style={draw=deepnavy, thick, rounded corners=4pt, fill=cloud,
+              align=center, minimum height=1.05cm, minimum width=2.6cm,
+              font=\small, text=deepnavy, drop shadow={shadow xshift=1pt, shadow yshift=-1pt, opacity=0.2}},
+  link/.style={-{Stealth[length=3mm]}, thick, skyblue},
+  biln/.style={{Stealth[length=3mm]}-{Stealth[length=3mm]}, thick, signal},
+}

@@ -1,0 +1,38 @@
+\begin{frame}{System architecture}
+  \centering
+  \begin{tikzpicture}[node distance=1.1cm and 1.6cm]
+    % ---- Plane side ----
+    \node[box, fill=skyblue!8] (fc) {\textbf{Flight controller}\\[-2pt]{\scriptsize ESP32-S3 · ESP-IDF}};
+    \node[box, above=0.55cm of fc, minimum height=0.8cm] (sensors)
+      {\scriptsize GPS · IMU · Mag · Baro};
+    \node[box, below=0.55cm of fc, minimum height=0.8cm] (mc)
+      {\scriptsize Motor ctrl (Arduino)\\[-2pt]SBUS · 4 servos};
+
+    % ---- Base side ----
+    \node[box, right=3.1cm of fc, fill=leaf!8] (bs)
+      {\textbf{Base station}\\[-2pt]{\scriptsize ESP32-S3 · WiFi AP}};
+    \node[box, right=1.7cm of bs, fill=signal!8, minimum width=2.2cm] (web)
+      {\textbf{Web UI}\\[-2pt]{\scriptsize Vue 3 · Leaflet}};
+
+    % ---- Edges ----
+    \draw[link] (sensors) -- (fc);
+    \draw[biln]  (fc) -- (mc) node[midway, right, font=\scriptsize, text=slate] {I\textsuperscript{2}C};
+    \draw[biln]  (fc) -- node[above, font=\scriptsize\bfseries, text=signal]{LoRa}
+                        node[below, font=\scriptsize, text=slate]{SX1262} (bs);
+    \draw[biln]  (bs) -- node[above, font=\scriptsize, text=slate]{WebSocket} (web);
+
+    % background groupings
+    \begin{scope}[on background layer]
+      \node[fit=(sensors)(fc)(mc), draw=skyblue!40, dashed, rounded corners,
+            inner sep=8pt, label={[skyblue, font=\scriptsize\bfseries]above:PLANE}] {};
+      \node[fit=(bs)(web), draw=leaf!40, dashed, rounded corners,
+            inner sep=8pt, label={[leaf!70!black, font=\scriptsize\bfseries]above:GROUND}] {};
+    \end{scope}
+  \end{tikzpicture}
+
+  \vfill
+  {\footnotesize\color{slate}
+   Two ESP32-S3 boards share a set of \hilite{ESP-IDF components}
+   (LoRa comms, I\textsuperscript{2}C, sensor drivers, flight-data
+   serialization).}
+\end{frame}
