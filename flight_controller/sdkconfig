@@ -3689,6 +3689,12 @@ CONFIG_LORA_SYNC_WORD=0x34
 CONFIG_OLED_PIN_SDA=17
 # default:
 CONFIG_OLED_PIN_SCL=18
+# default:
+CONFIG_OLED_PIN_RESET=21
+# default:
+CONFIG_OLED_PIN_VEXT=36
+# default:
+CONFIG_OLED_REQUIRE_UNSCII_8_FONT=y
 # end of OLED Display Settings
 
 #
@@ -4060,7 +4066,7 @@ CONFIG_LV_FONT_MONTSERRAT_14=y
 # default:
 # CONFIG_LV_FONT_SOURCE_HAN_SANS_SC_16_CJK is not set
 # default:
-# CONFIG_LV_FONT_UNSCII_8 is not set
+CONFIG_LV_FONT_UNSCII_8=y
 # default:
 # CONFIG_LV_FONT_UNSCII_16 is not set
 # end of Enable built-in fonts

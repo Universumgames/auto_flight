@@ -20,6 +20,7 @@
 #include "route_planner.hpp"
 #include "MotorComMaster.hpp"
 #include "Magnetometer.hpp"
+#include "OledDisplay.hpp"
 
 static FlightControllerClass* flight_controller = nullptr;
 
@@ -52,6 +53,7 @@ void FlightControllerClass::init() {
     Magnetometer.begin();
     GPS_Reader.begin();
     MotorComMaster.init();
+    OledDisplay.begin();
 
     Flight_Communication::begin();
 
@@ -106,7 +108,6 @@ int i = -100;
         FlightStorage.updatePlaneBarometerConnectionState(Barometer.available()
                                                               ? ConnectionState::CONNECTED
                                                               : ConnectionState::CONNECTING);
-        //FlightStorage.updatePlaneGyroscopeConnectionState(Gyroscope.available() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
         FlightStorage.updatePlaneMotorControlConnectionState(
             MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
         FlightStorage.updatePlaneMagnetometerConnectionState(

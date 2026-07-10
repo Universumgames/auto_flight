@@ -9,8 +9,6 @@
 #endif
 #include <iostream>
 
-#include "Gyroscope.hpp"
-
 constexpr const char* TAG_FLIGHT_COMMUNICATION = "Flight_Communication";
 
 void Flight_Communication::begin() {}
@@ -166,7 +164,6 @@ void Flight_Communication::sendComponentStatus() {
     status.type = PacketType::COMPONENT_STATUS;
     status.gps = FlightStorage.getPlaneGPSConnectionState();
     status.barometer = FlightStorage.getPlaneBarometerConnectionState();
-    status.gyroscope = FlightStorage.getPlaneGyroscopeConnectionState();
     status.motorControl = FlightStorage.getPlaneMotorControlConnectionState();
     status.magnetometer = FlightStorage.getPlaneMagnetometerConnectionState();
     status.accelerometer = FlightStorage.getPlaneAccelerometerConnectionState();

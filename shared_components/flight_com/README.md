@@ -21,7 +21,7 @@ Every packet starts with a `BasePacket` header (`packets/base.hpp`): a `time_t t
 | `BasePacket` (as `ROUTE_HISTORY_REQUEST`) | `0x33` | base station | base → plane | header only — asks the plane to send its full route history |
 | `SensorUpdate` | `0x10` | both | plane ↔ base | `pressure` (hPa, from `Barometer`) |
 | `PositionUpdate` | `0x11` | both | plane ↔ base | current `Coordinate` (from `GPS_Reader`) |
-| `ComponentStatus` | `0x12` | plane | plane → base | `ConnectionState` of `gps`, `barometer`, `gyroscope`, `motorControl`, `magnetometer` |
+| `ComponentStatus` | `0x12` | plane | plane → base | `ConnectionState` of `gps`, `barometer`, `motorControl`, `magnetometer`, `accelerometer` |
 | `PlannedRoutePacket` | `0x30` | plane | plane → base | `route`: ordered list of `Coordinate` waypoints the plane computed to cover the planned area |
 | `PlannedAreaPacket` | `0x31` | base station | base → plane | `shape`: list of `Coordinate` describing the area the plane should cover |
 | `FlightHistoryPacket` | `0x32` | plane | plane → base | `history`: list of `Coordinate` the plane has actually flown since takeoff |
@@ -67,7 +67,7 @@ LoRa_Communication.registerReceivePacketCallback([](const LoRaPacket& packet) {
 
 - [`lora_com`](../lora_com) — the actual radio transport (`LoRa_Communication`, `LoRaPacket`).
 - [`flight_data`](../flight_data) — `Coordinate`/`ConnectionState` types and `FlightStorage` (consumed by callers of `decodePacket`, not by this component directly).
-- `gps`, `barometer`, `gyroscope` — read by the `send*()` helpers to fill packet payloads.
+- `gps`, `barometer` — read by the `send*()` helpers to fill packet payloads.
 - `motor_com_master` (plane build only) — optional dependency, included when `FLIGHT_DEVICE_TYPE_PLANE` is set.
 - `nlohmann-json` — private dependency (see [CMakeLists.txt](CMakeLists.txt)).
 - ESP-IDF: `driver`, `freertos`, `esp_timer`.

@@ -1,0 +1,45 @@
+menu "OLED Display Settings"
+
+    config OLED_PIN_SDA
+        int "OLED SDA Pin"
+        default 17
+        help
+            GPIO pin number for the OLED display's dedicated I2C SDA line.
+            This bus is separate from the shared I2C Manager bus.
+
+    config OLED_PIN_SCL
+        int "OLED SCL Pin"
+        default 18
+        help
+            GPIO pin number for the OLED display's dedicated I2C SCL line.
+            This bus is separate from the shared I2C Manager bus.
+
+    config OLED_PIN_RESET
+        int "OLED Reset Pin"
+        default 21
+        help
+            GPIO pin wired to the OLED's hardware reset line (RST_OLED on
+            Heltec WiFi LoRa32 V3 boards). Without toggling this pin the panel
+            never leaves reset and silently fails to ACK on the I2C bus.
+            Set to -1 if the display has no dedicated reset pin.
+
+    config OLED_PIN_VEXT
+        int "OLED Vext (power enable) Pin"
+        default 36
+        help
+            GPIO pin controlling the Vext power rail that feeds the OLED on
+            Heltec boards. Driven LOW to switch the rail on. Without this the
+            display has no power at all. Set to -1 if the board has no Vext
+            switch (display is always powered).
+
+    config OLED_REQUIRE_UNSCII_8_FONT
+        bool
+        default y
+        select LV_FONT_UNSCII_8
+        help
+            Forces LVGL's unscii_8 bitmap font on. Anti-aliased fonts (e.g. the
+            default Montserrat) render almost invisibly on 1bpp displays,
+            since LVGL's I1 blend only lights a pixel at 100% coverage; a
+            crisp, non-anti-aliased bitmap font is needed instead.
+
+endmenu

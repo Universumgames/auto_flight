@@ -215,34 +215,21 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer working">
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer and i2c working again">
       <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/FrontendPackets.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/FrontendPackets.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/sdkconfig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/sdkconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/App.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessageParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessageParser.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/connection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/types/connection.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/ConnectionOverview.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/views/ConnectionOverview.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/tsconfig.app.json" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/tsconfig.app.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../motor_controller/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resources/data_sheet_magnetometer.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resources/learning.md" beforeDir="false" afterPath="$PROJECT_DIR$/../resources/learning.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightVariables.inc" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightVariables.inc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/i2c_manager/i2c_manager.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -396,61 +383,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="0.0033771699350891634" />
-      <entry key="MS500" value="0.35762625758270344" />
-      <entry key="S2" value="1.1915778136347606" />
-      <entry key="S5" value="1.6119897829604326" />
-      <entry key="S10" value="1.7929548435326341" />
-      <entry key="S30" value="1.9451359646436512" />
-      <entry key="S60" value="2.190835174474571" />
-      <entry key="M2" value="2.8074006228483976" />
-      <entry key="M5" value="3.824849263060178" />
-      <entry key="M10" value="4.519496655684992" />
-      <entry key="M15" value="4.880518528292756" />
-      <entry key="M30" value="5.478981106315067" />
-      <entry key="H1" value="6.166052854371695" />
-      <entry key="H2" value="6.859369434864285" />
-      <entry key="H4" value="8.389687971338772" />
-      <entry key="D1" value="167.22458077470935" />
-      <entry key="W1" value="2007.2317505703825" />
-    </decayedCancelled>
-    <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
       <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.000000000000005" />
-      <entry key="S10" value="1.0000001140875887" />
-      <entry key="S30" value="1.0099048647718023" />
-      <entry key="S60" value="1.1719776292144322" />
-      <entry key="M2" value="1.7234205885136151" />
-      <entry key="M5" value="3.025049699345081" />
-      <entry key="M10" value="4.645208888447706" />
-      <entry key="M15" value="5.737468886862404" />
-      <entry key="M30" value="7.403102249384669" />
-      <entry key="H1" value="8.555125044258503" />
-      <entry key="H2" value="9.243512955672989" />
-      <entry key="H4" value="9.892980509324405" />
-      <entry key="D1" value="53.19229292748313" />
-      <entry key="W1" value="623.9369210174804" />
+      <entry key="S5" value="1.0000000000075724" />
+      <entry key="S10" value="1.0000087920036023" />
+      <entry key="S30" value="1.1012639246792113" />
+      <entry key="S60" value="2.0738270207177987" />
+      <entry key="M2" value="4.650600824256958" />
+      <entry key="M5" value="9.011156791564193" />
+      <entry key="M10" value="11.682031993680473" />
+      <entry key="M15" value="12.862075797019145" />
+      <entry key="M30" value="14.383953166100635" />
+      <entry key="H1" value="15.580740619772905" />
+      <entry key="H2" value="16.550057521111725" />
+      <entry key="H4" value="18.218991405561248" />
+      <entry key="D1" value="176.9306055217479" />
+      <entry key="W1" value="2016.7501804423857" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="3.127348411245433E-126" />
+      <entry key="S2" value="4.2052717620017074E-32" />
+      <entry key="S5" value="2.815254275969568E-13" />
+      <entry key="S10" value="5.305897585084672E-7" />
+      <entry key="S30" value="0.008175859168773982" />
+      <entry key="S60" value="0.10544980739117209" />
+      <entry key="M2" value="0.5169571082232224" />
+      <entry key="M5" value="1.8687784096113598" />
+      <entry key="M10" value="3.6510509646508944" />
+      <entry key="M15" value="4.886472301839166" />
+      <entry key="M30" value="6.832054100785567" />
+      <entry key="H1" value="8.218548760944783" />
+      <entry key="H2" value="9.059859057730357" />
+      <entry key="H4" value="9.794208544912953" />
+      <entry key="D1" value="53.10341007571408" />
+      <entry key="W1" value="623.7878740526783" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.03283894138800797" />
-      <entry key="MS500" value="0.8032294618696892" />
-      <entry key="S2" value="1.9928238377749263" />
-      <entry key="S5" value="2.524738171780235" />
-      <entry key="S10" value="2.747842055805325" />
-      <entry key="S30" value="2.9372424811737563" />
-      <entry key="S60" value="3.3375751694696874" />
-      <entry key="M2" value="4.493192166755165" />
-      <entry key="M5" value="6.8167736271600035" />
-      <entry key="M10" value="9.141386828451017" />
-      <entry key="M15" value="10.60005047562569" />
-      <entry key="M30" value="12.871458884942738" />
-      <entry key="H1" value="14.715293664125934" />
-      <entry key="H2" value="16.099755738990392" />
-      <entry key="H4" value="18.280993889601366" />
-      <entry key="D1" value="220.41449945557665" />
-      <entry key="W1" value="2631.1654484346914" />
+      <entry key="MS100" value="0.011280696840019503" />
+      <entry key="MS500" value="0.40781874666950485" />
+      <entry key="S2" value="0.799128825407828" />
+      <entry key="S5" value="0.9142115810936694" />
+      <entry key="S10" value="0.9561534128939803" />
+      <entry key="S30" value="1.0944274109622858" />
+      <entry key="S60" value="2.1693963292631713" />
+      <entry key="M2" value="5.152273824426958" />
+      <entry key="M5" value="10.857760501353935" />
+      <entry key="M10" value="15.31387007593368" />
+      <entry key="M15" value="17.732674147970364" />
+      <entry key="M30" value="21.205899482674113" />
+      <entry key="H1" value="23.793484130624304" />
+      <entry key="H2" value="25.606775511382903" />
+      <entry key="H4" value="28.011503738627184" />
+      <entry key="D1" value="230.0316389181685" />
+      <entry key="W1" value="2640.534831197316" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -1688,7 +1675,7 @@
       <workItem from="1782940826183" duration="1303000" />
       <workItem from="1782988488638" duration="22342000" />
       <workItem from="1783284866647" duration="11010000" />
-      <workItem from="1783509395056" duration="9723000" />
+      <workItem from="1783509395056" duration="16397000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />
@@ -1778,7 +1765,15 @@
       <option name="project" value="LOCAL" />
       <updated>1782314297082</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="get magnetometer and i2c working again">
+      <option name="closed" value="true" />
+      <created>1783631390645</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1783631390645</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1813,7 +1808,8 @@
     <MESSAGE value="cleanup" />
     <MESSAGE value="cleanup bugfixes, motor communication/servo fixes, integration fixes" />
     <MESSAGE value="get magnetometer working" />
-    <option name="LAST_COMMIT_MESSAGE" value="get magnetometer working" />
+    <MESSAGE value="get magnetometer and i2c working again" />
+    <option name="LAST_COMMIT_MESSAGE" value="get magnetometer and i2c working again" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

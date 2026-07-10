@@ -143,6 +143,23 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 1.21.1
+  lvgl/lvgl:
+    component_hash: 184e532558c1c45fefed631f3e235423d22582aafb4630f3e8885c35281a49ae
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 9.5.0
+  waveshare/esp_oled_ssd1315:
+    component_hash: 54ca4f42f0a8f635c149dae23c838b5c12b56d28564fc8bc895437f4324eb5d2
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.3'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 2.0.0
 direct_dependencies:
 - barometer
 - esp-idf-lib/esp_idf_lib_helpers
@@ -156,6 +173,8 @@ direct_dependencies:
 - jgromes/radiolib
 - johboh/nlohmann-json
 - joltwallet/littlefs
-manifest_hash: 977fe53b32288cdb618bca26e54ba084e0c7197b0f23fe1e092e104c9fcdd243
+- lvgl/lvgl
+- waveshare/esp_oled_ssd1315
+manifest_hash: a879a40365ade87c3bd40b34aee486428e2c2bdd0f297aca5859eb15aeb2e50c
 target: esp32s3
 version: 3.0.0
