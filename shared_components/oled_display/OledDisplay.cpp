@@ -212,11 +212,11 @@ uint32_t OledDisplayClass::tickCallback() {
 std::string OledDisplayClass::connectionSummary(const ConnectionState* states, const char* const* names,
                                                  size_t count) {
     const auto connected = std::count(states, states + count, ConnectionState::CONNECTED);
-    for (size_t i = 0; i < count; i++) {
+    /*for (size_t i = 0; i < count; i++) {
         if (states[i] != ConnectionState::CONNECTED) {
             ESP_LOGW(TAG_OLED_DISPLAY, "%s not connected", names[i]);
         }
-    }
+    }*/
     return std::to_string(connected) + "/" + std::to_string(count) +
            (static_cast<size_t>(connected) == count ? " OK" : " !!");
 }

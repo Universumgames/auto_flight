@@ -9,6 +9,7 @@ struct ComponentStatus : public BasePacket {
     ConnectionState magnetometer;
     ConnectionState accelerometer;
     bool manualOverride;
+    FlightState flightState;
 
     std::string toString() override {
         return "ComponentStatus{timestamp=" + std::to_string(timestamp) + ", type=" + std::to_string(
@@ -18,7 +19,8 @@ struct ComponentStatus : public BasePacket {
             ", motorControl=" + (motorControl == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", magnetometer=" + (magnetometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", accelerometer=" + (accelerometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
-            ", manualOverride=" + (manualOverride ? "true" : "false") + "}";
+            ", manualOverride=" + (manualOverride ? "true" : "false") +
+            ", flightState=" + std::to_string(static_cast<int>(flightState)) + "}";
     }
 
     ComponentStatus(const ComponentStatus& packet) : BasePacket(packet) {
@@ -28,6 +30,7 @@ struct ComponentStatus : public BasePacket {
         this->magnetometer = packet.magnetometer;
         this->accelerometer = packet.accelerometer;
         this->manualOverride = packet.manualOverride;
+        this->flightState = packet.flightState;
     }
 
     ComponentStatus(RawSerializedPacket packet) : BasePacket(packet) {
@@ -38,13 +41,15 @@ struct ComponentStatus : public BasePacket {
         this->magnetometer = gpsPacket->magnetometer;
         this->accelerometer = gpsPacket->accelerometer;
         this->manualOverride = gpsPacket->manualOverride;
+        this->flightState = gpsPacket->flightState;
     }
 
     ComponentStatus(time_t time = 0, ConnectionState gps = ConnectionState::CONNECTING, ConnectionState barometer = ConnectionState::CONNECTING,
                     ConnectionState motorControl = ConnectionState::CONNECTING, ConnectionState magnetometer = ConnectionState::CONNECTING, ConnectionState accelerometer = ConnectionState::CONNECTING,
-                    bool manualOverride = false) :
+                    bool manualOverride = false, FlightState flightState = FlightState::PLANNING) :
         BasePacket(time, PacketType::COMPONENT_STATUS), gps(gps), barometer(barometer),
-        motorControl(motorControl), magnetometer(magnetometer), accelerometer(accelerometer), manualOverride(manualOverride) {}
+        motorControl(motorControl), magnetometer(magnetometer), accelerometer(accelerometer), manualOverride(manualOverride),
+        flightState(flightState) {}
 
     std::pair<std::unique_ptr<uint8_t[]>, size_t> serialize() const override {
         auto packet = std::make_unique<uint8_t[]>(sizeof(ComponentStatus));

@@ -32,7 +32,7 @@ onMounted(async () => {
 
 <template>
   <h1>Route Preview</h1>
-  <RouteMap :planned-route="plannedRoute" :flight-history="flightHistory" :base-station-position="store.basePosition" :plane-position="store.planePosition"/>
+  <RouteMap :planned-route="plannedRoute" :flight-history="flightHistory" :base-station-position="store.basePosition" :plane-position="store.planePosition" :plane-heading="store.headingPlane"/>
 </template>
 
 <style scoped></style>

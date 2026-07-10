@@ -37,6 +37,10 @@ public:
          */
     bool sendCommand(ControlCommand command, int8_t value);
 
+    bool setCommand(ControlCommand command, int8_t value);
+
+    bool sendFullControlPacket();
+
     bool sendFullControlPacket(int8_t aileronDiff, int8_t pitch, int8_t thrust, int8_t rudder);
 
 private:

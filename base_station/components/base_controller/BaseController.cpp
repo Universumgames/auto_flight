@@ -49,6 +49,7 @@ void BaseControllerClass::init() {
     FlightStorage.registerDataChangeCallback([]() {
         ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d", FlightStorage.getPlannedArea().size());
         Flight_Communication::sendPlannedArea(FlightStorage.getPlannedArea());
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area change sent");
     }, FlightStorageClass::DataUpdateType::AREA);
 }
 
@@ -87,8 +88,10 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
         break;
     case PacketType::SENSOR_UPDATE: {
         auto sensorUpdate = reinterpret_cast<SensorUpdate*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received sensor update: pressure=%.2f", sensorUpdate->pressure);
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received sensor update: pressure=%.2f, heading=%d", sensorUpdate->pressure,
+                 sensorUpdate->heading);
         FlightStorage.updatePlanePressure(sensorUpdate->pressure, sensorUpdate->timestamp);
+        FlightStorage.updatePlaneHeading(sensorUpdate->heading, sensorUpdate->timestamp);
         break;
     }
     case PacketType::POSITION: {
@@ -107,17 +110,18 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     case PacketType::COMPONENT_STATUS: {
         auto status = reinterpret_cast<ComponentStatus*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER,
-                                "Component status - GPS: %d, Barometer: %d, MotorControl: %d, Magnetometer: %d, Accelerometer: %d, ManualOverride: %d",
+                                "Component status - GPS: %d, Barometer: %d, MotorControl: %d, Magnetometer: %d, Accelerometer: %d, ManualOverride: %d, FlightState: %d",
                                 static_cast<int>(status->gps), static_cast<int>(status->barometer),
                                 static_cast<int>(status->motorControl),
                                 static_cast<int>(status->magnetometer), static_cast<int>(status->accelerometer),
-                                static_cast<int>(status->manualOverride));
+                                static_cast<int>(status->manualOverride), static_cast<int>(status->flightState));
         FlightStorage.updatePlaneBarometerConnectionState(status->barometer);
         FlightStorage.updatePlaneMotorControlConnectionState(status->motorControl);
         FlightStorage.updatePlaneGPSConnectionState(status->gps);
         FlightStorage.updatePlaneMagnetometerConnectionState(status->magnetometer);
         FlightStorage.updatePlaneAccelerometerConnectionState(status->accelerometer);
         FlightStorage.updatePlaneManualOverride(status->manualOverride);
+        FlightStorage.updateFlightState(status->flightState);
         break;
     }
     default:

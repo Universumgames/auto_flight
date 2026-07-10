@@ -30,4 +30,37 @@ menu "Flight Controller Settings"
           "Maximum (full right) servo control value for the rudder. Adjust to match the
           physical servo travel limit. Must be in range [1, 100]."
 
+    config ALTITUDE_SMOOTHING_SAMPLES
+        int "Altitude smoothing sample count"
+        range 1 50
+        default 5
+        help
+          "Number of recent barometer-derived altitude readings averaged together
+          before being used for altitude hold. Higher values smooth out sensor
+          noise at the cost of a slower response to real altitude changes."
+
+    config ROLL_SMOOTHING_SAMPLES
+        int "Roll angle smoothing sample count"
+        range 1 50
+        default 5
+        help
+          "Number of recent gyroscope roll readings averaged together before
+          being used for aileron control."
+
+    config PITCH_SMOOTHING_SAMPLES
+        int "Pitch angle smoothing sample count"
+        range 1 50
+        default 5
+        help
+          "Number of recent gyroscope pitch readings averaged together before
+          being used for elevator/pitch control."
+
+    config HEADING_SMOOTHING_SAMPLES
+        int "Compass heading smoothing sample count"
+        range 1 50
+        default 5
+        help
+          "Number of recent magnetometer heading readings averaged together
+          before being used for rudder control."
+
 endmenu

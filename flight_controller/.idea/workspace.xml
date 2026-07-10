@@ -217,19 +217,39 @@
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer and i2c working again">
       <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/FrontendPackets.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/FrontendPackets.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/Kconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/Kconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../base_station/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/sdkconfig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/Kconfig" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/Kconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/sdkconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/RouteMap.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/components/RouteMap.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessageParser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessageParser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/connection.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/types/connection.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/sensor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/types/sensor.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/RoutePreviewView.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/src/views/RoutePreviewView.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../motor_controller/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/src/main.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/sensor.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/sensor.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightStorage.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/FlightVariables.inc" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/FlightVariables.inc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/types.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/types.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/magnetometer/Magnetometer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/oled_display/OledDisplay.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/oled_display/OledDisplay.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -354,7 +374,7 @@
     </selectedModels>
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="29278" />
+    <option name="cachedIndexableFilesCount" value="35337" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-ESP-IDF" />
   <component name="FileTemplateManagerImpl">
@@ -383,61 +403,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="7.340501379406942E-241" />
+      <entry key="S30" value="1.2272892643377801E-80" />
+      <entry key="S60" value="1.7961400211761829E-40" />
+      <entry key="M2" value="2.893028443619514E-20" />
+      <entry key="M5" value="5.660482927970138E-8" />
+      <entry key="M10" value="0.001130482253681852" />
+      <entry key="M15" value="0.0347279543715781" />
+      <entry key="M30" value="1.1581401175789898" />
+      <entry key="H1" value="7.574311099826224" />
+      <entry key="H2" value="22.12942853657736" />
+      <entry key="H4" value="40.798983114952925" />
+      <entry key="D1" value="206.30611648206104" />
+      <entry key="W1" value="2032.6889077004564" />
+    </decayedCancelled>
+    <decayedSelected>
       <entry key="MS100" value="1.0" />
       <entry key="MS500" value="1.0" />
       <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0000000000075724" />
-      <entry key="S10" value="1.0000087920036023" />
-      <entry key="S30" value="1.1012639246792113" />
-      <entry key="S60" value="2.0738270207177987" />
-      <entry key="M2" value="4.650600824256958" />
-      <entry key="M5" value="9.011156791564193" />
-      <entry key="M10" value="11.682031993680473" />
-      <entry key="M15" value="12.862075797019145" />
-      <entry key="M30" value="14.383953166100635" />
-      <entry key="H1" value="15.580740619772905" />
-      <entry key="H2" value="16.550057521111725" />
-      <entry key="H4" value="18.218991405561248" />
-      <entry key="D1" value="176.9306055217479" />
-      <entry key="W1" value="2016.7501804423857" />
-    </decayedCancelled>
-    <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="3.127348411245433E-126" />
-      <entry key="S2" value="4.2052717620017074E-32" />
-      <entry key="S5" value="2.815254275969568E-13" />
-      <entry key="S10" value="5.305897585084672E-7" />
-      <entry key="S30" value="0.008175859168773982" />
-      <entry key="S60" value="0.10544980739117209" />
-      <entry key="M2" value="0.5169571082232224" />
-      <entry key="M5" value="1.8687784096113598" />
-      <entry key="M10" value="3.6510509646508944" />
-      <entry key="M15" value="4.886472301839166" />
-      <entry key="M30" value="6.832054100785567" />
-      <entry key="H1" value="8.218548760944783" />
-      <entry key="H2" value="9.059859057730357" />
-      <entry key="H4" value="9.794208544912953" />
-      <entry key="D1" value="53.10341007571408" />
-      <entry key="W1" value="623.7878740526783" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0" />
+      <entry key="S60" value="1.0" />
+      <entry key="M2" value="1.0" />
+      <entry key="M5" value="1.0000000589286062" />
+      <entry key="M10" value="1.0007185801551652" />
+      <entry key="M15" value="1.017134758282341" />
+      <entry key="M30" value="1.4304160467850278" />
+      <entry key="H1" value="3.462148897738536" />
+      <entry key="H2" value="7.961907901671196" />
+      <entry key="H4" value="13.851732815534843" />
+      <entry key="D1" value="60.34397674308792" />
+      <entry key="W1" value="626.2329932907531" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.011280696840019503" />
-      <entry key="MS500" value="0.40781874666950485" />
-      <entry key="S2" value="0.799128825407828" />
-      <entry key="S5" value="0.9142115810936694" />
-      <entry key="S10" value="0.9561534128939803" />
-      <entry key="S30" value="1.0944274109622858" />
-      <entry key="S60" value="2.1693963292631713" />
-      <entry key="M2" value="5.152273824426958" />
-      <entry key="M5" value="10.857760501353935" />
-      <entry key="M10" value="15.31387007593368" />
-      <entry key="M15" value="17.732674147970364" />
-      <entry key="M30" value="21.205899482674113" />
-      <entry key="H1" value="23.793484130624304" />
-      <entry key="H2" value="25.606775511382903" />
-      <entry key="H4" value="28.011503738627184" />
-      <entry key="D1" value="230.0316389181685" />
-      <entry key="W1" value="2640.534831197316" />
+      <entry key="MS100" value="1.1548555257880812E-4" />
+      <entry key="MS500" value="0.16311936846111968" />
+      <entry key="S2" value="0.6355158446528333" />
+      <entry key="S5" value="0.8341622906618247" />
+      <entry key="S10" value="0.9133248549458318" />
+      <entry key="S30" value="0.9702308781722321" />
+      <entry key="S60" value="0.9850029838392532" />
+      <entry key="M2" value="0.992473165299321" />
+      <entry key="M5" value="0.9969825552395875" />
+      <entry key="M10" value="1.0003353101383914" />
+      <entry key="M15" value="1.0507930732082822" />
+      <entry key="M30" value="2.58723707786886" />
+      <entry key="H1" value="11.03391644209027" />
+      <entry key="H2" value="30.088148430293735" />
+      <entry key="H4" value="54.647955354785886" />
+      <entry key="D1" value="266.64754049944963" />
+      <entry key="W1" value="2658.918668641518" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -531,6 +551,11 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="$USER_HOME$/.espressif/v6.0.1/esp-idf/tools/idf.py">
       <method v="2" />
     </configuration>
@@ -1199,11 +1224,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="app-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="app-flash" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1460,64 +1480,18 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="CMake Application.__ldgen_output_sections.ld" />
-      <item itemvalue="CMake Application._project_elf_src" />
-      <item itemvalue="CMake Application.app" />
-      <item itemvalue="CMake Application.app-flash" />
-      <item itemvalue="CMake Application.app_check_size" />
-      <item itemvalue="CMake Application.config-report" />
-      <item itemvalue="CMake Application.confserver" />
-      <item itemvalue="CMake Application.dfu" />
-      <item itemvalue="CMake Application.dfu-flash" />
-      <item itemvalue="CMake Application.dfu-list" />
-      <item itemvalue="CMake Application.encrypted-app-flash" />
-      <item itemvalue="CMake Application.encrypted-flash" />
-      <item itemvalue="CMake Application.erase-flash" />
-      <item itemvalue="CMake Application.flash" />
-      <item itemvalue="CMake Application.flight_controller.elf" />
-      <item itemvalue="CMake Application.gen_flight_controller_binary" />
-      <item itemvalue="CMake Application.gen_project_binary" />
-      <item itemvalue="CMake Application.menuconfig" />
-      <item itemvalue="CMake Application.merge-bin" />
-      <item itemvalue="CMake Application.monitor" />
       <item itemvalue="CMake Application.Upload &amp; Monitor" />
-      <item itemvalue="CMake Application.save-defconfig" />
-      <item itemvalue="CMake Application.size" />
-      <item itemvalue="CMake Application.size-components" />
-      <item itemvalue="CMake Application.size-files" />
-      <item itemvalue="CMake Application.uf2" />
-      <item itemvalue="CMake Application.uf2-app" />
-      <item itemvalue="CMake Application.__idf_flight_controller" />
-      <item itemvalue="CMake Application.__idf_gps" />
-      <item itemvalue="CMake Application.__idf_i2c_manager" />
-      <item itemvalue="CMake Application.__idf_minmea" />
-      <item itemvalue="CMake Application.__idf_oled_display" />
-      <item itemvalue="CMake Application.__idf_motor_com_master" />
-      <item itemvalue="CMake Application.__idf_route_planner" />
-      <item itemvalue="CMake Application.__idf_esp-idf-lib__i2cdev" />
-      <item itemvalue="CMake Application.__idf_espressif__bme280" />
-      <item itemvalue="CMake Application.__idf_espressif__i2c_bus" />
-      <item itemvalue="CMake Application.__idf_lvgl__lvgl" />
-      <item itemvalue="CMake Application.__idf_waveshare__esp_oled_ssd1315" />
-      <item itemvalue="CMake Application.__idf_duruofu__qmc5883p" />
-      <item itemvalue="CMake Application.__idf_esp-idf-lib__hmc5883l" />
-      <item itemvalue="CMake Application.__idf_flight_com" />
-      <item itemvalue="CMake Application.__idf_jgromes__radiolib" />
-      <item itemvalue="CMake Application.__idf_flight_data" />
-      <item itemvalue="CMake Application.__idf_gyroscope" />
-      <item itemvalue="CMake Application.__idf_lora_com" />
-      <item itemvalue="CMake Application.__idf_magnetometer" />
+      <item itemvalue="CMake Application.__idf_app_update" />
+      <item itemvalue="CMake Application.__idf_barometer" />
+      <item itemvalue="CMake Application.__idf_bootloader_support" />
       <item itemvalue="CMake Application.__idf_cmock" />
       <item itemvalue="CMake Application.__idf_console" />
       <item itemvalue="CMake Application.__idf_cxx" />
+      <item itemvalue="CMake Application.__idf_driver" />
+      <item itemvalue="CMake Application.__idf_duruofu__qmc5883p" />
       <item itemvalue="CMake Application.__idf_efuse" />
-      <item itemvalue="CMake Application.efuse-common-table" />
-      <item itemvalue="CMake Application.efuse-custom-table" />
-      <item itemvalue="CMake Application.efuse_common_table" />
-      <item itemvalue="CMake Application.efuse_custom_table" />
-      <item itemvalue="CMake Application.efuse_test_table" />
-      <item itemvalue="CMake Application.show-efuse-table" />
-      <item itemvalue="CMake Application.show_efuse_table" />
+      <item itemvalue="CMake Application.__idf_esp-idf-lib__hmc5883l" />
+      <item itemvalue="CMake Application.__idf_esp-idf-lib__i2cdev" />
       <item itemvalue="CMake Application.__idf_esp-tls" />
       <item itemvalue="CMake Application.__idf_esp_adc" />
       <item itemvalue="CMake Application.__idf_esp_app_format" />
@@ -1525,9 +1499,14 @@
       <item itemvalue="CMake Application.__idf_esp_bootloader_format" />
       <item itemvalue="CMake Application.__idf_esp_coex" />
       <item itemvalue="CMake Application.__idf_esp_common" />
+      <item itemvalue="CMake Application.__idf_esp_driver_cam" />
       <item itemvalue="CMake Application.__idf_esp_driver_dma" />
+      <item itemvalue="CMake Application.__idf_esp_driver_gpio" />
       <item itemvalue="CMake Application.__idf_esp_driver_gptimer" />
       <item itemvalue="CMake Application.__idf_esp_driver_i2c" />
+      <item itemvalue="CMake Application.__idf_esp_driver_i2s" />
+      <item itemvalue="CMake Application.__idf_esp_driver_ledc" />
+      <item itemvalue="CMake Application.__idf_esp_driver_mcpwm" />
       <item itemvalue="CMake Application.__idf_esp_driver_pcnt" />
       <item itemvalue="CMake Application.__idf_esp_driver_rmt" />
       <item itemvalue="CMake Application.__idf_esp_driver_sd_intf" />
@@ -1542,22 +1521,33 @@
       <item itemvalue="CMake Application.__idf_esp_driver_usb_serial_jtag" />
       <item itemvalue="CMake Application.__idf_esp_eth" />
       <item itemvalue="CMake Application.__idf_esp_event" />
+      <item itemvalue="CMake Application.__idf_esp_gdbstub" />
       <item itemvalue="CMake Application.__idf_esp_hal_ana_conv" />
       <item itemvalue="CMake Application.__idf_esp_hal_cam" />
+      <item itemvalue="CMake Application.__idf_esp_hal_clock" />
       <item itemvalue="CMake Application.__idf_esp_hal_dma" />
       <item itemvalue="CMake Application.__idf_esp_hal_gpio" />
       <item itemvalue="CMake Application.__idf_esp_hal_gpspi" />
       <item itemvalue="CMake Application.__idf_esp_hal_i2c" />
+      <item itemvalue="CMake Application.__idf_esp_hal_i2s" />
+      <item itemvalue="CMake Application.__idf_esp_hal_lcd" />
       <item itemvalue="CMake Application.__idf_esp_hal_ledc" />
+      <item itemvalue="CMake Application.__idf_esp_hal_mcpwm" />
       <item itemvalue="CMake Application.__idf_esp_hal_mspi" />
       <item itemvalue="CMake Application.__idf_esp_hal_pcnt" />
       <item itemvalue="CMake Application.__idf_esp_hal_pmu" />
       <item itemvalue="CMake Application.__idf_esp_hal_rmt" />
+      <item itemvalue="CMake Application.__idf_esp_hal_sd" />
       <item itemvalue="CMake Application.__idf_esp_hal_security" />
+      <item itemvalue="CMake Application.__idf_esp_hal_timg" />
       <item itemvalue="CMake Application.__idf_esp_hal_touch_sens" />
       <item itemvalue="CMake Application.__idf_esp_hal_twai" />
+      <item itemvalue="CMake Application.__idf_esp_hal_uart" />
+      <item itemvalue="CMake Application.__idf_esp_hal_usb" />
       <item itemvalue="CMake Application.__idf_esp_hal_wdt" />
+      <item itemvalue="CMake Application.__idf_esp_hid" />
       <item itemvalue="CMake Application.__idf_esp_http_client" />
+      <item itemvalue="CMake Application.__idf_esp_http_server" />
       <item itemvalue="CMake Application.__idf_esp_https_ota" />
       <item itemvalue="CMake Application.__idf_esp_https_server" />
       <item itemvalue="CMake Application.__idf_esp_hw_support" />
@@ -1566,6 +1556,7 @@
       <item itemvalue="CMake Application.__idf_esp_local_ctrl" />
       <item itemvalue="CMake Application.__idf_esp_mm" />
       <item itemvalue="CMake Application.__idf_esp_netif" />
+      <item itemvalue="CMake Application.__idf_esp_partition" />
       <item itemvalue="CMake Application.__idf_esp_phy" />
       <item itemvalue="CMake Application.__idf_esp_pm" />
       <item itemvalue="CMake Application.__idf_esp_psram" />
@@ -1574,33 +1565,41 @@
       <item itemvalue="CMake Application.__idf_esp_security" />
       <item itemvalue="CMake Application.__idf_esp_stdio" />
       <item itemvalue="CMake Application.__idf_esp_system" />
-      <item itemvalue="CMake Application.memory_ld_in_preprocess" />
-      <item itemvalue="CMake Application.sections_ld_in_preprocess" />
+      <item itemvalue="CMake Application.__idf_esp_timer" />
       <item itemvalue="CMake Application.__idf_esp_wifi" />
-      <item itemvalue="CMake Application.bootloader-flash" />
-      <item itemvalue="CMake Application.encrypted-bootloader-flash" />
+      <item itemvalue="CMake Application.__idf_espressif__bme280" />
+      <item itemvalue="CMake Application.__idf_espressif__i2c_bus" />
+      <item itemvalue="CMake Application.__idf_espressif__mpu6050" />
+      <item itemvalue="CMake Application.__idf_fatfs" />
+      <item itemvalue="CMake Application.__idf_flight_com" />
+      <item itemvalue="CMake Application.__idf_flight_controller" />
+      <item itemvalue="CMake Application.__idf_flight_data" />
       <item itemvalue="CMake Application.__idf_freertos" />
+      <item itemvalue="CMake Application.__idf_gps" />
+      <item itemvalue="CMake Application.__idf_gyroscope" />
       <item itemvalue="CMake Application.__idf_hal" />
+      <item itemvalue="CMake Application.__idf_heap" />
+      <item itemvalue="CMake Application.__idf_http_parser" />
+      <item itemvalue="CMake Application.__idf_i2c_manager" />
+      <item itemvalue="CMake Application.__idf_jgromes__radiolib" />
+      <item itemvalue="CMake Application.__idf_log" />
+      <item itemvalue="CMake Application.__idf_lora_com" />
+      <item itemvalue="CMake Application.__idf_lvgl__lvgl" />
+      <item itemvalue="CMake Application.__idf_lwip" />
+      <item itemvalue="CMake Application.__idf_magnetometer" />
+      <item itemvalue="CMake Application.__idf_main" />
       <item itemvalue="CMake Application.__idf_mbedtls" />
-      <item itemvalue="CMake Application.custom_bundle" />
-      <item itemvalue="CMake Application.mbedtls-apidoc" />
-      <item itemvalue="CMake Application.lib" />
-      <item itemvalue="CMake Application.mbedtls" />
-      <item itemvalue="CMake Application.mbedx509" />
-      <item itemvalue="CMake Application.tfpsacrypto-apidoc" />
-      <item itemvalue="CMake Application.tfpsacrypto" />
-      <item itemvalue="CMake Application.builtin" />
-      <item itemvalue="CMake Application.everest" />
-      <item itemvalue="CMake Application.p256m" />
+      <item itemvalue="CMake Application.__idf_minmea" />
+      <item itemvalue="CMake Application.__idf_motor_com" />
+      <item itemvalue="CMake Application.__idf_motor_com_master" />
       <item itemvalue="CMake Application.__idf_nvs_flash" />
-      <item itemvalue="CMake Application.encrypted-partition-table-flash" />
-      <item itemvalue="CMake Application.partition-table" />
-      <item itemvalue="CMake Application.partition-table-flash" />
-      <item itemvalue="CMake Application.partition_table" />
-      <item itemvalue="CMake Application.partition_table-flash" />
-      <item itemvalue="CMake Application.partition_table_bin" />
+      <item itemvalue="CMake Application.__idf_nvs_sec_provider" />
+      <item itemvalue="CMake Application.__idf_oled_display" />
+      <item itemvalue="CMake Application.__idf_perfmon" />
       <item itemvalue="CMake Application.__idf_protobuf-c" />
       <item itemvalue="CMake Application.__idf_protocomm" />
+      <item itemvalue="CMake Application.__idf_pthread" />
+      <item itemvalue="CMake Application.__idf_route_planner" />
       <item itemvalue="CMake Application.__idf_rt" />
       <item itemvalue="CMake Application.__idf_sdmmc" />
       <item itemvalue="CMake Application.__idf_soc" />
@@ -1609,42 +1608,63 @@
       <item itemvalue="CMake Application.__idf_tcp_transport" />
       <item itemvalue="CMake Application.__idf_unity" />
       <item itemvalue="CMake Application.__idf_vfs" />
-      <item itemvalue="CMake Application.__idf_app_update" />
-      <item itemvalue="CMake Application.__idf_barometer" />
-      <item itemvalue="CMake Application.__idf_bootloader_support" />
-      <item itemvalue="CMake Application.__idf_driver" />
-      <item itemvalue="CMake Application.__idf_esp_driver_cam" />
-      <item itemvalue="CMake Application.__idf_esp_driver_gpio" />
-      <item itemvalue="CMake Application.__idf_esp_driver_i2s" />
-      <item itemvalue="CMake Application.__idf_esp_driver_ledc" />
-      <item itemvalue="CMake Application.__idf_esp_driver_mcpwm" />
-      <item itemvalue="CMake Application.__idf_esp_gdbstub" />
-      <item itemvalue="CMake Application.__idf_esp_hal_clock" />
-      <item itemvalue="CMake Application.__idf_esp_hal_i2s" />
-      <item itemvalue="CMake Application.__idf_esp_hal_lcd" />
-      <item itemvalue="CMake Application.__idf_esp_hal_mcpwm" />
-      <item itemvalue="CMake Application.__idf_esp_hal_sd" />
-      <item itemvalue="CMake Application.__idf_esp_hal_timg" />
-      <item itemvalue="CMake Application.__idf_esp_hal_uart" />
-      <item itemvalue="CMake Application.__idf_esp_hal_usb" />
-      <item itemvalue="CMake Application.__idf_esp_hid" />
-      <item itemvalue="CMake Application.__idf_esp_http_server" />
-      <item itemvalue="CMake Application.__idf_esp_partition" />
-      <item itemvalue="CMake Application.__idf_esp_timer" />
-      <item itemvalue="CMake Application.__idf_espressif__mpu6050" />
-      <item itemvalue="CMake Application.__idf_fatfs" />
-      <item itemvalue="CMake Application.__idf_heap" />
-      <item itemvalue="CMake Application.__idf_http_parser" />
-      <item itemvalue="CMake Application.__idf_log" />
-      <item itemvalue="CMake Application.__idf_lwip" />
-      <item itemvalue="CMake Application.__idf_main" />
-      <item itemvalue="CMake Application.__idf_motor_com" />
-      <item itemvalue="CMake Application.__idf_nvs_sec_provider" />
-      <item itemvalue="CMake Application.__idf_perfmon" />
-      <item itemvalue="CMake Application.__idf_pthread" />
+      <item itemvalue="CMake Application.__idf_waveshare__esp_oled_ssd1315" />
       <item itemvalue="CMake Application.__idf_wear_levelling" />
       <item itemvalue="CMake Application.__idf_wpa_supplicant" />
       <item itemvalue="CMake Application.__idf_xtensa" />
+      <item itemvalue="CMake Application.__ldgen_output_sections.ld" />
+      <item itemvalue="CMake Application._project_elf_src" />
+      <item itemvalue="CMake Application.app-flash" />
+      <item itemvalue="CMake Application.app" />
+      <item itemvalue="CMake Application.app_check_size" />
+      <item itemvalue="CMake Application.bootloader-flash" />
+      <item itemvalue="CMake Application.builtin" />
+      <item itemvalue="CMake Application.config-report" />
+      <item itemvalue="CMake Application.confserver" />
+      <item itemvalue="CMake Application.custom_bundle" />
+      <item itemvalue="CMake Application.dfu-flash" />
+      <item itemvalue="CMake Application.dfu-list" />
+      <item itemvalue="CMake Application.dfu" />
+      <item itemvalue="CMake Application.efuse-common-table" />
+      <item itemvalue="CMake Application.efuse-custom-table" />
+      <item itemvalue="CMake Application.efuse_common_table" />
+      <item itemvalue="CMake Application.efuse_custom_table" />
+      <item itemvalue="CMake Application.efuse_test_table" />
+      <item itemvalue="CMake Application.encrypted-app-flash" />
+      <item itemvalue="CMake Application.encrypted-bootloader-flash" />
+      <item itemvalue="CMake Application.encrypted-flash" />
+      <item itemvalue="CMake Application.encrypted-partition-table-flash" />
+      <item itemvalue="CMake Application.erase-flash" />
+      <item itemvalue="CMake Application.everest" />
+      <item itemvalue="CMake Application.flash" />
+      <item itemvalue="CMake Application.flight_controller.elf" />
+      <item itemvalue="CMake Application.gen_flight_controller_binary" />
+      <item itemvalue="CMake Application.gen_project_binary" />
+      <item itemvalue="CMake Application.lib" />
+      <item itemvalue="CMake Application.mbedtls-apidoc" />
+      <item itemvalue="CMake Application.mbedtls" />
+      <item itemvalue="CMake Application.mbedx509" />
+      <item itemvalue="CMake Application.memory_ld_in_preprocess" />
+      <item itemvalue="CMake Application.menuconfig" />
+      <item itemvalue="CMake Application.merge-bin" />
+      <item itemvalue="CMake Application.monitor" />
+      <item itemvalue="CMake Application.p256m" />
+      <item itemvalue="CMake Application.partition-table-flash" />
+      <item itemvalue="CMake Application.partition-table" />
+      <item itemvalue="CMake Application.partition_table-flash" />
+      <item itemvalue="CMake Application.partition_table" />
+      <item itemvalue="CMake Application.partition_table_bin" />
+      <item itemvalue="CMake Application.save-defconfig" />
+      <item itemvalue="CMake Application.sections_ld_in_preprocess" />
+      <item itemvalue="CMake Application.show-efuse-table" />
+      <item itemvalue="CMake Application.show_efuse_table" />
+      <item itemvalue="CMake Application.size-components" />
+      <item itemvalue="CMake Application.size-files" />
+      <item itemvalue="CMake Application.size" />
+      <item itemvalue="CMake Application.tfpsacrypto-apidoc" />
+      <item itemvalue="CMake Application.tfpsacrypto" />
+      <item itemvalue="CMake Application.uf2-app" />
+      <item itemvalue="CMake Application.uf2" />
     </list>
   </component>
   <component name="TaskManager">
@@ -1676,6 +1696,7 @@
       <workItem from="1782988488638" duration="22342000" />
       <workItem from="1783284866647" duration="11010000" />
       <workItem from="1783509395056" duration="16397000" />
+      <workItem from="1783682071260" duration="11389000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />

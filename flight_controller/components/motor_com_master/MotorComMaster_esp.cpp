@@ -66,4 +66,14 @@ bool MotorComMasterClass::isManualOverride() {
     //I2C_ERROR_LOG("MotorCom", "read manual override failed", errorCode);
     return errorCode == ESP_OK && isManualOverride;
 }
+
+bool MotorComMasterClass::setCommand(ControlCommand command, int8_t value) {
+    ASSERT_VALID_SERVO_VALUE(value);
+    lastSentValues[command] = value;
+    return true;
+}
+
+bool MotorComMasterClass::sendFullControlPacket() {
+    return sendPacketInternal();
+}
 #endif

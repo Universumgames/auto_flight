@@ -66,7 +66,9 @@ export const connectionItems = computed<ConnectionItem[]>(() => [
         state: store.manualOverridePlane ? 'loading' : 'done',
       },
       {
-        label: 'Magnetometer',
+        label:
+          'Magnetometer' +
+          (isConnected(store.magnetometerConnectionPlane) ? ` (${store.headingPlane}°)` : ''),
         state: isConnected(store.magnetometerConnectionPlane) ? 'done' : 'loading',
       },
       {
@@ -101,4 +103,9 @@ export const autopilotDisabledWarning = computed(
 // true when the plane is connected but its motor controller is not
 export const motorControllerDisconnectedError = computed(
   () => isConnected(store.connectionStatePlane) && !isConnected(store.motorComConnectionPlane),
+)
+
+// true when the plane is connected but no GPS position is available for it
+export const gpsPlaneUnavailableError = computed(
+  () => isConnected(store.connectionStatePlane) && !isConnected(store.gpsConnectionPlane),
 )

@@ -11,6 +11,7 @@ FLIGHT_VAR(baseConnectionState,               BaseConnectionState,              
 FLIGHT_VAR(planeConnectionState,              PlaneConnectionState,              ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
 FLIGHT_VAR(basePressure,                      BasePressure,                      float,                     0.0f,                          SENSOR,     {})
 FLIGHT_VAR(planePressure,                     PlanePressure,                     float,                     0.0f,                          SENSOR,     {})
+FLIGHT_VAR(planeHeading,                      PlaneHeading,                      int,                       0,                             SENSOR,     {})
 FLIGHT_VAR(plannedArea,                       PlannedArea,                       std::vector<Coordinate>,   std::vector<Coordinate>{},     AREA,       { plannedRoute.clear(); })
 FLIGHT_VAR(baseBarometerConnectionState,      BaseBarometerConnectionState,      ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
 FLIGHT_VAR(planeBarometerConnectionState,     PlaneBarometerConnectionState,     ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
@@ -20,3 +21,4 @@ FLIGHT_VAR(planeGPSConnectionState,           PlaneGPSConnectionState,          
 FLIGHT_VAR(planeMagnetometerConnectionState,  PlaneMagnetometerConnectionState,  ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
 FLIGHT_VAR(planeAccelerometerConnectionState, PlaneAccelerometerConnectionState, ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
 FLIGHT_VAR(planeManualOverride,               PlaneManualOverride,               bool,                      false,                         CONNECTION, {})
+FLIGHT_VAR(flightState,                       FlightState,                       FlightState,               FlightState::PLANNING,         STATE,      {})

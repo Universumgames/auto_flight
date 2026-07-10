@@ -36,7 +36,9 @@ public:
         /// area changes
         AREA,
         /// Sensor changes
-        SENSOR
+        SENSOR,
+        /// Flight state changes (planning/planned/flying/returning)
+        STATE
     };
 
     void registerEventHandlersInSubComponents();

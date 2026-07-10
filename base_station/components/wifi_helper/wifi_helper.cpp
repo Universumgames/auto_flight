@@ -62,6 +62,10 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 }
 
 
+static esp_netif_t* s_sta_netif = nullptr;
+static esp_event_handler_instance_t s_instance_any_id = nullptr;
+static esp_event_handler_instance_t s_instance_got_ip = nullptr;
+
 esp_err_t prepare_wifi() {
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -77,15 +81,12 @@ esp_err_t prepare_wifi() {
     return ESP_OK;
 }
 
-esp_err_t start_ap() {
-    if (current_wifi_mode != WIFI_MODE_NULL) {
-        return ESP_FAIL; // Already in a Wi-Fi mode
-    }
-
+/**
+ * Brings up the WiFi driver in AP mode. Assumes prepare_wifi() has already been called
+ * and that no other WiFi mode is currently active.
+ */
+static esp_err_t configure_and_start_ap() {
     esp_err_t err;
-
-    err = prepare_wifi();
-    ESP_ERROR_CHECK_SOFT(err);
 
     esp_netif_create_default_wifi_ap();
 
@@ -107,6 +108,7 @@ esp_err_t start_ap() {
             .channel = 0,
             .authmode = WIFI_AUTH_WPA2_PSK,
             .ssid_hidden = false,
+            .max_connection = 4,
         }
     };
 
@@ -128,6 +130,17 @@ esp_err_t start_ap() {
     return ESP_OK;
 }
 
+esp_err_t start_ap() {
+    if (current_wifi_mode != WIFI_MODE_NULL) {
+        return ESP_FAIL; // Already in a Wi-Fi mode
+    }
+
+    esp_err_t err = prepare_wifi();
+    ESP_ERROR_CHECK_SOFT(err);
+
+    return configure_and_start_ap();
+}
+
 esp_err_t connect_wifi() {
     if (current_wifi_mode != WIFI_MODE_NULL) {
         return ESP_FAIL; // Already in a Wi-Fi mode
@@ -139,24 +152,22 @@ esp_err_t connect_wifi() {
     err = prepare_wifi();
     ESP_ERROR_CHECK_SOFT(err);
 
-    esp_netif_create_default_wifi_sta();
+    s_sta_netif = esp_netif_create_default_wifi_sta();
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     err = esp_wifi_init(&cfg);
     ESP_ERROR_CHECK_SOFT(err);
 
-    esp_event_handler_instance_t instance_any_id;
-    esp_event_handler_instance_t instance_got_ip;
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
         ESP_EVENT_ANY_ID,
         &wifi_event_handler,
         NULL,
-        &instance_any_id));
+        &s_instance_any_id));
     ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
         IP_EVENT_STA_GOT_IP,
         &wifi_event_handler,
         NULL,
-        &instance_got_ip));
+        &s_instance_got_ip));
 
     wifi_config_t sta_config = {
         .sta{
@@ -180,32 +191,50 @@ esp_err_t connect_wifi() {
 
     /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
      * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
-    // Use 30 second timeout instead of portMAX_DELAY to avoid infinite blocking
+    // Use a configurable timeout instead of portMAX_DELAY to avoid infinite blocking
     EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
                                            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
                                            pdFALSE,
                                            pdFALSE,
-                                           pdMS_TO_TICKS(30000));
+                                           pdMS_TO_TICKS(CONFIG_WIFI_DEV_MODE_CONNECT_TIMEOUT_SEC * 1000));
 
     /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
      * happened. */
     if (bits & WIFI_CONNECTED_BIT) {
         ESP_LOGI(TAG_WIFI_HELPER, "connected to ap SSID:%s password:%s",
                  CONFIG_WIFI_AP_SSID, CONFIG_WIFI_AP_PASSWORD);
+
+        esp_netif_set_hostname(esp_netif_get_default_netif(), CONFIG_WIFI_DEVICE_HOSTNAME);
+
+        current_wifi_mode = WIFI_MODE_STA;
+
+        return ESP_OK;
     }
-    else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG_WIFI_HELPER, "Failed to connect to SSID:%s, password:%s",
+
+    if (bits & WIFI_FAIL_BIT) {
+        ESP_LOGW(TAG_WIFI_HELPER, "Failed to connect to SSID:%s, password:%s",
                  CONFIG_WIFI_AP_SSID, CONFIG_WIFI_AP_PASSWORD);
     }
     else {
-        ESP_LOGE(TAG_WIFI_HELPER, "UNEXPECTED EVENT");
+        ESP_LOGW(TAG_WIFI_HELPER, "Timed out after %d second(s) trying to connect to SSID:%s",
+                 CONFIG_WIFI_DEV_MODE_CONNECT_TIMEOUT_SEC, CONFIG_WIFI_AP_SSID);
     }
 
-    esp_netif_set_hostname(esp_netif_get_default_netif(), CONFIG_WIFI_DEVICE_HOSTNAME);
+    ESP_LOGW(TAG_WIFI_HELPER, "Falling back to Access Point mode");
 
-    current_wifi_mode = WIFI_MODE_STA;
+    // Tear down the STA driver so the AP can be brought up from a clean state
+    esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, s_instance_any_id);
+    esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, s_instance_got_ip);
+    esp_wifi_stop();
+    esp_wifi_deinit();
+    esp_netif_destroy_default_wifi(s_sta_netif);
+    s_sta_netif = nullptr;
+    vEventGroupDelete(s_wifi_event_group);
+    s_wifi_event_group = nullptr;
 
-    return ESP_OK;
+    current_wifi_mode = WIFI_MODE_NULL;
+
+    return configure_and_start_ap();
 }
 
 

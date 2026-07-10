@@ -75,6 +75,13 @@ hmc5883l_data_t MagnetometerClass::readData() {
 
     hmc5883l_data_t data = {};
     hmc5883l_raw_to_mg(&dev, &raw, &data);
+
+    // Board is mounted chip-side down with X still aligned to the nose (180 deg
+    // rotation about X relative to the sensor's native frame), same as the
+    // MPU6050 on this combo board - flip Y and Z to match, see Gyroscope.cpp.
+    data.y *= -1;
+    data.z *= -1;
+
     return data;
 }
 

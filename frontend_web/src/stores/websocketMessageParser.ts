@@ -1,4 +1,4 @@
-import { ConnectionState, type ConnectionUpdatePacket } from '@/types/connection.ts'
+import { ConnectionState, FlightState, type ConnectionUpdatePacket } from '@/types/connection.ts'
 import type { Coordinate } from '@/types/coordinates.ts'
 import type { FlightUpdatePacket } from '@/types/flight.ts'
 
@@ -61,6 +61,21 @@ export function parseConnectionState(v: unknown): ConnectionState | null {
     const s = v.toLowerCase()
     if (s === ConnectionState.CONNECTED) return ConnectionState.CONNECTED
     if (s === ConnectionState.CONNECTING) return ConnectionState.CONNECTING
+  }
+
+  return null
+}
+
+/**
+ * Parses flight state values from either enum values or case-insensitive strings.
+ */
+export function parseFlightState(v: unknown): FlightState | null {
+  if (v == null) return null
+  if (Object.values(FlightState).includes(v as FlightState)) return v as FlightState
+  if (typeof v === 'string') {
+    const s = v.toLowerCase()
+    const match = Object.values(FlightState).find((state) => state === s)
+    if (match) return match
   }
 
   return null
@@ -134,6 +149,9 @@ export function applyConnectionPacket(store: StoreState, packet: ConnectionUpdat
 
   if (typeof packet.manualOverridePlane === 'boolean')
     store.manualOverridePlane = packet.manualOverridePlane
+
+  const flightState = parseFlightState(packet.flightState)
+  if (flightState) store.flightState = flightState
 }
 
 
@@ -145,4 +163,6 @@ export function applySensorPacket(store: StoreState, packet: SensorUpdatePacket)
 
   const calculatedAltitude = packet.calculatedAltitude
   if (calculatedAltitude) store.calculatedAltitude = calculatedAltitude
+
+  if (typeof packet.headingPlane === 'number') store.headingPlane = packet.headingPlane
 }

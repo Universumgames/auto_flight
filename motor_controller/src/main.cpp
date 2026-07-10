@@ -136,7 +136,10 @@ ISR(TIMER2_COMPA_vect)
 
 // value in [-100, 100]
 void writeServo(Servo& servo, int value) {
-    servo.write(mapToServo(value));
+    int pulseWidth = mapToServo(value);
+    if (servo.readMicroseconds() != pulseWidth) {
+        servo.writeMicroseconds(pulseWidth);
+    }
 }
 
 void loop() {

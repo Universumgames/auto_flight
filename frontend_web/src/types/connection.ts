@@ -3,6 +3,13 @@ export enum ConnectionState {
   CONNECTED = 'connected',
 }
 
+export enum FlightState {
+  PLANNING = 'planning',
+  PLANNED = 'planned',
+  FLYING = 'flying',
+  RETURNING = 'returning',
+}
+
 export interface ConnectionUpdatePacket {
   type?: 'connection'
   baseConnectionState: ConnectionState
@@ -17,5 +24,6 @@ export interface ConnectionUpdatePacket {
   magnetometerConnectionPlane?: ConnectionState
   accelerometerConnectionPlane?: ConnectionState
   manualOverridePlane?: boolean
+  flightState?: FlightState
 }
 

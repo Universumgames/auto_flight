@@ -43,12 +43,13 @@ struct ConnectionUpdatePacket {
     ConnectionState magnetometerConnectionPlane;
     ConnectionState accelerometerConnectionPlane;
     bool manualOverridePlane;
+    FlightState flightState;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectionUpdatePacket, type, baseConnectionState, lastContactBaseStationTimestamp,
                                    planeConnectionState, lastContactPlaneTimestamp, gpsConnectionBase,
                                    gpsConnectionPlane, barometerConnectionBase, barometerConnectionPlane,
                                    motorComConnectionPlane, magnetometerConnectionPlane, accelerometerConnectionPlane,
-                                   manualOverridePlane)
+                                   manualOverridePlane, flightState)
 };
 
 struct AreaDefinePacket {
@@ -62,8 +63,9 @@ struct SensorPacket {
     float barometerPressureBase;
     float barometerPressurePlane;
     float calculatedAltitude;
+    int headingPlane;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(SensorPacket, type, barometerPressureBase, barometerPressurePlane, calculatedAltitude)
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(SensorPacket, type, barometerPressureBase, barometerPressurePlane, calculatedAltitude, headingPlane)
 };
 
 struct PlannedRoutePacket {

@@ -79,6 +79,16 @@ void GyroscopeClass::gyroReadTask() {
         ringBufferIndex = (ringBufferIndex + 1) % GYRO_RING_BUFFER_SIZE;
         mpu6050_get_gyro(gyroscopeHandle, &gyroBuffer[ringBufferIndex]);
         mpu6050_get_acce(gyroscopeHandle, &accBuffer[ringBufferIndex]);
+
+        // The MPU6050 is mounted chip-side down with its X axis still aligned
+        // to the nose, i.e. rotated 180 deg about X relative to the sensor's
+        // datasheet (chip-up) frame. That rotation leaves X unchanged and
+        // flips the sign of Y and Z, so correct it here once for every consumer.
+        gyroBuffer[ringBufferIndex].gyro_y *= -1;
+        gyroBuffer[ringBufferIndex].gyro_z *= -1;
+        accBuffer[ringBufferIndex].acce_y *= -1;
+        accBuffer[ringBufferIndex].acce_z *= -1;
+
         int64_t now = esp_timer_get_time();
         float dt = (now - lastTime) / 1000000.0f;
         lastTime = now;
@@ -106,7 +116,7 @@ void GyroscopeClass::measureGyroBias() {
     for (int i = 0; i < measurements; i++) {
         mpu6050_gyro_value_t gyro;
         mpu6050_get_gyro(gyroscopeHandle, &gyro);
-        biasZ += gyro.gyro_z;
+        biasZ += -gyro.gyro_z; // matches the Y/Z flip applied in gyroReadTask
         vTaskDelay(pdMS_TO_TICKS(5));
     }
 

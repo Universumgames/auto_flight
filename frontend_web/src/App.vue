@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { computed } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 import ConnectionStatusButton from '@/components/ConnectionStatusButton.vue'
 import StepView from '@/components/StepView.vue'
-import { autopilotDisabledWarning, motorControllerDisconnectedError } from '@/composables/useConnectionItems.ts'
+import {
+  autopilotDisabledWarning,
+  gpsPlaneUnavailableError,
+  motorControllerDisconnectedError,
+} from '@/composables/useConnectionItems.ts'
+
+const route = useRoute()
+const isConnectionPage = computed(() => route.name === 'Connection')
 </script>
 
 <template>
@@ -11,9 +19,16 @@ import { autopilotDisabledWarning, motorControllerDisconnectedError } from '@/co
       <span class="warningBanner__icon" aria-hidden="true">✕</span>
       <span>Motor controller disconnected</span>
     </div>
+    <div
+      v-else-if="gpsPlaneUnavailableError && !isConnectionPage"
+      class="warningBanner warningBanner--error"
+    >
+      <span class="warningBanner__icon" aria-hidden="true">✕</span>
+      <span>No GPS position available for the plane</span>
+    </div>
     <div v-else-if="autopilotDisabledWarning" class="warningBanner warningBanner--warning">
       <span class="warningBanner__icon" aria-hidden="true">⚠</span>
-      <span>Autopilot control is disabled — manual override active</span>
+    <span>Autopilot control is disabled — manual override active</span>
     </div>
     <header style="position:relative; padding: 0.75rem 1rem;">
       <div style="position:absolute; right:1rem; top:0.5rem;">

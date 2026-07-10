@@ -1,7 +1,7 @@
 import { useWebSocket } from '@vueuse/core'
 import { reactive } from 'vue'
 
-import { ConnectionState, type ConnectionUpdatePacket } from '@/types/connection.ts'
+import { ConnectionState, FlightState, type ConnectionUpdatePacket } from '@/types/connection.ts'
 import { handleWebSocketMessage } from '@/stores/websocketMessage.ts'
 import type { FlightRoute, FlightUpdatePacket, PlannedRoute } from '@/types/flight.ts'
 import type { Coordinate } from '@/types/coordinates.ts'
@@ -38,9 +38,11 @@ export function createStoreState() {
     magnetometerConnectionPlane: ConnectionState.CONNECTING,
     accelerometerConnectionPlane: ConnectionState.CONNECTING,
     manualOverridePlane: false,
+    flightState: FlightState.PLANNING,
     pressureBase: 0.0,
     pressurePlane: 0.0,
-    calculatedAltitude: 0.0
+    calculatedAltitude: 0.0,
+    headingPlane: 0
   }
 }
 

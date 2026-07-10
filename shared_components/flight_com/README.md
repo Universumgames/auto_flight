@@ -19,7 +19,7 @@ Every packet starts with a `BasePacket` header (`packets/base.hpp`): a `time_t t
 | Packet | Type | Sent by | Direction | Payload |
 |---|---|---|---|---|
 | `BasePacket` (as `ROUTE_HISTORY_REQUEST`) | `0x33` | base station | base → plane | header only — asks the plane to send its full route history |
-| `SensorUpdate` | `0x10` | both | plane ↔ base | `pressure` (hPa, from `Barometer`) |
+| `SensorUpdate` | `0x10` | both | plane ↔ base | `pressure` (hPa, from `Barometer`), `heading` (degrees `[0, 360)`, rounded, from `Magnetometer`, plane only) |
 | `PositionUpdate` | `0x11` | both | plane ↔ base | current `Coordinate` (from `GPS_Reader`) |
 | `ComponentStatus` | `0x12` | plane | plane → base | `ConnectionState` of `gps`, `barometer`, `motorControl`, `magnetometer`, `accelerometer` |
 | `PlannedRoutePacket` | `0x30` | plane | plane → base | `route`: ordered list of `Coordinate` waypoints the plane computed to cover the planned area |

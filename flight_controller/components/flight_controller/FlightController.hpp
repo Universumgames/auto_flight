@@ -1,6 +1,7 @@
 #pragma once
 #include "Gyroscope.hpp"
 #include "LoRa_Communication.hpp"
+#include "MovingAverage.hpp"
 
 class FlightControllerClass {
 private:
@@ -27,6 +28,11 @@ private:
     float thrustIntegral  = 0.0f;
 
     float targetAltitude = 60.0f; // meters; matches route planner cruise altitude
+
+    MovingAverage<CONFIG_ALTITUDE_SMOOTHING_SAMPLES> altitudeAverage;
+    MovingAverage<CONFIG_ROLL_SMOOTHING_SAMPLES> rollAverage;
+    MovingAverage<CONFIG_PITCH_SMOOTHING_SAMPLES> pitchAverage;
+    HeadingMovingAverage<CONFIG_HEADING_SMOOTHING_SAMPLES> headingAverage;
 
     static constexpr float AILERON_P_GAIN = 1.5f;
     static constexpr float AILERON_I_GAIN = 0.5f;

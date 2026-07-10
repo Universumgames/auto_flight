@@ -12,6 +12,7 @@ const props = withDefaults(
     flightHistory?: Coordinate[]
     baseStationPosition?: Coordinate | null
     planePosition?: Coordinate | null
+    planeHeading?: number | null
     center?: Coordinate
     zoom?: number
     height?: string
@@ -27,6 +28,7 @@ const props = withDefaults(
     flightHistory: () => [],
     baseStationPosition: null,
     planePosition: null,
+    planeHeading: null,
   },
 )
 
@@ -100,11 +102,103 @@ function createPositionIcon(label: string, color: string): L.DivIcon {
   })
 }
 
-function createPositionMarker(position: Coordinate, label: string, color: string): L.Marker {
-  return L.marker([position.latitude, position.longitude], {
-    icon: createPositionIcon(label, color),
+function createPlaneIcon(label: string, color: string, heading: number): L.DivIcon {
+  return L.divIcon({
+    className: 'position-marker-icon',
+    html: `
+      <div style="
+        position: relative;
+        width: 28px;
+        height: 28px;
+        transform: rotate(${heading}deg);
+      ">
+        <div style="
+          position: absolute;
+          top: -8px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0;
+          height: 0;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: 8px solid ${color};
+        "></div>
+        <div style="
+          width: 28px;
+          height: 28px;
+          border-radius: 9999px;
+          background: ${color};
+          color: white;
+          border: 2px solid white;
+          box-shadow: 0 2px 8px rgba(15, 23, 42, 0.35);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 11px;
+          font-weight: 700;
+          line-height: 1;
+          transform: rotate(${-heading}deg);
+        ">${label}</div>
+      </div>
+    `,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  })
+}
+
+function createPositionMarker(
+  position: Coordinate,
+  label: string,
+  color: string,
+  heading?: number | null,
+): L.Marker {
+  const icon = heading != null ? createPlaneIcon(label, color, heading) : createPositionIcon(label, color)
+  const marker = L.marker([position.latitude, position.longitude], {
+    icon,
     keyboard: false,
   })
+
+  return marker
+}
+
+function destinationPoint(position: Coordinate, bearingDeg: number, distanceMeters: number): Coordinate {
+  const R = 6371000
+  const bearing = (bearingDeg * Math.PI) / 180
+  const lat1 = (position.latitude * Math.PI) / 180
+  const lon1 = (position.longitude * Math.PI) / 180
+  const angularDistance = distanceMeters / R
+
+  const lat2 = Math.asin(
+    Math.sin(lat1) * Math.cos(angularDistance) + Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing),
+  )
+  const lon2 =
+    lon1 +
+    Math.atan2(
+      Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(lat1),
+      Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2),
+    )
+
+  return {
+    latitude: (lat2 * 180) / Math.PI,
+    longitude: (lon2 * 180) / Math.PI,
+  }
+}
+
+function createHeadingLine(position: Coordinate, heading: number, color: string): L.Polyline {
+  const end = destinationPoint(position, heading, 50)
+
+  return L.polyline(
+    [
+      [position.latitude, position.longitude],
+      [end.latitude, end.longitude],
+    ],
+    {
+      color,
+      weight: 3,
+      dashArray: '6 4',
+      interactive: false,
+    },
+  )
 }
 
 function createPolyline(coords: Coordinate[], color: string, weight = 4): L.Polyline {
@@ -161,7 +255,13 @@ function syncPositionMarkers() {
   }
 
   if (props.planePosition) {
-    positionMarkers.addLayer(createPositionMarker(props.planePosition, 'PL', '#d97706'))
+    if (props.planeHeading != null) {
+      positionMarkers.addLayer(createHeadingLine(props.planePosition, props.planeHeading, '#d97706'))
+    }
+
+    positionMarkers.addLayer(
+      createPositionMarker(props.planePosition, 'PL', '#d97706', props.planeHeading),
+    )
   }
 
   if (props.plannedRoute.length > 0) {
@@ -216,7 +316,7 @@ watch(
 )
 
 watch(
-  [() => props.baseStationPosition, () => props.planePosition],
+  [() => props.baseStationPosition, () => props.planePosition, () => props.planeHeading],
   () => {
     syncPositionMarkers()
   },

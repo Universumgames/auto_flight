@@ -3612,6 +3612,8 @@ CONFIG_WIFI_AP_SSID="FlightBaseStation"
 CONFIG_WIFI_AP_PASSWORD="1234567890"
 # CONFIG_WIFI_DEV_MODE is not set
 # default:
+CONFIG_WIFI_DEV_MODE_CONNECT_TIMEOUT_SEC=30
+# default:
 CONFIG_WIFI_DEVICE_HOSTNAME="ESP32-Flight-Base-Station"
 # end of WiFi Helper Configuration
 

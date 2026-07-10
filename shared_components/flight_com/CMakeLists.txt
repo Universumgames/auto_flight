@@ -10,6 +10,6 @@ if (NOT NATIVE_BUILD)
     )
 
     if (FLIGHT_DEVICE_TYPE_PLANE EQUAL 1)
-        idf_component_optional_requires(PRIVATE motor_com_master)
+        idf_component_optional_requires(PRIVATE motor_com_master magnetometer)
     endif ()
 endif ()

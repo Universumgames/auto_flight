@@ -6,7 +6,9 @@
 #include "LoRa_Communication.hpp"
 #ifdef FLIGHT_DEVICE_TYPE_PLANE
 #include "MotorComMaster.hpp"
+#include "Magnetometer.hpp"
 #endif
+#include <cmath>
 #include <iostream>
 
 constexpr const char* TAG_FLIGHT_COMMUNICATION = "Flight_Communication";
@@ -96,7 +98,6 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
 
 void Flight_Communication::sendPacket(const BasePacket& packet) {
     auto data = packet.serialize();
-    ESP_LOGI("test", "sending packet 0x%02x", packet.type);
     LoRa_Communication.sendData(data.first.get(), data.second);
 }
 
@@ -111,9 +112,15 @@ void Flight_Communication::sendPosition() {
 
 void Flight_Communication::sendSensorUpdate() {
     float pressure = Barometer.getPressure();
+#ifdef FLIGHT_DEVICE_TYPE_PLANE
+    int heading = static_cast<int>(std::lround(Magnetometer.getHeading()));
+#else
+    int heading = 0;
+#endif
     SensorUpdate packet = {
         GPS_Reader.getGPSLatestTime(),
         pressure,
+        heading,
     };
 
     sendPacket(packet);
@@ -168,6 +175,7 @@ void Flight_Communication::sendComponentStatus() {
     status.magnetometer = FlightStorage.getPlaneMagnetometerConnectionState();
     status.accelerometer = FlightStorage.getPlaneAccelerometerConnectionState();
     status.manualOverride = FlightStorage.getPlaneManualOverride();
+    status.flightState = FlightStorage.getFlightState();
 
     sendPacket(status);
 }

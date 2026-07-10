@@ -68,6 +68,7 @@ void FlightControllerClass::init() {
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route changed, sending update with size %d",
                  FlightStorage.getPlannedRoute().size());
         Flight_Communication::sendPlannedRoute();
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route sent");
     }, FlightStorageClass::DataUpdateType::ROUTE);
 
     vTaskDelay(pdMS_TO_TICKS(200));
@@ -77,8 +78,6 @@ void FlightControllerClass::flightTaskEntry(void* param) {
     auto* instance = static_cast<FlightControllerClass*>(param);
     instance->flightTask();
 }
-
-int i = -100;
 
 [[noreturn]] void FlightControllerClass::flightTask() {
     while (true) {
@@ -92,15 +91,17 @@ int i = -100;
         auto pressure = FlightStorage.updatePlanePressure(Barometer.getPressure(), currentTime);
         vTaskDelay(1);
         auto groundPressure = FlightStorage.getBasePressure();
-        auto currentAltitude = BarometerClass::calculateAltitude(groundPressure, pressure);
+        auto currentAltitude = altitudeAverage.push(BarometerClass::calculateAltitude(groundPressure, pressure));
         auto planeAngle = Gyroscope.getPlaneAngle();
+        planeAngle.roll = rollAverage.push(planeAngle.roll);
+        planeAngle.pitch = pitchAverage.push(planeAngle.pitch);
         vTaskDelay(1);
         auto magnetHeading = Magnetometer.readData();
-        auto compassHeading = Magnetometer.getHeading();
+        auto compassHeading = headingAverage.push(Magnetometer.getHeading());
         vTaskDelay(1);
 
         //ESP_LOGI("GNDANG", "roll: %f, pitch: %f, yaw deg: %f", planeAngle.roll, planeAngle.pitch, planeAngle.yaw);
-        ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ready: %d, locked: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.isAvailable(), Magnetometer.isLocked());
+        //ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ready: %d, locked: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.isAvailable(), Magnetometer.isLocked());
 
         FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()
                                                         ? ConnectionState::CONNECTED
@@ -121,10 +122,7 @@ int i = -100;
         // advance waypoint index if close enough, then steer
         checkAndAdvanceWaypoint(position);
 
-        //steerToWaypoint(getNextWaypoint(), currentAltitude, planeAngle, compassHeading);
-        MotorComMaster.sendFullControlPacket(i,i,i,i);
-        i++;
-        if (i > 100) i = -100;
+            steerToWaypoint(getNextWaypoint(), currentAltitude, planeAngle, compassHeading);
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
@@ -207,6 +205,7 @@ void FlightControllerClass::recalculateRoute() {
     auto plannedRoute = RoutePlanner.planRoute(FlightStorage.getPlannedArea(), 60, metersToLatitudeDegree(40), 0.2);
     FlightStorage.updatePlannedRoute(plannedRoute);
     nextWaypointIndex = 0;
+    FlightStorage.updateFlightState(FlightState::FLYING);
 }
 
 
@@ -214,7 +213,10 @@ void FlightControllerClass::checkAndAdvanceWaypoint(Coordinate currentPosition) 
     if (Coordinate::isInvalid(currentPosition)) return;
 
     auto plannedRoute = FlightStorage.getPlannedRoute();
-    if (nextWaypointIndex >= plannedRoute.size()) return;
+    if (nextWaypointIndex >= plannedRoute.size()) {
+        FlightStorage.updateFlightState(FlightState::RETURNING);
+        return;
+    }
 
     const Coordinate waypoint = plannedRoute[nextWaypointIndex];
     if (distanceInMeters(currentPosition, waypoint) <= CONFIG_WAYPOINT_REACHED_RADIUS_M) {
@@ -224,10 +226,12 @@ void FlightControllerClass::checkAndAdvanceWaypoint(Coordinate currentPosition) 
     }
 }
 
-void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::PlaneAngle angle, float compassHeading) {
+void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::PlaneAngle angle,
+                                            float compassHeading) {
+    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Steering to waypoint: %s", waypoint.toString().c_str());
     // --- Rudder: steer toward waypoint ---
     int8_t rudder = 0;
-    if (!Coordinate::isInvalid(waypoint)) {
+    if (FlightStorage.getFlightState() == FlightState::FLYING && !Coordinate::isInvalid(waypoint)) {
         auto currentPosition = GPS_Reader.getCurrentPosition();
         if (!Coordinate::isInvalid(currentPosition)) {
             const float dLon = (waypoint.longitude - currentPosition.longitude) * M_PI / 180.0f;
@@ -245,8 +249,8 @@ void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, Gyr
             // normalize to [-1, 1]: full deflection at ±90° heading error
             const float normalized = std::max(-1.0f, std::min(1.0f, headingError / 90.0f));
             const float rudderF = normalized >= 0.0f
-                ? normalized * static_cast<float>(CONFIG_RUDDER_SERVO_MAX)
-                : normalized * static_cast<float>(-CONFIG_RUDDER_SERVO_MIN);
+                                      ? normalized * static_cast<float>(CONFIG_RUDDER_SERVO_MAX)
+                                      : normalized * static_cast<float>(-CONFIG_RUDDER_SERVO_MIN);
             rudder = static_cast<int8_t>(rudderF);
             ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Rudder: bearing=%.1f heading=%.1f error=%.1f rudder=%d",
                      bearing, compassHeading, headingError, rudder);
@@ -256,20 +260,20 @@ void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, Gyr
     // --- Altitude hold: PI on altitude error drives thrust and sets target pitch ---
     const float altitudeError = targetAltitude - static_cast<float>(height);
     thrustIntegral = std::max(-THRUST_I_LIMIT, std::min(THRUST_I_LIMIT,
-                               thrustIntegral + altitudeError * 0.05f));
+                                                        thrustIntegral + altitudeError * 0.05f));
     const float thrustF = THRUST_BASE + altitudeError * THRUST_P_GAIN + thrustIntegral * THRUST_I_GAIN;
     const auto thrust = static_cast<int8_t>(std::max(0.0f, std::min(100.0f, thrustF)));
 
     // Target pitch is derived from altitude error; I term on pitch finds the unknown trim.
     const float targetPitch = std::max(-MAX_CLIMB_PITCH, std::min(MAX_CLIMB_PITCH,
-                                        altitudeError * ALTITUDE_TO_PITCH_GAIN));
+                                                                  altitudeError * ALTITUDE_TO_PITCH_GAIN));
 
     ESP_LOGI(TAG_FLIGHT_CONTROLLER, "AltHold: alt=%d target=%.0f err=%.1f targetPitch=%.1f thrust=%d",
              height, targetAltitude, altitudeError, targetPitch, thrust);
 
     // --- Aileron: keep wings level, I term discovers roll trim offset ---
     aileronIntegral = std::max(-AILERON_I_LIMIT, std::min(AILERON_I_LIMIT,
-                                aileronIntegral + angle.roll * 0.05f));
+                                                          aileronIntegral + angle.roll * 0.05f));
     const float aileronF = angle.roll * AILERON_P_GAIN + aileronIntegral * AILERON_I_GAIN;
     const auto aileron = static_cast<int8_t>(std::max(-100.0f, std::min(100.0f, aileronF)));
     ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Aileron: roll=%.1f integral=%.2f out=%d",
@@ -278,7 +282,7 @@ void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, Gyr
     // --- Pitch: drive toward targetPitch, I term discovers pitch trim offset ---
     const float pitchError = targetPitch - angle.pitch;
     pitchIntegral = std::max(-PITCH_I_LIMIT, std::min(PITCH_I_LIMIT,
-                              pitchIntegral + pitchError * 0.05f));
+                                                      pitchIntegral + pitchError * 0.05f));
     const float pitchF = pitchError * PITCH_P_GAIN + pitchIntegral * PITCH_I_GAIN;
     const auto pitch = static_cast<int8_t>(std::max(-100.0f, std::min(100.0f, pitchF)));
     ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Pitch: pitch=%.1f target=%.1f err=%.1f integral=%.2f out=%d",

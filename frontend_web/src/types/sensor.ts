@@ -4,4 +4,5 @@ export interface SensorUpdatePacket {
   barometerPressureBase: number
   barometerPressurePlane: number
   calculatedAltitude: number
+  headingPlane: number
 }

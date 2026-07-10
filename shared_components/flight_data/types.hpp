@@ -36,3 +36,17 @@ NLOHMANN_JSON_SERIALIZE_ENUM(ConnectionState, {
                              {ConnectionState::CONNECTING, "connecting"},
                              {ConnectionState::CONNECTED, "connected"},
                              })
+
+enum class FlightState: uint8_t {
+    PLANNING = 0x22,
+    PLANNED = 0x33,
+    FLYING = 0x44,
+    RETURNING = 0x55
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(FlightState, {
+                             {FlightState::PLANNING, "planning"},
+                             {FlightState::PLANNED, "planned"},
+                             {FlightState::FLYING, "flying"},
+                             {FlightState::RETURNING, "returning"},
+                             })

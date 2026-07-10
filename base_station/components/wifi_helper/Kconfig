@@ -19,6 +19,14 @@ config WIFI_DEV_MODE
       Enable this connect to an existing WiFi network in station mode. When enabled, the ESP32 will attempt to connect to a WiFi network using the SSID and password provided in the configuration. If disabled, the ESP32 will operate in Access Point (AP) mode, allowing other devices to connect to it directly.
       It will use the AP SSID and AP password defined in the configuration for AP mode to connect to the network.
 
+config WIFI_DEV_MODE_CONNECT_TIMEOUT_SEC
+    int "Dev mode WiFi connect timeout (seconds)"
+    default 30
+    help
+      When Developer Mode is enabled, this is the maximum time (in seconds) to wait
+      for the ESP32 to connect to the configured WiFi network before giving up and
+      falling back to starting the Access Point instead.
+
 config WIFI_DEVICE_HOSTNAME
     string "Device Hostname"
     default "ESP32-Flight-Base-Station"

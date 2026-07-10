@@ -40,7 +40,7 @@ Base path for all endpoints below is the device's IP/hostname (no auth, plain HT
 - `GET /api/ws` — upgrade to a WebSocket connection. On handshake, the client is registered to receive periodic push updates (every 5s):
   - a `FlightUpdatePacket` (`type: "flight"`) — base/plane positions, flown route, planned route, plus their last-update timestamps
   - a `ConnectionUpdatePacket` (`type: "connection"`) — same content as `/api/status`
-  - a `SensorPacket` (`type: "sensor"`) — base/plane barometric pressure and the calculated altitude difference
+  - a `SensorPacket` (`type: "sensor"`) — base/plane barometric pressure, the calculated altitude difference, and the plane's compass heading
   - Sending the text message `"ping"` on the socket triggers a `"pong"` reply.
 
 ### Packets (`FrontendPackets.hpp`)
@@ -49,7 +49,7 @@ All packets are JSON-serialized via `nlohmann::json` (`NLOHMANN_DEFINE_TYPE_INTR
 
 - `FlightUpdatePacket` (`type: "flight"`) — `basePosition`, `basePositionUpdateTime`, `planePosition`, `planePositionUpdateTime`, `flightRoute`, `flightRouteUpdateTime`, `plannedRoute`, `plannedRouteUpdateTime`
 - `ConnectionUpdatePacket` (`type: "connection"`) — `baseConnectionState`, `lastContactBaseStationTimestamp`, `planeConnectionState`, `lastContactPlaneTimestamp`, `gpsConnectionBase`, `gpsConnectionPlane`, `barometerConnectionBase`, `barometerConnectionPlane`, `motorComConnectionPlane`, `magnetometerConnectionPlane` (each `ConnectionState` is `"connecting"` or `"connected"`)
-- `SensorPacket` (`type: "sensor"`) — `barometerPressureBase`, `barometerPressurePlane`, `calculatedAltitude`
+- `SensorPacket` (`type: "sensor"`) — `barometerPressureBase`, `barometerPressurePlane`, `calculatedAltitude`, `headingPlane` (degrees `[0, 360)`)
 - `AreaDefinePacket` — `shape`: list of `Coordinate` (`{longitude, latitude}`)
 - `PlannedRoutePacket` (`type: "plannedRoute"`) — `route`: list of `Coordinate`
 - `BaseUpdatePacket` (`type: "base"`) — defined but currently unused by any handler
