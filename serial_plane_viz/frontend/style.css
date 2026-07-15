@@ -1,0 +1,172 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background: #1a1d23;
+  color: #e8e8ea;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+header {
+  padding: 10px 16px;
+  border-bottom: 1px solid #2b2f38;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+header h1 {
+  font-size: 16px;
+  margin: 0;
+  margin-right: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+button {
+  background: #2b2f38;
+  color: #e8e8ea;
+  border: 1px solid #3a3f4b;
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button:hover:not(:disabled) {
+  background: #363b47;
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+input {
+  background: #14161b;
+  color: #e8e8ea;
+  border: 1px solid #3a3f4b;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+#ws-url {
+  width: 190px;
+}
+
+#baud-rate {
+  width: 80px;
+}
+
+.baud-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #a7acb8;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 13px;
+  color: #a7acb8;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-disconnected {
+  background: #6b7280;
+}
+
+.status-connecting {
+  background: #eab308;
+}
+
+.status-connected {
+  background: #22c55e;
+}
+
+.status-error {
+  background: #ef4444;
+}
+
+#scene {
+  flex: 1;
+  min-width: 0;
+  display: block;
+}
+
+#debug-panel {
+  flex: none;
+  padding: 6px 16px;
+  border-bottom: 1px solid #2b2f38;
+  background: #14161b;
+  overflow-x: auto;
+}
+
+#debug-panel.hidden {
+  display: none;
+}
+
+#debug-log {
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre;
+}
+
+.debug-row {
+  color: #cdd2db;
+}
+
+.debug-row-dropped {
+  color: #ef4444;
+}
+
+footer {
+  padding: 8px 16px;
+  border-top: 1px solid #2b2f38;
+  font-size: 12px;
+  color: #a7acb8;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+footer code {
+  background: #14161b;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+#channel-readout {
+  font-variant-numeric: tabular-nums;
+}

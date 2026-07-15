@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Serial Plane Viz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Serial Plane Viz</h1>
+      <div class="controls">
+        <button id="connect-webserial">Connect via Web Serial</button>
+        <button id="connect-wsbridge">Connect via WS Bridge</button>
+        <input id="ws-url" type="text" title="WebSocket bridge URL" />
+        <label class="baud-label">Baud <input id="baud-rate" type="number" title="Web Serial baud rate" /></label>
+        <button id="disconnect" disabled>Disconnect</button>
+        <button id="debug-toggle">Show Debug</button>
+      </div>
+      <div class="status">
+        <span id="status-dot" class="status-dot status-disconnected"></span>
+        <span id="status-text">Disconnected</span>
+      </div>
+    </header>
+
+    <div id="debug-panel" class="hidden">
+      <span id="debug-log">Waiting for data…</span>
+    </div>
+
+    <canvas id="scene"></canvas>
+
+    <footer>
+      <div>Channel order (edit in <code>js/config.js</code>): <span id="channel-order"></span></div>
+      <div id="channel-readout"></div>
+    </footer>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
