@@ -19,6 +19,7 @@ pcb_d1_h = 20;  // Z
 pcb_d2_w = 40;  // X
 pcb_d2_l = 60;  // Y
 pcb_d2_h = 20;  // Z
+pcb_d2_standoff_inset_extra = 1.5;  // this board's holes sit 3mm closer together than the standard grid, on both axes (1.5mm inward per side)
 
 // ---- Plate ----
 plate_thickness = 3;
@@ -32,6 +33,7 @@ standoff_height = 6.9;
 standoff_od     = 8;
 standoff_hole_d = 4;    // pilot hole for an M2.5 self-tap screw
 standoff_inset  = 1.8;  // distance of standoff center from each board corner
+pcb_d2_standoff_inset = standoff_inset + pcb_d2_standoff_inset_extra;  // tighter hole spacing for daughter board 2
 
 // ---- Servos ----
 // The two mounting holes sit on the tab plane; the servo case hangs
@@ -51,6 +53,12 @@ servo_cable_w      = 6;     // width (along Y) of the cable-exit notch on the si
 servo_cable_ext    = 4;     // how far the cable notch extends past the body cutout, through the side rim
 servo_cable_side   = -1;    // which side the cable exits: -1 = -X edge, +1 = +X edge (same for all servos)
 servo_row_gap      = 10;    // gap between adjacent servos
+
+// The screws on hand are 2mm longer than the plate is thick, so each of a
+// servo's two mounting tabs sits on a small raised pedestal that adds that
+// much extra depth, keeping the screw from bottoming out or poking through.
+servo_pedestal_enable = true;
+servo_pedestal_height = 2;   // matches the screws' 2mm overlength
 
 // ---- Derived servo cutout (the body opening, centered in the footprint) ----
 servo_cutout_w = servo_body_w - 2 * servo_side_margin;

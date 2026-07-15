@@ -12,6 +12,7 @@ module plate() {
         union() {
             base_plate();
             if (standoff_enable) board_standoffs();
+            if (servo_pedestal_enable) servo_pedestals();
         }
         board_standoff_holes();
         servo_holes();
@@ -36,11 +37,11 @@ module standoff(x, y) {
     }
 }
 
-function board_corners(ox, oy, w, l) = [
-    [ox + standoff_inset, oy + standoff_inset],
-    [ox + w - standoff_inset, oy + standoff_inset],
-    [ox + standoff_inset, oy + l - standoff_inset],
-    [ox + w - standoff_inset, oy + l - standoff_inset],
+function board_corners(ox, oy, w, l, inset = standoff_inset) = [
+    [ox + inset, oy + inset],
+    [ox + w - inset, oy + inset],
+    [ox + inset, oy + l - inset],
+    [ox + w - inset, oy + l - inset],
 ];
 
 module board_standoffs() {
@@ -48,7 +49,7 @@ module board_standoffs() {
         standoff(p[0], p[1]);
     for (p = board_corners(d1_origin_x, d1_origin_y, pcb_d1_w, pcb_d1_l))
         standoff(p[0], p[1]);
-    for (p = board_corners(d2_origin_x, d2_origin_y, pcb_d2_w, pcb_d2_l))
+    for (p = board_corners(d2_origin_x, d2_origin_y, pcb_d2_w, pcb_d2_l, pcb_d2_standoff_inset))
         standoff(p[0], p[1]);
 }
 
@@ -58,7 +59,7 @@ module board_standoff_holes() {
     for (p = concat(
         board_corners(main_origin_x, main_origin_y, pcb_main_w, pcb_main_l),
         board_corners(d1_origin_x, d1_origin_y, pcb_d1_w, pcb_d1_l),
-        board_corners(d2_origin_x, d2_origin_y, pcb_d2_w, pcb_d2_l)
+        board_corners(d2_origin_x, d2_origin_y, pcb_d2_w, pcb_d2_l, pcb_d2_standoff_inset)
     ))
         translate([p[0], p[1], -0.5])
             cylinder(d = standoff_hole_d, h = plate_thickness + 1);
@@ -69,14 +70,31 @@ module board_standoff_holes() {
 // ===================================================================
 
 // Two mounting holes per servo, centered in the footprint and spaced
-// servo_hole_spacing apart along Y.
+// servo_hole_spacing apart along Y. Cut tall enough to clear the pedestal
+// (if enabled) as well as the plate itself.
 module servo_holes() {
+    hole_h = plate_thickness + (servo_pedestal_enable ? servo_pedestal_height : 0) + 1;
     for (i = [0 : servo_count - 1]) {
         cx = servo_origin_x(i) + servo_body_w / 2;
         cy = servo_origin_y(i) + servo_body_l / 2;
         for (dy = [-servo_hole_spacing / 2, servo_hole_spacing / 2])
             translate([cx, cy + dy, -0.5])
-                cylinder(d = servo_hole_d, h = plate_thickness + 1);
+                cylinder(d = servo_hole_d, h = hole_h);
+    }
+}
+
+// Raised pads under each servo's two mounting tabs, giving the (longer than
+// expected) mounting screws extra depth so they don't bottom out. Sits over
+// the same solid tab strip that already supports the tab (see servo_tab_l),
+// so it stays fully supported by the plate below with no bridging.
+module servo_pedestals() {
+    for (i = [0 : servo_count - 1]) {
+        ox = servo_origin_x(i);
+        oy = servo_origin_y(i);
+        translate([ox, oy, plate_thickness])
+            cube([servo_body_w, servo_tab_l, servo_pedestal_height]);
+        translate([ox, oy + servo_body_l - servo_tab_l, plate_thickness])
+            cube([servo_body_w, servo_tab_l, servo_pedestal_height]);
     }
 }
 
