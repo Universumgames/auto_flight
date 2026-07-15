@@ -14,6 +14,7 @@
 
 #define DEBUG_I2C
 #define DEBUG_PLANE
+#define VIRTUAL_DEBUG
 
 SBUS sbus(Serial);
 Servo servo1;
@@ -58,7 +59,7 @@ void I2C_TxHandler() {
 }
 
 void I2C_RxHandler(int numBytes) {
-#ifdef DEBUG_I2C
+#if defined(DEBUG_I2C) && !defined(VIRTUAL_DEBUG)
     Serial.print("I2C_RxHandler called with ");
     Serial.print(numBytes);
     Serial.println(" bytes");
@@ -74,7 +75,7 @@ void I2C_RxHandler(int numBytes) {
     desiredValueServo2 = (int8_t)buf[1];
     desiredValueServo3 = (int8_t)buf[2];
     desiredValueServo4 = (int8_t)buf[3];
-#ifdef DEBUG_I2C
+#if defined(DEBUG_I2C) && !defined(VIRTUAL_DEBUG)
     Serial.print("desiredValueServo1: ");
     Serial.print(desiredValueServo1);
     Serial.print(", desiredValueServo2: ");
@@ -113,7 +114,7 @@ void setupI2C() {
 }
 
 void setup() {
-#ifndef DEBUG_I2C
+#if !defined(VIRTUAL_DEBUG) && !defined(DEBUG_I2C)
     sbus.begin();
 #else
     Serial.begin(115200);
@@ -127,7 +128,7 @@ void setup() {
     servo4.attach(PIN_SERVO4);
 }
 
-#ifndef DEBUG_I2C
+#if !defined(VIRTUAL_DEBUG) && !defined(DEBUG_I2C)
 ISR(TIMER2_COMPA_vect)
 {
     sbus.process();
@@ -148,17 +149,25 @@ void loop() {
     manualOverride = false;
 #endif
 
-    if (manualOverride) {
-        writeServo(servo1, getChannel(1));
-        writeServo(servo2, getChannel(2));
-        writeServo(servo3, getChannel(3));
-        writeServo(servo4, getChannel(4));
-    } else {
-        writeServo(servo1, desiredValueServo1);
-        writeServo(servo2, desiredValueServo2);
-        writeServo(servo3, desiredValueServo3);
-        writeServo(servo4, desiredValueServo4);
-    }
+    int channel1 = manualOverride? getChannel(1) : desiredValueServo1;
+    int channel2 = manualOverride? getChannel(2) : desiredValueServo2;
+    int channel3 = manualOverride? getChannel(3) : desiredValueServo3;
+    int channel4 = manualOverride? getChannel(4) : desiredValueServo4;
+    writeServo(servo1, channel1);
+    writeServo(servo2, channel2);
+    writeServo(servo3, channel3);
+    writeServo(servo4, channel4);
+
+#ifdef VIRTUAL_DEBUG
+    Serial.print(channel1);
+    Serial.print(",");
+    Serial.print(channel2);
+    Serial.print(",");
+    Serial.print(channel3);
+    Serial.print(",");
+    Serial.print(channel4);
+    Serial.println();
+#endif
 
     if (lastI2CMessageTime < (millis() - I2C_RESET_TIMEOUT_MILLIS)) {
         setupI2C();
