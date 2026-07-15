@@ -42,13 +42,13 @@ bool MotorComMasterClass::sendPacketInternal() {
     int8_t packet[4] = {
         /// from futba my RC remote, order defined via the servo connections on the plane
         /// channel 1
-        lastSentValues[ControlCommand::AILERON_DIFF],
+        lastSentValues[ControlCommand::RUDDER],
         /// channel 2
         lastSentValues[ControlCommand::PITCH],
         /// channel 3
         lastSentValues[ControlCommand::THRUST],
         /// channel 4
-        lastSentValues[ControlCommand::RUDDER],
+        lastSentValues[ControlCommand::AILERON_DIFF],
     };
     errorCode = (i2c_bus_write_bytes(devHandle, NULL_I2C_MEM_ADDR, 4, reinterpret_cast<uint8_t *>(packet)));
     //I2C_ERROR_LOG("MotorCom", "write packet failed", errorCode);
