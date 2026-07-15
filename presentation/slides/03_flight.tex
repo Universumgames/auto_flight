@@ -2,39 +2,39 @@
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.5\textwidth}
       \metroset{block=fill}
-      \begin{block}{\faDrawPolygon\; Route planning}
-        A drawn \hilite{polygon} is swept into a
-        \hilite{lawn-mower route} by the \texttt{route\_planner} component.
-      \end{block}
-      \begin{block}{\faCompass\; Sensor fusion}
-        GPS (position/alt), MPU6050 (attitude), magnetometer (heading)
-        and barometer (altitude) feed the controller.
+      \begin{block}{\faDrawPolygon\; Routen Planung}
+        Im Web Interface kann beliebig ein Gebiet markiert werden, dass der Flieger autonom abfliegen soll
       \end{block}
       \begin{block}{\faSlidersH\; PID steering}
-        Aileron, pitch and thrust are driven by \hilite{PID loops}
-        toward the next waypoint.
+        Aileron, pitch und thrust sind gesteuert durch \hilite{PID loops} um von Waypoint zu Waypoint zu fliegen
       \end{block}
     \end{column}
     \begin{column}{0.5\textwidth}
       \centering
       \begin{tikzpicture}[scale=1.0, font=\scriptsize]
-        \foreach \n/\x/\y in {1/0/0, 2/2.4/0.2, 3/2.0/1.7, 4/-0.3/1.6}{
+        % surveyed area, marked in the web interface
+        \fill[skyblue!12] (0,0) rectangle (3.4,2.4);
+        \draw[slate, dashed] (0,0) rectangle (3.4,2.4);
+
+        % boustrophedon (lawnmower) waypoints: top-left to bottom-right
+        \foreach \n/\x/\y in {1/0/2.4, 2/3.4/2.4, 3/3.4/1.2, 4/0/1.2, 5/0/0, 6/3.4/0}{
           \node[circle, fill=skyblue, text=white, inner sep=1.6pt] (w\n) at (\x,\y) {\n};
         }
         \draw[signal, thick, -{Stealth[length=2mm]}] (w1)--(w2);
         \draw[signal, thick, -{Stealth[length=2mm]}] (w2)--(w3);
         \draw[signal, thick, -{Stealth[length=2mm]}] (w3)--(w4);
-        \node[slate] at (1.0,-0.55) {waypoints from route planner};
+        \draw[signal, thick, -{Stealth[length=2mm]}] (w4)--(w5);
+        \draw[signal, thick, -{Stealth[length=2mm]}] (w5)--(w6);
+        \node[slate] at (1.7,-0.4) {waypoints from route planner};
 
         % control-surface legend
-        \node[deepnavy, anchor=west] at (-0.4,2.6) {\faPlane\; controls:};
-        \node[anchor=west, text=slate] at (1.3,2.6) {aileron · pitch · thrust};
+        \node[deepnavy, anchor=west] at (-0.4,2.9) {\faPlane\; controls:};
+        \node[anchor=west, text=slate] at (1.3,2.9) {aileron · pitch · thrust};
       \end{tikzpicture}
 
       \vspace{0.6em}
       \begin{alertblock}{\faHandPaper\; Manual override}
-        An SBUS RC receiver can override the autopilot outputs
-        \emph{at any time}.
+        Durch einen SBUS RC Empfänger kann jederzeit die manuelle Kontrolle übernommen werden
       \end{alertblock}
     \end{column}
   \end{columns}

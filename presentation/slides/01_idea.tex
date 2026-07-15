@@ -1,17 +1,13 @@
 \begin{frame}{The idea}
   \begin{columns}[T,onlytextwidth]
     \begin{column}{0.58\textwidth}
-      An \hilite{autonomous glider} that flies pre-planned coverage
-      patterns over an area — a field, for example — so it can later carry a
-      camera for \hilite{aerial surveying and crop analysis}.
+      \hilite{Autonomes Flugzeug} zum großflächigem Monitoring
 
       \bigskip
       \begin{itemize}
-        \item Navigates itself from \alert{GPS}, an \alert{IMU}, a
-              \alert{magnetometer} and a \alert{barometer}
-        \item Stays in contact with a ground base station over a
-              \alert{long-range LoRa} link
-        \item Can be taken over \alert{manually via RC} in an emergency
+        \item mithilfe von GPS, Barometer und IMU \alert{selbstständig} über ein vorgegebenes Gebiet fliegen
+        \item Kommunikation und Konfiguration über eine \alert{LoRa}-basierte Basis Station
+        \item switch zu manueller Steuerung per RC-Fernsteuerung möglich
       \end{itemize}
     \end{column}
     \begin{column}{0.38\textwidth}
@@ -27,15 +23,11 @@
         % plane glyph
         \node[signal, font=\Huge] at (0.6,1.05) {\faPlane};
         \node[font=\scriptsize\bfseries, text=slate] at (0,-1.62)
-          {lawn-mower coverage route};
+          {Boustrophedon coverage path};
       \end{tikzpicture}
 
       \medskip
       \chip{leaf}{survey}\; \chip{skyblue}{autonomous}\; \chip{signal}{LoRa}
     \end{column}
   \end{columns}
-
-  \vfill
-  {\footnotesize\color{slate} Student project (Semester 12, MRB) — a work in
-  progress.}
 \end{frame}
