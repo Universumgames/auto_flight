@@ -13,12 +13,16 @@ const LIMITS = {
 const deg2rad = (d) => (d * Math.PI) / 180;
 
 function makeHingedFlap(width, height, depth, hingeOffsetX) {
-  // hinge is an empty Object3D positioned at the flap's leading edge;
-  // the flap mesh is offset so rotating the hinge swings it like a real control surface.
+  // hinge is an empty Object3D positioned at the flap's mounting edge (the
+  // trailing edge of the wing/stab/fin it's attached to). The flap mesh is
+  // offset aft (-Z) by half its depth so it hangs behind the hinge line
+  // instead of straddling it - rotating the hinge then swings the flap
+  // about its mount point, not its own center.
   const hinge = new THREE.Object3D();
   const flapMaterial = new THREE.MeshStandardMaterial({ color: 0xdadada });
   const flap = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), flapMaterial);
   flap.position.x = hingeOffsetX;
+  flap.position.z = -depth / 2;
   hinge.add(flap);
   return hinge;
 }
