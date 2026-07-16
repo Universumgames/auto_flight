@@ -114,7 +114,8 @@ async def mock_producer(queue: asyncio.Queue):
         roll = 80 * math.sin(t * 0.9)
         yaw = 80 * math.sin(t * 0.5 + 1.5)
         pitch = 80 * math.sin(t * 0.7 + 3.0)
-        line = f"{motor:.0f},{roll:.0f},{yaw:.0f},{pitch:.0f}\n"
+        # Field order must match config.js's CHANNEL_ORDER (yaw, pitch, motor, roll).
+        line = f"{yaw:.0f},{pitch:.0f},{motor:.0f},{roll:.0f}\n"
         await queue.put(line)
         await asyncio.sleep(0.05)
 

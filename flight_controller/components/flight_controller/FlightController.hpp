@@ -34,7 +34,7 @@ private:
     MovingAverage<CONFIG_PITCH_SMOOTHING_SAMPLES> pitchAverage;
     HeadingMovingAverage<CONFIG_HEADING_SMOOTHING_SAMPLES> headingAverage;
 
-    static constexpr float AILERON_P_GAIN = 1.5f;
+    static constexpr float AILERON_P_GAIN = 0.75f;
     static constexpr float AILERON_I_GAIN = 0.5f;
     static constexpr float AILERON_I_LIMIT = 30.0f;
 
@@ -64,7 +64,7 @@ private:
 
     void checkAndAdvanceWaypoint(Coordinate currentPosition);
 
-    void steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::PlaneAngle angle, float compassHeading);
+    void steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::GroundAngle angle, float compassHeading);
 
 
 };

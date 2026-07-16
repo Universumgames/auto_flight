@@ -15,12 +15,15 @@
 #define DEBUG_I2C
 #define DEBUG_PLANE
 #define VIRTUAL_DEBUG
+//#define DEBUG_SERVO
 
 SBUS sbus(Serial);
 Servo servo1;
 Servo servo2;
 Servo servo3;
 Servo servo4;
+
+int lastServoValues[4] = {0, 0, 0, 0};
 
 int desiredValueServo1 = 0;
 int desiredValueServo2 = 0;
@@ -47,15 +50,15 @@ int mapToServo(int value) {
 }
 
 bool isManualOverride() {
+#if defined(DEBUG_PLANE) || defined(DEBUG_I2C) || defined(VIRTUAL_DEBUG)
+    return false;
+#else
     return getChannel(5) > 50;
+#endif
 }
 
 void I2C_TxHandler() {
-#ifdef DEBUG_PLANE
-    Wire.write(false);
-#else
     Wire.write(isManualOverride());
-#endif
 }
 
 void I2C_RxHandler(int numBytes) {
@@ -75,14 +78,13 @@ void I2C_RxHandler(int numBytes) {
     desiredValueServo2 = (int8_t)buf[1];
     desiredValueServo3 = (int8_t)buf[2];
     desiredValueServo4 = (int8_t)buf[3];
-#if defined(DEBUG_I2C) && !defined(VIRTUAL_DEBUG)
-    Serial.print("desiredValueServo1: ");
+#if defined(DEBUG_I2C) || defined(VIRTUAL_DEBUG)
     Serial.print(desiredValueServo1);
-    Serial.print(", desiredValueServo2: ");
+    Serial.print(",");
     Serial.print(desiredValueServo2);
-    Serial.print(" , desiredValueServo3: ");
+    Serial.print(",");
     Serial.print(desiredValueServo3);
-    Serial.print(", desiredValueServo4: ");
+    Serial.print(",");
     Serial.println(desiredValueServo4);
 #endif
     lastI2CMessageTime = millis();
@@ -113,11 +115,20 @@ void setupI2C() {
     lastI2CMessageTime = millis();
 }
 
+// value in [-100, 100]
+void writeServo(Servo& servo, int value, int id) {
+    int pulseWidth = mapToServo(value);
+    if (lastServoValues[id - 1] != pulseWidth) {
+        servo.writeMicroseconds(pulseWidth);
+        lastServoValues[id - 1] = pulseWidth;
+    }
+}
+
 void setup() {
-#if !defined(VIRTUAL_DEBUG) && !defined(DEBUG_I2C)
-    sbus.begin();
-#else
+#if defined(VIRTUAL_DEBUG) || defined(DEBUG_I2C)
     Serial.begin(115200);
+#else
+    sbus.begin();
 #endif
 
     setupI2C();
@@ -126,6 +137,20 @@ void setup() {
     servo2.attach(PIN_SERVO2);
     servo3.attach(PIN_SERVO3);
     servo4.attach(PIN_SERVO4);
+
+#ifdef DEBUG_SERVO
+    int i = -100;
+    while (true) {
+        Serial.println("DEBUG_SERVO: Servo pins initialized.");
+        i++;
+        if (i > 100) i = -100;
+        writeServo(servo1, i, 1);
+        writeServo(servo2, i, 2);
+        writeServo(servo3, i, 3);
+        writeServo(servo4, i, 4);
+        delay(50);
+    }
+#endif
 }
 
 #if !defined(VIRTUAL_DEBUG) && !defined(DEBUG_I2C)
@@ -135,39 +160,17 @@ ISR(TIMER2_COMPA_vect)
 }
 #endif
 
-// value in [-100, 100]
-void writeServo(Servo& servo, int value) {
-    int pulseWidth = mapToServo(value);
-    if (servo.readMicroseconds() != pulseWidth) {
-        servo.writeMicroseconds(pulseWidth);
-    }
-}
-
 void loop() {
     bool manualOverride = isManualOverride();
-#if defined(DEBUG_PLANE) || defined(DEBUG_I2C)
-    manualOverride = false;
-#endif
 
     int channel1 = manualOverride? getChannel(1) : desiredValueServo1;
     int channel2 = manualOverride? getChannel(2) : desiredValueServo2;
     int channel3 = manualOverride? getChannel(3) : desiredValueServo3;
     int channel4 = manualOverride? getChannel(4) : desiredValueServo4;
-    writeServo(servo1, channel1);
-    writeServo(servo2, channel2);
-    writeServo(servo3, channel3);
-    writeServo(servo4, channel4);
-
-#ifdef VIRTUAL_DEBUG
-    Serial.print(channel1);
-    Serial.print(",");
-    Serial.print(channel2);
-    Serial.print(",");
-    Serial.print(channel3);
-    Serial.print(",");
-    Serial.print(channel4);
-    Serial.println();
-#endif
+    writeServo(servo1, channel1, 1);
+    writeServo(servo2, channel2, 2);
+    writeServo(servo3, channel3, 3);
+    writeServo(servo4, channel4, 4);
 
     if (lastI2CMessageTime < (millis() - I2C_RESET_TIMEOUT_MILLIS)) {
         setupI2C();

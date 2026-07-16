@@ -36,6 +36,7 @@ void GyroscopeClass::begin() {
     I2C_ERROR_LOG("Gyroscope", "wake up failed", err);
 
     //measureGyroBias();
+    calibrateLevelOffset();
 
     xTaskCreate(gyroReadTaskEntry, "gyroReadTaskEntry", 2048, gyroscopeHandle, 5, NULL);
 }
@@ -43,8 +44,8 @@ void GyroscopeClass::begin() {
 
 complimentary_angle_t GyroscopeClass::getComplAngle() {
     complimentary_angle_t angle;
-    mpu6050_acce_value_t acce = accBuffer[ringBufferIndex];
-    mpu6050_gyro_value_t gyro = gyroBuffer[ringBufferIndex];
+    mpu6050_acce_value_t acce = getAcc();
+    mpu6050_gyro_value_t gyro = getGyro();
     err = mpu6050_complimentory_filter(gyroscopeHandle, &acce, &gyro, &angle);
     I2C_ERROR_LOG("Gyroscope", "complimentary filter failed", err);
     return angle;
@@ -55,7 +56,21 @@ mpu6050_gyro_value_t GyroscopeClass::getGyro() {
 }
 
 mpu6050_acce_value_t GyroscopeClass::getAcc() {
+    if (useImmediateAcc) {
+        return getAccImmediate();
+    }
     return accBuffer[ringBufferIndex];
+}
+
+mpu6050_acce_value_t GyroscopeClass::getAccImmediate() {
+    mpu6050_acce_value_t acce = {};
+    err = mpu6050_get_acce(gyroscopeHandle, &acce);
+    I2C_ERROR_LOG("Gyroscope", "immediate accelerometer read failed", err);
+
+    // matches the Y/Z flip applied in gyroReadTask
+    acce.acce_y *= -1;
+    acce.acce_z *= -1;
+    return acce;
 }
 
 bool GyroscopeClass::initialized() const {
@@ -64,9 +79,15 @@ bool GyroscopeClass::initialized() const {
 
 GyroscopeClass::GroundAngle GyroscopeClass::getGroundAngle() {
     auto acc = getAcc();
-    auto roll = std::atan2(acc.acce_y, acc.acce_z);
-    auto pitch = std::atan2(-acc.acce_x, std::sqrt(acc.acce_y * acc.acce_y + acc.acce_z * acc.acce_z));
-    return {roll, pitch};
+    const float x = acc.acce_x - accXBiasG;
+    const float y = acc.acce_y - accYBiasG;
+    const float z = acc.acce_z - accZBiasG;
+    auto rollRad = std::atan2(y, z);
+    auto pitchRad = std::atan2(-x, std::sqrt(y * y + z * z));
+    return {
+        static_cast<float>(rollRad * (180.0f / M_PI)),
+        static_cast<float>(pitchRad * (180.0f / M_PI))
+    };
 }
 
 void GyroscopeClass::gyroReadTaskEntry(void* args) {
@@ -126,13 +147,55 @@ void GyroscopeClass::measureGyroBias() {
 }
 
 
-GyroscopeClass::PlaneAngle GyroscopeClass::getPlaneAngle() {
-    auto groundAngle = getGroundAngle();
-    // convert ground to deg
+void GyroscopeClass::calibrateLevelOffset() {
+    ESP_LOGI("Gyroscope", "Calibrating level offset, keep the airframe still and level");
 
-    return {
-        .roll = static_cast<float>(groundAngle.roll * (180.0f / M_PI)),
-        .pitch = static_cast<float>(groundAngle.pitch * (180.0f / M_PI)),
-        .yaw = getYawDeg()
-    };
+    constexpr int measurements = 200;
+    float xSum = 0.0f;
+    float ySum = 0.0f;
+    float zSum = 0.0f;
+
+    for (int i = 0; i < measurements; i++) {
+        mpu6050_acce_value_t acce;
+        mpu6050_get_acce(gyroscopeHandle, &acce);
+        // matches the Y/Z flip applied in gyroReadTask
+        acce.acce_y *= -1;
+        acce.acce_z *= -1;
+
+        xSum += acce.acce_x;
+        ySum += acce.acce_y;
+        zSum += acce.acce_z;
+        vTaskDelay(pdMS_TO_TICKS(5));
+    }
+
+    const float measuredXBias = xSum / measurements;
+    const float measuredYBias = ySum / measurements;
+    // at rest and level, Z should read +1g - the deviation from that is the bias
+    const float measuredZBias = (zSum / measurements) - 1.0f;
+
+    // Express the measured offset as the angle it would imply, purely to sanity-check
+    // it: a raw-axis offset large enough to look like the airframe was tilted a lot at
+    // boot most likely means it actually was tilted - not that the hardware itself has
+    // that much zero-g error - so reject and skip calibration rather than baking in a
+    // one-off tilt as the new "zero".
+    const float impliedRollDeg = std::atan2(measuredYBias, 1.0f) * (180.0f / M_PI);
+    const float impliedPitchDeg = std::atan2(-measuredXBias, 1.0f) * (180.0f / M_PI);
+
+    constexpr float MAX_PLAUSIBLE_BIAS_DEG = 45.0f;
+    if (std::fabs(impliedRollDeg) > MAX_PLAUSIBLE_BIAS_DEG || std::fabs(impliedPitchDeg) > MAX_PLAUSIBLE_BIAS_DEG) {
+        ESP_LOGE("Gyroscope",
+                 "Level offset implausible (roll=%.2f deg, pitch=%.2f deg) - airframe was likely not level at boot; skipping calibration",
+                 impliedRollDeg, impliedPitchDeg);
+        return;
+    }
+
+    accXBiasG = measuredXBias;
+    accYBiasG = measuredYBias;
+    accZBiasG = measuredZBias;
+    ESP_LOGI("Gyroscope", "Level offset: x=%.3fg y=%.3fg z=%.3fg (roll=%.2f deg, pitch=%.2f deg)",
+             accXBiasG, accYBiasG, accZBiasG, impliedRollDeg, impliedPitchDeg);
+}
+
+GyroscopeClass::PlaneAngle GyroscopeClass::getPlaneAngle() {
+    return {getGroundAngle(), getYawDeg()};
 }

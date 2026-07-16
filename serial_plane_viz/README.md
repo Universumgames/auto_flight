@@ -22,7 +22,7 @@ One line per update, comma-separated raw values in the range -100..100
 0,62,0,-38\n
 ```
 
-By default the four fields are read as `motor, roll, yaw, pitch`, in that
+By default the four fields are read as `yaw, pitch, motor, roll`, in that
 order.
 
 ## Configuring channel order
@@ -32,7 +32,7 @@ The wire order is remapped in exactly one place, `frontend/js/config.js`:
 ```js
 // Reorder this array to match your transmitter/receiver's actual wire order.
 // Nothing else in parser.js / plane.js needs to change.
-export const CHANNEL_ORDER = ['motor', 'roll', 'yaw', 'pitch'];
+export const CHANNEL_ORDER = ['yaw', 'pitch', 'motor', 'roll'];
 ```
 
 Edit the array order (and `CHANNEL_TYPE` if a channel's normalization should
@@ -62,7 +62,7 @@ python3 serial_to_ws_bridge.py --mock
 ```
 
 Open `http://localhost:8000`, click **Connect via WS Bridge**, and you
-should see the propeller spin and the control surfaces sweep smoothly.
+should see the propeller spin and the plane bank, pitch, and yaw smoothly.
 
 ## Quick start — real hardware, Web Serial (Chrome/Edge only)
 

@@ -92,11 +92,10 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         vTaskDelay(1);
         auto groundPressure = FlightStorage.getBasePressure();
         auto currentAltitude = altitudeAverage.push(BarometerClass::calculateAltitude(groundPressure, pressure));
-        auto planeAngle = Gyroscope.getPlaneAngle();
+        auto planeAngle = Gyroscope.getGroundAngle();
         planeAngle.roll = rollAverage.push(planeAngle.roll);
         planeAngle.pitch = pitchAverage.push(planeAngle.pitch);
         vTaskDelay(1);
-        auto magnetHeading = Magnetometer.readData();
         auto compassHeading = headingAverage.push(Magnetometer.getHeading());
         vTaskDelay(1);
 
@@ -226,7 +225,7 @@ void FlightControllerClass::checkAndAdvanceWaypoint(Coordinate currentPosition) 
     }
 }
 
-void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::PlaneAngle angle,
+void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::GroundAngle angle,
                                             float compassHeading) {
     ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Steering to waypoint: %s", waypoint.toString().c_str());
     // --- Rudder: steer toward waypoint ---
