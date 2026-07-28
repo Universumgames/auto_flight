@@ -3,12 +3,13 @@
     \begin{column}{0.5\textwidth}
       \textbf{\faExclamationTriangle\; Herausforderungen}
       \begin{itemize}
-        \item Umstellung der Toolchain (PlatformIO $\to$ ESP-IDF) für
+        \item Unzureichendes Framework für
               sauberes Komponenten-Management
         \item schlechte/unzureichende LoRa Bibliotheken
         \item Magnetometer blockierte im Dauerbetrieb den gesamten
               I\textsuperscript{2}C-Bus
         \item viele verschiedene Datenquellen und parallele Prozesse
+        \item ESP und Arduino beide zerstören beim Booten den I\textsuperscript{2}C Bus
       \end{itemize}
     \end{column}
     \begin{column}{0.5\textwidth}
