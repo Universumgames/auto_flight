@@ -25,3 +25,6 @@ create_links:
 	cd flight_controller && ln -s ../shared_components shared_components
 	cd base_station && rm -f shared_components
 	cd base_station && ln -s ../shared_components shared_components
+
+readme_pdf:
+	pandoc README.md -o README.pdf

@@ -1,0 +1,12 @@
+stages:
+  - docs
+
+readme_pdf:
+  stage: docs
+  image: pandoc/latex:latest
+  script:
+    - make readme_pdf
+  artifacts:
+    paths:
+      - README.pdf
+    expire_in: 1 week
