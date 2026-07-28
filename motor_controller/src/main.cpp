@@ -1,3 +1,5 @@
+#if true
+
 #include <Arduino.h>
 #include "SBUS.h"
 #include <Servo.h>
@@ -12,10 +14,10 @@
 
 #define I2C_RESET_TIMEOUT_MILLIS (1000L)
 
-#define DEBUG_I2C
-#define DEBUG_PLANE
-#define VIRTUAL_DEBUG
-//#define DEBUG_SERVO
+#define DEBUG_I2C // serial logging if I2C messages arrive
+#define DEBUG_PLANE // no need for SBUS channel 5, manual override is always disabled
+#define VIRTUAL_DEBUG // output only the servo control signals to serial [-100,100]
+//#define DEBUG_SERVO // sweeping from -100 to 100 over all servos
 
 SBUS sbus(Serial);
 Servo servo1;
@@ -131,8 +133,6 @@ void setup() {
     sbus.begin();
 #endif
 
-    setupI2C();
-
     servo1.attach(PIN_SERVO1);
     servo2.attach(PIN_SERVO2);
     servo3.attach(PIN_SERVO3);
@@ -151,6 +151,8 @@ void setup() {
         delay(50);
     }
 #endif
+
+    setupI2C();
 }
 
 #if !defined(VIRTUAL_DEBUG) && !defined(DEBUG_I2C)
@@ -176,3 +178,4 @@ void loop() {
         setupI2C();
     }
 }
+#endif
