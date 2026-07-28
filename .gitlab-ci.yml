@@ -3,7 +3,7 @@ stages:
 
 readme_pdf:
   stage: docs
-  image: pandoc/latex:latest
+  image: pandoc/extra:latest
   script:
     - make readme_pdf
   artifacts:
