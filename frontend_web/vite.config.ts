@@ -15,9 +15,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': 'http://192.168.178.52',
+      //'/api': 'http://192.168.178.52',
+      '/api': 'http://172.20.10.3',
       '/api/ws': {
-        target: 'ws://192.168.178.52',
+        //target: 'ws://192.168.178.52',
+        target: 'ws://172.20.10.3',
         ws: true,
       },
     },

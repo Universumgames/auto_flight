@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="8" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="6" type="long" />
     <option name="/Default/Environment/StickyLines/DisabledLanguageList/@EntryValue" value="Jupyter" type="string" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
@@ -216,17 +216,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer and i2c working again">
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.vscode/extensions.json" beforeDir="false" afterPath="$PROJECT_DIR$/../.vscode/extensions.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.vscode/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/../.vscode/settings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../motor_controller/src/main2.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend_web/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/vite.config.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../motor_controller/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../serial_plane_viz/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../serial_plane_viz/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../serial_plane_viz/frontend/js/plane.js" beforeDir="false" afterPath="$PROJECT_DIR$/../serial_plane_viz/frontend/js/plane.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/gyroscope/Gyroscope.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../presentation/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/main.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../presentation/slides/04_communication.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/slides/04_communication.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../presentation/slides/05_lessons_learned.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/slides/05_lessons_learned.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../presentation/slides/06_status.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/slides/06_status.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -350,6 +350,9 @@
       <entry key="chat-panel" value="Auto" />
     </selectedModels>
   </component>
+  <component name="CurrentDebugProfile">
+    <option name="debugProfileId" value="d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4" />
+  </component>
   <component name="EmbeddingIndexingInfo">
     <option name="cachedIndexableFilesCount" value="35362" />
   </component>
@@ -381,22 +384,22 @@
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.000779194814389" />
-      <entry key="S2" value="1.2809756438366646" />
-      <entry key="S5" value="1.912187760124977" />
-      <entry key="S10" value="2.3506938225446516" />
-      <entry key="S30" value="2.7547109633249014" />
-      <entry key="S60" value="2.8733450923015647" />
-      <entry key="M2" value="2.935636887461502" />
-      <entry key="M5" value="2.9740018393611183" />
-      <entry key="M10" value="2.986958398580483" />
-      <entry key="M15" value="2.991296122430496" />
-      <entry key="M30" value="2.9956433160124702" />
-      <entry key="H1" value="2.9978207133184647" />
-      <entry key="H2" value="3.0028029139628614" />
-      <entry key="H4" value="3.5417349983206914" />
-      <entry key="D1" value="103.48964418235398" />
-      <entry key="W1" value="1836.82256464291" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0" />
+      <entry key="S60" value="1.0" />
+      <entry key="M2" value="1.0" />
+      <entry key="M5" value="1.0" />
+      <entry key="M10" value="1.0000000000128717" />
+      <entry key="M15" value="1.0000000792131496" />
+      <entry key="M30" value="1.000487482509702" />
+      <entry key="H1" value="1.0382419583649105" />
+      <entry key="H2" value="1.339151750358914" />
+      <entry key="H4" value="2.190281490442236" />
+      <entry key="D1" value="87.29172748501463" />
+      <entry key="W1" value="1790.7477116974474" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -404,37 +407,37 @@
       <entry key="S2" value="0.0" />
       <entry key="S5" value="0.0" />
       <entry key="S10" value="0.0" />
-      <entry key="S30" value="2.04783810691379E-202" />
-      <entry key="S60" value="2.001977177867632E-101" />
-      <entry key="M2" value="6.310240724393235E-51" />
-      <entry key="M5" value="1.2599324159172671E-20" />
-      <entry key="M10" value="1.5872318850022282E-10" />
-      <entry key="M15" value="3.693398728122918E-7" />
-      <entry key="M30" value="8.594541913133331E-4" />
-      <entry key="H1" value="0.041459690116783195" />
-      <entry key="H2" value="0.2892967751542062" />
-      <entry key="H4" value="0.9385949820525903" />
-      <entry key="D1" value="30.952906838213515" />
-      <entry key="W1" value="566.6426188866996" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="4.4210682673873616E-215" />
+      <entry key="M2" value="9.377346773911594E-108" />
+      <entry key="M5" value="2.33970374112783E-43" />
+      <entry key="M10" value="6.839859630028412E-22" />
+      <entry key="M15" value="9.780567812256785E-15" />
+      <entry key="M30" value="1.3985940312583094E-7" />
+      <entry key="H1" value="5.28884111122521E-4" />
+      <entry key="H2" value="0.03267464115293972" />
+      <entry key="H4" value="0.31543642725638016" />
+      <entry key="D1" value="25.8091504986312" />
+      <entry key="W1" value="552.1204660831659" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.9604837758045254E-11" />
-      <entry key="MS500" value="0.007793903221514803" />
-      <entry key="S2" value="0.5488118824013242" />
-      <entry key="S5" value="1.4905273596463895" />
-      <entry key="S10" value="2.1077718378257937" />
-      <entry key="S30" value="2.665113957626168" />
-      <entry key="S60" value="2.8273572705991903" />
-      <entry key="M2" value="2.912336485168097" />
-      <entry key="M5" value="2.964606911203203" />
-      <entry key="M10" value="2.9822483711109706" />
-      <entry key="M15" value="2.988153673497386" />
-      <entry key="M30" value="2.9949295903440687" />
-      <entry key="H1" value="3.038484736450211" />
-      <entry key="H2" value="3.291674713758449" />
-      <entry key="H4" value="4.480055922061947" />
-      <entry key="D1" value="134.44126125302833" />
-      <entry key="W1" value="2403.4622605147442" />
+      <entry key="MS100" value="7.360332503047952E-31" />
+      <entry key="MS500" value="9.40544800275191E-7" />
+      <entry key="S2" value="0.031141883213370865" />
+      <entry key="S5" value="0.24965366652525725" />
+      <entry key="S10" value="0.4996535464952263" />
+      <entry key="S30" value="0.7935171634071927" />
+      <entry key="S60" value="0.8907958034292667" />
+      <entry key="M2" value="0.9438197939380518" />
+      <entry key="M5" value="0.97713739150583" />
+      <entry key="M10" value="0.9885026006699413" />
+      <entry key="M15" value="0.9923203828743277" />
+      <entry key="M30" value="0.9966401175753464" />
+      <entry key="H1" value="1.0368352143538222" />
+      <entry key="H2" value="1.370815189701356" />
+      <entry key="H4" value="2.5051440966031793" />
+      <entry key="D1" value="113.0997222474023" />
+      <entry key="W1" value="2342.8653182058274" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -486,6 +489,7 @@
     &quot;CMake Application.Upload &amp; Monitor.executor&quot;: &quot;Run&quot;,
     &quot;CMake Application.flash.executor&quot;: &quot;Run&quot;,
     &quot;CMake Application.monitor.executor&quot;: &quot;Run&quot;,
+    &quot;CidrDebugProfileConversion&quot;: &quot;true&quot;,
     &quot;Google Test.flight_controller_test.executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
@@ -528,6 +532,11 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="$USER_HOME$/.espressif/v6.0.1/esp-idf/tools/idf.py">
       <method v="2" />
     </configuration>
@@ -1196,11 +1205,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="app-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="app-flash" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1674,7 +1678,7 @@
       <workItem from="1783284866647" duration="11010000" />
       <workItem from="1783509395056" duration="16397000" />
       <workItem from="1783682071260" duration="12053000" />
-      <workItem from="1784127040284" duration="17112000" />
+      <workItem from="1784127040284" duration="17871000" />
     </task>
     <task id="LOCAL-00001" summary="switch flight controller from platformio to esp idf project">
       <option name="closed" value="true" />

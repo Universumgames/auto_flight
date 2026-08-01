@@ -26,9 +26,15 @@ create_links:
 	cd base_station && rm -f shared_components
 	cd base_station && ln -s ../shared_components shared_components
 
-readme_pdf:
+export_documentation:
 	pandoc -s -f markdown -t pdf -o README.pdf \
 		README.md \
+		--toc --number-sections \
+        -V lang=de-DE \
+        -V breakurl -V hyphens=URL -V colorlinks \
+        -V geometry=a4paper,left=3cm,right=2cm,top=2cm,bottom=2cm
+	pandoc -s -f markdown -t pdf -o README_de.pdf \
+		README_de.md \
 		--toc --number-sections \
         -V lang=de-DE \
         -V breakurl -V hyphens=URL -V colorlinks \
