@@ -7,3 +7,7 @@
 **/.cache
 3d_models/build
 README.pdf
+assets/out
+assets/*.aux
+assets/*.log
+assets/*.pdf

@@ -26,7 +26,12 @@ create_links:
 	cd base_station && rm -f shared_components
 	cd base_station && ln -s ../shared_components shared_components
 
-export_documentation:
+render_architecture_diagram:
+	cd assets && xelatex -interaction=nonstopmode -halt-on-error architecture.tex
+	pdftocairo -svg assets/architecture.pdf assets/architecture.svg
+	rm -f assets/architecture.aux assets/architecture.log assets/architecture.pdf
+
+export_documentation: render_architecture_diagram
 	pandoc -s -f markdown -t pdf -o README.pdf \
 		README.md \
 		--toc --number-sections \
