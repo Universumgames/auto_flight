@@ -1,0 +1,76 @@
+Teilaufgaben
+- Flug fertigstellen, vollkommen autonomes Fliegen
+  - I2C fixen
+  - Steuerung testen und optimieren
+- optimieren des Setups/Konfiguration
+  - evtl. auch Schwarmkonfiguration
+  - Konfigurationsmöglichkeiten anbieten für
+    - Kamera (FOV, Modell, Algorithmus?)
+    - Schwadbreite, Überlappungsfaktor
+    - Akkukapazität
+    - Flugzeug, -größe, -gewicht?
+- Pfadalgorithmen durchtesten/evaluieren
+  - auch anhand:
+    - Flugstrecke
+    - theoretischer Flugdauer
+    - Akkukapazitäts Schätzung
+- Bildabdeckung mittel FOV und Bodendistanz berechenbar
+  - Bodendistanz berechenbar über?
+    - LiDAR für 40m+?
+    - Barometer: Problem bei Bergen etc. -> Höhenkarte
+    - GPS: Problem bei Bergen etc. -> Höhenkarte
+- umschreiben/ergänzen der Kommunikation Basis <-> Gerät durch Bluetooth und App um besser Offline mit Karten arbeiten zu können
+- Bildverarbeitung: Feuer-/Raucherkennung
+  - Möglichkeiten:
+    - naiver Algorithmus (grau bzw. rotanteil im Bild, evtl. mit Wärmebild Kamera)
+    - mini CNN auf separatem ESP (Inspo: https://github.com/DaveBben/esp32-llm)
+
+Anmeldungsrelevant:
+- Prüfer
+  - Matteo Zella
+  - Peter Davids
+- Titel Ideen
+  - Wahrnehmungsbasierte und dynamikgerechte Flächenabdeckung mit einem Starrflügel-UAV
+- Titel Ideen der KI
+  - Entwurf und Umsetzung eines autonomen Starrflügel-UAV-Systems für flächendeckende Überwachungsflüge
+  - Ein ressourcenbeschränktes Avioniksystem für autonome Flächenabdeckungsflüge mit Starrflügel-UAVs
+  - Sicherheitskritische Architektur für ein autonomes Segelflugzeug mit manueller Übersteuerungsebene
+  - Evaluation von Coverage-Path-Planning-Algorithmen für energiebeschränkte Starrflügel-UAVs
+  - Von der Fläche zur Flugroute: Streifenmuster-Routenplanung unter Berücksichtigung von Akku- und Kameraparametern
+  - Ein ressourcenschonendes LoRa-Kommunikationsprotokoll für die Telemetrie autonomer Kleinfluggeräte
+  - Entkoppelte Funk- und Weboberflächen-Architektur zur Fernüberwachung autonomer UAV-Missionen
+  - Sensorfusion und PID-basierte Lage-/Kursregelung für ein GPS-, IMU- und magnetometergestütztes Starrflügel-UAV
+  - Eingebettete Branderkennung mittels CNN auf ressourcenbeschränkter ESP32-Hardware für UAV-gestützte Flächenüberwachung
+  - Von der Bildaufnahme zur Kanteninferenz: ein TinyML-Ansatz zur Feuer-/Raucherkennung auf Mikrocontrollern für UAV-Einsätze
+  - Autonomie mit Rückfallebene: Entwurf eines fail-safe-fähigen UAV-Systems für kartografische Flächenabdeckung
+  - Evaluation bildbasierter Branderkennungsalgorithmen für den Einsatz auf ressourcenbeschränkter UAV-Hardware
+  - Naiver Bildverarbeitungsansatz vs. eingebettetes CNN: ein Vergleich zur Feuer-/Raucherkennung auf Mikrocontroller-Ebene
+  - Von der Heuristik zum TinyML-Modell: Evaluation von Algorithmen zur Branderkennung für autonome Flächenüberwachung
+  - Evaluation von Pfadplanungsalgorithmen für die kamerabasierte Flächenabdeckung mit einem Starrflügel-UAV
+  - Flugstrecke, Flugdauer, Bildabdeckung: eine vergleichende Evaluation von Coverage-Path-Algorithmen unter Energie- und Sensorrestriktionen
+  - Algorithmenevaluation für autonome UAV-Flächenüberwachung: Coverage-Path-Planning und eingebettete Branderkennung
+  - Von der Routenplanung zur Detektion: vergleichende Evaluation von Pfad- und Bildverarbeitungsalgorithmen für ein autonomes Überwachungs-UAV
+  - Algorithmische Grundlagen eines autonomen Flächenüberwachungs-UAV: Pfadplanung, Bildabdeckungsberechnung und eingebettete Branderkennung im Vergleich
+  - Wahrnehmungsbasierte und ressourcenbeschränkte Branderkennung mit einem Starrflügel-UAV
+  - Vergleichende und eingebettete Branderkennung mittels Bildverarbeitung mit einem Starrflügel-UAV
+  - Algorithmenbasierte und ressourcenschonende Feuer-/Raucherkennung mit einem autonomen Starrflügel-UAV
+  - Bildbasierte und echtzeitfähige Branderkennung für die Flächenüberwachung mit einem Starrflügel-UAV
+  - Vergleichende und dynamikgerechte Pfad- und Detektionsalgorithmen für ein autonomes Starrflügel-UAV
+  - Wahrnehmungsbasierte und mikrocontrollertaugliche Algorithmenevaluation zur Branderkennung mit einem Starrflügel-UAV
+  - Algorithmische und ressourcenbewusste Flächenabdeckung und Branderkennung mit einem Starrflügel-UAV
+  - Luftgestützte Waldbrandfrüherkennung: Entwicklung und Evaluation eingebetteter Bildverarbeitungsalgorithmen für ein autonomes UAV
+  - Vom Rauch zum Alarm: bildbasierte Branderkennung auf einem autonomen Starrflügel-UAV
+  - Frühwarnung aus der Luft: ein Algorithmenvergleich zur automatisierten Branderkennung mit einem autonomen Kleinflugzeug
+  - Brandwache ohne Pilot: Konzeption und Evaluation eines UAV-gestützten Früherkennungssystems für Wald- und Feldbrände
+  - Auto Flight: Evaluation eingebetteter Branderkennungsalgorithmen auf einem autonomen Starrflügel-UAV
+  - Augen über dem Feld: Bildverarbeitungsalgorithmen zur Branderkennung auf einem autonomen UAV im Vergleich
+  - Klein, autonom, wachsam: eingebettete Branderkennung auf einem ressourcenbeschränkten Starrflügel-UAV
+  - Reicht ein einfacher Algorithmus? Klassische Bildverarbeitung vs. eingebettetes CNN zur Branderkennung
+  - Klassisch oder gelernt? Evaluation von Bildverarbeitungsansätzen zur Branderkennung für autonome UAVs
+  - Wie viel Intelligenz passt auf einen Mikrocontroller? Branderkennung zwischen Heuristik und neuronalem Netz
+  - Genauigkeit vs. Ressourcenverbrauch: eine systematische Evaluation von Branderkennungsalgorithmen auf Embedded-Hardware
+  - Erkennungsgüte unter Realbedingungen: Evaluation von Bildverarbeitungsalgorithmen zur Branderkennung im UAV-Einsatz
+  - Kostengünstige Branderkennung: ein Vergleich klassischer Bildverarbeitung und eingebetteter neuronaler Netze auf Mikrocontrollern
+  - Edge AI im Sinkflug: Evaluation eingebetteter neuronaler Netze zur Branderkennung auf einem autonomen UAV
+  - TinyML in der Luft: Entwicklung und Bewertung eines CNN-basierten Branderkennungssystems für Mikrocontroller
+  - Neuronale Netze am Limit: Branderkennung mit TinyML auf einem autonomen Kleinflugzeug

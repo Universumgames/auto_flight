@@ -122,11 +122,11 @@ Die Verbindung zwischen Flugzeug und Bodenstation ist in drei Schichten aufgetei
 
 1. **Funkschicht** ([`shared_components/lora_com`](shared_components/lora_com)): Ansteuerung des SX1262-Funkmoduls über die RadioLib-Bibliothek. Da ein LoRa-Paket auf 255 Byte begrenzt ist, implementiert diese Schicht eine eigene Fragmentierung größerer Nachrichten (Kopf mit Nachrichten-ID, Fragment-ID und Gesamtfragmentzahl), eine Bestätigung jedes Fragments per ACK mit Zeitüberschreitung (2 s) und bis zu drei Wiederholungsversuchen, sowie periodische Keep-Alive-Pings (Standard: alle 30 s), um die Verbindung zu überwachen, falls keine andere Nachricht gesendet wird.
 2. **Anwendungsprotokoll** ([`shared_components/flight_com`](shared_components/flight_com)): definiert typisierte Pakete auf Basis der Funkschicht, u. a. `SensorUpdate` (Luftdruck, Kurs), `PositionUpdate` (GPS-Position), `ComponentStatus` (Verbindungszustand der einzelnen Subsysteme, Override-Status, Flugzustand), `PlannedRoutePacket`/`PlannedAreaPacket` (berechnete Route bzw. vorgegebene Fläche) und `FlightHistoryPacket` (geflogene Strecke).
-3. **Web-Anbindung** (Bodenstation -> Browser): Die Bodenstation übersetzt die empfangenen LoRa-Pakete nicht direkt weiter, sondern schreibt sie in einen zentralen, thread-sicheren Zustandsspeicher (`FlightStorage`, Teil von [`shared_components/flight_data`](shared_components/flight_data)). Ein HTTP-/WebSocket-Server liest daraus und serialisiert die Daten getrennt als JSON für das Web-Frontend. LoRa-Wireformat und Web-JSON-Format sind damit vollständig entkoppelt.
+3. **Web-Anbindung** (Bodenstation -> Browser): Die Bodenstation übersetzt die empfangenen LoRa-Pakete nicht direkt weiter, sondern schreibt sie in einen zentralen, thread-sicheren Zustandsspeicher (`FlightStorage`, Teil von [`shared_components/flight_data`](shared_components/flight_data)). Ein HTTP-/WebSocket-Server liest daraus und serialisiert die Daten getrennt als JSON für das Web-Frontend. LoRa-Format und Web-JSON-Format sind damit vollständig entkoppelt.
 
 ### Web-Stack der Bodenstation
 
-Die Bodenstation öffnet einen WLAN-AP (Standard-SSID, konfigurierbar über Kconfig, alternativ ein „Dev-Mode", in dem sie sich stattdessen in ein bestehendes WLAN einbucht) sowie einen HTTP-Server. Dieser bedient:
+Die Bodenstation öffnet einen WLAN-AP (Standard-SSID, konfigurierbar über Kconfig, alternativ ein „Dev-Mode", in dem stattdessen erst versucht wird sich mit einem bestehenden WLAN zu verbinden) sowie einen HTTP-Server. Dieser bedient:
 
 - **Statische Dateien** der Weboberfläche aus einer LittleFS-Flash-Partition (`/*`-Route als Fallback-Handler). Das Verzeichnis `base_station/static` ist ein Symlink auf `frontend_web/dist`, sodass ein Frontend-Build direkt als Flash-Image eingebunden wird (`littlefs_create_partition_image` in [`base_station/CMakeLists.txt`](base_station/CMakeLists.txt)).
 - **REST-API-Endpunkte**: u. a. `GET /api/status` (Verbindungsstatus), `POST`/`GET /api/area` (Zielfläche setzen/lesen), `GET /api/route` (berechnete Route abfragen). Details siehe „API-Referenz der Bodenstation" unten.
@@ -194,7 +194,7 @@ interface SensorUpdatePacket {
 }
 ```
 
-`...Timestamp`/`...UpdateTime`-Felder sind Unix-Zeitstempel, `ConnectionState`/`FlightState` werden als lesbare Strings statt Zahlen serialisiert.
+`...Timestamp`/`...UpdateTime`-Felder sind Unix-Zeitstempel, die entweder aus der Laufzeit oder aus dem GPS Signal stammen, `ConnectionState`/`FlightState` werden als Strings statt Zahlen serialisiert.
 
 #### Endpunkte
 
@@ -210,7 +210,7 @@ interface SensorUpdatePacket {
 
 #### WebSocket `/api/ws`
 
-Nach dem Upgrade wird der Client registriert und alle 5 Sekunden mit drei Nachrichten versorgt, unterschieden über `type`: `FlightUpdatePacket`, `ConnectionUpdatePacket`, `SensorUpdatePacket` (Typdefinitionen siehe oben). Sendet ein Client die Textnachricht `"ping"`, antwortet der Server mit `"pong"` (im Frontend als Verbindungs-Heartbeat genutzt). Der Typ der Websocket Nachricht wird aktuell über das erste Feld `type` im JSON-Objekt unterschieden, nicht über die WebSocket-Subprotokoll-Mechanismen. Das ist eine bewusste Vereinfachung, da die WebSocket-Verbindung ohnehin nur von der eigenen Weboberfläche genutzt wird.
+Nach dem Upgrade wird der Client registriert und alle 5 Sekunden mit drei Nachrichten versorgt, unterschieden über `type`: `FlightUpdatePacket`, `ConnectionUpdatePacket`, `SensorUpdatePacket` (Typdefinitionen siehe oben). Sendet ein Client die Textnachricht `"ping"`, antwortet der Server mit `"pong"` (im Frontend als Verbindungs-Heartbeat genutzt). Der Typ der Websocket Nachricht wird aktuell über das erste Feld `type` im JSON-Objekt unterschieden, nicht über die WebSocket-Subprotokoll-Mechanismen.
 
 ### Frontend
 
@@ -230,7 +230,7 @@ Für die Zustandsverwaltung nutzt die Anwendung einen selbst geschriebenen, reak
 Der [`route_planner`](flight_controller/components/route_planner) erzeugt aus einem vom Bediener gezeichneten Polygon ein Mäander- bzw. Boustrophedon-Muster:
 
 1. **Sweep-Lines erzeugen**: Aus der Bounding-Box des Polygons werden äquidistante, horizontale Linien (parallel zum Breitengrad) im Abstand der effektiven Schwadbreite berechnet.
-2. **Zuschneiden auf das Polygon**: Jede Linie wird mit dem tatsächlichen, auch konkaven, Polygon geschnitten (Geometriebibliothek [`homog2d`](flight_controller/components/homog2d)). Bei mehreren Schnittpunkten wird nur das äußere Segment behalten, sodass Löcher und konkave Formen korrekt ausgespart werden.
+2. **Zuschneiden auf das Polygon**: Jede Linie wird mit dem tatsächlichen, auch konkaven, Polygon geschnitten (Geometriebibliothek [`homog2d`](https://github.com/skramm/homog2d)). Bei mehreren Schnittpunkten wird nur das äußere Segment behalten, sodass Löcher und konkave Formen korrekt ausgespart werden.
 3. **Pfad zusammensetzen**: Die einzelnen Linien werden abwechselnd von links nach rechts bzw. rechts nach links zu einem durchgehenden Pfad verbunden. Zwischen zwei Zeilen werden zusätzliche Zwischenpunkte eingefügt, um statt einer scharfen 180°-Kehre eine weichere Kurvenbahn zu erzeugen.
 4. **Interpolation**: Abschließend werden alle Teilstrecken, die länger als ein konfigurierter Maximalabstand sind, in gleichmäßige Zwischenpunkte unterteilt, sodass zwei aufeinanderfolgende Wegpunkte nie weiter als dieser Abstand auseinanderliegen. Diese Interpolation sollte später für die Kamera Steuerung verwendet werden können und ist nicht nur für die Flugregelung relevant.
 
@@ -249,7 +249,7 @@ Die Wegpunkt-Erreichung wird über den Abstand zur aktuellen Position gegen eine
 
 ## Sensorik und Datenfusion
 
-Die Sensordatenverarbeitung ist bewusst einfach gehalten: Es kommt **kein** gemeinsamer Zustandsschätzer (z. B. Kalman-Filter) zum Einsatz. Stattdessen wird jeder abgeleitete Messwert unabhängig über ein gleitendes Mittel geglättet und direkt in die jeweilige PI-Regelung eingespeist:
+Die Sensordatenverarbeitung ist bewusst einfach gehalten: Es kommt **kein** gemeinsamer Zustandsschätzer zum Einsatz. Stattdessen wird jeder abgeleitete Messwert unabhängig über ein gleitendes Mittel geglättet und direkt in die jeweilige PI-Regelung eingespeist:
 
 - **Lage (Roll/Pitch):** wird ausschließlich aus der Schwerkraftrichtung des Beschleunigungssensors berechnet (`atan2` über die Beschleunigungskomponenten), nach einer Nullpunktkalibrierung beim Start.
 - **Kurs (Heading):** wird direkt aus den Magnetometer-Rohwerten berechnet (`atan2`), ohne Neigungskompensation gegenüber Roll/Pitch und ohne Korrektur der magnetischen Missweisung. Anschließend wird der Wert zirkulär geglättet (getrennte Mittelung von Sinus-/Kosinuskomponenten, um den Sprung bei 0°/360° korrekt zu behandeln).
@@ -303,15 +303,21 @@ Das Entwicklungsprotokoll ([`resources/learning.md`](resources/learning.md)) dok
 
 # Bekannte Einschränkungen und mögliche Verbesserungen
 
-| Bereich | Einschränkung | Mögliche Verbesserung |
-|---|---|---|
-| Sensorfusion | Lagebestimmung rein aus Beschleunigungssensor, kein Kalman-/Komplementärfilter aktiv, Kompass ohne Neigungskompensation/Deklinationskorrektur | Vorhandenen Komplementärfilter und Gyroskop-Integration tatsächlich in die Regelschleife einbinden, Neigungskompensation und Deklination im Heading ergänzen |
-| Regelung | Reglerverstärkungen und Zielhöhe hart codiert statt konfigurierbar, keine koordinierte Kurve (Querruder unabhängig vom Kurvenkommando), volle Regelkaskade nicht flugerprobt | Gains über Kconfig/Laufzeit konfigurierbar machen, systematische Flugtests durchführen, koordinierte Kurvenregelung ergänzen |
-| Hardware-Robustheit | Wiederkehrende I2C-Bus-Aussetzer bei mehreren angeschlossenen Sensoren, trotz Workarounds ein Restrisiko | Bus-Topologie überdenken (z. B. I2C-Multiplexer, getrennte Busse), Hardware-Redesign der Verkabelung |
-| Funkstrecke | Keine Verschlüsselung aktiv, keine Geräteadressierung (nur Punkt-zu-Punkt) (relevant für mehrere Flugzeuge/Basisstationen), Sendezeit Regelung nicht Kontrolliert | Verschlüsselung aktivieren, Adressierung für Mehrflugzeug-Szenarien ergänzen, Kontrolle der maximalen Sendezeit implementieren |
-| Testabdeckung | Nur die Routenplanungs-Geometrie ist automatisiert getestet, CI baut ausschließlich die Dokumentation und nicht die Firmware/das Frontend, der Frontend-E2E-Test ist unveränderter Gerüst-Code | Unit-Tests für Regelungslogik und Protokollcode ergänzen, Firmware-/Frontend-Build und Tests in die CI-Pipeline aufnehmen, Playwright-Test an die reale Anwendung anpassen |
-| Frontend-Code | Pinia eingebunden, aber ungenutzt, `MapView`-Komponente nutzt einen anderen Leaflet-Ansatz als der Rest der App und ist nicht in den eigentlichen Bedien-Workflow eingebunden | Aufräumen: Pinia entfernen oder konsequent nutzen, `MapView` entfernen oder konsolidieren |
-| Flug Tests | Keine echten Flugtests durchgeführt, da die Höhenregelung und Schubregelung noch nicht adäquat implementiert sind, Kontrollieren der bisherigen Servo Regelungen | Systematische Flugtests durchführen, ggf. mit Sicherheitsleine oder in einem abgesperrten Testbereich |
+**Sensorfusion:** Die Lagebestimmung erfolgt rein aus dem Beschleunigungssensor, ein Kalman- bzw. Komplementärfilter ist nicht aktiv, und der Kompass arbeitet ohne Neigungskompensation bzw. Deklinationskorrektur. Als Verbesserung sollten der vorhandene Komplementärfilter und die Gyroskop-Integration tatsächlich in die Regelschleife eingebunden sowie Neigungskompensation und Deklination im Heading ergänzt werden.
+
+**Regelung:** Reglerverstärkungen und Zielhöhe sind hart codiert statt konfigurierbar, es gibt keine koordinierte Kurve (Querruder unabhängig vom Kurvenkommando), und die volle Regelkaskade ist nicht flugerprobt. Verbessern ließe sich dies, indem die Gains über Kconfig bzw. zur Laufzeit konfigurierbar gemacht werden, systematische Flugtests durchgeführt werden und eine koordinierte Kurvenregelung ergänzt wird.
+
+**Hardware-Robustheit:** Bei mehreren angeschlossenen Sensoren treten wiederkehrende I2C-Bus-Aussetzer auf, die trotz Workarounds ein Restrisiko darstellen. Als Verbesserung bietet sich an, die Bus-Topologie zu überdenken (z. B. I2C-Multiplexer, getrennte Busse) und ein Hardware-Redesign der Verkabelung vorzunehmen.
+
+**Funkstrecke:** Es ist keine Verschlüsselung aktiv, es gibt keine Geräteadressierung (nur Punkt-zu-Punkt, relevant für mehrere Flugzeuge/Basisstationen), und die Sendezeit-Regelung ist nicht kontrolliert. Verbesserungspotenzial liegt in der Aktivierung von Verschlüsselung, der Ergänzung einer Adressierung für Mehrflugzeug-Szenarien und der Implementierung einer Kontrolle der maximalen Sendezeit.
+
+**Testabdeckung:** Nur die Routenplanungs-Geometrie ist automatisiert getestet, die CI baut ausschließlich die Dokumentation und nicht die Firmware bzw. das Frontend, und der Frontend-E2E-Test ist unveränderter Gerüst-Code. Hier sollten Unit-Tests für Regelungslogik und Protokollcode ergänzt, Firmware-/Frontend-Build und Tests in die CI-Pipeline aufgenommen und der Playwright-Test an die reale Anwendung angepasst werden.
+
+**Frontend-Code:** Das Frontend ist noch nicht fertiggestellt. Es fehlen noch Möglichkeiten zur weiteren Konfiguration der Flugstreckenberechnung und die Flugüberwachung sobald dieser gestartet wurde, sowie ein Return-To-Home. Aktuell gibt es auch noch ein Problem mit dem Laden der Tiles für die OpenStreetMap Karte. Da Sich das Endgerät im WLAN der Basisstation befindet und diese keinen Internetzugriff bietet, funktioniert die Kartenansicht aktuell nur wenn ein eigener Hotspot aufgemacht wird oder man zwischenzeitig auf Mobile Daten wechselt um die Karte zu laden. Als Lösung für dieses Problem bietet sich ein SIM Modul an. Alternativ wäre der Wechsel zu einer nativen App mit Kommunikation per Bluetooth eine elegante Variante, die es ermöglichen würde die offline Karten des Mobiltelefons zu verwenden.
+
+**Flug Tests:** Es wurden keine echten Flugtests durchgeführt, da Höhenregelung und Schubregelung noch nicht adäquat implementiert sind; zudem sind die bisherigen Servo-Regelungen noch zu kontrollieren. Als nächster Schritt sollten systematische Flugtests durchgeführt werden, ggf. mit Sicherheitsleine oder in einem abgesperrten Testbereich.
+
+**Kamera Einbindung:** Bisher wurde die Kamera in diesem Prototypen außen vor gelassen. In einem der nächsten Schritte soll die Kamera in den Prozess mit eingebunden werden um lokal in kleinem Stil eine Bildverarbeitung und -analyse vorzunehmen.
 
 # Individuelle Beiträge
 
