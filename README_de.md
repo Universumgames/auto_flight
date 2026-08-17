@@ -2,7 +2,7 @@
 title: "Auto Flight: Autonomes Segelflugzeug für Flächenabdeckungsflüge"
 subtitle: "Technische Dokumentation zur Projektaufgabe Embedded Systems"
 author: Tom Arlt, 1335730
-date: 28.07.2026
+date: 17.08.2026
 lang: de-DE
 ---
 
@@ -74,7 +74,7 @@ Da LoRa bei großer Reichweite nur eine sehr geringe Bandbreite bietet, ist die 
 | MPU6050 (Beschleunigungssensor + Gyroskop) | Flugzeug | Lagebestimmung (Roll/Pitch) |
 | Magnetometer HMC5883L | Flugzeug | Kursbestimmung (Heading) |
 | Barometer (BME280) | Flugzeug, Bodenstation | Höhenbestimmung über Luftdruck |
-| Level Shifter (3,3 V ↔ 5 V) | Flugzeug | I2C-Pegelanpassung zwischen ESP32-S3 (3,3 V) und Arduino Nano (5 V) |
+| Level Shifter (3,3 V <-> 5 V) | Flugzeug | I2C-Pegelanpassung zwischen ESP32-S3 (3,3 V) und Arduino Nano (5 V) |
 | Time-of-Flight-Sensor TOF200C | Flugzeug | Bodenabstandsmessung, vorgesehen für die automatische Landung |
 | SBUS-Empfänger | Flugzeug | Empfang der RC-Fernsteuerbefehle |
 | 4× Servo / ESC | Flugzeug | Querruder (differentiell), Höhenruder, Schub, Seitenruder |
@@ -307,6 +307,10 @@ Das Entwicklungsprotokoll ([`resources/learning.md`](resources/learning.md)) dok
 
 **Regelung:** Reglerverstärkungen und Zielhöhe sind hart codiert statt konfigurierbar, es gibt keine koordinierte Kurve (Querruder unabhängig vom Kurvenkommando), und die volle Regelkaskade ist nicht flugerprobt. Verbessern ließe sich dies, indem die Gains über Kconfig bzw. zur Laufzeit konfigurierbar gemacht werden, systematische Flugtests durchgeführt werden und eine koordinierte Kurvenregelung ergänzt wird.
 
+**Missionsparameter & Konfigurierbarkeit:** Schwadbreite, Überlappungsfaktor und maximale Punktdistanz sind für die Routenplanung fest im Quellcode hinterlegt (siehe Abschnitt „Routenplanung") und nicht auf unterschiedliche Kameras (FOV, Modell), Akkukapazitäten oder Flugzeuggrößen/-gewichte abgestimmt konfigurierbar; ebenso fehlt jegliche Konfiguration für den koordinierten Betrieb mehrerer Flugzeuge (Schwarmkonfiguration). Sinnvoll wäre es, diese Missionsparameter über die Weboberfläche konfigurierbar zu machen und die Kommunikations-/Adressierungsschicht (siehe „Funkstrecke") so zu erweitern, dass mehrere Flugzeuge und Basisstationen als Schwarm koordiniert werden können.
+
+**Pfadplanungsalgorithmen:** Aktuell ist ausschließlich ein Sweep-Line-Mäandermuster implementiert; alternative Coverage-Path-Planning-Algorithmen wurden nicht durchgetestet oder evaluiert. Eine systematische Evaluation verschiedener Algorithmen anhand von Flugstrecke, theoretischer Flugdauer und geschätzter Akkukapazität stünde noch aus und wäre ein sinnvoller nächster Schritt, um die Routenplanung über die reine Geometrie hinaus energie- und laufzeitbewusst zu machen.
+
 **Hardware-Robustheit:** Bei mehreren angeschlossenen Sensoren treten wiederkehrende I2C-Bus-Aussetzer auf, die trotz Workarounds ein Restrisiko darstellen. Als Verbesserung bietet sich an, die Bus-Topologie zu überdenken (z. B. I2C-Multiplexer, getrennte Busse) und ein Hardware-Redesign der Verkabelung vorzunehmen.
 
 **Funkstrecke:** Es ist keine Verschlüsselung aktiv, es gibt keine Geräteadressierung (nur Punkt-zu-Punkt, relevant für mehrere Flugzeuge/Basisstationen), und die Sendezeit-Regelung ist nicht kontrolliert. Verbesserungspotenzial liegt in der Aktivierung von Verschlüsselung, der Ergänzung einer Adressierung für Mehrflugzeug-Szenarien und der Implementierung einer Kontrolle der maximalen Sendezeit.
@@ -317,7 +321,7 @@ Das Entwicklungsprotokoll ([`resources/learning.md`](resources/learning.md)) dok
 
 **Flug Tests:** Es wurden keine echten Flugtests durchgeführt, da Höhenregelung und Schubregelung noch nicht adäquat implementiert sind; zudem sind die bisherigen Servo-Regelungen noch zu kontrollieren. Als nächster Schritt sollten systematische Flugtests durchgeführt werden, ggf. mit Sicherheitsleine oder in einem abgesperrten Testbereich.
 
-**Kamera Einbindung:** Bisher wurde die Kamera in diesem Prototypen außen vor gelassen. In einem der nächsten Schritte soll die Kamera in den Prozess mit eingebunden werden um lokal in kleinem Stil eine Bildverarbeitung und -analyse vorzunehmen.
+**Kamera Einbindung:** Bisher wurde die Kamera in diesem Prototypen außen vor gelassen. Die Bildabdeckung ist zwar über FOV und Bodendistanz berechenbar, eine zuverlässige Bodendistanzmessung fehlt aber noch: Barometer und GPS liefern nur die Höhe über Startpunkt/Meeresspiegel und versagen in hügeligem bzw. bergigem Gelände ohne begleitende Höhenkarte, ein LiDAR-Sensor für Reichweiten über 40 m wäre hierfür ebenfalls noch zu ergänzen. Für eine Bildverarbeitung existiert die Idee der Feuer-/Raucherkennung. Hierfür könnte versucht werden auf einem ESP ein kleines quantisiertes CNN laufen zu lassen (Inspieriert von dem Projekt [ESP32 LLM](https://github.com/DaveBben/esp32-llm)). Als naive, ressourcenschonendere Alternative dazu käme ein einfacher heuristischer Algorithmus in Frage (z. B. Grau-/Rotanteil im Bild, optional unterstützt durch eine Wärmebildkamera). Nächste Schritte wären die Anbindung einer echten Kamera an diesen ESP32-Prototypen, die Integration in den Gesamtprozess (Flugcontroller/Bodenstation) sowie ein vergleichender Test beider Ansätze (naiv vs. CNN) hinsichtlich Erkennungsgüte und Ressourcenverbrauch.
 
 # Individuelle Beiträge
 
