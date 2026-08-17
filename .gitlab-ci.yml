@@ -8,7 +8,7 @@ readme_pdf:
     - apt-get update -qq
     - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-lang-german texlive-latex-extra lmodern
   script:
-    - make readme_pdf
+    - make export_documentation
   artifacts:
     paths:
       - README.pdf
