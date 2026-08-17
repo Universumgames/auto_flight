@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { FLAP_DEPTH } from './config.js';
+import { FLAP_DEPTH, SERVO_FLIP } from './config.js';
 
 // All tunable animation limits live here, in one place.
 const LIMITS = {
@@ -12,6 +12,12 @@ const LIMITS = {
 };
 
 const deg2rad = (d) => (d * Math.PI) / 180;
+
+// Per-pair flip multipliers, applied on top of the default sign convention
+// baked into the animate() loop below.
+const aileronFlip = SERVO_FLIP.aileron ? -1 : 1;
+const elevatorFlip = SERVO_FLIP.elevator ? -1 : 1;
+const rudderFlip = SERVO_FLIP.rudder ? -1 : 1;
 
 function makeHingedFlap(width, height, depth, hingeOffsetX) {
   // hinge is an empty Object3D positioned at the flap's mounting edge (the
@@ -304,10 +310,10 @@ export function createPlaneScene(canvas) {
 
     // Control surface deflections. The plane body itself stays put — only
     // the propeller and flaps move.
-    leftAileronHinge.rotation.x = deg2rad(roll * LIMITS.aileronDeg);
-    rightAileronHinge.rotation.x = deg2rad(-roll * LIMITS.aileronDeg);
-    elevatorHinge.rotation.x = deg2rad(pitch * LIMITS.elevatorDeg);
-    rudderHinge.rotation.y = deg2rad(yaw * LIMITS.rudderDeg);
+    leftAileronHinge.rotation.x = deg2rad(aileronFlip * roll * LIMITS.aileronDeg);
+    rightAileronHinge.rotation.x = deg2rad(aileronFlip * -roll * LIMITS.aileronDeg);
+    elevatorHinge.rotation.x = deg2rad(elevatorFlip * pitch * LIMITS.elevatorDeg);
+    rudderHinge.rotation.y = deg2rad(rudderFlip * yaw * LIMITS.rudderDeg);
 
     controls.update();
     renderer.render(scene, camera);

@@ -26,3 +26,13 @@ export const DEFAULT_BAUD_RATE = 115200;
 // backward from its hinge line, in world units. Purely visual — increase
 // for more visible flaps.
 export const FLAP_DEPTH = 0.12;
+
+// Set a surface to true if its real servo(s) are mounted/geared so the
+// surface moves opposite to what this viz assumes by default. This flips
+// the whole pair together (e.g. both ailerons), not just one side, so their
+// differential motion relative to each other is preserved.
+export const SERVO_FLIP = {
+  aileron: true,
+  elevator: false,
+  rudder: false,
+};
