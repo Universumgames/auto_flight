@@ -14,19 +14,19 @@ Das System besteht aus drei eigenständigen Firmware-/Software-Projekten (dem Fl
 
 | Projekt | Plattform | Aufgabe |
 |---|---|---|
-| [`flight_controller/`](flight_controller) | ESP-IDF (ESP32-S3) | Hauptrechner im Flugzeug: Routenplanung, Sensorik, Flugregelung, LoRa-Kommunikation |
-| [`base_station/`](base_station) | ESP-IDF (ESP32-S3) | Bodenstation: WLAN-Zugangspunkt, Web-UI-Server, LoRa-Relais |
-| [`motor_controller/`](motor_controller) | PlatformIO/Arduino (ATmega328) | Steuerflächen-/Motoransteuerung, SBUS-Empfang, Sicherheits-Override |
-| [`frontend_web/`](frontend_web) | Vue 3 + TypeScript | Bedienoberfläche der Bodenstation (Missionsplanung, Live-Telemetrie) |
-| [`shared_components/`](shared_components) | ESP-IDF-Komponenten | Gemeinsame Bausteine für Flugcontroller und Bodenstation (LoRa, I2C, Sensor-Treiber, Datenhaltung) |
+| [`flight_controller/`](./flight_controller) | ESP-IDF (ESP32-S3) | Hauptrechner im Flugzeug: Routenplanung, Sensorik, Flugregelung, LoRa-Kommunikation |
+| [`base_station/`](./base_station) | ESP-IDF (ESP32-S3) | Bodenstation: WLAN-Zugangspunkt, Web-UI-Server, LoRa-Relais |
+| [`motor_controller/`](./motor_controller) | PlatformIO/Arduino (ATmega328) | Steuerflächen-/Motoransteuerung, SBUS-Empfang, Sicherheits-Override |
+| [`frontend_web/`](./frontend_web) | Vue 3 + TypeScript | Bedienoberfläche der Bodenstation (Missionsplanung, Live-Telemetrie) |
+| [`shared_components/`](./shared_components) | ESP-IDF-Komponenten | Gemeinsame Bausteine für Flugcontroller und Bodenstation (LoRa, I2C, Sensor-Treiber, Datenhaltung) |
 
-Das Projekt ist eine studentische Einzelarbeit im Modul "Mobile Roboter" und befindet sich im Status eines fortgeschrittenen Prototyps. Ein fortlaufendes Entwicklungsprotokoll mit Fortschritt und aufgetretenen Problemen findet sich in [`resources/learning.md`](resources/learning.md).
+Das Projekt ist eine studentische Einzelarbeit im Modul "Mobile Roboter" und befindet sich im Status eines fortgeschrittenen Prototyps. Ein fortlaufendes Entwicklungsprotokoll mit Fortschritt und aufgetretenen Problemen findet sich in [`resources/learning.md`](./resources/learning.md).
 
 # Zielsetzung und Anwendungsszenario
 
 ## Grundidee
 
-Ausgangspunkt des Projekts (siehe [`Projekt_Idee.md`](Projekt_Idee.md)) ist ein autonomes Segelflugzeug, das definierte Flächen abfliegt. Die im Rahmen dieser Arbeit umgesetzte Version deckt den Beginn dieses Szenarios ab: die Kommunikation mit der Bodenstation, die Konfiguration und die Überwachung des Flugs. Das Flugzeug ist bereits in der Lage, aus der vorgegebenen Fläche eine Route zu berechnen und kleine Korrekturen während des Fluges auf Basis des Beschleunigungssensors vorzunehmen. Das Anfliegen der Route erfolgt jedoch noch nicht vollständig autonom, da die Höhenregelung und die Schubregelung noch nicht flugerprobt sind.
+Ausgangspunkt des Projekts (siehe [`Projekt_Idee.md`](./Projekt_Idee.md)) ist ein autonomes Segelflugzeug, das definierte Flächen abfliegt. Die im Rahmen dieser Arbeit umgesetzte Version deckt den Beginn dieses Szenarios ab: die Kommunikation mit der Bodenstation, die Konfiguration und die Überwachung des Flugs. Das Flugzeug ist bereits in der Lage, aus der vorgegebenen Fläche eine Route zu berechnen und kleine Korrekturen während des Fluges auf Basis des Beschleunigungssensors vorzunehmen. Das Anfliegen der Route erfolgt jedoch noch nicht vollständig autonom, da die Höhenregelung und die Schubregelung noch nicht flugerprobt sind.
 
 ## Anwendungsszenario
 Das System ist für den Einsatz in der Kartografie und Landwirtschaft konzipiert. Bei einer Erweiterung um eine Kamera kann das System für die Inspektion von großen Flächen (z. B. landwirtschaftliche Felder, Solarparks, Wälder) genutzt werden. Die Bodenstation ermöglicht die Planung der zu überfliegenden Fläche, die Überwachung des Flugs und die Auswertung der Sensordaten. Das System ist für den Einsatz in ländlichen Gebieten mit geringer Bebauung und ohne Flugverbotszonen vorgesehen.
@@ -51,13 +51,13 @@ Da LoRa bei großer Reichweite nur eine sehr geringe Bandbreite bietet, ist die 
 - **Echtzeitfähigkeit:** Die Flugregelung läuft mit einer festen Zykluszeit von 50 ms, um auf Lage- und Kursänderungen zeitnah reagieren zu können.
 - **Ressourcenbeschränkung:** Als Segelflugzeug ist Gewicht ein limitierender Faktor für Akkukapazität, Sensorik und Servos. Das begrenzt sowohl die Rechenleistung (Mikrocontroller statt Einplatinencomputer) als auch die Anzahl gleichzeitig betreibbarer I2C-Sensoren an einem gemeinsamen Bus.
 - **Ausfallsicherheit:** Die manuelle Übersteuerung darf nicht vom Zustand des Flugcontrollers abhängen, da dieser die eigentliche Ausfallquelle ist, gegen die abgesichert werden soll.
-- **Rechtlicher Rahmen:** Im Projektverlauf wurde eine Recherche zu rechtlichen Rahmenbedingungen für autonome Fluggeräte durchgeführt (siehe Woche 2 in [`resources/learning.md`](resources/learning.md)), die insbesondere die Notwendigkeit einer jederzeit verfügbaren manuellen Kontrolle bestätigt.
+- **Rechtlicher Rahmen:** Im Projektverlauf wurde eine Recherche zu rechtlichen Rahmenbedingungen für autonome Fluggeräte durchgeführt (siehe Woche 2 in [`resources/learning.md`](./resources/learning.md)), die insbesondere die Notwendigkeit einer jederzeit verfügbaren manuellen Kontrolle bestätigt.
 
 ## Technische Randbedingungen
 
 - Zwei baugleiche Heltec-WiFi-LoRa-32-V3-Boards (ESP32-S3 + integriertes SX1262-LoRa-Modul) als zentrale Rechen- und Funkeinheiten, eines im Flugzeug und eines in der Bodenstation
 - Ein Arduino Nano (ATmega328) als separater, einfacher Servo-/Motor-Controller, angebunden über I2C an den Flugcontroller und über SBUS an den RC-Empfänger
-- ESP-IDF (Version 5.x) als Firmware-Basis für Flugcontroller und Bodenstation, mit gemeinsam genutzten Komponenten in [`shared_components/`](shared_components)
+- ESP-IDF (Version 5.x) als Firmware-Basis für Flugcontroller und Bodenstation, mit gemeinsam genutzten Komponenten in [`shared_components/`](./shared_components)
 - Node.js/Vue 3 für die Weboberfläche, die als statische Dateien in den Flash-Speicher der Bodenstation eingebettet wird (kein separater Webserver)
 
 # Systemarchitektur
@@ -81,13 +81,13 @@ Da LoRa bei großer Reichweite nur eine sehr geringe Bandbreite bietet, ist die 
 | LittleFS-Speicher | Bodenstation | Ablage der Web-UI-Dateien im Flash |
 | Akkus | Flugzeug, Bodenstation | Energieversorgung |
 
-Die vollständige Stückliste befindet sich in [`BOM.md`](BOM.md). Der TOF200C-Abstandssensor ist Teil der Beschaffungsliste, aber im aktuellen Funktionsumfang noch nicht in die Firmware integriert, da die automatische Landung wie im Abschnitt "Bekannte Einschränkungen und mögliche Verbesserungen" beschrieben noch nicht umgesetzt ist.
+Die vollständige Stückliste befindet sich in [`BOM.md`](./BOM.md). Der TOF200C-Abstandssensor ist Teil der Beschaffungsliste, aber im aktuellen Funktionsumfang noch nicht in die Firmware integriert, da die automatische Landung wie im Abschnitt "Bekannte Einschränkungen und mögliche Verbesserungen" beschrieben noch nicht umgesetzt ist.
 
-Beim Magnetometer wurde ursprünglich ein QMC5883P eingesetzt und im Projektverlauf durch ein HMC5883L ersetzt. Beide zugehörigen Datenblätter liegen unter [`resources/`](resources) vor, der Grund für den Wechsel wird in Abschnitt "Technische Umsetzung und wesentliche Designentscheidungen" erläutert.
+Beim Magnetometer wurde ursprünglich ein QMC5883P eingesetzt und im Projektverlauf durch ein HMC5883L ersetzt. Beide zugehörigen Datenblätter liegen unter [`resources/`](./resources) vor, der Grund für den Wechsel wird in Abschnitt "Technische Umsetzung und wesentliche Designentscheidungen" erläutert.
 
 ### Schaltpläne
 
-Die Schaltpläne für Flugzeug und Bodenstation wurden mit [Fritzing](https://fritzing.org/) erstellt. Die Quelldateien liegen als [`assets/schematics_plane.fzz`](assets/schematics_plane.fzz) bzw. [`assets/schematics_base.fzz`](assets/schematics_base.fzz) vor, zusammen mit selbst angelegten Fritzing-Bauteilen für Module ohne offizielle Fritzing-Unterstützung ([BMP280-Breakout](<assets/BMP280_Breakout_Board.fzpz>), [GT-U8-GPS-Modul](<assets/GT-U8-GPS-module.fzpz>), [Heltec WiFi Kit 32 (V3)](<assets/Heltec WiFi Kit 32 (V3).fzpz>)).
+Die Schaltpläne für Flugzeug und Bodenstation wurden mit [Fritzing](https://fritzing.org/) erstellt. Die Quelldateien liegen als [`assets/schematics_plane.fzz`](./assets/schematics_plane.fzz) bzw. [`assets/schematics_base.fzz`](./assets/schematics_base.fzz) vor, zusammen mit selbst angelegten Fritzing-Bauteilen für Module ohne offizielle Fritzing-Unterstützung ([BMP280-Breakout](./assets/BMP280_Breakout_Board.fzpz), [GT-U8-GPS-Modul](./assets/GT-U8-GPS-module.fzpz), [Heltec WiFi Kit 32 (V3)](./assets/Heltec WiFi Kit 32 (V3).fzpz)).
 
 Die Anbindung der 4 Servos wurde hier nicht im Schaltplan dargestellt, um die Übersichtlichkeit zu wahren. Die Servos werden direkt an den Arduino Nano angeschlossen, der die PWM-Signale erzeugt. Verwendet wurden die PWM-Pins 9, 10, 11 und 12 für Querruder links, Querruder rechts, Höhenruder und Seitenruder. Das Mapping zwischen Servo und Steuerfläche ist in der Regelung im ESP32-Flightcontroller festgelegt und kann bei Bedarf angepasst werden. Im Arduino Code gibt es ein festes Mapping: Byte 0 -> Servo 1, Byte 1 -> Servo 2, Byte 2 -> Servo 3, Byte 3 -> Servo 4. Welches Servo welcher Steuerfläche zugeordnet ist, wird dann in der Flugregelung im ESP32-Flightcontroller festgelegt.
 
@@ -105,14 +105,14 @@ Die Anbindung der 4 Servos wurde hier nicht im Schaltplan dargestellt, um die Ü
 
 ### Mechanischer Aufbau
 
-Unter [`3d_models/`](3d_models) liegen die 3D-gedruckten Gehäuse-/Montagekonstruktionen:
+Unter [`3d_models/`](./3d_models) liegen die 3D-gedruckten Gehäuse-/Montagekonstruktionen:
 
-- **Bodenstations-Gehäuse** ([`base_station_case.scad`](3d_models/base_station_case.scad)): zweiteiliges Gehäuse (Wanne + Deckel) mit Snap-Fit-Verbindung, Aufnahmen für die Hauptplatine (Heltec LoRa32 V3 + GPS-Modul) und eine über Kabel angebundene Tochterplatine (Barometer), einer SMA-Antennendurchführung in der Gehäusewand sowie einem Druckausgleichsloch im Deckel oberhalb des Barometers.
-- **Flugzeug-Montageplatte** ([`plane_mount_plate.scad`](3d_models/plane_mount_plate.scad)): laut Kommentar im Quellcode ein reines Layout-Mockup, das die relative Anordnung von Hauptplatine, zwei Tochterplatinen und den vier Steuerflächen-Servos zeigt. Es ist ausdrücklich kein flugtaugliches Bauteil (keine Rumpfbefestigung, keine Kabelkanäle, keine Gewichtsoptimierung).
+- **Bodenstations-Gehäuse** ([`base_station_case.scad`](./3d_models/base_station_case.scad)): zweiteiliges Gehäuse (Wanne + Deckel) mit Snap-Fit-Verbindung, Aufnahmen für die Hauptplatine (Heltec LoRa32 V3 + GPS-Modul) und eine über Kabel angebundene Tochterplatine (Barometer), einer SMA-Antennendurchführung in der Gehäusewand sowie einem Druckausgleichsloch im Deckel oberhalb des Barometers.
+- **Flugzeug-Montageplatte** ([`plane_mount_plate.scad`](./3d_models/plane_mount_plate.scad)): laut Kommentar im Quellcode ein reines Layout-Mockup, das die relative Anordnung von Hauptplatine, zwei Tochterplatinen und den vier Steuerflächen-Servos zeigt. Es ist ausdrücklich kein flugtaugliches Bauteil (keine Rumpfbefestigung, keine Kabelkanäle, keine Gewichtsoptimierung).
 
 ### Systemtopologie
 
-![Systemtopologie: Flugzeug (Flugcontroller, IMU, GPS, Motoransteuerung, RC-Empfänger) verbunden per LoRa mit der Bodenstation, die per WebSocket mit der Web-UI kommuniziert](assets/architecture.svg)
+![Systemtopologie: Flugzeug (Flugcontroller, IMU, GPS, Motoransteuerung, RC-Empfänger) verbunden per LoRa mit der Bodenstation, die per WebSocket mit der Web-UI kommuniziert](./assets/architecture.svg)
 
 Die Steuerflächen können über die Servos sowohl vom Flugcontroller (über I2C) als auch direkt von der RC-Fernsteuerung (über SBUS) angesteuert werden. Welcher Pfad aktiv ist, entscheidet ausschließlich der Arduino im Flugzeug (siehe "Manuelle Übersteuerung").
 
@@ -122,14 +122,14 @@ Die Steuerflächen können über die Servos sowohl vom Flugcontroller (über I2C
 
 | Pfad | Inhalt |
 |---|---|
-| [`flight_controller/`](flight_controller) | ESP-IDF-Firmware des Flugzeugs: Routenplanung, Sensorik, Flugregelung, LoRa-Kommunikation |
-| [`base_station/`](base_station) | ESP-IDF-Firmware der Bodenstation: WLAN-AP, Web-UI-Server, LoRa-Relais |
-| [`motor_controller/`](motor_controller) | Arduino-Firmware für Servo-/SBUS-Anbindung |
-| [`frontend_web/`](frontend_web) | Vue-3-Weboberfläche der Bodenstation |
-| [`shared_components/`](shared_components) | Zwischen Flugcontroller und Bodenstation geteilte ESP-IDF-Komponenten (LoRa, I2C, Sensor-Treiber, Datenhaltung) |
-| [`python/`](python) | Offline-Visualisierung der berechneten Flugrouten |
-| [`serial_plane_viz/`](serial_plane_viz) | Werkzeug zur Visualisierung der Servo-Ausschläge über die serielle Schnittstelle |
-| [`doc/`](doc), [`resources/`](resources) | Notizen, Pinouts, Datenblätter, Stückliste, Entwicklungsprotokoll |
+| [`flight_controller/`](./flight_controller) | ESP-IDF-Firmware des Flugzeugs: Routenplanung, Sensorik, Flugregelung, LoRa-Kommunikation |
+| [`base_station/`](./base_station) | ESP-IDF-Firmware der Bodenstation: WLAN-AP, Web-UI-Server, LoRa-Relais |
+| [`motor_controller/`](./motor_controller) | Arduino-Firmware für Servo-/SBUS-Anbindung |
+| [`frontend_web/`](./frontend_web) | Vue-3-Weboberfläche der Bodenstation |
+| [`shared_components/`](./shared_components) | Zwischen Flugcontroller und Bodenstation geteilte ESP-IDF-Komponenten (LoRa, I2C, Sensor-Treiber, Datenhaltung) |
+| [`python/`](./python) | Offline-Visualisierung der berechneten Flugrouten |
+| [`serial_plane_viz/`](./serial_plane_viz) | Werkzeug zur Visualisierung der Servo-Ausschläge über die serielle Schnittstelle |
+| [`doc/`](./doc), [`resources/`](./resources) | Notizen, Pinouts, Datenblätter, Stückliste, Entwicklungsprotokoll |
 
 `flight_controller` und `base_station` sind zwei unabhängige ESP-IDF-Projekte mit jeweils eigener `sdkconfig`/`CMakeLists.txt`, die beide dieselben Komponenten aus `shared_components/` über `EXTRA_COMPONENT_DIRS` einbinden. Das ist die zentrale Wiederverwendungsstrategie des Projekts: Sensor-Treiber, I2C-Verwaltung, der LoRa-Funkstack und das Anwendungsprotokoll existieren nur einmal und werden von beiden Firmware-Projekten geteilt, gesteuert über ein projektweites Compile-Flag (`FLIGHT_DEVICE_TYPE_PLANE` bzw. `FLIGHT_DEVICE_TYPE_BASE_STATION`), das jeweils festlegt, welche Rolle ein Gerät im Protokoll einnimmt.
 `motor_controller` ist ein eigenständiges Arduino-Projekt, das über I2C mit dem Flugcontroller kommuniziert und die Steuerflächen-Servos und den Motor ansteuert. Es ist bewusst einfach gehalten, da es nur die Aufgabe hat, die Servos zu bewegen und die SBUS-Signale der Fernsteuerung zu empfangen.
@@ -138,25 +138,25 @@ Die Steuerflächen können über die Servos sowohl vom Flugcontroller (über I2C
 
 Die Verbindung zwischen Flugzeug und Bodenstation ist in drei Schichten aufgeteilt:
 
-1. **Funkschicht** ([`shared_components/lora_com`](shared_components/lora_com)): Ansteuerung des SX1262-Funkmoduls über die RadioLib-Bibliothek. Da ein LoRa-Paket auf 255 Byte begrenzt ist, implementiert diese Schicht eine eigene Fragmentierung größerer Nachrichten (Kopf mit Nachrichten-ID, Fragment-ID und Gesamtfragmentzahl), eine Bestätigung jedes Fragments per ACK mit Zeitüberschreitung (2 s) und bis zu drei Wiederholungsversuchen, sowie periodische Keep-Alive-Pings (Standard: alle 30 s), um die Verbindung zu überwachen, falls keine andere Nachricht gesendet wird.
-2. **Anwendungsprotokoll** ([`shared_components/flight_com`](shared_components/flight_com)): definiert typisierte Pakete auf Basis der Funkschicht, u. a. `SensorUpdate` (Luftdruck, Kurs), `PositionUpdate` (GPS-Position), `ComponentStatus` (Verbindungszustand der einzelnen Subsysteme, Override-Status, Flugzustand), `PlannedRoutePacket`/`PlannedAreaPacket` (berechnete Route bzw. vorgegebene Fläche) und `FlightHistoryPacket` (geflogene Strecke).
-3. **Web-Anbindung** (Bodenstation -> Browser): Die Bodenstation übersetzt die empfangenen LoRa-Pakete nicht direkt weiter, sondern schreibt sie in einen zentralen, thread-sicheren Zustandsspeicher (`FlightStorage`, Teil von [`shared_components/flight_data`](shared_components/flight_data)). Ein HTTP-/WebSocket-Server liest daraus und serialisiert die Daten getrennt als JSON für das Web-Frontend. LoRa-Format und Web-JSON-Format sind damit vollständig entkoppelt.
+1. **Funkschicht** ([`shared_components/lora_com`](./shared_components/lora_com)): Ansteuerung des SX1262-Funkmoduls über die RadioLib-Bibliothek. Da ein LoRa-Paket auf 255 Byte begrenzt ist, implementiert diese Schicht eine eigene Fragmentierung größerer Nachrichten (Kopf mit Nachrichten-ID, Fragment-ID und Gesamtfragmentzahl), eine Bestätigung jedes Fragments per ACK mit Zeitüberschreitung (2 s) und bis zu drei Wiederholungsversuchen, sowie periodische Keep-Alive-Pings (Standard: alle 30 s), um die Verbindung zu überwachen, falls keine andere Nachricht gesendet wird.
+2. **Anwendungsprotokoll** ([`shared_components/flight_com`](./shared_components/flight_com)): definiert typisierte Pakete auf Basis der Funkschicht, u. a. `SensorUpdate` (Luftdruck, Kurs), `PositionUpdate` (GPS-Position), `ComponentStatus` (Verbindungszustand der einzelnen Subsysteme, Override-Status, Flugzustand), `PlannedRoutePacket`/`PlannedAreaPacket` (berechnete Route bzw. vorgegebene Fläche) und `FlightHistoryPacket` (geflogene Strecke).
+3. **Web-Anbindung** (Bodenstation -> Browser): Die Bodenstation übersetzt die empfangenen LoRa-Pakete nicht direkt weiter, sondern schreibt sie in einen zentralen, thread-sicheren Zustandsspeicher (`FlightStorage`, Teil von [`shared_components/flight_data`](./shared_components/flight_data)). Ein HTTP-/WebSocket-Server liest daraus und serialisiert die Daten getrennt als JSON für das Web-Frontend. LoRa-Format und Web-JSON-Format sind damit vollständig entkoppelt.
 
 ### Web-Stack der Bodenstation
 
 Die Bodenstation öffnet einen WLAN-AP (Standard-SSID, konfigurierbar über Kconfig, alternativ ein "Dev-Mode", in dem stattdessen erst versucht wird, sich mit einem bestehenden WLAN zu verbinden) sowie einen HTTP-Server. Dieser bedient:
 
-- **Statische Dateien** der Weboberfläche aus einer LittleFS-Flash-Partition (`/*`-Route als Fallback-Handler). Das Verzeichnis `base_station/static` ist ein Symlink auf `frontend_web/dist`, sodass ein Frontend-Build direkt als Flash-Image eingebunden wird (`littlefs_create_partition_image` in [`base_station/CMakeLists.txt`](base_station/CMakeLists.txt)).
+- **Statische Dateien** der Weboberfläche aus einer LittleFS-Flash-Partition (`/*`-Route als Fallback-Handler). Das Verzeichnis `base_station/static` ist ein Symlink auf `frontend_web/dist`, sodass ein Frontend-Build direkt als Flash-Image eingebunden wird (`littlefs_create_partition_image` in [`base_station/CMakeLists.txt`](./base_station/CMakeLists.txt)).
 - **REST-API-Endpunkte**: u. a. `GET /api/status` (Verbindungsstatus), `POST`/`GET /api/area` (Zielfläche setzen/lesen), `GET /api/route` (berechnete Route abfragen). Details siehe "API-Referenz der Bodenstation" unten.
 - **WebSocket-Endpunkt** (`GET /api/ws`): sendet alle 5 Sekunden drei Nachrichtentypen an alle verbundenen Clients: `flight` (Positionen, geplante/geflogene Route), `connection` (Verbindungszustände aller Subsysteme), `sensor` (Luftdruck, berechnete Höhe, Kurs). Details siehe unten.
 
 ### API-Referenz der Bodenstation
 
-Sämtliche HTTP- und WebSocket-Endpunkte werden in der ESP-IDF-Komponente [`base_station/components/frontend`](base_station/components/frontend) registriert (`FrontendHandlerClass::init()`), nicht im `base_controller`. Beim Start wird zunächst `httpd_start` aufgerufen, dann die LittleFS-Partition gemountet und anschließend werden die Handler in fester Reihenfolge registriert: `/api/ping`, `/api/ws`, die übrigen REST-Endpunkte und zuletzt der statische Datei-Handler `/*`. Diese Reihenfolge ist notwendig, da `/*` als Wildcard sonst alle spezifischeren Routen verdecken würde. Parallel dazu startet ein FreeRTOS-Task, der alle 5 Sekunden Status-Pakete via WebSocket verschickt.
+Sämtliche HTTP- und WebSocket-Endpunkte werden in der ESP-IDF-Komponente [`base_station/components/frontend`](./base_station/components/frontend) registriert (`FrontendHandlerClass::init()`), nicht im `base_controller`. Beim Start wird zunächst `httpd_start` aufgerufen, dann die LittleFS-Partition gemountet und anschließend werden die Handler in fester Reihenfolge registriert: `/api/ping`, `/api/ws`, die übrigen REST-Endpunkte und zuletzt der statische Datei-Handler `/*`. Diese Reihenfolge ist notwendig, da `/*` als Wildcard sonst alle spezifischeren Routen verdecken würde. Parallel dazu startet ein FreeRTOS-Task, der alle 5 Sekunden Status-Pakete via WebSocket verschickt.
 
 #### Datentypen
 
-Alle Endpunkte tauschen JSON aus, das per `nlohmann::json` direkt aus den C++-Strukturen in [`FrontendPackets.hpp`](base_station/components/frontend/FrontendPackets.hpp) (de-)serialisiert wird. Die Typen im Frontend ([`frontend_web/src/types/`](frontend_web/src/types)) bilden dieselben Strukturen in TypeScript nach:
+Alle Endpunkte tauschen JSON aus, das per `nlohmann::json` direkt aus den C++-Strukturen in [`FrontendPackets.hpp`](./base_station/components/frontend/FrontendPackets.hpp) (de-)serialisiert wird. Die Typen im Frontend ([`frontend_web/src/types/`](./frontend_web/src/types)) bilden dieselben Strukturen in TypeScript nach:
 
 ```ts
 type Coordinate = { longitude: number; latitude: number }
@@ -231,7 +231,7 @@ Nach dem Upgrade wird der Client registriert und alle 5 Sekunden mit drei Nachri
 
 ### Frontend
 
-Die Weboberfläche ([`frontend_web/`](frontend_web)) ist eine Vue-3-/TypeScript-Single-Page-Anwendung, gebaut mit Vite. Sie führt den Bediener über einen Assistenten durch die Missionsvorbereitung:
+Die Weboberfläche ([`frontend_web/`](./frontend_web)) ist eine Vue-3-/TypeScript-Single-Page-Anwendung, gebaut mit Vite. Sie führt den Bediener über einen Assistenten durch die Missionsvorbereitung:
 
 - **Verbindungsübersicht**: zeigt den Live-Status von Basis- und Flugzeugverbindung sowie deren Teilsysteme (GPS, Barometer, Motoransteuerung, Magnetometer) und gibt den nächsten Schritt erst frei, wenn alle Verbindungen stehen.
 - **Flächenplanung**: Zeichnen eines Zielpolygons auf einer Leaflet-Karte (über `leaflet-draw`), Übertragung an die Bodenstation.
@@ -242,7 +242,7 @@ Die Weboberfläche ([`frontend_web/`](frontend_web)) ist eine Vue-3-/TypeScript-
 
 ## Routenplanung
 
-Der [`route_planner`](flight_controller/components/route_planner) erzeugt aus einem vom Bediener gezeichneten Polygon ein Mäander- bzw. Boustrophedon-Muster:
+Der [`route_planner`](./flight_controller/components/route_planner) erzeugt aus einem vom Bediener gezeichneten Polygon ein Mäander- bzw. Boustrophedon-Muster:
 
 1. **Sweep-Lines erzeugen**: Aus der Bounding-Box des Polygons werden äquidistante, horizontale Linien (parallel zum Breitengrad) im Abstand der effektiven Schwadbreite berechnet.
 2. **Zuschneiden auf das Polygon**: Jede Linie wird mit dem tatsächlichen, auch konkaven, Polygon geschnitten (Geometriebibliothek [`homog2d`](https://github.com/skramm/homog2d)). Bei mehreren Schnittpunkten wird nur das äußere Segment behalten, sodass Löcher und konkave Formen korrekt ausgespart werden.
@@ -253,7 +253,7 @@ In der aktuellen Implementierung ruft der Flugcontroller die Routenplanung mit e
 
 ## Flugregelung
 
-Der Flugcontroller ([`FlightController`](flight_controller/components/flight_controller)) läuft als FreeRTOS-Task mit einem festen Zyklus von 50 ms und implementiert eine kaskadierte PI-Regelung für vier Steuergrößen:
+Der Flugcontroller ([`FlightController`](./flight_controller/components/flight_controller)) läuft als FreeRTOS-Task mit einem festen Zyklus von 50 ms und implementiert eine kaskadierte PI-Regelung für vier Steuergrößen:
 
 - **Seitenruder (Kurs):** Aus der aktuellen GPS-Position und dem nächsten Wegpunkt wird die Soll-Peilung (Bearing) berechnet und mit dem gemessenen Kompasskurs verglichen. Der normalisierte Peilungsfehler wird proportional (P-Regelung) auf das Seitenruder abgebildet.
 - **Höhenhaltung:** Die Differenz aus Zielhöhe (60 m) und gemessener Höhe treibt zwei parallele PI-Regelungen: eine für den Schub und eine für den Ziel-Pitch-Winkel, der wiederum als Sollwert in die Nickregelung einfließt (kaskadierte Regelung).
@@ -299,8 +299,8 @@ Der Futaba SBUS Empfänger kommuniziert über eine invertierte UART Schnittstell
 
 Zwei Werkzeuge unterstützen die Entwicklung, sind aber nicht Teil der eigentlichen Flugsoftware:
 
-- [`python/`](python): Zwei kleine Skripte zur Offline-Visualisierung der vom Routenplaner erzeugten Sweep-Pfade, als einfacher 2D-Plot (`matplotlib`) oder auf einer interaktiven Karte (`folium`).
-- [`serial_plane_viz/`](serial_plane_viz): Ein Browser-Werkzeug (three.js), das Servo-Ausschläge (Motor, Roll, Pitch, Yaw), die über eine serielle Schnittstelle im selben Wertebereich wie das I2C-Protokoll des Motor-Controllers gesendet werden, an einem einfachen 3D-Flugzeugmodell visualisiert. Das ist nützlich zur Fehlersuche ohne reales Flugzeug.
+- [`python/`](./python): Zwei kleine Skripte zur Offline-Visualisierung der vom Routenplaner erzeugten Sweep-Pfade, als einfacher 2D-Plot (`matplotlib`) oder auf einer interaktiven Karte (`folium`).
+- [`serial_plane_viz/`](./serial_plane_viz): Ein Browser-Werkzeug (three.js), das Servo-Ausschläge (Motor, Roll, Pitch, Yaw), die über eine serielle Schnittstelle im selben Wertebereich wie das I2C-Protokoll des Motor-Controllers gesendet werden, an einem einfachen 3D-Flugzeugmodell visualisiert. Das ist nützlich zur Fehlersuche ohne reales Flugzeug.
 
 # Tests und Evaluation
 
@@ -312,7 +312,7 @@ Zwei Werkzeuge unterstützen die Entwicklung, sind aber nicht Teil der eigentlic
 
 ## Evaluation anhand des Entwicklungsverlaufs
 
-Das Entwicklungsprotokoll ([`resources/learning.md`](resources/learning.md)) dokumentiert den Fortschritt über zwölf Wochen und erlaubt eine ehrliche Einschätzung des tatsächlich erreichten Funktionsstands:
+Das Entwicklungsprotokoll ([`resources/learning.md`](./resources/learning.md)) dokumentiert den Fortschritt über zwölf Wochen und erlaubt eine ehrliche Einschätzung des tatsächlich erreichten Funktionsstands:
 
 - Erfolgreich umgesetzt und in Betrieb genommen wurden: GPS-Auswertung, eine funktionierende LoRa-Verbindung mit Bestätigungen und Keep-Alive-Pings, die I2C-Anbindung von Barometer und IMU sowi    e, nach den beschriebenen Hardware-Problemen, eine funktionsfähige Magnetometer-Anbindung.
 - Mehrere grundlegende technische Probleme mussten während der Entwicklung gelöst werden, u. a. eine notwendige Paketfragmentierung für LoRa-Nachrichten über 255 Byte, ein Deadlock in der Event-Handler-Warteschlange sowie die oben beschriebenen I2C-Bus-Aussetzer im Zusammenhang mit dem Magnetometer.
