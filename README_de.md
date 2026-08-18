@@ -74,7 +74,7 @@ Da LoRa bei großer Reichweite nur eine sehr geringe Bandbreite bietet, ist die 
 | MPU6050 (Beschleunigungssensor + Gyroskop) | Flugzeug | Lagebestimmung (Roll/Pitch) |
 | Magnetometer HMC5883L | Flugzeug | Kursbestimmung (Heading) |
 | Barometer (BME280) | Flugzeug, Bodenstation | Höhenbestimmung über Luftdruck |
-| Level Shifter (3,3 V ↔ 5 V) | Flugzeug | I2C-Pegelanpassung zwischen ESP32-S3 (3,3 V) und Arduino Nano (5 V) |
+| Level Shifter (3,3 V <-> 5 V) | Flugzeug | I2C-Pegelanpassung zwischen ESP32-S3 (3,3 V) und Arduino Nano (5 V) |
 | Time-of-Flight-Sensor TOF200C | Flugzeug | Bodenabstandsmessung, vorgesehen für die automatische Landung |
 | SBUS-Empfänger | Flugzeug | Empfang der RC-Fernsteuerbefehle |
 | 4× Servo / ESC | Flugzeug | Querruder (differentiell), Höhenruder, Schub, Seitenruder |
@@ -84,6 +84,22 @@ Da LoRa bei großer Reichweite nur eine sehr geringe Bandbreite bietet, ist die 
 Die vollständige Stückliste befindet sich in [`BOM.md`](BOM.md). Der TOF200C-Abstandssensor ist Teil der Beschaffungsliste, aber im aktuellen Funktionsumfang noch nicht in die Firmware integriert, da die automatische Landung wie im Abschnitt "Bekannte Einschränkungen und mögliche Verbesserungen" beschrieben noch nicht umgesetzt ist.
 
 Beim Magnetometer wurde ursprünglich ein QMC5883P eingesetzt und im Projektverlauf durch ein HMC5883L ersetzt. Beide zugehörigen Datenblätter liegen unter [`resources/`](resources) vor, der Grund für den Wechsel wird in Abschnitt "Technische Umsetzung und wesentliche Designentscheidungen" erläutert.
+
+### Schaltpläne
+
+Die Schaltpläne für Flugzeug und Bodenstation wurden mit [Fritzing](https://fritzing.org/) erstellt. Die Quelldateien liegen als [`assets/schematics_plane.fzz`](assets/schematics_plane.fzz) bzw. [`assets/schematics_base.fzz`](assets/schematics_base.fzz) vor, zusammen mit selbst angelegten Fritzing-Bauteilen für Module ohne offizielle Fritzing-Unterstützung ([BMP280-Breakout](<assets/BMP280_Breakout_Board.fzpz>), [GT-U8-GPS-Modul](<assets/GT-U8-GPS-module.fzpz>), [Heltec WiFi Kit 32 (V3)](<assets/Heltec WiFi Kit 32 (V3).fzpz>)).
+
+**Flugzeug:**
+
+![Schaltplan des Flugzeugs mit Heltec LoRa32 V3, GPS, IMU, Magnetometer, Barometer und Anbindung an den Arduino-Motor-Controller](assets/schematics_plane_schem.svg)
+
+![Steckplatinen-Ansicht der Verkabelung im Flugzeug](assets/schematics_plane_bb.svg)
+
+**Bodenstation:**
+
+![Schaltplan der Bodenstation mit Heltec LoRa32 V3, GPS und Barometer](assets/schematics_base_schem.svg)
+
+![Steckplatinen-Ansicht der Verkabelung der Bodenstation](assets/schematics_base_bb.svg)
 
 ### Mechanischer Aufbau
 

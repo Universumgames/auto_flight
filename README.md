@@ -31,6 +31,22 @@ This is a student project (semester 12, MRB) and is very much a work in progress
 - GPS module (NMEA, parsed with minmea), MPU6050 IMU, magnetometer (HMC5883L/QMC5883P), barometer, SD card (for LittleFS storage on the base station).
 - See [BOM.md](BOM.md) and [resources/pinout_lheltec_lora32_v3.png](resources/pinout_lheltec_lora32_v3.png) / [motor_controller/Readme.md](motor_controller/Readme.md) for parts and pinouts.
 
+### Schematics
+
+The plane's and base station's wiring was drawn in [Fritzing](https://fritzing.org/); source files are [assets/schematics_plane.fzz](assets/schematics_plane.fzz) and [assets/schematics_base.fzz](assets/schematics_base.fzz), along with custom Fritzing parts for modules without official support ([BMP280 breakout](<assets/BMP280_Breakout_Board.fzpz>), [GT-U8 GPS module](<assets/GT-U8-GPS-module.fzpz>), [Heltec WiFi Kit 32 (V3)](<assets/Heltec WiFi Kit 32 (V3).fzpz>)).
+
+**Plane:**
+
+![Plane schematic: Heltec LoRa32 V3, GPS, IMU, magnetometer, barometer and the link to the Arduino motor controller](assets/schematics_plane_schem.svg)
+
+![Plane breadboard view showing the wiring](assets/schematics_plane_bb.svg)
+
+**Base station:**
+
+![Base station schematic: Heltec LoRa32 V3, GPS and barometer](assets/schematics_base_schem.svg)
+
+![Base station breadboard view showing the wiring](assets/schematics_base_bb.svg)
+
 ## Prerequisites
 
 - [ESP-IDF](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s3/get-started/index.html) (v5.x) for `flight_controller` and `base_station`. A devcontainer is provided in each (`.devcontainer/`) if you prefer not to install ESP-IDF locally.
