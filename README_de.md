@@ -229,14 +229,12 @@ Nach dem Upgrade wird der Client registriert und alle 5 Sekunden mit drei Nachri
 
 ### Frontend
 
-Die Weboberfläche ([`frontend_web/`](frontend_web)) ist eine Vue-3-/TypeScript-Single-Page-Anwendung, gebaut mit Vite. Sie führt den Bediener über einen Assistenten (Zustandsautomat `Connection → Area Selection → Route Approval → Starting → Flying → Finishing`) durch die Missionsvorbereitung:
+Die Weboberfläche ([`frontend_web/`](frontend_web)) ist eine Vue-3-/TypeScript-Single-Page-Anwendung, gebaut mit Vite. Sie führt den Bediener über einen Assistenten durch die Missionsvorbereitung:
 
 - **Verbindungsübersicht**: zeigt den Live-Status von Basis- und Flugzeugverbindung sowie deren Teilsysteme (GPS, Barometer, Motoransteuerung, Magnetometer) und gibt den nächsten Schritt erst frei, wenn alle Verbindungen stehen.
 - **Flächenplanung**: Zeichnen eines Zielpolygons auf einer Leaflet-Karte (über `leaflet-draw`), Übertragung an die Bodenstation.
 - **Routenvorschau**: Abfrage der vom Flugzeug berechneten Route, Darstellung auf der Karte zusammen mit der bisher geflogenen Strecke.
 - **Live-Telemetrie**: laufende Aktualisierung von Position, Route und Sensorwerten über die WebSocket-Verbindung, ergänzt um einen eigenen Ping/Pong-Herzschlag im Frontend zur Erkennung von Verbindungsabbrüchen.
-
-Für die Zustandsverwaltung nutzt die Anwendung einen selbst geschriebenen, reaktiven Store (`stores/store.ts`) auf Basis der Vue-3-`reactive()`-API.
 
 # Technische Umsetzung und wesentliche Designentscheidungen
 
