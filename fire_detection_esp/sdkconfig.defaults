@@ -1,0 +1,16 @@
+# Requires a 4MB+ flash chip: the app partition alone is 3MB (see partitions.csv).
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# TFLite Micro's interpreter setup and the (future) camera decode path use
+# more stack than the default main task allows.
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
+
+# C++ exceptions/RTTI are off by default in ESP-IDF; TFLM doesn't need them,
+# but leave this here as a reminder if a future dependency does.
+# CONFIG_COMPILER_CXX_EXCEPTIONS=y
+
+# On an S3/PSRAM board (e.g. ESP32-S3-EYE), also enable PSRAM support via
+# `idf.py menuconfig` -> Component config -> ESP PSRAM, and consider moving
+# the tensor arena into PSRAM (see main/inference.cc) if you grow the model.

@@ -1,0 +1,10 @@
+.DS_Store
+data/
+models/
+.venv/
+venv/
+.idea/
+__pycache__/
+*.pyc
+*.keras
+*.tflite

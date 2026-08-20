@@ -1,0 +1,7 @@
+## IDF Component Manager Manifest File
+dependencies:
+  idf:
+    # >=5.2 for the driver/i2c_master.h API used in i2c_task.c.
+    version: '>=5.2'
+  espressif/esp-tflite-micro:
+    version: '*'
