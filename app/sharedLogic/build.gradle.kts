@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -6,14 +7,33 @@ plugins {
 }
 
 kotlin {
-    listOf(
-        iosArm64(),
+    //listOf(
+        iosArm64()//,
         iosSimulatorArm64()
-    ).forEach { iosTarget ->
+    /*).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "SharedLogic"
             isStatic = true
         }
+    }*/
+
+    @OptIn(ExperimentalSwiftExportDsl::class)
+    swiftExport {
+        // Set the root module name
+        moduleName = "SharedLogic"
+
+        // Set the collapse rule
+        // Removes package prefix from generated Swift code
+        flattenPackage = "de.universegame.auto_flight.app"
+
+        // Configure external modules export
+        /*@OptIn(ExperimentalSwiftExportDsl::class)
+        export(project(":subproject")) {
+            // Set the name for the exported module
+            moduleName = "Subproject"
+            // Set the collapse rule for the exported dependency
+            flattenPackage = "de.universegame.auto_flight.library"
+        }*/
     }
 
     android {
