@@ -3,7 +3,7 @@ package de.universegame.auto_flight.app
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SharedCommonTest {
+class SharedUICommonTest {
 
     @Test
     fun example() {
