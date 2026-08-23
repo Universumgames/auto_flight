@@ -1,0 +1,57 @@
+import SwiftUI
+import SharedLogic
+
+/// Shared list rendering for `ConnectionItems.shared.items(state:)`, used both by
+/// the full Connection screen and the compact status popover.
+struct ConnectionItemsList: View {
+    let items: [ConnectionItem]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        StatusDot(connected: ConnectionItems.shared.isConnected(status: item.status))
+                        Text(item.label).font(.headline)
+                        Spacer()
+                        Text(ConnectionItems.shared.formatStatus(status: item.status))
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(Color.secondary.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                    ForEach(Array(item.subTasks.enumerated()), id: \.offset) { _, subTask in
+                        HStack(spacing: 6) {
+                            if subTask.state == .DONE {
+                                Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+                            } else {
+                                ProgressView().scaleEffect(0.6).frame(width: 14, height: 14)
+                            }
+                            Text(subTask.label).font(.subheadline).foregroundStyle(.secondary)
+                        }
+                    }
+                }
+                .padding(12)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+        }
+    }
+}
+
+struct StatusDot: View {
+    let connected: Bool
+    var body: some View {
+        if connected {
+            Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
+        } else {
+            ProgressView().scaleEffect(0.7).frame(width: 16, height: 16)
+        }
+    }
+}
+
+
+#Preview {
+    ConnectionItemsList(items: [AppState.shared.baseStationItem] + AppState.shared.planeItems)
+}

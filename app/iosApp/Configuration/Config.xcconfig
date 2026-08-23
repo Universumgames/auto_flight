@@ -1,6 +1,6 @@
 TEAM_ID=
 
-PRODUCT_NAME=app
+PRODUCT_NAME=Auto Flight
 PRODUCT_BUNDLE_IDENTIFIER=de.universegame.auto_flight.app.app$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1

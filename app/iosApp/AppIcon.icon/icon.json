@@ -1,0 +1,82 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.00000,0.62193,0.27937,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill" : {
+            "linear-gradient" : [
+              "display-p3:0.00000,0.80061,0.80061,1.00000",
+              "display-p3:0.28926,0.55781,1.00000,1.00000"
+            ],
+            "orientation" : {
+              "start" : {
+                "x" : 0.5,
+                "y" : 0
+              },
+              "stop" : {
+                "x" : 0.713515967093654,
+                "y" : 0.566655714563863
+              }
+            }
+          },
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "plane.svg",
+          "name" : "plane",
+          "position" : {
+            "scale" : 1.07,
+            "translation-in-points" : [
+              -105.3125,
+              138.4375
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    },
+    {
+      "layers" : [
+        {
+          "fill" : {
+            "automatic-gradient" : "extended-gray:1.00000,1.00000"
+          },
+          "glass" : false,
+          "image-name" : "compass.svg",
+          "name" : "compass",
+          "position" : {
+            "scale" : 0.65,
+            "translation-in-points" : [
+              255.2265625,
+              -254.21875
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

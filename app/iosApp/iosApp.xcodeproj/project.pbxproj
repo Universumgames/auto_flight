@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		55EED775303874470011FC8A /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 55EED774303874470011FC8A /* AppIcon.icon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		5BDB0D6ACC1D2C8E9F9D46A7 /* app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = app.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		55EED774303874470011FC8A /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		5BDB0D6ACC1D2C8E9F9D46A7 /* Auto Flight.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Auto Flight.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,7 +55,7 @@
 		2E925E612999D155AB8DB97F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5BDB0D6ACC1D2C8E9F9D46A7 /* app.app */,
+				5BDB0D6ACC1D2C8E9F9D46A7 /* Auto Flight.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -58,6 +63,7 @@
 		DA1B8446AA03E5FAB4E7F6B1 = {
 			isa = PBXGroup;
 			children = (
+				55EED774303874470011FC8A /* AppIcon.icon */,
 				992FC46D3D538FECDA41E6E6 /* Configuration */,
 				2AB048961519C7B4C6AAA89B /* iosApp */,
 				2E925E612999D155AB8DB97F /* Products */,
@@ -88,7 +94,7 @@
 			packageProductDependencies = (
 			);
 			productName = iosApp;
-			productReference = 5BDB0D6ACC1D2C8E9F9D46A7 /* app.app */;
+			productReference = 5BDB0D6ACC1D2C8E9F9D46A7 /* Auto Flight.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -130,6 +136,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55EED775303874470011FC8A /* AppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +145,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		55EED6B330385AD50011FC8A /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -253,10 +261,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = "${TEAM_ID}";
+				DEVELOPMENT_TEAM = 98ZXK38P8L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To locate user on map when selecting the area to fly over";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -266,6 +276,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "de.universegame.auto-flight.app";
+				PRODUCT_NAME = "Auto Flight";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -346,10 +358,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 98ZXK38P8L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To locate user on map when selecting the area to fly over";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -359,6 +373,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				PRODUCT_BUNDLE_IDENTIFIER = "de.universegame.auto-flight.app";
+				PRODUCT_NAME = "Auto Flight";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
