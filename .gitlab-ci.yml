@@ -63,7 +63,7 @@ base_station:
   needs: []
   image: espressif/idf:v6.0.1
   before_script:
-    - cd base_controller
+    - cd base_station
     - idf.py build
   script:
     - cd base_station
