@@ -63,8 +63,8 @@ base_station:
   needs: []
   image: espressif/idf:v6.0.1
   before_script:
-    - apt-get update -qq && apt-get install -y --no-install-recommends -qq nodejs npm
-    - (cd frontend_web && npm ci && npm run build)
+    - cd base_controller
+    - idf.py build
   script:
     - cd base_station
     - idf.py build
