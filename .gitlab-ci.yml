@@ -30,3 +30,44 @@ ios_app:
     paths:
       - app/build/ios/Build/Products
     expire_in: 1 week
+
+motor_controller:
+  stage: build
+  needs: []
+  image: python:3.12-slim
+  before_script:
+    - pip install --no-cache-dir platformio
+  script:
+    - cd motor_controller
+    - pio run
+  artifacts:
+    paths:
+      - motor_controller/.pio/build
+    expire_in: 1 week
+
+flight_controller:
+  stage: build
+  needs: []
+  image: espressif/idf:v5.3.4
+  script:
+    - cd flight_controller
+    - idf.py build
+  artifacts:
+    paths:
+      - flight_controller/build
+    expire_in: 1 week
+
+base_station:
+  stage: build
+  needs: []
+  image: espressif/idf:v5.3.4
+  before_script:
+    - apt-get update -qq && apt-get install -y --no-install-recommends -qq nodejs npm
+    - cd frontend_web && npm ci && npm run build && cd ..
+  script:
+    - cd base_station
+    - idf.py build
+  artifacts:
+    paths:
+      - base_station/build
+    expire_in: 1 week
