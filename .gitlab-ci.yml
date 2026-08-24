@@ -49,7 +49,7 @@ motor_controller:
 flight_controller:
   stage: build
   needs: []
-  image: espressif/idf:v5.3.4
+  image: espressif/idf:v6.0.1
   script:
     - cd flight_controller
     - idf.py build
@@ -61,7 +61,7 @@ flight_controller:
 base_station:
   stage: build
   needs: []
-  image: espressif/idf:v5.3.4
+  image: espressif/idf:v6.0.1
   before_script:
     - apt-get update -qq && apt-get install -y --no-install-recommends -qq nodejs npm
     - cd frontend_web && npm ci && npm run build && cd ..
