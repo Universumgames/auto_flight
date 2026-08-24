@@ -1,13 +1,13 @@
 stages:
-  - docs
   - build
 
 readme_pdf:
-  stage: docs
+  stage: build
+  needs: []
   image: debian:bookworm-slim
   before_script:
     - apt-get update -qq
-    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-lang-german texlive-latex-extra texlive-xetex lmodern poppler-utils
+    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-fonts-extra texlive-lang-german texlive-latex-extra texlive-xetex lmodern poppler-utils
   script:
     - make export_documentation
   artifacts:
@@ -17,6 +17,7 @@ readme_pdf:
 
 ios_app:
   stage: build
+  needs: []
   tags:
     - private
     - macos
