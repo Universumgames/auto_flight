@@ -1,15 +1,31 @@
 stages:
   - docs
+  - build
 
 readme_pdf:
   stage: docs
   image: debian:bookworm-slim
   before_script:
     - apt-get update -qq
-    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-lang-german texlive-latex-extra lmodern
+    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-lang-german texlive-latex-extra texlive-xetex lmodern poppler-utils
   script:
     - make export_documentation
   artifacts:
     paths:
       - README.pdf
+    expire_in: 1 week
+
+ios_app:
+  stage: build
+  tags:
+    - private
+    - macos
+    - arm
+    - universum
+  script:
+    - cd app
+    - xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+  artifacts:
+    paths:
+      - app/build/ios/Build/Products
     expire_in: 1 week
