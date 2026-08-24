@@ -7,7 +7,7 @@ readme_pdf:
   image: debian:bookworm-slim
   before_script:
     - apt-get update -qq
-    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-fonts-extra texlive-lang-german texlive-latex-extra texlive-xetex lmodern poppler-utils
+    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-fonts-extra texlive-lang-german texlive-latex-extra texlive-xetex lmodern poppler-utils librsvg2-bin
   script:
     - make export_documentation
   artifacts:
@@ -64,7 +64,7 @@ base_station:
   image: espressif/idf:v6.0.1
   before_script:
     - apt-get update -qq && apt-get install -y --no-install-recommends -qq nodejs npm
-    - cd frontend_web && npm ci && npm run build && cd ..
+    - (cd frontend_web && npm ci && npm run build)
   script:
     - cd base_station
     - idf.py build
