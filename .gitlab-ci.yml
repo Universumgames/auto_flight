@@ -1,8 +1,30 @@
 stages:
+  - test
   - build
+  - doc
+
+flight_controller_test:
+  stage: test
+  needs: []
+  image: debian:bookworm-slim
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends -qq cmake g++ make libgtest-dev libgmock-dev
+  script:
+    - cd flight_controller
+    - cmake -S . -B build_native -DCMAKE_BUILD_TYPE=Debug
+    - cmake --build build_native -j"$(nproc)"
+    - ./build_native/flight_controller_test --gtest_output=xml:build_native/report.xml
+  artifacts:
+    when: always
+    reports:
+      junit: flight_controller/build_native/report.xml
+    paths:
+      - flight_controller/build_native/report.xml
+    expire_in: 1 week
 
 readme_pdf:
-  stage: build
+  stage: doc
   needs: []
   image: debian:bookworm-slim
   before_script:
@@ -63,8 +85,7 @@ base_station:
   needs: []
   image: espressif/idf:v6.0.1
   before_script:
-    - cd base_station
-    - idf.py build
+    - (cd frontend_web && mkdir dist)
   script:
     - cd base_station
     - idf.py build

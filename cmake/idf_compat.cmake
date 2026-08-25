@@ -4,6 +4,10 @@
 
 include(CMakeParseArguments)
 
+# Captured here (not inside the function below) because CMAKE_CURRENT_LIST_DIR
+# inside a function reflects the caller's file, not this one.
+set(IDF_COMPAT_NATIVE_STUBS_DIR "${CMAKE_CURRENT_LIST_DIR}/native_stubs")
+
 # Global interface target collecting all component properties
 add_library(idf_components INTERFACE)
 
@@ -108,6 +112,14 @@ function(idf_component_register)
         )
 
     endforeach()
+
+    # Minimal ESP-IDF header stand-ins (e.g. esp_log.h) so component sources
+    # don't need to be rewritten just to build natively.
+    target_include_directories(
+        ${TARGET_NAME}
+        PUBLIC
+        "${IDF_COMPAT_NATIVE_STUBS_DIR}"
+    )
 
     foreach(inc ${IDF_PRIV_INCLUDE_DIRS})
 

@@ -1,7 +1,5 @@
 #include "MotorComMaster.hpp"
 
-#include "i2c_manager.hpp"
-
 static MotorComMasterClass *motorComMasterClass = nullptr;
 
 MotorComMasterClass& MotorComMaster = MotorComMasterClass::getInstance();

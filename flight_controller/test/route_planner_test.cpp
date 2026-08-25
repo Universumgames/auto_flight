@@ -73,7 +73,7 @@ TEST(RoutePlannerTest, simpleSweepLines) {
     }
 
     std::ofstream os("sweepLines.txt");
-    serialize(path, os);
+    simpleSerialize(path, os);
     os.close();
 }
 
@@ -94,6 +94,6 @@ TEST(RoutePlannerTest, sweepPath) {
     }
 
     std::ofstream os("sweepPath.txt");
-    serialize(path, os);
+    simpleSerialize(path, os);
     os.close();
 }

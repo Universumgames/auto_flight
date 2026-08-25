@@ -12,4 +12,10 @@ if (NOT NATIVE_BUILD)
     if (FLIGHT_DEVICE_TYPE_PLANE EQUAL 1)
         idf_component_optional_requires(PRIVATE motor_com_master magnetometer)
     endif ()
+else ()
+    # Flight_Communication.cpp drives the LoRa radio and is ESP-only; the
+    # packets/ headers are plain C++ and needed by native tests.
+    idf_component_register(
+            INCLUDE_DIRS "." "packets"
+    )
 endif ()
