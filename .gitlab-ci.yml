@@ -90,3 +90,17 @@ base_station:
     paths:
       - base_station/build
     expire_in: 1 week
+
+3d_models:
+  stage: build
+  needs: []
+  image: debian:bookworm-slim
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends -qq make openscad
+  script:
+    - make build_3d_models
+  artifacts:
+    paths:
+      - 3d_models/build
+    expire_in: 1 week
