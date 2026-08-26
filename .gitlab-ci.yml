@@ -11,10 +11,7 @@ flight_controller_test:
     - apt-get update -qq
     - apt-get install -y --no-install-recommends -qq cmake g++ make libgtest-dev libgmock-dev
   script:
-    - cd flight_controller
-    - cmake -S . -B build_native -DCMAKE_BUILD_TYPE=Debug
-    - cmake --build build_native -j"$(nproc)"
-    - ./build_native/flight_controller_test --gtest_output=xml:build_native/report.xml
+    - make test_flight_controller
   artifacts:
     when: always
     reports:
