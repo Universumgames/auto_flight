@@ -8,4 +8,13 @@ idf_component_register(
         REQUIRES gps barometer flight_data lora_com gyroscope flight_com route_planner homog2d motor_com_master magnetometer oled_display
 )
 
+else()
+# FlightController.cpp drives hardware/RTOS directly and is ESP-only;
+# SteeringLaw is plain C++ control-law math and needed by native tests.
+idf_component_register(
+        SRCS "SteeringLaw.cpp"
+        INCLUDE_DIRS "."
+        REQUIRES flight_data
+)
+
 endif()
