@@ -22,10 +22,7 @@
 #pragma GCC diagnostic pop
 #endif
 
-struct LoRaPacket {
-    size_t length;
-    uint8_t* payload;
-};
+#include "LoRaPacket.hpp"
 
 
 class LoRa_CommunicationClass {

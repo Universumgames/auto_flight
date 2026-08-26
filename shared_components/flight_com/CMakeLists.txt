@@ -14,8 +14,11 @@ if (NOT NATIVE_BUILD)
     endif ()
 else ()
     # Flight_Communication.cpp drives the LoRa radio and is ESP-only; the
-    # packets/ headers are plain C++ and needed by native tests.
+    # packets/ headers and PacketCodec.cpp's decodePacket are plain C++ and
+    # needed by native tests.
     idf_component_register(
+            SRCS "PacketCodec.cpp"
             INCLUDE_DIRS "." "packets"
+            REQUIRES flight_data
     )
 endif ()
