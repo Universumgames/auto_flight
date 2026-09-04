@@ -28,6 +28,7 @@ struct PolygonMapView: View {
     @Binding var polygon: [Coordinate]
     let basePosition: Coordinate?
     let planePosition: Coordinate?
+    let planeHeading: Double?
 
     @StateObject private var locationManager = DeviceLocationManager()
     @State private var cameraPosition: MapCameraPosition = .region(
@@ -37,7 +38,7 @@ struct PolygonMapView: View {
     var body: some View {
         MapReader { proxy in
             Map(position: $cameraPosition) {
-                if polygon.count >= 2 {
+                if polygon.count > 2 {
                     MapPolygon(coordinates: polygon.map(\.clCoordinate))
                         .foregroundStyle(Color.blue.opacity(0.2))
                         .stroke(Color.blue, lineWidth: 2)
@@ -55,7 +56,7 @@ struct PolygonMapView: View {
                 }
                 if let plane = planePosition {
                     Annotation("Plane", coordinate: plane.clCoordinate) {
-                        MarkerBadge.plane()
+                        MarkerBadge.plane(rotation: planeHeading)
                     }
                 }
             }
@@ -66,16 +67,21 @@ struct PolygonMapView: View {
                     }
                 }
             )
-            .overlay(alignment: .topTrailing) {
+            .overlay(alignment: .bottomTrailing) {
                 VStack(spacing: 10) {
-                    mapButton(systemImage: "location.fill") { recenter() }
+                    mapButton(systemImage: "scope") { recenter() }
                     if !polygon.isEmpty {
                         mapButton(systemImage: "arrow.uturn.backward") { polygon.removeLast() }
                         mapButton(systemImage: "trash") { polygon.removeAll() }
                     }
                 }
-                .padding()
+                .padding([.trailing, .bottom], 16)
             }
+            .mapControls {
+                MapScaleView()
+                MapCompass()
+            }
+            .mapControlVisibility(.visible)
         }
         .onAppear { recenter() }
     }
@@ -109,6 +115,7 @@ extension Coordinate {
     PolygonMapView(
         polygon: .constant([]),
         basePosition: Coordinate.Companion.shared.defaultLocation,
-        planePosition: Coordinate.Companion.shared.defaultLocation
+        planePosition: Coordinate.Companion.shared.defaultLocation,
+        planeHeading: 45
     )
 }

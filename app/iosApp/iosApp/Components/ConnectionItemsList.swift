@@ -5,6 +5,24 @@ import SharedLogic
 /// the full Connection screen and the compact status popover.
 struct ConnectionItemsList: View {
     let items: [ConnectionItem]
+    
+    @ViewBuilder
+    func batteryIcon(_ percent: Int) -> some View {
+        switch percent {
+            case 0...20:
+                Image(systemName: "battery.0percent").foregroundStyle(.red)
+            case 21...40:
+                Image(systemName: "battery.25percent").foregroundStyle(.orange)
+            case 41...60:
+                Image(systemName: "battery.50percent").foregroundStyle(.yellow)
+            case 61...80:
+                Image(systemName: "battery.75percent").foregroundStyle(.green)
+            case 81...100:
+                Image(systemName: "battery.100percent").foregroundStyle(.green)
+            default:
+                Image(systemName: "battery.0percent").foregroundStyle(.gray)
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -13,6 +31,8 @@ struct ConnectionItemsList: View {
                     HStack {
                         StatusDot(connected: ConnectionItems.shared.isConnected(status: item.status))
                         Text(item.label).font(.headline)
+                        batteryIcon(Int(item.batteryPercent))
+                        Text("(\(item.batteryPercent)%)").font(.subheadline).foregroundStyle(.secondary)
                         Spacer()
                         Text(ConnectionItems.shared.formatStatus(status: item.status))
                             .font(.caption)

@@ -19,6 +19,7 @@ struct ConnectionView: View {
             }
             .padding()
         }
+        .connectedToolbar()
     }
 }
 

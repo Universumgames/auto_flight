@@ -42,21 +42,28 @@ struct RouteMapView: View {
                 }
             }
         }
-        .overlay(alignment: .topTrailing) {
-            Button {
-                fitToRoutes()
-            } label: {
-                Image(systemName: "scope")
-                    .frame(width: 20, height: 20)
-                    .padding(10)
-                    .background(.thinMaterial)
-                    .clipShape(Circle())
-                    .shadow(radius: 2)
-            }
-            .padding()
+        .overlay(alignment: .bottomTrailing) {
+            mapButton(systemImage: "scope") { fitToRoutes() }
+                .padding([.trailing, .bottom], 16)
         }
+        .mapControls {
+            MapScaleView()
+            MapCompass()
+        }
+        .mapControlVisibility(.visible)
         .onChange(of: plannedRoute.count) { _, _ in fitToRoutes() }
         .onAppear { fitToRoutes() }
+    }
+
+    private func mapButton(systemImage: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .frame(width: 20, height: 20)
+                .padding(10)
+                .background(.thinMaterial)
+                .clipShape(Circle())
+                .shadow(radius: 2)
+        }
     }
 
     private func fitToRoutes() {

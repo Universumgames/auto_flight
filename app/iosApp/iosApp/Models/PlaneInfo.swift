@@ -32,6 +32,7 @@ final class PlaneInfo {
     var manualOverride: Bool = false
     var flightState: FlightState = .PLANNING
     var pressure: Double = 0
+    var batteryPercentage: Int = -1
     var calculatedAltitude: Double = 0
     var heading: Double = 0
     var flightRoute: [Coordinate]?
@@ -46,7 +47,9 @@ final class PlaneInfo {
     var connectionItem: ConnectionItem {
         ConnectionItem(
             label: "Plane (id: \(id))",
+            connectionItemType: .PLANE,
             status: connectionState,
+            batteryPercent: Int32(batteryPercentage),
             subTasks: [
                 SubTask(label: "Connection", state: stateOf(connectionState == .CONNECTED)),
                 SubTask(

@@ -6,10 +6,8 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if appState.connectionStateBaseStation == .DISCONNECTED {
+            if appState.connectionStateBaseStation == .DISCONNECTED || appState.connectionStateBaseStation == .CONNECTING {
                 BaseSelectionView()
-            } else if appState.connectionStateBaseStation == .CONNECTING {
-                Text("Connecting...")
             } else {
                 BaseConnectedView()
                     .onAppear { appState.resetNavigation() }

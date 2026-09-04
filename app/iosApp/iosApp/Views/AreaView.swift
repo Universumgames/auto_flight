@@ -1,5 +1,5 @@
-import SwiftUI
 import SharedLogic
+import SwiftUI
 
 struct AreaView: View {
     @Environment(ConnectionManager.self) private var connectionManager: ConnectionManager
@@ -10,31 +10,33 @@ struct AreaView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Route Planner").font(.title2).bold()
-                Text("Tap the map to draw a polygon for your route.").font(.subheadline).foregroundStyle(.secondary)
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Tap the map to draw a polygon for your route.").font(.subheadline).foregroundStyle(.secondary)
+                }
+                Spacer()
+                Button("Next Step") {
+                    submit()
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(polygon.isEmpty || loading)
+                .padding(.horizontal)
             }
             .padding(.horizontal)
 
             ZStack {
-                PolygonMapView(polygon: $polygon, basePosition: appState.basePosition, planePosition: appState.planes[defaultPlaneID]?.position)
-                    .frame(minHeight: 400)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal)
+                PolygonMapView(polygon: $polygon, basePosition: appState.basePosition, planePosition: appState.planes[defaultPlaneID]?.position, planeHeading: appState.planes[defaultPlaneID]?.heading)
 
                 if loading {
                     ProgressView().padding().background(.thinMaterial).clipShape(RoundedRectangle(cornerRadius: 12))
                 }
             }
-
-            Button("Next Step") {
-                submit()
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(polygon.isEmpty || loading)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal)
         }
-        .padding(.vertical)
+        .navigationTitle("Route Planner")
+        .padding(.bottom)
+        .connectedToolbar()
         .onAppear {
             connectionManager.fetchArea { fetched in
                 if let fetched, polygon.isEmpty {
@@ -57,7 +59,12 @@ struct AreaView: View {
 }
 
 #Preview {
-    AreaView()
-        .environment(AppState.shared)
-        .environment(ConnectionManager())
+    VStack{
+        NavigationStack {
+            AreaView()
+        }
+        WizardProgressBar()
+    }
+    .environment(AppState.shared)
+    .environment(ConnectionManager())
 }

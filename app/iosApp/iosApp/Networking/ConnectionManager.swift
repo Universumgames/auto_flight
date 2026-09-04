@@ -1,6 +1,7 @@
+import CoreBluetooth
 import Foundation
-import SwiftUI
 @preconcurrency import SharedLogic
+import SwiftUI
 
 /// Native Swift counterpart to `sharedLogic`'s (Android-only) `KtorFlightRepository`.
 /// Talks to the base station with `URLSession` directly - see the module-level
@@ -8,7 +9,7 @@ import SwiftUI
 /// be shared with iOS. Mirrors the same websocket + heartbeat + REST behavior.
 @MainActor
 @Observable
-final class ConnectionManager {
+final class ConnectionManager: NSObject {
     let state = AppState.shared
 
     var host: String {
@@ -22,159 +23,191 @@ final class ConnectionManager {
             }
         }
     }
-    
+
     private var shouldReconnect = false
-    private var webSocketTask: URLSessionWebSocketTask?
-    private var pingTimer: Timer?
-    private var lastPongAt = Date.distantPast
     private var reconnectTask: Task<Void, Never>?
-    
-    init(){
-        
+    internal var centralManager: CBCentralManager?
+
+    // Bluetooth scanning state — updated by BluetoothManager extension
+    var bluetoothState: CBManagerState = .unknown
+    var discoveredPeripherals: [CBPeripheral] = []
+    var isScanning = false
+    internal var pendingStartScan = false
+
+    // Bluetooth connection state — updated by BluetoothManager extension
+    var connectedPeripheral: CBPeripheral?
+    internal var discoveredCharacteristics: [CBUUID: CBCharacteristic] = [:]
+    internal var readCompletions: [CBUUID: (Data?) -> Void] = [:]
+    internal var writeCompletions: [CBUUID: (Error?) -> Void] = [:]
+    internal var notificationHandlers: [CBUUID: (Data) -> Void] = [:]
+    /// UUIDs of characteristics whose next `didUpdateValueFor` delivery is a plain,
+    /// unfragmented GATT read response rather than a fragmented notification.
+    internal var pendingRawReads: Set<CBUUID> = []
+    /// Per-characteristic fragment reassembly state for notified (not read) values.
+    internal var reassemblyBuffers: [CBUUID: FragmentReassemblyBuffer] = [:]
+
+    override init() {
+        super.init()
     }
 
-    func connect(host: String) {
-        self.host = host
+    func tryConnectToPeripheral(_ peripheral: CBPeripheral) {
+        stopBluetoothScan()
         shouldReconnect = true
-        reconnectTask?.cancel()
-        openSocket()
+        state.connectionStateBaseStation = .CONNECTING
+        centralManager?.connect(peripheral, options: nil)
+    }
+
+    func afterFullyConnected(service: CBService) {
+        subscribe(to: CharacteristicUUID.connectionUpdate, handler: onFrameConnectionUpdate)
+        subscribe(to: CharacteristicUUID.sensorData, handler: onFrameSensorUpdate)
+        subscribe(to: CharacteristicUUID.batteryStatus, handler: onFrameBatteryStatus)
+        subscribe(to: CharacteristicUUID.flightUpdate, handler: onFrameFlightData)
+        // areaDefine and plannedRoute have no persistent handler — they're only ever
+        // pulled on demand via awaitNextUpdate(_:) below — but still need their CCCD
+        // enabled so the base station's notifications for them reach us at all.
+        enableNotifications(for: .areaDefine)
+        enableNotifications(for: .plannedRoute)
     }
 
     func disconnect() {
         shouldReconnect = false
         reconnectTask?.cancel()
-        pingTimer?.invalidate()
-        pingTimer = nil
-        webSocketTask?.cancel(with: .goingAway, reason: nil)
-        webSocketTask = nil
-        state.connectionStateBaseStation = .CONNECTING
+        if let peripheral = connectedPeripheral {
+            centralManager?.cancelPeripheralConnection(peripheral)
+        }
+        clearSubscriptions()
+        state.connectionStateBaseStation = .DISCONNECTED
     }
 
-    private func openSocket() {
-        guard shouldReconnect, !host.isEmpty, let url = URL(string: "ws://\(host)/api/ws") else { return }
-
-        let task = URLSession.shared.webSocketTask(with: url)
-        webSocketTask = task
-        task.resume()
-
-        lastPongAt = Date()
-        state.connectionStateBaseStation = .CONNECTING
-
-        pingTimer?.invalidate()
-        pingTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
-            Task { @MainActor in self?.sendPingAndCheckHeartbeat() }
-        }
-
-        listen(on: task)
-    }
-
-    private func listen(on task: URLSessionWebSocketTask) {
-        task.receive { [weak self] result in
-            Task { @MainActor in
-                guard let self, self.webSocketTask === task else { return }
-                switch result {
-                case .failure:
-                    self.handleDisconnect()
-                case .success(let message):
-                    self.state.connectionStateBaseStation = .CONNECTED
-                    if case .string(let text) = message {
-                        self.handleFrame(text)
-                    }
-                    self.listen(on: task)
-                }
-            }
-        }
-    }
-
-    private func sendPingAndCheckHeartbeat() {
-        guard let task = webSocketTask else { return }
-        task.send(.string("ping")) { _ in }
-        if Date().timeIntervalSince(lastPongAt) > 5.0 {
-            handleDisconnect()
-        }
-    }
-
-    private func handleFrame(_ raw: String) {
-        let normalized = PacketParsing.normalize(raw)
-        guard !normalized.isEmpty else { return }
-
-        if normalized == "pong" {
-            lastPongAt = Date()
-            state.connectionStateBaseStation = .CONNECTED
-            return
-        }
-
-        guard let data = normalized.data(using: .utf8),
-              let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
-              let type = json["type"] as? String else { return }
-
-        switch type {
-        case "flight": PacketParsing.applyFlightPacket(state, json)
-        case "connection": PacketParsing.applyConnectionPacket(state, json)
-        case "sensor": PacketParsing.applySensorPacket(state, json)
-        default: break
-        }
-    }
-
-    private func handleDisconnect() {
-        pingTimer?.invalidate()
-        pingTimer = nil
-        webSocketTask?.cancel(with: .abnormalClosure, reason: nil)
-        webSocketTask = nil
-        state.connectionStateBaseStation = .CONNECTING
+    func handleDisconnect(from peripheral: CBPeripheral) {
+        connectedPeripheral = nil
+        discoveredCharacteristics = [:]
+        state.connectionStateBaseStation = .DISCONNECTED
         state.planes.values.forEach { $0.connectionState = .CONNECTING }
 
         guard shouldReconnect else { return }
-        reconnectTask?.cancel()
-        reconnectTask = Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-            guard !Task.isCancelled else { return }
-            self?.openSocket()
+        // CoreBluetooth retries in the background until cancelPeripheralConnection is called
+        clearSubscriptions()
+        centralManager?.connect(peripheral, options: nil)
+    }
+    
+    // MARK: - Notifications
+
+    private func onFrameConnectionUpdate(data: Data) {
+        guard let packet: wire.ConnectionUpdatePacket = data.asJson() else { return }
+        PacketParsing.applyConnectionPacket(state, packet)
+        print("Connection update received: \(packet)")
+    }
+
+    private func onFrameSensorUpdate(data: Data) {
+        guard let packet: wire.SensorPacket = data.asJson() else { return }
+        PacketParsing.applySensorPacket(state, packet)
+        print("Sensor update received: \(packet)")
+    }
+
+    private func onFrameFlightData(data: Data) {
+        guard let packet: wire.FlightUpdatePacket = data.asJson() else { return }
+        PacketParsing.applyFlightPacket(state, packet)
+        print("Flight update received: \(packet)")
+    }
+
+    private func onFrameBatteryStatus(data: Data) {
+        guard let packet: wire.BatteryStatusPacket = data.asJson() else { return }
+        PacketParsing.applyBatteryStatusPacket(state, packet)
+        print("Battery status received: \(packet)")
+    }
+
+    // MARK: - Manual fetching
+
+    /// Waits for the next already-subscribed notification on `char`. Unlike
+    /// `readCharacteristic`, this issues no GATT read — it's for characteristics
+    /// (areaDefine, flightUpdate, plannedRoute) whose payload can exceed the 512-byte
+    /// GATT attribute limit and so are only ever served over the fragmented notify path.
+    func awaitNextUpdate(_ char: CharacteristicUUID) async -> Data? {
+        guard discoveredCharacteristics[char.uuid] != nil else { return nil }
+        return await withCheckedContinuation { continuation in
+            readCompletions[char.uuid] = { continuation.resume(returning: $0) }
         }
     }
 
-    // MARK: - REST
-
     func fetchArea(onResult: @escaping ([Coordinate]?) -> Void) {
-        guard let url = URL(string: "http://\(host)/api/area") else { onResult(nil); return }
-        URLSession.shared.dataTask(with: url) { data, response, _ in
-            var result: [Coordinate]?
-            if let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode), let data,
-               let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] {
-                result = PacketParsing.toRoute(json["shape"])
+        Task {
+            let data = await awaitNextUpdate(.areaDefine)
+            if let data, let json: wire.AreaDefinePacket = data.asJson() {
+                Task { @MainActor in onResult(json.shape) }
+                return
+            } else {
+                onResult(nil)
             }
-            Task { @MainActor in onResult(result) }
-        }.resume()
+        }
     }
 
     func submitArea(polygon: [Coordinate], onResult: @escaping (AreaSubmitResult) -> Void) {
-        guard let url = URL(string: "http://\(host)/api/area") else { onResult(.FAILED); return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        let shape = polygon.map { ["latitude": $0.latitude, "longitude": $0.longitude] }
-        request.httpBody = try? JSONSerialization.data(withJSONObject: ["shape": shape])
-
-        URLSession.shared.dataTask(with: request) { data, response, _ in
-            var result = AreaSubmitResult.FAILED
-            if let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode),
-               let data, let text = String(data: data, encoding: .utf8),
-               let count = Int(text.trimmingCharacters(in: .whitespacesAndNewlines)) {
-                result = count == polygon.count ? .ACCEPTED : .MISMATCH
+        Task {
+            guard let data = try? JSONEncoder().encode(wire.AreaDefinePacket(shape: polygon)) else {
+                onResult(.FAILED); return
             }
-            Task { @MainActor in onResult(result) }
-        }.resume()
+            do {
+                try await writeCharacteristic(.areaDefine, data: data)
+                Task { @MainActor in onResult(.ACCEPTED) }
+            } catch {
+                onResult(.FAILED)
+            }
+        }
     }
 
     func fetchRoute(onResult: @escaping ([Coordinate]) -> Void) {
-        guard let url = URL(string: "http://\(host)/api/route") else { onResult([]); return }
-        URLSession.shared.dataTask(with: url) { data, response, _ in
-            var result: [Coordinate] = []
-            if let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode), let data,
-               let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] {
-                result = PacketParsing.toRoute(json["route"]) ?? []
+        Task {
+            let data = await awaitNextUpdate(.plannedRoute)
+            if let data, let json: wire.PlannedRoutePacket = data.asJson() {
+                Task { @MainActor in onResult(json.route) }
+            } else {
+                onResult([])
             }
-            Task { @MainActor in onResult(result) }
-        }.resume()
+        }
+    }
+
+    func fetchFlightState(onResult: @escaping (wire.FlightUpdatePacket?) -> Void) {
+        Task {
+            let data = await awaitNextUpdate(.flightUpdate)
+            if let data, let json: wire.FlightUpdatePacket = data.asJson() {
+                Task { @MainActor in onResult(json) }
+            } else {
+                onResult(nil)
+            }
+        }
+    }
+    
+    func fetchConnectionState(onResult: @escaping (wire.ConnectionUpdatePacket?) -> Void) {
+        Task {
+            let data = await readCharacteristic(.connectionUpdate)
+            if let data, let json: wire.ConnectionUpdatePacket = data.asJson() {
+                Task { @MainActor in onResult(json) }
+            } else {
+                onResult(nil)
+            }
+        }
+    }
+    
+    func fetchSensorState(onResult: @escaping (wire.SensorPacket?) -> Void) {
+        Task {
+            let data = await readCharacteristic(.sensorData)
+            if let data, let json: wire.SensorPacket = data.asJson() {
+                Task { @MainActor in onResult(json) }
+            } else {
+                onResult(nil)
+            }
+        }
+    }
+
+    func fetchBatteryStatus(onResult: @escaping (wire.BatteryStatusPacket?) -> Void) {
+        Task {
+            let data = await readCharacteristic(.batteryStatus)
+            if let data, let json: wire.BatteryStatusPacket = data.asJson() {
+                Task { @MainActor in onResult(json) }
+            } else {
+                onResult(nil)
+            }
+        }
     }
 }

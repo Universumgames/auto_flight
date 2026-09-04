@@ -1,5 +1,5 @@
-import SwiftUI
 import SharedLogic
+import SwiftUI
 
 /// Mirrors `RoutePreviewView.vue`: poll for the planned route until the base
 /// station has one ready, then show it alongside the live flight history.
@@ -12,16 +12,16 @@ struct RouteView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Route Preview").font(.title2).bold().padding(.horizontal)
-
-            RouteMapView(
-                plannedRoute: plannedRoute,
-                flightHistory: appState.planes[defaultPlaneID]?.flightRoute ?? [],
-                basePosition: appState.basePosition,
-                planePosition: appState.planes[defaultPlaneID]?.position,
-                planeHeading: appState.planes[defaultPlaneID]?.heading ?? 0
-            )
-            .frame(minHeight: 400)
+            ZStack {
+                RouteMapView(
+                    plannedRoute: plannedRoute,
+                    flightHistory: appState.planes[defaultPlaneID]?.flightRoute ?? [],
+                    basePosition: appState.basePosition,
+                    planePosition: appState.planes[defaultPlaneID]?.position,
+                    planeHeading: appState.planes[defaultPlaneID]?.heading ?? 0
+                )
+            }
+            .frame(minHeight: 400, maxHeight: .infinity)
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal)
 
@@ -33,7 +33,9 @@ struct RouteView: View {
                 .padding(.horizontal)
             }
         }
-        .padding(.vertical)
+        .navigationTitle("Route Preview")
+        .padding(.bottom)
+        .connectedToolbar()
         .onAppear {
             startPolling()
         }
@@ -55,14 +57,20 @@ struct RouteView: View {
                     return
                 }
                 tries += 1
-                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                try? await Task.sleep(nanoseconds: 1000000000)
             }
         }
     }
 }
 
 #Preview {
-    RouteView()
-        .environment(ConnectionManager())
-        .environment(AppState.shared)
+    VStack {
+        NavigationStack {
+            RouteView()
+        }
+
+        WizardProgressBar()
+    }
+    .environment(ConnectionManager())
+    .environment(AppState.shared)
 }

@@ -26,7 +26,7 @@ struct WizardProgressBar: View {
 
     var body: some View {
         let currentIdx = Int(appState.wizardStep.index)
-        HStack(alignment: .top, spacing: 0) {
+        HStack(alignment: .bottom, spacing: 0) {
             ForEach(Array(steps.enumerated()), id: \.offset) { i, step in
                 let idx = Int(step.index)
                 VStack(spacing: 4) {
@@ -60,7 +60,7 @@ struct WizardProgressBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(.bar)
+        .background(.bar, ignoresSafeAreaEdges: .bottom)
     }
 
     @ViewBuilder

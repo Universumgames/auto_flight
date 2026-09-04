@@ -6,11 +6,6 @@ import SharedLogic
 /// `DEFAULT_PLANE_ID` (`sharedLogic/.../Models.kt`).
 let defaultPlaneID: PlaneID = "default"
 
-/// Native Swift re-implementation of the parsing rules in
-/// `sharedLogic/src/commonMain/kotlin/.../PacketParser.kt`. Kept as free functions
-/// operating on Foundation JSON (`[String: Any]`) rather than reusing the shared
-/// Kotlin `PacketParser`, because its methods take `kotlinx.serialization.json`
-/// types that aren't practical to construct from Swift.
 enum PacketParsing {
 
     /// Returns the plane's existing entry in `current.planes`, creating and inserting one if absent.
@@ -29,142 +24,70 @@ enum PacketParsing {
         return s.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    static func toDouble(_ value: Any?) -> Double? {
-        switch value {
-        case let n as NSNumber: return n.doubleValue
-        case let s as String: return Double(s)
-        default: return nil
-        }
-    }
-
-    /// Accepts a `[lat, lon]` array or an object with `lat`/`lon` or
-    /// `latitude`/`longitude` keys. Rejects the `(0,0)` sentinel and anything with
-    /// a coordinate below -200.
-    static func toCoordinate(_ value: Any?) -> Coordinate? {
-        guard let value else { return nil }
-        var coord: Coordinate?
-
-        if let arr = value as? [Any], arr.count >= 2,
-           let lat = toDouble(arr[0]), let lon = toDouble(arr[1]) {
-            coord = Coordinate(latitude: lat, longitude: lon)
-        }
-
-        if let obj = value as? [String: Any] {
-            if let lat = toDouble(obj["lat"]), let lon = toDouble(obj["lon"]) {
-                coord = Coordinate(latitude: lat, longitude: lon)
-            }
-            if let lat = toDouble(obj["latitude"]), let lon = toDouble(obj["longitude"]) {
-                coord = Coordinate(latitude: lat, longitude: lon)
-            }
-        }
-
-        if let c = coord {
-            if c.latitude == 0 && c.longitude == 0 { coord = nil }
-            else if c.latitude < -200 || c.longitude < -200 { coord = nil }
-        }
-
+    /// Returns nil for the (0,0) sentinel and coordinates below -200.
+    private static func toCoordinate(_ coord: Coordinate) -> Coordinate? {
+        if coord.latitude == 0 && coord.longitude == 0 { return nil }
+        if coord.latitude < -200 || coord.longitude < -200 { return nil }
         return coord
     }
 
-    static func toRoute(_ value: Any?) -> [Coordinate]? {
-        guard let arr = value as? [Any] else { return nil }
-        return arr.compactMap { toCoordinate($0) }
+    private static func toConnectionState(_ state: wire.ConnectionState) -> ConnectionState {
+        state == .CONNECTED ? .CONNECTED : .CONNECTING
     }
 
-    /// A number is epoch millis if `> 1e12`, else epoch seconds. A string is
-    /// parsed as ISO-8601.
-    static func toTimeT(_ value: Any?) -> Int64? {
-        guard let value else { return nil }
-        if let n = value as? NSNumber {
-            let d = n.doubleValue
-            return Int64(d > 1e12 ? (d / 1000).rounded(.down) : d.rounded(.down))
-        }
-        if let s = value as? String {
-            let withFractional = ISO8601DateFormatter()
-            withFractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            if let date = withFractional.date(from: s) {
-                return Int64(date.timeIntervalSince1970)
-            }
-            let plain = ISO8601DateFormatter()
-            if let date = plain.date(from: s) {
-                return Int64(date.timeIntervalSince1970)
-            }
-            return nil
-        }
-        return nil
-    }
-
-    static func parseConnectionState(_ value: Any?) -> ConnectionState? {
-        guard let s = value as? String else { return nil }
-        switch s.uppercased() {
-        case "CONNECTING": return .CONNECTING
-        case "CONNECTED": return .CONNECTED
-        default: return nil
+    private static func toFlightState(_ state: wire.FlightState) -> FlightState {
+        switch state {
+        case .PLANNED: return .PLANNED
+        case .FLYING: return .FLYING
+        case .RETURNING: return .RETURNING
+        default: return .PLANNING
         }
     }
 
-    static func parseFlightState(_ value: Any?) -> FlightState? {
-        guard let s = value as? String else { return nil }
-        switch s.uppercased() {
-        case "PLANNING": return .PLANNING
-        case "PLANNED": return .PLANNED
-        case "FLYING": return .FLYING
-        case "RETURNING": return .RETURNING
-        default: return nil
-        }
-    }
-
-    static func toBool(_ value: Any?) -> Bool? {
-        if let n = value as? NSNumber, CFGetTypeID(n) == CFBooleanGetTypeID() { return n.boolValue }
-        if let b = value as? Bool { return b }
-        return nil
-    }
-
-    static func applyFlightPacket(_ current: AppState, _ packet: [String: Any]) {
-        let basePos = toCoordinate(packet["basePosition"])
-        let planePos = toCoordinate(packet["planePosition"])
-
-        current.basePosition = basePos ?? current.basePosition
-        current.basePositionUpdateTime = toTimeT(packet["basePositionUpdateTime"])
+    static func applyFlightPacket(_ current: AppState, _ packet: wire.FlightUpdatePacket) {
+        current.basePosition = toCoordinate(packet.basePosition) ?? current.basePosition
+        current.basePositionUpdateTime = packet.basePositionUpdateTime
 
         let plane = self.plane(current)
-        plane.position = planePos ?? plane.position
-        plane.positionUpdateTime = toTimeT(packet["planePositionUpdateTime"])
-        plane.flightRoute = toRoute(packet["flightRoute"])
-        plane.flightRouteUpdateTime = toTimeT(packet["flightRouteUpdateTime"])
-        plane.plannedRoute = toRoute(packet["plannedRoute"])
-        plane.plannedRouteUpdateTime = toTimeT(packet["plannedRouteUpdateTime"])
+        plane.position = toCoordinate(packet.planePosition) ?? plane.position
+        plane.positionUpdateTime = packet.planePositionUpdateTime
+        plane.flightRoute = packet.flightRoute.isEmpty ? nil : packet.flightRoute
+        plane.flightRouteUpdateTime = packet.flightRouteUpdateTime
+        plane.plannedRoute = packet.plannedRoute.isEmpty ? nil : packet.plannedRoute
+        plane.plannedRouteUpdateTime = packet.plannedRouteUpdateTime
     }
 
-    static func applyConnectionPacket(_ current: AppState, _ packet: [String: Any]) {
-        current.connectionStateBaseStation = parseConnectionState(packet["baseConnectionState"]) ?? current.connectionStateBaseStation
-        current.lastContactBaseStationTimestamp = toTimeT(packet["lastContactBaseStationTimestamp"])
-        current.gpsConnectionBase = parseConnectionState(packet["gpsConnectionBase"]) ?? current.gpsConnectionBase
-        current.barometerConnectionBase = parseConnectionState(packet["barometerConnectionBase"]) ?? current.barometerConnectionBase
+    static func applyConnectionPacket(_ current: AppState, _ packet: wire.ConnectionUpdatePacket) {
+        //current.connectionStateBaseStation = toConnectionState(packet.baseConnectionState)
+        current.lastContactBaseStationTimestamp = packet.lastContactBaseStationTimestamp
+        current.gpsConnectionBase = toConnectionState(packet.gpsConnectionBase)
+        current.barometerConnectionBase = toConnectionState(packet.barometerConnectionBase)
 
         let plane = self.plane(current)
-        plane.connectionState = parseConnectionState(packet["planeConnectionState"]) ?? plane.connectionState
-        plane.lastContactTimestamp = toTimeT(packet["lastContactPlaneTimestamp"])
-        plane.gpsConnection = parseConnectionState(packet["gpsConnectionPlane"]) ?? plane.gpsConnection
-        plane.barometerConnection = parseConnectionState(packet["barometerConnectionPlane"]) ?? plane.barometerConnection
-        plane.motorComConnection = parseConnectionState(packet["motorComConnectionPlane"]) ?? plane.motorComConnection
-        plane.magnetometerConnection = parseConnectionState(packet["magnetometerConnectionPlane"]) ?? plane.magnetometerConnection
-        plane.accelerometerConnection = parseConnectionState(packet["accelerometerConnectionPlane"]) ?? plane.accelerometerConnection
-        plane.manualOverride = toBool(packet["manualOverridePlane"]) ?? plane.manualOverride
-        plane.flightState = parseFlightState(packet["flightState"]) ?? plane.flightState
+        plane.connectionState = toConnectionState(packet.planeConnectionState)
+        plane.lastContactTimestamp = packet.lastContactPlaneTimestamp
+        plane.gpsConnection = toConnectionState(packet.gpsConnectionPlane)
+        plane.barometerConnection = toConnectionState(packet.barometerConnectionPlane)
+        plane.motorComConnection = toConnectionState(packet.motorComConnectionPlane)
+        plane.magnetometerConnection = toConnectionState(packet.magnetometerConnectionPlane)
+        plane.accelerometerConnection = toConnectionState(packet.accelerometerConnectionPlane)
+        plane.manualOverride = packet.manualOverridePlane
+        plane.flightState = toFlightState(packet.flightState)
     }
 
-    static func applySensorPacket(_ current: AppState, _ packet: [String: Any]) {
-        let pressureBase = toDouble(packet["barometerPressureBase"])
-        let pressurePlane = toDouble(packet["barometerPressurePlane"])
-        let calculatedAltitude = toDouble(packet["calculatedAltitude"])
-        let headingPlane = toDouble(packet["headingPlane"])
-
-        current.pressureBase = (pressureBase.map { $0 != 0 } == true) ? pressureBase! : current.pressureBase
+    static func applySensorPacket(_ current: AppState, _ packet: wire.SensorPacket) {
+        if packet.barometerPressureBase != 0 { current.pressureBase = Double(packet.barometerPressureBase) }
 
         let plane = self.plane(current)
-        plane.pressure = (pressurePlane.map { $0 != 0 } == true) ? pressurePlane! : plane.pressure
-        plane.calculatedAltitude = (calculatedAltitude.map { $0 != 0 } == true) ? calculatedAltitude! : plane.calculatedAltitude
-        plane.heading = headingPlane ?? plane.heading
+        if packet.barometerPressurePlane != 0 { plane.pressure = Double(packet.barometerPressurePlane) }
+        if packet.calculatedAltitude != 0 { plane.calculatedAltitude = Double(packet.calculatedAltitude) }
+        plane.heading = Double(packet.headingPlane)
+    }
+
+    static func applyBatteryStatusPacket(_ current: AppState, _ packet: wire.BatteryStatusPacket) {
+        current.batteryPercentageBase = Int(packet.baseBatteryPercentage)
+
+        let plane = self.plane(current)
+        plane.batteryPercentage = Int(packet.planeBatteryPercentage)
     }
 }

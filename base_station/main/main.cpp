@@ -1,6 +1,5 @@
 #include "BaseController.hpp"
 #include "esp_log.h"
-#include "wifi_helper.hpp"
 
 static void checkSystemStats(void* param) {
     char buffer[2048];
@@ -12,10 +11,6 @@ static void checkSystemStats(void* param) {
 }
 
 extern "C" void app_main(void) {
-    init_wifi();
-
-    ESP_LOGI("main", "IP Address: %s", get_ip_address().c_str());
-
     //xTaskCreate(checkSystemStats, "SystemStatsTask", 4096, nullptr, tskIDLE_PRIORITY + 1, nullptr);
 
     BaseController.init();

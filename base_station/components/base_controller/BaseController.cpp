@@ -3,11 +3,11 @@
 #include "Barometer.hpp"
 #include "Battery.hpp"
 #include "FlightStorage.hpp"
-#include "Frontend.hpp"
 #include "GPS_Reader.hpp"
 #include "i2c_manager.hpp"
 #include "LoRa_Communication.hpp"
 #include "Flight_Communication.hpp"
+#include "FrontendBl.hpp"
 #include "OledDisplay.hpp"
 
 BaseControllerClass* instance = nullptr;
@@ -33,12 +33,12 @@ void BaseControllerClass::init() {
 
     FlightStorage.init();
 
-    FrontendHandler.init();
+    FrontendHandlerBl.init();
 
     LoRa_Communication.begin();
 
     Barometer.begin();
-Battery.begin();
+    Battery.begin();
     GPS_Reader.begin();
     OledDisplay.begin();
 

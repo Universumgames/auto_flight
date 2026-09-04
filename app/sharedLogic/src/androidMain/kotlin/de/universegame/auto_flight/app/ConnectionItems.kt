@@ -6,7 +6,9 @@ package de.universegame.auto_flight.app
  */
 fun ConnectionItems.baseStationItem(state: AppState) = ConnectionItem(
     label = "Base Station",
+    connectionItemType = ConnectionItemType.BASE_STATION,
     status = state.connectionStateBaseStation,
+    batteryPercent = 100,
     subTasks = listOf(
         SubTask("Connection", stateOf(isConnected(state.connectionStateBaseStation))),
         SubTask(
@@ -30,7 +32,9 @@ fun ConnectionItems.planeItems(state: AppState): List<ConnectionItem> {
 
 private fun ConnectionItems.planeItem(plane: PlaneInfo) = ConnectionItem(
     label = "Plane (${plane.id})",
+    connectionItemType = ConnectionItemType.PLANE,
     status = plane.connectionState,
+    batteryPercent = 100,
     subTasks = listOf(
         SubTask("Connection", stateOf(isConnected(plane.connectionState))),
         SubTask(

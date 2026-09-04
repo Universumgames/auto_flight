@@ -14,32 +14,68 @@ struct BaseSelectionView: View {
     @State private var host = ""
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Connection Overview").font(.title2).bold()
-                Text("Enter the base station's address on your local network, then wait for every link to come up.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-            }
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Bluetooth Devices")
+                            .font(.headline)
+                        Spacer()
+                        if connectionManager.isScanning {
+                            ProgressView().scaleEffect(0.8)
+                        }
+                        Button(connectionManager.isScanning ? "Stop" : "Scan") {
+                            if connectionManager.isScanning {
+                                connectionManager.stopBluetoothScan()
+                            } else {
+                                connectionManager.startBluetoothScan()
+                            }
+                        }
+                        .buttonStyle(.bordered)
+                    }
 
-            HStack {
-                TextField("Base station host, e.g. 192.168.4.1", text: $host)
-                    .textFieldStyle(.roundedBorder)
-                    .autocorrectionDisabled()
-                #if os(iOS)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.URL)
-                #endif
-                Button("Connect") {
-                    connectionManager.connect(host: host)
+                    if connectionManager.bluetoothState == .poweredOff {
+                        Text("Bluetooth is off — enable it in Settings.")
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    } else if connectionManager.discoveredPeripherals.isEmpty {
+                        Text(connectionManager.isScanning ? "Searching…" : "Tap Scan to find nearby devices.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        ForEach(connectionManager.discoveredPeripherals, id: \.identifier) { peripheral in
+                            HStack {
+                                Image(systemName: "antenna.radiowaves.left.and.right")
+                                VStack(alignment: .leading) {
+                                    Text(peripheral.name ?? "Unknown Device")
+                                    Text(String(peripheral.identifier.uuidString.prefix(8)))
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Button {
+                                    connectionManager.tryConnectToPeripheral(peripheral)
+                                } label: {
+                                    Text("Connect")
+                                }
+                                .disabled(
+                                    appState.connectionStateBaseStation == .CONNECTING
+                                )
+                            }
+                            .padding(.vertical, 4)
+                            Divider()
+                        }
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(host.isEmpty)
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
             }
+            .navigationTitle("Connect to a Base Station")
+            .padding()
         }
-        .padding()
         .onAppear {
-            host = connectionManager.host
+            connectionManager.startBluetoothScan()
         }
     }
 }

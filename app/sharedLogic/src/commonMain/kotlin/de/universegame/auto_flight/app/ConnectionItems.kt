@@ -13,9 +13,16 @@ data class SubTask(
     val state: SubTaskState,
 )
 
+enum class ConnectionItemType{
+    BASE_STATION,
+    PLANE
+}
+
 data class ConnectionItem(
     val label: String,
+    val connectionItemType: ConnectionItemType,
     val status: ConnectionState,
+    val batteryPercent: Int,
     val subTasks: List<SubTask>,
 )
 

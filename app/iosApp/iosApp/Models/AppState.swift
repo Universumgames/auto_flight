@@ -32,6 +32,7 @@ final class AppState {
     var gpsConnectionBase: ConnectionState = .CONNECTING
     var barometerConnectionBase: ConnectionState = .CONNECTING
     var pressureBase: Double = 0
+    var batteryPercentageBase: Int = -1
     var planes: [PlaneID: PlaneInfo] = [:]
 }
 
@@ -45,7 +46,9 @@ extension AppState {
     var baseStationItem: ConnectionItem {
         ConnectionItem(
             label: "Base Station",
+            connectionItemType: .BASE_STATION,
             status: connectionStateBaseStation,
+            batteryPercent: Int32(batteryPercentageBase),
             subTasks: [
                 SubTask(label: "Connection", state: stateOf(connectionStateBaseStation == .CONNECTED)),
                 SubTask(

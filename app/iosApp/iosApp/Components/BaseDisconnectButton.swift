@@ -18,7 +18,7 @@ struct BaseDisconnectButton: View {
             Button(role:.destructive){
                 connectionManager.disconnect()
             } label: {
-                Text("button.disconnect.confirm")
+                Text("Are you sure you want to disconnect?")
             }
             .padding()
             .presentationCompactAdaptation(.popover)

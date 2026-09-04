@@ -11,9 +11,9 @@ struct MarkerBadge: View {
         static let labelFontSize: CGFloat = 11
         static let labelFontWeight: Font.Weight = .bold
         static let labelColor: Color = .white
-        static let pointerWidth: CGFloat = 10
-        static let pointerHeight: CGFloat = 8
-        static let pointerOffsetY: CGFloat = -16
+        static let coneLength: CGFloat = 55
+        static let coneHalfAngle: Double = 22
+        static let coneInnerOpacity: Double = 0.55
     }
 
     let text: String
@@ -23,10 +23,16 @@ struct MarkerBadge: View {
     var body: some View {
         ZStack {
             if let rotation {
-                Triangle()
-                    .fill(color)
-                    .frame(width: Metrics.pointerWidth, height: Metrics.pointerHeight)
-                    .offset(y: Metrics.pointerOffsetY)
+                DirectionCone(halfAngle: Metrics.coneHalfAngle)
+                    .fill(
+                        RadialGradient(
+                            colors: [color.opacity(Metrics.coneInnerOpacity), color.opacity(0)],
+                            center: .center,
+                            startRadius: Metrics.diameter / 2,
+                            endRadius: Metrics.coneLength
+                        )
+                    )
+                    .frame(width: Metrics.coneLength * 2, height: Metrics.coneLength * 2)
                     .rotationEffect(.degrees(rotation))
             }
             Circle()
@@ -71,12 +77,21 @@ extension MarkerBadge {
     }
 }
 
-private struct Triangle: Shape {
+private struct DirectionCone: Shape {
+    var halfAngle: Double = 22
+
     func path(in rect: CGRect) -> Path {
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2
         var path = Path()
-        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.move(to: center)
+        path.addArc(
+            center: center,
+            radius: radius,
+            startAngle: .degrees(-90 - halfAngle),
+            endAngle: .degrees(-90 + halfAngle),
+            clockwise: false
+        )
         path.closeSubpath()
         return path
     }
