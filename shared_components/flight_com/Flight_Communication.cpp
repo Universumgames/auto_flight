@@ -10,6 +10,8 @@
 #endif
 #include <cmath>
 
+#include "Battery.hpp"
+
 void Flight_Communication::begin() {}
 
 void Flight_Communication::sendPacket(const BasePacket& packet) {
@@ -37,6 +39,7 @@ void Flight_Communication::sendSensorUpdate() {
         GPS_Reader.getGPSLatestTime(),
         pressure,
         heading,
+        FlightStorage.getPlaneBatteryPercentage()
     };
 
     sendPacket(packet);

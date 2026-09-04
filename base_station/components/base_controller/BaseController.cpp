@@ -1,6 +1,7 @@
 #include "BaseController.hpp"
 
 #include "Barometer.hpp"
+#include "Battery.hpp"
 #include "FlightStorage.hpp"
 #include "Frontend.hpp"
 #include "GPS_Reader.hpp"
@@ -37,6 +38,7 @@ void BaseControllerClass::init() {
     LoRa_Communication.begin();
 
     Barometer.begin();
+Battery.begin();
     GPS_Reader.begin();
     OledDisplay.begin();
 
@@ -62,10 +64,12 @@ void BaseControllerClass::loopTaskEntry(void* param) {
 [[noreturn]] void BaseControllerClass::loopTask() {
     while (true) {
         auto time = GPS_Reader.getGPSLatestTime();
+        FlightStorage.updateBaseBatteryPercentage(Battery.getVoltagePercentage());
         FlightStorage.updateBasePressure(Barometer.getPressure(), time);
         FlightStorage.updateBaseBarometerConnectionState(Barometer.available()
                                                              ? ConnectionState::CONNECTED
                                                              : ConnectionState::CONNECTING);
+        FlightStorage.updateBaseBatteryPercentage(Battery.voltageToPercentage(Battery.getVoltageMillivolts()), time);
 
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
@@ -92,6 +96,7 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
                  sensorUpdate->heading);
         FlightStorage.updatePlanePressure(sensorUpdate->pressure, sensorUpdate->timestamp);
         FlightStorage.updatePlaneHeading(sensorUpdate->heading, sensorUpdate->timestamp);
+        FlightStorage.updatePlaneBatteryPercentage(sensorUpdate->batteryPercent, sensorUpdate->timestamp);
         break;
     }
     case PacketType::POSITION: {

@@ -16,6 +16,7 @@
 #include "freertos/task.h"
 #include <variant>
 
+#include "Battery.hpp"
 #include "geo_helper.hpp"
 #include "route_planner.hpp"
 #include "MotorComMaster.hpp"
@@ -86,6 +87,8 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         }
 
         auto currentTime = GPS_Reader.getGPSLatestTime();
+        auto batteryPercentage = Battery.getVoltagePercentage();
+        FlightStorage.updatePlaneBatteryPercentage(batteryPercentage, currentTime);
         //auto planeAngle = Gyroscope.getAngle();
         auto position = FlightStorage.updatePlanePosition(GPS_Reader.getCurrentPosition(), currentTime);
         auto pressure = FlightStorage.updatePlanePressure(Barometer.getPressure(), currentTime);
