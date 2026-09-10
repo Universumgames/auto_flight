@@ -37,6 +37,17 @@ private:
 
     static void initFS();
 
+    /* Advertised in the scan response's manufacturer-specific data (AD type 0xFF) so the
+     * phone can see which firmware build a base station is running before connecting:
+     * bytes [0:2) are the company ID (0xFFFF, the Bluetooth SIG's reserved "for testing"
+     * value — this project has no assigned company ID), bytes [2:6) are
+     * BUILD_EPOCH_TIMESTAMP (Unix seconds, from the generated build_timestamp.h — see
+     * CMakeLists.txt/generate_build_timestamp.cmake — freshly stamped on every build) as
+     * a little-endian uint32. The iOS app must mirror this exact layout when parsing. */
+    static constexpr uint8_t BUILD_VERSION_MFG_DATA_LEN = 6;
+    uint8_t buildVersionMfgData[BUILD_VERSION_MFG_DATA_LEN]{};
+    void populateBuildVersionMfgData();
+
     /* C callback functions, call object instance methods */
     static void print_addr(const void *addr);
     static int ble_spp_server_gap_event(struct ble_gap_event *event, void *arg);

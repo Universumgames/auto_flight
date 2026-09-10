@@ -9,6 +9,7 @@
 #include "host/util/util.h"
 #include "services/gap/ble_svc_gap.h"
 #include "services/gatt/ble_svc_gatt.h"
+#include "build_timestamp.h"
 
 #include <algorithm>
 #include <cstring>
@@ -20,6 +21,19 @@ static BluetoothManager* instanceBT = nullptr;
 
 BluetoothManager::BluetoothManager() {
     instanceBT = this;
+    populateBuildVersionMfgData();
+}
+
+void BluetoothManager::populateBuildVersionMfgData() {
+    // Company ID 0xFFFF, little-endian (both bytes equal, so byte order is moot here).
+    buildVersionMfgData[0] = 0xFF;
+    buildVersionMfgData[1] = 0xFF;
+
+    const auto epoch = static_cast<uint32_t>(BUILD_EPOCH_TIMESTAMP);
+    buildVersionMfgData[2] = static_cast<uint8_t>(epoch & 0xFF);
+    buildVersionMfgData[3] = static_cast<uint8_t>((epoch >> 8) & 0xFF);
+    buildVersionMfgData[4] = static_cast<uint8_t>((epoch >> 16) & 0xFF);
+    buildVersionMfgData[5] = static_cast<uint8_t>((epoch >> 24) & 0xFF);
 }
 
 void BluetoothManager::initFS() {
@@ -121,6 +135,20 @@ void BluetoothManager::startAdvertising() {
     rc = ble_gap_adv_set_fields(&fields);
     if (rc != 0) {
         ESP_LOGE(TAG_BLUETOOTH_MANAGER, "error setting advertisement data; rc=%d", rc);
+        return;
+    }
+
+    /* The primary advertisement packet above is already close to the 31-byte legacy ADV
+     * limit (flags + tx power + service UUID + device name), so the build-version
+     * manufacturer data goes in the separate scan response packet instead. Since
+     * adv_params below uses undirected-connectable mode, the device is inherently
+     * scannable and NimBLE answers SCAN_REQs with this data automatically. */
+    ble_hs_adv_fields rsp_fields{};
+    rsp_fields.mfg_data = buildVersionMfgData;
+    rsp_fields.mfg_data_len = BUILD_VERSION_MFG_DATA_LEN;
+    rc = ble_gap_adv_rsp_set_fields(&rsp_fields);
+    if (rc != 0) {
+        ESP_LOGE(TAG_BLUETOOTH_MANAGER, "error setting scan response data; rc=%d", rc);
         return;
     }
 

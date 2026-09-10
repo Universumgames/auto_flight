@@ -155,22 +155,32 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
                 }
             default:
                 self.isScanning = false
-                self.discoveredPeripherals = []
+                self.discoveredBaseStations = []
             }
         }
     }
 
-    /// Called on the main actor when a peripheral is discovered. Adds it to the `discoveredPeripherals` array if not already present.
+    /// Called on the main actor when a peripheral is discovered. Adds it to the `discoveredBaseStations` array if not
+    /// already present, or fills in its build date if a later packet (e.g. the scan response) carries one we didn't
+    /// have yet. With `CBCentralManagerScanOptionAllowDuplicatesKey: true`, the primary advertisement and scan
+    /// response typically arrive as separate `didDiscover` calls rather than merged into one, so the manufacturer
+    /// data (build date) is not guaranteed to be present on the very first call for a peripheral.
     public nonisolated func centralManager(
         _ central: CBCentralManager,
         didDiscover peripheral: CBPeripheral,
         advertisementData: [String: Any],
         rssi RSSI: NSNumber
     ) {
+        let buildDate = parseBaseStationBuildDate(fromAdvertisementData: advertisementData)
         Task { @MainActor [weak self] in
             guard let self else { return }
-            guard !self.discoveredPeripherals.contains(where: { $0.identifier == peripheral.identifier }) else { return }
-            self.discoveredPeripherals.append(peripheral)
+            if let index = self.discoveredBaseStations.firstIndex(where: { $0.peripheral.identifier == peripheral.identifier }) {
+                if let buildDate, self.discoveredBaseStations[index].buildDate == nil {
+                    self.discoveredBaseStations[index] = DiscoveredBaseStation(peripheral: peripheral, buildDate: buildDate)
+                }
+                return
+            }
+            self.discoveredBaseStations.append(DiscoveredBaseStation(peripheral: peripheral, buildDate: buildDate))
         }
     }
 
@@ -299,7 +309,7 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
     // MARK: - Private
 
     private func beginScan() {
-        discoveredPeripherals = []
+        discoveredBaseStations = []
         isScanning = true
         centralManager?
             .scanForPeripherals(withServices: [ServiceUUID], options: [

@@ -11,14 +11,12 @@ struct BaseSelectionView: View {
     @Environment(ConnectionManager.self) private var connectionManager: ConnectionManager
     @Environment(AppState.self) private var appState
 
-    @State private var host = ""
-
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Bluetooth Devices")
+                        Text("Available Base Stations")
                             .font(.headline)
                         Spacer()
                         if connectionManager.isScanning {
@@ -38,23 +36,23 @@ struct BaseSelectionView: View {
                         Text("Bluetooth is off — enable it in Settings.")
                             .font(.caption)
                             .foregroundStyle(.red)
-                    } else if connectionManager.discoveredPeripherals.isEmpty {
+                    } else if connectionManager.discoveredBaseStations.isEmpty {
                         Text(connectionManager.isScanning ? "Searching…" : "Tap Scan to find nearby devices.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(connectionManager.discoveredPeripherals, id: \.identifier) { peripheral in
+                        ForEach(connectionManager.discoveredBaseStations) { station in
                             HStack {
                                 Image(systemName: "antenna.radiowaves.left.and.right")
                                 VStack(alignment: .leading) {
-                                    Text(peripheral.name ?? "Unknown Device")
-                                    Text(String(peripheral.identifier.uuidString.prefix(8)))
+                                    Text(station.name)
+                                    Text("Build \(station.buildDate?.formatted(date: .abbreviated, time: .shortened) ?? "Unkown")")
                                         .font(.caption2)
                                         .foregroundStyle(.secondary)
                                 }
                                 Spacer()
                                 Button {
-                                    connectionManager.tryConnectToPeripheral(peripheral)
+                                    connectionManager.tryConnectToPeripheral(station.peripheral)
                                 } label: {
                                     Text("Connect")
                                 }

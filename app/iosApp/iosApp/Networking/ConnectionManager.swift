@@ -30,7 +30,7 @@ final class ConnectionManager: NSObject {
 
     // Bluetooth scanning state — updated by BluetoothManager extension
     var bluetoothState: CBManagerState = .unknown
-    var discoveredPeripherals: [CBPeripheral] = []
+    var discoveredBaseStations: [DiscoveredBaseStation] = []
     var isScanning = false
     internal var pendingStartScan = false
 
