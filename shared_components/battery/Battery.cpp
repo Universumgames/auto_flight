@@ -34,6 +34,12 @@ void BatteryClass::begin(char cellCount) {
     I2C_ERROR_LOG(TAG_BATTERY, "set gain failed", err);
 }
 
+bool BatteryClass::isAvailable() const {
+    if (!adsHandle) return false;
+    bool busy = false;
+    return ads111x_is_busy(adsHandle, &busy) == ESP_OK;
+}
+
 int BatteryClass::readChannelMillivolts(const ads111x_mux_t mux) {
     esp_err_t err = ads111x_set_input_mux(adsHandle, mux);
     I2C_ERROR_LOG(TAG_BATTERY, "set mux failed", err);

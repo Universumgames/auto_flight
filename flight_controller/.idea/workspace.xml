@@ -217,17 +217,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer and i2c working again">
-      <change beforePath="$PROJECT_DIR$/../app/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/../app/gradle/libs.versions.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp.xcodeproj/xcshareddata/xcschemes/iosApp.xcscheme" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp.xcodeproj/xcshareddata/xcschemes/iosApp.xcscheme" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Helpers/Data.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Helpers/Data.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/Packets.swift" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/ConnectionManager.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/ConnectionManager.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/Models.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/Models.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPackets.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPackets.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

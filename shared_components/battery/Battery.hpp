@@ -17,6 +17,11 @@ public:
 
     void begin(char cellCount = MAX_BATTERY_CELL_COUNT);
 
+    /// Cheap check for whether the ADC is present and responding on the bus,
+    /// without touching TAG_BATTERY logging. Use this before relying on the
+    /// other getters if the sense board may not be connected.
+    bool isAvailable() const;
+
     // The 4S pack is sensed through its balance leads: AIN0 taps B- to cell1+,
     // AIN1 taps to cell2+, AIN2 to cell3+, AIN3 to cell4+/pack+. Each channel
     // therefore reads the *cumulative* voltage from pack negative, so the
