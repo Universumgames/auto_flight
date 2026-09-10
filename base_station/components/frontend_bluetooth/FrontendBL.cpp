@@ -47,11 +47,11 @@ void FrontendHandlerBlClass::init() {
     ESP_LOGI(TAG_FRONTEND_BL, "Frontend handler initialized");
 }
 
-#define PACKET_TO_JSON_RESPONSE(packet) \
-    std::string jsonStr = nlohmann::json(packet).dump(); \
-    *len = jsonStr.size(); \
+#define PACKET_TO_CBOR_RESPONSE(packet) \
+    std::vector<uint8_t> cborData = nlohmann::json::to_cbor(nlohmann::json(packet)); \
+    *len = static_cast<int>(cborData.size()); \
     auto* data = new uint8_t[*len]; \
-    memcpy(data, jsonStr.c_str(), *len); \
+    memcpy(data, cborData.data(), *len); \
     return data;
 
 void FrontendHandlerBlClass::registerReadCallbacks() {
@@ -60,32 +60,31 @@ void FrontendHandlerBlClass::registerReadCallbacks() {
     // they're served exclusively over the fragmented notify path (see sendUpdate())
     // rather than as GATT reads, which have no equivalent of unbounded fragmentation.
     bluetoothManager.addDataWriteCallback(BLETopics::NotifyByte::BLE_TOPIC_AREA_DEFINE, [](const uint8_t* data, int len, BluetoothManager::TopicType topic) {
-        std::string jsonStr(reinterpret_cast<const char*>(data), len);
         try {
-            auto packet = nlohmann::json::parse(jsonStr).get<Frontend::AreaDefinePacket>();
+            auto packet = nlohmann::json::from_cbor(data, data + len).get<Frontend::AreaDefinePacket>();
             FlightStorage.updatePlannedArea(packet.shape);
             ESP_LOGI(TAG_FRONTEND_BL, "Received new planned area with %d points", packet.shape.size());
         } catch (const std::exception& e) {
-            ESP_LOGE(TAG_FRONTEND_BL, "Failed to parse AreaDefinePacket JSON: %s", e.what());
+            ESP_LOGE(TAG_FRONTEND_BL, "Failed to parse AreaDefinePacket CBOR: %s", e.what());
         }
     });
     ESP_LOGI(TAG_FRONTEND_BL, "Registered write callback for BLE_TOPIC_AREA_DEFINE");
 
     bluetoothManager.addDataReadCallback(BLETopics::NotifyByte::BLE_TOPIC_CONNECTION_UPDATE, [this](int* len, BluetoothManager::TopicType topic) -> uint8_t* {
         auto packet = buildConnectionUpdatePacket();
-        PACKET_TO_JSON_RESPONSE(packet);
+        PACKET_TO_CBOR_RESPONSE(packet);
     });
     ESP_LOGI(TAG_FRONTEND_BL, "Registered read callback for BLE_TOPIC_CONNECTION_UPDATE");
 
     bluetoothManager.addDataReadCallback(BLETopics::NotifyByte::BLE_TOPIC_SENSOR_DATA, [this](int* len, BluetoothManager::TopicType topic) -> uint8_t* {
         auto packet = buildSensorPacket();
-        PACKET_TO_JSON_RESPONSE(packet);
+        PACKET_TO_CBOR_RESPONSE(packet);
     });
     ESP_LOGI(TAG_FRONTEND_BL, "Registered read callback for BLE_TOPIC_SENSOR_DATA");
 
     bluetoothManager.addDataReadCallback(BLETopics::NotifyByte::BLE_TOPIC_BATTERY_STATUS, [this](int* len, BluetoothManager::TopicType topic) -> uint8_t* {
         auto packet = buildBatteryStatusPacket();
-        PACKET_TO_JSON_RESPONSE(packet);
+        PACKET_TO_CBOR_RESPONSE(packet);
     });
     ESP_LOGI(TAG_FRONTEND_BL, "Registered read callback for BLE_TOPIC_BATTERY_STATUS");
 }
@@ -150,8 +149,8 @@ Frontend::AreaDefinePacket FrontendHandlerBlClass::buildAreaDefinePacket() {
 }
 
 void FrontendHandlerBlClass::sendUpdate(const BLETopics::NotifyByte topic, const nlohmann::json& packet) {
-    const std::string jsonStr = packet.dump();
-    bluetoothManager.notify(topic, reinterpret_cast<uint8_t*>(const_cast<char*>(jsonStr.data())), static_cast<int>(jsonStr.size()));
+    const std::vector<uint8_t> cborData = nlohmann::json::to_cbor(packet);
+    bluetoothManager.notify(topic, const_cast<uint8_t*>(cborData.data()), static_cast<int>(cborData.size()));
 }
 
 void FrontendHandlerBlClass::sendUpdate() {

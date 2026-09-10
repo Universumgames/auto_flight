@@ -1,6 +1,5 @@
 package de.universegame.auto_flight.app
 
-import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 typealias PlaneID = String
@@ -66,7 +65,6 @@ enum class ConfigurationState {
     }
 }
 
-@Serializable
 data class Coordinate(
     val latitude: Double,
     val longitude: Double,

@@ -1,61 +1,63 @@
 package de.universegame.auto_flight.app.wire
 
 import de.universegame.auto_flight.app.Coordinate
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.cbor.Cbor
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
 
 /**
- * kotlinx.serialization mirrors of the base-station <-> frontend wire protocol defined in
+ * Mirrors of the base-station <-> frontend wire protocol defined in
  * `base_station/components/frontend/FrontendPackets.hpp` and the shared types it builds on in
  * `shared_components/flight_data/types.hpp`. Field names/enum wire values follow the C++ structs
  * exactly; JSON keys are name-based (not positional), so the domain [Coordinate]'s field order
  * and `Double` precision are interchangeable with the wire's `float longitude; float latitude;`.
+ *
+ * These public types are plain data holders, not `@Serializable` themselves - the actual CBOR
+ * codec lives in [FrontendPackets] below, backed by `internal` mirror types in
+ * FrontendPacketsWire.kt. A public `@Serializable` class gets a public `KSerializer`-returning
+ * `serializer()` accessor, which forces Swift Export to bridge kotlinx-serialization-core to
+ * describe it - and doing so currently trips a Swift Export Alpha compiler bug that double-emits
+ * `CompositeDecoder`/`CompositeEncoder`/`Encoder` default members (`decodeSequentially`,
+ * `shouldEncodeElementDefault`, `encodeNotNullMark`) as invalid redeclarations. Keeping the
+ * `@Serializable` annotations off any `public` type avoids that entirely, since Swift Export only
+ * ever sees public API - `internal` is enough for that, it doesn't need to be `private`/same-file.
  */
 
 typealias Route = List<Coordinate>
 typealias FlightRoute = Route
 typealias PlannedRoute = Route
 
-/** Mirrors `ConnectionState` (shared_components/flight_data/types.hpp); wire values are the NLOHMANN_JSON_SERIALIZE_ENUM strings. */
-@Serializable
+/** Mirrors `ConnectionState` (shared_components/flight_data/types.hpp); wire values are the NLOHMANN_JSON_SERIALIZE_ENUM strings ("connecting", "connected"). */
 enum class ConnectionState {
-    @SerialName("connecting") CONNECTING,
-    @SerialName("connected") CONNECTED,
+    CONNECTING,
+    CONNECTED,
 }
 
-/** Mirrors `FlightState` (shared_components/flight_data/types.hpp); wire values are the NLOHMANN_JSON_SERIALIZE_ENUM strings. */
-@Serializable
+/** Mirrors `FlightState` (shared_components/flight_data/types.hpp); wire values are the NLOHMANN_JSON_SERIALIZE_ENUM strings ("planning", "planned", "flying", "returning"). */
 enum class FlightState {
-    @SerialName("planning") PLANNING,
-    @SerialName("planned") PLANNED,
-    @SerialName("flying") FLYING,
-    @SerialName("returning") RETURNING,
+    PLANNING,
+    PLANNED,
+    FLYING,
+    RETURNING,
 }
 
 /**
- * Common supertype of the `type`-tagged packets in FrontendPackets.hpp. Not itself `@Serializable`
- * (each variant carries its own literal `type` field exactly like the C++ struct's
- * `static constexpr const char* type` member, so there's no room for a class-discriminator on top
- * of it) - encode/decode via the concrete type, or via [FrontendPackets.encode]/[FrontendPackets.decode]
- * when the concrete type isn't known ahead of time.
+ * Common supertype of the `type`-tagged packets in FrontendPackets.hpp, matching the C++ structs'
+ * `static constexpr const char* type` member.
  */
-sealed interface FrontendPacket
+sealed interface FrontendPacket {
+    val type: String
+}
 
 /** Mirrors `BaseUpdatePacket`. */
-@Serializable
 data class BaseUpdatePacket(
-    val type: String = "base",
+    override val type: String = "base",
 ) : FrontendPacket
 
 /** Mirrors `FlightUpdatePacket`. */
-@Serializable
 data class FlightUpdatePacket(
-    val type: String = "flight",
+    override val type: String = "flight",
     val basePosition: Coordinate,
     val basePositionUpdateTime: Long,
     val planePosition: Coordinate,
@@ -67,9 +69,8 @@ data class FlightUpdatePacket(
 ) : FrontendPacket
 
 /** Mirrors `ConnectionUpdatePacket`. */
-@Serializable
 data class ConnectionUpdatePacket(
-    val type: String = "connection",
+    override val type: String = "connection",
     val baseConnectionState: ConnectionState,
     val lastContactBaseStationTimestamp: Long,
     val planeConnectionState: ConnectionState,
@@ -86,15 +87,14 @@ data class ConnectionUpdatePacket(
 ) : FrontendPacket
 
 /** Mirrors `AreaDefinePacket`. Unlike the others it carries no `type` tag on the wire. */
-@Serializable
 data class AreaDefinePacket(
+    override val type: String = "area",
     val shape: List<Coordinate>,
 ) : FrontendPacket
 
 /** Mirrors `SensorPacket`. */
-@Serializable
 data class SensorPacket(
-    val type: String = "sensor",
+    override val type: String = "sensor",
     val barometerPressureBase: Float,
     val barometerPressurePlane: Float,
     val calculatedAltitude: Float,
@@ -102,51 +102,63 @@ data class SensorPacket(
 ) : FrontendPacket
 
 /** Mirrors `BatteryStatusPacket`. */
-@Serializable
 data class BatteryStatusPacket(
-    val type: String = "battery",
+    override val type: String = "battery",
     val baseBatteryPercentage: Int,
     val planeBatteryPercentage: Int,
 ) : FrontendPacket
 
 /** Mirrors `PlannedRoutePacket`. */
-@Serializable
 data class PlannedRoutePacket(
-    val type: String = "plannedRoute",
+    override val type: String = "plannedRoute",
     val route: List<Coordinate>,
 ) : FrontendPacket
 
-/** Encodes/decodes [FrontendPacket]s by dispatching on the `type` field, for callers that receive a heterogeneous stream of packets. */
+/**
+ * The shared CBOR codec for the wire types above. Each packet type maps to its own dedicated
+ * Bluetooth GATT characteristic (see `iosApp/Networking/ConnectionManager.swift`), so there's no
+ * generic type-tagged stream to demultiplex - callers already know which concrete type a given
+ * characteristic's payload decodes to, hence one `decodeX` function per type rather than a single
+ * polymorphic `decode(ByteArray): FrontendPacket?`.
+ *
+ * Bytes cross the Kotlin/Swift boundary as hex strings, not `ByteArray`: Swift Export (Alpha) has
+ * no bridge for *constructing* a Kotlin `ByteArray` from Swift (only reading an existing one), so
+ * Swift has no way to hand raw bytes to a `ByteArray`-typed parameter. `String` is fully bridged
+ * in both directions, so hex is the round-trippable common ground.
+ */
+@OptIn(ExperimentalSerializationApi::class, ExperimentalStdlibApi::class)
 object FrontendPackets {
-    private val json = Json { ignoreUnknownKeys = true }
+    private val cbor = Cbor { ignoreUnknownKeys = true }
 
-    /** Decodes one JSON object into the [FrontendPacket] matching its `type` field, or `null` if malformed/unrecognized. */
-    fun decode(raw: String): FrontendPacket? {
-        val obj = try {
-            json.parseToJsonElement(raw) as? JsonObject
-        } catch (_: Exception) {
-            null
-        } ?: return null
+    fun decodeBaseUpdate(hex: String): BaseUpdatePacket? =
+        runCatching { cbor.decodeFromByteArray<BaseUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
-        return when (obj["type"]?.jsonPrimitive?.contentOrNull) {
-            "base" -> json.decodeFromJsonElement<BaseUpdatePacket>(obj)
-            "flight" -> json.decodeFromJsonElement<FlightUpdatePacket>(obj)
-            "connection" -> json.decodeFromJsonElement<ConnectionUpdatePacket>(obj)
-            "sensor" -> json.decodeFromJsonElement<SensorPacket>(obj)
-            "battery" -> json.decodeFromJsonElement<BatteryStatusPacket>(obj)
-            "plannedRoute" -> json.decodeFromJsonElement<PlannedRoutePacket>(obj)
-            else -> null
-        }
-    }
+    fun decodeFlightUpdate(hex: String): FlightUpdatePacket? =
+        runCatching { cbor.decodeFromByteArray<FlightUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
-    /** Encodes any [FrontendPacket] to its JSON wire form. */
+    fun decodeConnectionUpdate(hex: String): ConnectionUpdatePacket? =
+        runCatching { cbor.decodeFromByteArray<ConnectionUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
+    fun decodeAreaDefine(hex: String): AreaDefinePacket? =
+        runCatching { cbor.decodeFromByteArray<AreaDefinePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
+    fun decodeSensor(hex: String): SensorPacket? =
+        runCatching { cbor.decodeFromByteArray<SensorPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
+    fun decodeBatteryStatus(hex: String): BatteryStatusPacket? =
+        runCatching { cbor.decodeFromByteArray<BatteryStatusPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
+    fun decodePlannedRoute(hex: String): PlannedRoutePacket? =
+        runCatching { cbor.decodeFromByteArray<PlannedRoutePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
+    /** Encodes any [FrontendPacket] to its CBOR wire form, hex-encoded. */
     fun encode(packet: FrontendPacket): String = when (packet) {
-        is BaseUpdatePacket -> json.encodeToString(packet)
-        is FlightUpdatePacket -> json.encodeToString(packet)
-        is ConnectionUpdatePacket -> json.encodeToString(packet)
-        is AreaDefinePacket -> json.encodeToString(packet)
-        is SensorPacket -> json.encodeToString(packet)
-        is BatteryStatusPacket -> json.encodeToString(packet)
-        is PlannedRoutePacket -> json.encodeToString(packet)
-    }
+        is BaseUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
+        is FlightUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
+        is ConnectionUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
+        is AreaDefinePacket -> cbor.encodeToByteArray(packet.toWire())
+        is SensorPacket -> cbor.encodeToByteArray(packet.toWire())
+        is BatteryStatusPacket -> cbor.encodeToByteArray(packet.toWire())
+        is PlannedRoutePacket -> cbor.encodeToByteArray(packet.toWire())
+    }.toHexString()
 }

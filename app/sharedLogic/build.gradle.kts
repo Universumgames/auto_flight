@@ -35,6 +35,7 @@ kotlin {
             // Set the collapse rule for the exported dependency
             flattenPackage = "de.universegame.auto_flight.library"
         }*/
+
     }
 
     android {
@@ -66,7 +67,9 @@ kotlin {
         // implements FlightRepository natively in Swift (URLSession) against these shared
         // types instead. Revisit this split whenever the Swift Export toolchain matures.
         commonMain.dependencies {
-            implementation(libs.kotlinx.serialization.json)
+            // Only referenced by FrontendPackets.kt's `private` wire-mirror types (see the
+            // comment there on why the public wire types themselves stay unannotated).
+            implementation(libs.kotlinx.serialization.cbor)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -77,6 +80,10 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.websockets)
             implementation(libs.ktor.client.okhttp)
+            // Only used for manual JsonObject/JsonArray building in KtorFlightRepository - kept
+            // out of commonMain so kotlinx-serialization-core never enters the iOS/Swift Export
+            // dependency graph (see the wire-types comment in FrontendPackets.kt).
+            implementation(libs.kotlinx.serialization.json)
         }
         iosMain.dependencies {
             // Not used by any of our own code - present solely because Swift Export's

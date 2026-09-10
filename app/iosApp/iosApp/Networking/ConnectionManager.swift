@@ -94,25 +94,25 @@ final class ConnectionManager: NSObject {
     // MARK: - Notifications
 
     private func onFrameConnectionUpdate(data: Data) {
-        guard let packet: wire.ConnectionUpdatePacket = data.asJson() else { return }
+        guard let packet = wire.FrontendPackets.shared.decodeConnectionUpdate(hex: data.hexEncoded) else { return }
         PacketParsing.applyConnectionPacket(state, packet)
         print("Connection update received: \(packet)")
     }
 
     private func onFrameSensorUpdate(data: Data) {
-        guard let packet: wire.SensorPacket = data.asJson() else { return }
+        guard let packet = wire.FrontendPackets.shared.decodeSensor(hex: data.hexEncoded) else { return }
         PacketParsing.applySensorPacket(state, packet)
         print("Sensor update received: \(packet)")
     }
 
     private func onFrameFlightData(data: Data) {
-        guard let packet: wire.FlightUpdatePacket = data.asJson() else { return }
+        guard let packet = wire.FrontendPackets.shared.decodeFlightUpdate(hex: data.hexEncoded) else { return }
         PacketParsing.applyFlightPacket(state, packet)
         print("Flight update received: \(packet)")
     }
 
     private func onFrameBatteryStatus(data: Data) {
-        guard let packet: wire.BatteryStatusPacket = data.asJson() else { return }
+        guard let packet = wire.FrontendPackets.shared.decodeBatteryStatus(hex: data.hexEncoded) else { return }
         PacketParsing.applyBatteryStatusPacket(state, packet)
         print("Battery status received: \(packet)")
     }
@@ -133,8 +133,8 @@ final class ConnectionManager: NSObject {
     func fetchArea(onResult: @escaping ([Coordinate]?) -> Void) {
         Task {
             let data = await awaitNextUpdate(.areaDefine)
-            if let data, let json: wire.AreaDefinePacket = data.asJson() {
-                Task { @MainActor in onResult(json.shape) }
+            if let data, let packet = wire.FrontendPackets.shared.decodeAreaDefine(hex: data.hexEncoded) {
+                Task { @MainActor in onResult(packet.shape) }
                 return
             } else {
                 onResult(nil)
@@ -144,7 +144,7 @@ final class ConnectionManager: NSObject {
 
     func submitArea(polygon: [Coordinate], onResult: @escaping (AreaSubmitResult) -> Void) {
         Task {
-            guard let data = try? JSONEncoder().encode(wire.AreaDefinePacket(shape: polygon)) else {
+            guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.AreaDefinePacket(type: "area", shape: polygon))) else {
                 onResult(.FAILED); return
             }
             do {
@@ -159,8 +159,8 @@ final class ConnectionManager: NSObject {
     func fetchRoute(onResult: @escaping ([Coordinate]) -> Void) {
         Task {
             let data = await awaitNextUpdate(.plannedRoute)
-            if let data, let json: wire.PlannedRoutePacket = data.asJson() {
-                Task { @MainActor in onResult(json.route) }
+            if let data, let packet = wire.FrontendPackets.shared.decodePlannedRoute(hex: data.hexEncoded) {
+                Task { @MainActor in onResult(packet.route) }
             } else {
                 onResult([])
             }
@@ -170,8 +170,8 @@ final class ConnectionManager: NSObject {
     func fetchFlightState(onResult: @escaping (wire.FlightUpdatePacket?) -> Void) {
         Task {
             let data = await awaitNextUpdate(.flightUpdate)
-            if let data, let json: wire.FlightUpdatePacket = data.asJson() {
-                Task { @MainActor in onResult(json) }
+            if let data, let packet = wire.FrontendPackets.shared.decodeFlightUpdate(hex: data.hexEncoded) {
+                Task { @MainActor in onResult(packet) }
             } else {
                 onResult(nil)
             }
@@ -181,8 +181,8 @@ final class ConnectionManager: NSObject {
     func fetchConnectionState(onResult: @escaping (wire.ConnectionUpdatePacket?) -> Void) {
         Task {
             let data = await readCharacteristic(.connectionUpdate)
-            if let data, let json: wire.ConnectionUpdatePacket = data.asJson() {
-                Task { @MainActor in onResult(json) }
+            if let data, let packet = wire.FrontendPackets.shared.decodeConnectionUpdate(hex: data.hexEncoded) {
+                Task { @MainActor in onResult(packet) }
             } else {
                 onResult(nil)
             }
@@ -192,8 +192,8 @@ final class ConnectionManager: NSObject {
     func fetchSensorState(onResult: @escaping (wire.SensorPacket?) -> Void) {
         Task {
             let data = await readCharacteristic(.sensorData)
-            if let data, let json: wire.SensorPacket = data.asJson() {
-                Task { @MainActor in onResult(json) }
+            if let data, let packet = wire.FrontendPackets.shared.decodeSensor(hex: data.hexEncoded) {
+                Task { @MainActor in onResult(packet) }
             } else {
                 onResult(nil)
             }
@@ -203,8 +203,8 @@ final class ConnectionManager: NSObject {
     func fetchBatteryStatus(onResult: @escaping (wire.BatteryStatusPacket?) -> Void) {
         Task {
             let data = await readCharacteristic(.batteryStatus)
-            if let data, let json: wire.BatteryStatusPacket = data.asJson() {
-                Task { @MainActor in onResult(json) }
+            if let data, let packet = wire.FrontendPackets.shared.decodeBatteryStatus(hex: data.hexEncoded) {
+                Task { @MainActor in onResult(packet) }
             } else {
                 onResult(nil)
             }
