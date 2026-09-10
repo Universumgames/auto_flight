@@ -4864,6 +4864,16 @@
 	)
 	(wire
 		(pts
+			(xy 38.1 168.91) (xy 45.72 168.91)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a14c838e-95f9-47ee-bfc7-73ecaceb234e")
+	)
+	(wire
+		(pts
 			(xy 132.08 55.88) (xy 137.16 55.88)
 		)
 		(stroke
@@ -5382,6 +5392,16 @@
 		)
 		(uuid "fffa5ac0-adfb-4278-8258-75230b34358c")
 	)
+	(label "3V3"
+		(at 38.1 168.91 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "096230f5-a5f3-42c6-86c4-f9fb83075892")
+	)
 	(label "UART_RX"
 		(at 137.16 55.88 0)
 		(effects
@@ -5842,7 +5862,7 @@
 		)
 		(uuid "d178d57b-25bf-4fc6-8d2c-766e1b4e76fe")
 	)
-	(label "3V3"
+	(label "5V"
 		(at 99.06 127 0)
 		(effects
 			(font
@@ -6124,7 +6144,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 198.12 221.742 90)
 			(hide yes)
 			(show_name no)
@@ -6374,7 +6394,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 173.228 233.68 90)
 			(hide yes)
 			(show_name no)
@@ -6528,7 +6548,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 83.82 73.66 0)
 			(hide yes)
 			(show_name no)
@@ -6605,7 +6625,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 85.09 80.01 0)
 			(hide yes)
 			(show_name no)
@@ -6763,7 +6783,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 154.94 216.662 90)
 			(hide yes)
 			(show_name no)
@@ -7490,7 +7510,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 194.818 236.22 90)
 			(hide yes)
 			(show_name no)
@@ -7856,8 +7876,9 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Heltec WiFi LoRa 32 V3.2 dev board (ESP32-S3 + SX1262), 36-pin dual header"
 			(at 58.42 149.86 0)
+			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -8017,7 +8038,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 151.638 231.14 90)
 			(hide yes)
 			(show_name no)
@@ -8273,7 +8294,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 132.08 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -8602,7 +8623,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 119.38 44.45 0)
 			(hide yes)
 			(show_name no)
@@ -8761,7 +8782,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 29.21 78.74 0)
 			(hide yes)
 			(show_name no)
@@ -9150,7 +9171,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 26.67 86.36 0)
 			(hide yes)
 			(show_name no)
@@ -9228,7 +9249,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
 			(at 176.53 219.202 90)
 			(hide yes)
 			(show_name no)

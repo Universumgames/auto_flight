@@ -217,65 +217,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer and i2c working again">
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station.nets.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station.parts.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station_pcb.kicad_pcb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station_pcb.kicad_pro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station_pcb.kicad_sch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/fp-lib-table" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/sym-lib-table" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.3dshapes/HTIT-WB32LAF_V3.7(3).step" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.3dshapes/Heltec_WiFi_LoRa_32_V3.2.step" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.3dshapes/Heltec_WiFi_LoRa_32_V3.2.wrl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.kicad_sym" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/Heltec_WiFi_LoRa_32_V3.2.kicad_mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/I2C_Level_Converter.kicad_mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/fp-lib-table" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane.nets.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane.parts.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pcb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_sch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/sbus.kicad_sch" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/sym-lib-table" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/Arduino Nano3(fix).fzp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/Dagu DGServo 9g header (male).fzp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/bmp180_breakout.fzp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/breadboard2.fzp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/resistor_5band.fzp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/sparkfun-connectors-m04-jst-pth.fzp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/sparkfun-discretesemi-transistor_npn_2-pth.fzp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fz_extract.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_footprints.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_pcb.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_schematic.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_symbols.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/generated_pin_numbers.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/parts_catalog.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/pin_overrides.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/sexpr_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README_de.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README_de.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/ADS1115.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/ADS1115.fzpz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/BMP280_Breakout_Board.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/BMP280_Breakout_Board.fzpz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/GT-U8-GPS-module.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/GT-U8-GPS-module.fzpz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/Heltec WiFi Kit 32 (V3).fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/Heltec WiFi Kit 32 (V3).fzpz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/Heltec WiFi LoRa 32 V3.2.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/Heltec WiFi LoRa 32 V3.2.fzpz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/Heltec WiFi LoRa 32 V4.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/Heltec WiFi LoRa 32 V4.fzpz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/schematics_base.fzz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_base.fzz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/schematics_base_bb.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_base_bb.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/schematics_base_schem.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_base_schem.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane.fzz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane.fzz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane_backup.fzz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane_backup.fzz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane_bb.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane_bb.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane_schem.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane_schem.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/static" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/Heltec_WiFi_LoRa_32_V3.2.kicad_mod" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/Heltec_WiFi_LoRa_32_V3.2.kicad_mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/I2C_Level_Converter.kicad_mod" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/I2C_Level_Converter.kicad_mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pcb" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pcb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_sch" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_sch" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/tools/gen_footprints.py" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_footprints.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -1260,6 +1209,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="app-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="app-flash" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1711,18 +1665,18 @@
       <item itemvalue="CMake Application.uf2" />
     </list>
   </component>
-  <component name="SelectedDebugProfileService"><![CDATA[{
-  "profileIdByStamp": [
+  <component name="SelectedDebugProfileService">{
+  &quot;profileIdByStamp&quot;: [
     {
-      "first": {
-        "##RUN_CONFIGURATION##": "CMake Application.Upload & Monitor",
-        "cmake": "CMakeBuildProfile:Debug-ESP-IDF"
+      &quot;first&quot;: {
+        &quot;##RUN_CONFIGURATION##&quot;: &quot;CMake Application.Upload &amp; Monitor&quot;,
+        &quot;cmake&quot;: &quot;CMakeBuildProfile:Debug-ESP-IDF&quot;
       },
-      "second": "d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4"
+      &quot;second&quot;: &quot;d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4&quot;
     }
   ],
-  "modificationCount": 9
-}]]></component>
+  &quot;modificationCount&quot;: 9
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="" />

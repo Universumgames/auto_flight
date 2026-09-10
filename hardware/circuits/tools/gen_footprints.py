@@ -37,12 +37,17 @@ def pad(number, x, y):
     )
 
 
-def dual_row_header(name, pins_per_row, row_spacing, descr, tags, board_w=None, board_h=None, model_block=""):
+def dual_row_header(name, pins_per_row, row_spacing, descr, tags, board_w=None, board_h=None,
+                     model_block="", row0_reversed=False):
     """A 2-row THT header footprint: pins 1..pins_per_row along the first
     (negative-Y) row left-to-right, pins_per_row+1..2*pins_per_row along the
     second (positive-Y) row left-to-right -- i.e. pin N+1 sits directly
     across from pin N's mirror position, matching how these breakout-style
-    parts are silkscreened in practice."""
+    parts are silkscreened in practice.
+
+    row0_reversed=True numbers the first row right-to-left instead (pin 1 at
+    the +X end), for boards whose header runs the opposite direction from
+    this default -- see the Heltec call below."""
     x0 = -(pins_per_row - 1) * PITCH / 2
     y0 = -row_spacing / 2
     y1 = row_spacing / 2
@@ -65,7 +70,8 @@ def dual_row_header(name, pins_per_row, row_spacing, descr, tags, board_w=None, 
 
     pin = 1
     for i in range(pins_per_row):
-        parts.append(pad(pin, x0 + i * PITCH, y0))
+        x = x0 + (pins_per_row - 1 - i) * PITCH if row0_reversed else x0 + i * PITCH
+        parts.append(pad(pin, x, y0))
         pin += 1
     for i in range(pins_per_row):
         parts.append(pad(pin, x0 + i * PITCH, y1))
@@ -101,6 +107,9 @@ def main():
               "row spacing ESTIMATED at 20.32mm -- verify before fab, see tools/README.md",
         tags="heltec esp32 lora devboard",
         board_w=50.2, board_h=25.5, model_block=heltec_model,
+        # Row 1 (pins 1-18, incl. the two 3V3 pins) runs right-to-left on the
+        # real board, opposite of this generator's default -- see auto_flight.kicad_sym.
+        row0_reversed=True,
     )
 
     level_converter = dual_row_header(
