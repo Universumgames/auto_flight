@@ -4974,6 +4974,16 @@
 	)
 	(wire
 		(pts
+			(xy 35.56 171.45) (xy 45.72 171.45)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "afae7ed9-ec86-4a0f-a942-c4f1baf4c482")
+	)
+	(wire
+		(pts
 			(xy 181.61 243.84) (xy 193.04 243.84)
 		)
 		(stroke
@@ -5962,6 +5972,16 @@
 		)
 		(uuid "f160328f-42da-4cee-814c-a304a16a0c6d")
 	)
+	(label "GND_MAIN"
+		(at 35.56 171.45 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "fd41498b-88f1-405b-a63b-f278239adef9")
+	)
 	(symbol
 		(lib_id "power:PWR_FLAG")
 		(at 40.64 83.82 0)
@@ -6865,7 +6885,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder"
 			(at 160.9852 234.95 0)
 			(hide yes)
 			(show_name no)
@@ -8703,7 +8723,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder"
 			(at 204.1652 240.03 0)
 			(hide yes)
 			(show_name no)
@@ -8862,7 +8882,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric_Pad1.33x1.80mm_HandSolder"
 			(at 182.5752 237.49 0)
 			(hide yes)
 			(show_name no)
