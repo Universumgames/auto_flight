@@ -81,8 +81,6 @@ base_station:
   stage: build
   needs: []
   image: espressif/idf:v6.0.1
-  before_script:
-    - (cd frontend_web && mkdir dist)
   script:
     - cd base_station
     - idf.py build

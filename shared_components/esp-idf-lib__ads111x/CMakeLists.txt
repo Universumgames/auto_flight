@@ -1,3 +1,4 @@
+if(NOT NATIVE_BUILD)
 idf_component_register(
     SRCS ads111x.c
     INCLUDE_DIRS .
@@ -9,4 +10,6 @@ if(EXISTS ${ESP_IDF_LIB_CMAKE})
     include(${ESP_IDF_LIB_CMAKE})
 else()
     message(WARNING "${ESP_IDF_LIB_CMAKE} not found")
+endif()
+
 endif()
