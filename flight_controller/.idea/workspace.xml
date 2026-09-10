@@ -217,108 +217,65 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer and i2c working again">
-      <change beforePath="$PROJECT_DIR$/../app/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../app/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/BaseDisconnectButton.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/BaseDisconnectButton.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/ConnectionItemsList.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/ConnectionItemsList.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/ConnectionStatusButton.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/ConnectionStatusButton.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/MapMarkers.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/MapMarkers.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/PolygonMapView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/PolygonMapView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/RouteMapView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/RouteMapView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/WizardProgressBar.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/WizardProgressBar.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/AppState.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/AppState.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/PlaneInfo.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/PlaneInfo.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/ConnectionManager.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/ConnectionManager.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/PacketParsing.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/PacketParsing.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/AreaView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/AreaView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/BaseConnectedView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/BaseConnectedView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/BaseSelectionView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/BaseSelectionView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/ConnectionView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/ConnectionView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/ContentView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/ContentView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/RouteView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/RouteView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/androidMain/kotlin/de/universegame/auto_flight/app/ConnectionItems.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/androidMain/kotlin/de/universegame/auto_flight/app/ConnectionItems.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/ConnectionItems.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/ConnectionItems.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/Models.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/Models.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/Frontend.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/FrontendPackets.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/idf_component.yml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/static_content.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/websocket.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/websocket_helper.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend/websocket_helper.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/CMakeLists.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/Kconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/wifi_helper/wifi_helper.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/main/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/partitions.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/partitions.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/sdkconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station.nets.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station.parts.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station_pcb.kicad_pcb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station_pcb.kicad_pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/base_station_pcb.kicad_sch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/fp-lib-table" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/sym-lib-table" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.3dshapes/HTIT-WB32LAF_V3.7(3).step" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.3dshapes/Heltec_WiFi_LoRa_32_V3.2.step" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.3dshapes/Heltec_WiFi_LoRa_32_V3.2.wrl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.kicad_sym" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/Heltec_WiFi_LoRa_32_V3.2.kicad_mod" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/kicad_libs/auto_flight.pretty/I2C_Level_Converter.kicad_mod" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/fp-lib-table" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane.nets.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane.parts.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pcb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_sch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/sbus.kicad_sch" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/sym-lib-table" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/Arduino Nano3(fix).fzp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/Dagu DGServo 9g header (male).fzp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/bmp180_breakout.fzp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/breadboard2.fzp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/resistor_5band.fzp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/sparkfun-connectors-m04-jst-pth.fzp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fritzing_core_parts_cache/sparkfun-discretesemi-transistor_npn_2-pth.fzp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/fz_extract.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_footprints.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_pcb.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_schematic.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/gen_symbols.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/generated_pin_numbers.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/parts_catalog.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/pin_overrides.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../hardware/circuits/tools/sexpr_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README_de.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README_de.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/ADS1115.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/ADS1115.fzpz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/BMP280_Breakout_Board.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/BMP280_Breakout_Board.fzpz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/GT-U8-GPS-module.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/GT-U8-GPS-module.fzpz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/Heltec WiFi Kit 32 (V3).fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/Heltec WiFi Kit 32 (V3).fzpz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/Heltec WiFi LoRa 32 V3.2.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/Heltec WiFi LoRa 32 V3.2.fzpz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/Heltec WiFi LoRa 32 V4.fzpz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/Heltec WiFi LoRa 32 V4.fzpz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/schematics_base.fzz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_base.fzz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/schematics_base_bb.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_base_bb.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/schematics_base_schem.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_base_schem.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane.fzz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane.fzz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane_backup.fzz" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane_backup.fzz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane_bb.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane_bb.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../assets/schematics_plane_schem.svg" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/fritzing_source/schematics_plane_schem.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/static" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sweepLines.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sweepPath.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/.editorconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/.oxlintrc.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/.prettierrc.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/.vscode/extensions.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/e2e/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/e2e/vue.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/env.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/eslint.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/playwright.config.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/public/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/references/FrontendPackets.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/App.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/api/status.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/assets/base.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/assets/location-crosshairs-solid-full.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/assets/logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/assets/main.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/ConnectionStatusButton.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/NextStepBtn.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/PolygonMap.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/RouteMap.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/StepEntry.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/StepView.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/icons/IconCheckmark.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/icons/IconLoader.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/components/icons/IconLocator.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/composables/useConnectionItems.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/router/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/store.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessage.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/stores/websocketMessageParser.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/connection.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/coordinates.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/flight.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/types/sensor.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/AboutView.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/AreaPlanner.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/ConnectionOverview.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/HomeView.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/MapView.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/src/views/RoutePreviewView.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/tsconfig.app.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/tsconfig.node.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/vite.config.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -475,61 +432,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0000000008558043" />
-      <entry key="S5" value="1.000236020533792" />
-      <entry key="S10" value="1.015362959799203" />
-      <entry key="S30" value="1.2485945660902547" />
-      <entry key="S60" value="1.4985925852740438" />
-      <entry key="M2" value="1.7061108873782105" />
-      <entry key="M5" value="1.8700599202811334" />
-      <entry key="M10" value="1.9327700253980793" />
-      <entry key="M15" value="1.9546621870280414" />
-      <entry key="M30" value="1.9770681688239224" />
-      <entry key="H1" value="1.9891231376543517" />
-      <entry key="H2" value="2.1633458320347616" />
-      <entry key="H4" value="4.757385455518248" />
-      <entry key="D1" value="83.39950194830583" />
-      <entry key="W1" value="1717.4618572108084" />
+      <entry key="MS100" value="7.079400188662862E-33" />
+      <entry key="MS500" value="3.7200042809296426E-7" />
+      <entry key="S2" value="0.032937011133157786" />
+      <entry key="S5" value="0.49754629063256195" />
+      <entry key="S10" value="1.7221950244885385" />
+      <entry key="S30" value="9.765555127228387" />
+      <entry key="S60" value="19.00991822083624" />
+      <entry key="M2" value="27.553243634885785" />
+      <entry key="M5" value="34.86042082060508" />
+      <entry key="M10" value="37.78501997836815" />
+      <entry key="M15" value="38.822874513149884" />
+      <entry key="M30" value="39.89412982266419" />
+      <entry key="H1" value="40.44330241757783" />
+      <entry key="H2" value="40.88761226093057" />
+      <entry key="H4" value="43.605912403318214" />
+      <entry key="D1" value="122.30664604990469" />
+      <entry key="W1" value="1756.2479447527603" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="1.4134417020001995E-288" />
-      <entry key="M2" value="2.7864702063584807E-144" />
-      <entry key="M5" value="1.0953230113795044E-57" />
-      <entry key="M10" value="8.088808283155865E-29" />
-      <entry key="M15" value="3.3969411287223843E-19" />
-      <entry key="M30" value="1.4272795514331875E-9" />
-      <entry key="H1" value="9.254210351598381E-5" />
-      <entry key="H2" value="0.023688741109247444" />
-      <entry key="H4" value="0.395610035088587" />
-      <entry key="D1" value="20.026239618357536" />
-      <entry key="W1" value="522.4034985208446" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.000001919874395" />
+      <entry key="S2" value="1.0471779765832387" />
+      <entry key="S5" value="1.4986404040348065" />
+      <entry key="S10" value="2.2663949508398797" />
+      <entry key="S30" value="3.844069075495441" />
+      <entry key="S60" value="4.697648155339835" />
+      <entry key="M2" value="5.276458770223762" />
+      <entry key="M5" value="5.690510780326094" />
+      <entry key="M10" value="5.841651750931369" />
+      <entry key="M15" value="5.893613252155675" />
+      <entry key="M30" value="5.946390759022078" />
+      <entry key="H1" value="5.973181068097898" />
+      <entry key="H2" value="6.009964493626512" />
+      <entry key="H4" value="6.386827781432961" />
+      <entry key="D1" value="26.007907675931744" />
+      <entry key="W1" value="528.3391929948486" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.004775938584734642" />
-      <entry key="MS500" value="0.3434090583574056" />
-      <entry key="S2" value="0.7655136464090905" />
-      <entry key="S5" value="0.8988424896281723" />
-      <entry key="S10" value="0.9625196993920944" />
-      <entry key="S30" value="1.226520978927069" />
-      <entry key="S60" value="1.4852754337733856" />
-      <entry key="M2" value="1.6985093641733597" />
-      <entry key="M5" value="1.86672154953649" />
-      <entry key="M10" value="1.9310439018494834" />
-      <entry key="M15" value="1.9534981867665282" />
-      <entry key="M30" value="1.9764793890160177" />
-      <entry key="H1" value="1.9889194659982181" />
-      <entry key="H2" value="2.1868733195683943" />
-      <entry key="H4" value="5.152814674515215" />
-      <entry key="D1" value="103.42488284992825" />
-      <entry key="W1" value="2239.8626521562073" />
+      <entry key="MS100" value="0.0068011762757509715" />
+      <entry key="MS500" value="0.36856797280205145" />
+      <entry key="S2" value="0.8390977620939738" />
+      <entry key="S5" value="1.7956556909659454" />
+      <entry key="S10" value="3.7904874936025967" />
+      <entry key="S30" value="13.461645292842107" />
+      <entry key="S60" value="23.60369035208745" />
+      <entry key="M2" value="32.76516636177666" />
+      <entry key="M5" value="40.5208884339034" />
+      <entry key="M10" value="43.6108039311735" />
+      <entry key="M15" value="44.705708706687076" />
+      <entry key="M30" value="45.83502744198512" />
+      <entry key="H1" value="46.413710266693016" />
+      <entry key="H2" value="46.89617084171886" />
+      <entry key="H4" value="49.99193593947187" />
+      <entry key="D1" value="148.3135915195628" />
+      <entry key="W1" value="2284.584419610403" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -576,39 +533,39 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "CMake Application.Upload & Monitor.executor": "Run",
-    "CMake Application.flash.executor": "Run",
-    "CMake Application.monitor.executor": "Run",
-    "CidrDebugProfileConversion": "true",
-    "Google Test.flight_controller_test.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.RadMigrateCodeStyle": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "RunOnceActivity.west.config.association.type.startup.service": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "copilot.chat.legacySessionMetadata.migrated": "true",
-    "git-widget-placeholder": "experiment/kotlin__multiplatform",
-    "last_opened_file_path": "/Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
-    "settings.editor.selected.configurable": "CPPToolchains",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;CMake Application.Upload &amp; Monitor.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.flash.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.monitor.executor&quot;: &quot;Run&quot;,
+    &quot;CidrDebugProfileConversion&quot;: &quot;true&quot;,
+    &quot;Google Test.flight_controller_test.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;experiment/kotlin__multiplatform&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/shared_components" />
@@ -625,11 +582,6 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="${IDF_PATH}/tools/idf.py">
       <method v="2" />
     </configuration>
@@ -1760,8 +1712,16 @@
     </list>
   </component>
   <component name="SelectedDebugProfileService"><![CDATA[{
-  "profileIdByStamp": [],
-  "modificationCount": 7
+  "profileIdByStamp": [
+    {
+      "first": {
+        "##RUN_CONFIGURATION##": "CMake Application.Upload & Monitor",
+        "cmake": "CMakeBuildProfile:Debug-ESP-IDF"
+      },
+      "second": "d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4"
+    }
+  ],
+  "modificationCount": 9
 }]]></component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

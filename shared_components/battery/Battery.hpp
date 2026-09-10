@@ -3,7 +3,7 @@
 
 #include <array>
 
-#define BATTERY_CELL_COUNT 4
+#define MAX_BATTERY_CELL_COUNT 4
 
 class BatteryClass {
 private:
@@ -15,14 +15,14 @@ public:
     static BatteryClass& getInstance();
     static BatteryClass* getInstancePtr();
 
-    void begin();
+    void begin(char cellCount = MAX_BATTERY_CELL_COUNT);
 
     // The 4S pack is sensed through its balance leads: AIN0 taps B- to cell1+,
     // AIN1 taps to cell2+, AIN2 to cell3+, AIN3 to cell4+/pack+. Each channel
     // therefore reads the *cumulative* voltage from pack negative, so the
     // per-cell voltage is the difference between successive channels.
     /// Voltage of each individual cell in millivolts, index 0 = cell nearest B-.
-    std::array<int, BATTERY_CELL_COUNT> getCellVoltagesMillivolts();
+    std::array<int, MAX_BATTERY_CELL_COUNT> getCellVoltagesMillivolts();
 
     /// Average per-cell voltage in millivolts, for feeding voltageToPercentage()
     /// which is calibrated against a single LiPo cell's discharge curve.
@@ -43,7 +43,7 @@ private:
     // TODO: measure the real sense-board resistor-divider ratio; this assumes
     // every AINx-to-GND channel is scaled down by the same ratio before reaching
     // the ADS111x, and un-scales the reading back up to the real tap voltage.
-    static constexpr float voltageDividerRatio = 5.0f;
+    static constexpr float voltageDividerRatio = 3.3f;
 
     // Conversions can take a few ms; bound the busy-poll so a stuck/disconnected
     // ADC can't hang whoever is reading the battery state.
@@ -57,6 +57,7 @@ private:
     int readChannelMillivolts(ads111x_mux_t mux);
 
     ads111x_handle_t adsHandle = nullptr;
+    char batteryCellCount = MAX_BATTERY_CELL_COUNT;
 };
 
 extern BatteryClass& Battery;

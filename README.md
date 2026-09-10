@@ -82,21 +82,23 @@ The magnetometer originally used was a QMC5883P, which was replaced with an HMC5
 
 ### Schematics
 
-The schematics for the plane and ground station were created with [Fritzing](https://fritzing.org/). The source files are available as [`assets/schematics_plane.fzz`](./assets/schematics_plane.fzz) and [`assets/schematics_base.fzz`](./assets/schematics_base.fzz), together with custom Fritzing parts created for modules without official Fritzing support ([BMP280 breakout](./assets/BMP280_Breakout_Board.fzpz), [GT-U8 GPS module](./assets/GT-U8-GPS-module.fzpz), [Heltec WiFi Kit 32 (V3)](./assets/Heltec WiFi Kit 32 (V3).fzpz)).
+The schematics for the plane and ground station were originally created with [Fritzing](https://fritzing.org/). The source files are available as [`hardware/circuits/fritzing_source/schematics_plane.fzz`](./hardware/circuits/fritzing_source/schematics_plane.fzz) and [`hardware/circuits/fritzing_source/schematics_base.fzz`](./hardware/circuits/fritzing_source/schematics_base.fzz), together with custom Fritzing parts created for modules without official Fritzing support ([BMP280 breakout](./hardware/circuits/fritzing_source/BMP280_Breakout_Board.fzpz), [GT-U8 GPS module](./hardware/circuits/fritzing_source/GT-U8-GPS-module.fzpz), [Heltec WiFi Kit 32 (V3)](./hardware/circuits/fritzing_source/Heltec%20WiFi%20Kit%2032%20(V3).fzpz)).
+
+Since Fritzing is no longer maintained, the design was also converted into KiCad projects: [`hardware/circuits/plane_pcb/`](./hardware/circuits/plane_pcb/) and [`hardware/circuits/base_station_pcb/`](./hardware/circuits/base_station_pcb/), covering both schematic capture and PCB footprint placement. There's no reliable automated Fritzing→KiCad converter, so this used a custom extraction pipeline (documented in [`hardware/circuits/tools/README.md`](./hardware/circuits/tools/README.md)) that rebuilds the netlist from the Fritzing source and generates the KiCad files from it. A few things to know before treating the KiCad projects as finished: symbols are placed on a plain auto-generated grid rather than a hand-arranged layout (both schematic and PCB), the PCB has no copper routing yet (only correct net assignments/ratsnest), and several breakout-board footprints use generic pin headers with dimensions noted as estimated where not confirmed from a datasheet — see the tooling README's "Known limitations" section for the full list before ordering boards.
 
 The wiring of the 4 servos is not shown in the schematic here, in order to keep it clear. The servos are connected directly to the Arduino Nano, which generates the PWM signals. PWM pins 9, 10, 11, and 12 were used for the left aileron, right aileron, elevator, and rudder. The mapping between servo and control surface is defined in the control logic in the ESP32 flight controller and can be adjusted as needed. In the Arduino code there is a fixed mapping: byte 0 -> servo 1, byte 1 -> servo 2, byte 2 -> servo 3, byte 3 -> servo 4. Which servo is assigned to which control surface is then defined in the flight control logic in the ESP32 flight controller.
 
 **Plane:**
 
-![Plane schematic with Heltec LoRa32 V3, GPS, IMU, magnetometer, barometer and the link to the Arduino motor controller](assets/schematics_plane_schem.svg)
+![Plane schematic with Heltec LoRa32 V3, GPS, IMU, magnetometer, barometer and the link to the Arduino motor controller](hardware/circuits/fritzing_source/schematics_plane_schem.svg)
 
-![Breadboard view of the wiring in the plane](assets/schematics_plane_bb.svg)
+![Breadboard view of the wiring in the plane](hardware/circuits/fritzing_source/schematics_plane_bb.svg)
 
 **Ground station:**
 
-![Ground station schematic with Heltec LoRa32 V3, GPS and barometer](assets/schematics_base_schem.svg)
+![Ground station schematic with Heltec LoRa32 V3, GPS and barometer](hardware/circuits/fritzing_source/schematics_base_schem.svg)
 
-![Breadboard view of the ground station wiring](assets/schematics_base_bb.svg)
+![Breadboard view of the ground station wiring](hardware/circuits/fritzing_source/schematics_base_bb.svg)
 
 ### Mechanical design
 
@@ -281,7 +283,7 @@ The Arduino independently monitors the freshness of incoming I2C messages and au
 
 The safety-critical decision of whether the plane is controlled autonomously or manually is deliberately not made in the flight controller, but on the Arduino. A fixed SBUS channel (channel 5) of the RC receiver is interpreted as an override switch. If its value exceeds the threshold of 1500 µs (neutral position), the Arduino drives the four servos directly from the SBUS channels and ignores the I2C values last received from the flight controller. The flight controller itself only reads the override status for display/telemetry purposes, but has no influence on it. This decoupling ensures that manual control is preserved even in the event of a crash or hang of the ESP32 firmware.
 The current setup uses the MRFS01 SBUS receiver from Futaba (link to [Aliexpress](https://de.aliexpress.com/item/1005007253167246.html)). The SBUS receiver transmits the control commands to the Arduino over a serial interface (UART), but Futaba uses a special configuration of the UART interface. The Arduino library [SBUS](https://github.com/george-hawkins/arduino-sbus) supports this configuration, with a few hardware modifications for the Arduino Nano.
-The Futaba SBUS receiver communicates over an inverted UART interface at 100000 baud, 8 data bits, 2 stop bits, and even parity. The Arduino Nano, however, does not have an inverted UART interface, so an inversion of the UART signals was implemented using a 2N2222 transistor. The circuit can be found in the schematic file `schematics_plane.fzz` or in the section [Schematics](#schematics).
+The Futaba SBUS receiver communicates over an inverted UART interface at 100000 baud, 8 data bits, 2 stop bits, and even parity. The Arduino Nano, however, does not have an inverted UART interface, so an inversion of the UART signals was implemented using a 2N2222 transistor. The circuit can be found in the schematic file [`hardware/circuits/fritzing_source/schematics_plane.fzz`](./hardware/circuits/fritzing_source/schematics_plane.fzz) (also viewable as symbol `U1` in the KiCad schematic, see the section [Schematics](#schematics)).
 
 ## Key design decisions during the project
 

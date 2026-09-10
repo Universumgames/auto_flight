@@ -22,7 +22,8 @@ BatteryClass& BatteryClass::getInstance() {
     return *getInstancePtr();
 }
 
-void BatteryClass::begin() {
+void BatteryClass::begin(char cellCount) {
+    batteryCellCount = cellCount;
     adsHandle = ads111x_create(I2CManager::getBus(), ADS111X_ADDR_GND);
 
     esp_err_t err = ads111x_set_mode(adsHandle, ADS111X_MODE_SINGLE_SHOT);
@@ -57,19 +58,19 @@ int BatteryClass::readChannelMillivolts(const ads111x_mux_t mux) {
     return static_cast<int>(adcVolts * voltageDividerRatio * 1000.0f);
 }
 
-std::array<int, BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts() {
-    static constexpr ads111x_mux_t channelMux[BATTERY_CELL_COUNT] = {
+std::array<int, MAX_BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts() {
+    static constexpr ads111x_mux_t channelMux[MAX_BATTERY_CELL_COUNT] = {
         ADS111X_MUX_0_GND, ADS111X_MUX_1_GND, ADS111X_MUX_2_GND, ADS111X_MUX_3_GND
     };
 
-    std::array<int, BATTERY_CELL_COUNT> cumulativeMillivolts{};
-    for (int i = 0; i < BATTERY_CELL_COUNT; i++) {
+    std::array<int, MAX_BATTERY_CELL_COUNT> cumulativeMillivolts{};
+    for (int i = 0; i < batteryCellCount; i++) {
         cumulativeMillivolts[i] = readChannelMillivolts(channelMux[i]);
     }
 
-    std::array<int, BATTERY_CELL_COUNT> cellVoltages{};
+    std::array<int, MAX_BATTERY_CELL_COUNT> cellVoltages{};
     int previous = 0;
-    for (int i = 0; i < BATTERY_CELL_COUNT; i++) {
+    for (int i = 0; i < batteryCellCount; i++) {
         cellVoltages[i] = cumulativeMillivolts[i] - previous;
         previous = cumulativeMillivolts[i];
     }
@@ -82,7 +83,7 @@ int BatteryClass::getVoltageMillivolts() {
     for (const int cellMillivolts : cells) {
         sum += cellMillivolts;
     }
-    return sum / BATTERY_CELL_COUNT;
+    return sum / batteryCellCount;
 }
 
 int BatteryClass::voltageToPercentage(const int millivolts) {

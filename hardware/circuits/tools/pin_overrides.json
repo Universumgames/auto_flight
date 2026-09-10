@@ -1,0 +1,22 @@
+{
+  "I2C_level_converter_444e27d4b4b231371fe2ccfc428902c1_1": {
+    "connector2": "GND",
+    "connector3": "HV",
+    "connector4": "HV1",
+    "connector5": "HV2",
+    "connector6": "LV2",
+    "connector7": "LV1",
+    "connector8": "LV",
+    "connector9": "GND"
+  },
+  "MPU6050_GY521_782354e339f672575bb20992ece4ab1b_9": {
+    "connector0": "VCC",
+    "connector1": "GND",
+    "connector2": "SCL",
+    "connector3": "SDA",
+    "connector4": "XDA",
+    "connector5": "XCL",
+    "connector6": "AD0",
+    "connector7": "INT"
+  }
+}

@@ -1,0 +1,11 @@
+# KiCad workspace/lock state, not part of the design
+*.kicad_prl
+*.lck
+~*.lck
+
+# Validation output (regenerate with `kicad-cli sch erc` / `kicad-cli pcb drc`)
+erc_report.txt
+drc_report.txt
+
+# Python
+__pycache__/

@@ -1,0 +1,31 @@
+#VRML V2.0 utf8
+# Simplified placeholder model for the Heltec WiFi LoRa 32 V3.2 dev board:
+# a green PCB slab sized to the board's published outline (50.2 x 25.5mm)
+# plus a dark block standing in for the ESP32-S3/SX1262 shield can. Not a
+# real scan/CAD export of the board -- good enough to see the part's
+# footprint and rough height in KiCad's 3D viewer, not for mechanical fit
+# checks against the enclosure in 3d_models/.
+
+Transform {
+  translation 0 0 0.8
+  children [
+    Shape {
+      appearance Appearance {
+        material Material { diffuseColor 0.0 0.35 0.15 specularColor 0.1 0.1 0.1 }
+      }
+      geometry Box { size 50.2 25.5 1.6 }
+    }
+  ]
+}
+
+Transform {
+  translation 9 0 3.3
+  children [
+    Shape {
+      appearance Appearance {
+        material Material { diffuseColor 0.12 0.12 0.12 specularColor 0.2 0.2 0.2 }
+      }
+      geometry Box { size 26 16.5 3.0 }
+    }
+  ]
+}
