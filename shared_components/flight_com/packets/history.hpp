@@ -6,8 +6,7 @@ struct FlightHistoryPacket : public BasePacket {
     std::vector<Coordinate> history;
 
     std::string toString() override {
-        return "FlightHistoryPacket{timestamp=" + std::to_string(timestamp) + ", type=" +
-            std::to_string(static_cast<int>(type)) + ", historySize=" + std::to_string(history.size()) + "}";
+        return "FlightHistoryPacket{base=" + BasePacket::toString() + ", historySize=" + std::to_string(history.size()) + "}";
     }
 
     FlightHistoryPacket(const FlightHistoryPacket& packet) : BasePacket(packet) {

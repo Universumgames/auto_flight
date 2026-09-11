@@ -4,6 +4,7 @@
 #include <atomic>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
@@ -40,6 +41,8 @@ private:
 
     struct LoRa_Packet_Internal {
         PacketType type;
+        /// hashed+truncated device identifier, stamped in sendRawPacket() before transmission
+        uint8_t senderId[4];
         uint8_t messageId;
         uint8_t payloadLength;
         uint8_t fragmentId;
@@ -48,7 +51,9 @@ private:
         [[nodiscard]] std::string toString() const;
 
         static bool equals(const LoRa_Packet_Internal& a, const LoRa_Packet_Internal& b) {
-            return a.type == b.type && a.messageId == b.messageId && a.payloadLength == b.payloadLength && a.fragmentId
+            return a.type == b.type
+                && std::equal(std::begin(a.senderId), std::end(a.senderId), std::begin(b.senderId))
+                && a.messageId == b.messageId && a.payloadLength == b.payloadLength && a.fragmentId
                 == b.fragmentId && a.totalFragments == b.totalFragments;
         }
 
@@ -193,7 +198,7 @@ private:
      * @param requireAck If true, waits for acknowledgement; defaults to true
      * @return true on success, false otherwise
      */
-    bool sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck = true);
+    bool sendRawPacket(LoRa_Packet_Internal packet, const uint8_t* data, bool requireAck = true);
 
     /**
      * Updates the timestamp of the last successful transmission

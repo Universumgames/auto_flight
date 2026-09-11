@@ -6,7 +6,7 @@ if (NOT NATIVE_BUILD)
             SRCS ${lora_com_srcs}
             #SRCS "LoRa_Communication.cpp"
             INCLUDE_DIRS "."
-            REQUIRES driver freertos esp_timer mbedtls esp_driver_gpio radiolib pthread
+            REQUIRES driver freertos esp_timer mbedtls esp_driver_gpio radiolib pthread device_id
     )
 else ()
     # LoRa_Communication.cpp drives the SX126x radio via radiolib/FreeRTOS and

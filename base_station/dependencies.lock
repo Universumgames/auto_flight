@@ -9,6 +9,14 @@ dependencies:
       path: ../shared_components/barometer
       type: local
     version: '*'
+  device_id:
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
+    source:
+      path: ../shared_components/device_id
+      type: local
+    version: '*'
   esp-idf-lib/ads111x:
     dependencies: []
     source:
@@ -158,6 +166,7 @@ dependencies:
     version: 2.0.0
 direct_dependencies:
 - barometer
+- device_id
 - esp-idf-lib/ads111x
 - esp-idf-lib/esp_idf_lib_helpers
 - esp-idf-lib/i2cdev
@@ -171,6 +180,6 @@ direct_dependencies:
 - johboh/nlohmann-json
 - lvgl/lvgl
 - waveshare/esp_oled_ssd1315
-manifest_hash: c5aa7ac7ef9d89982b16b806fc97bd42391ee8989c0573798bffd65ece6ab288
+manifest_hash: 48c231227e24d4195e44bb257240ed5a0fbca3f7ba0240b58101b3e64a1dbc28
 target: esp32s3
 version: 3.0.0

@@ -11,8 +11,7 @@ struct SensorUpdate : public BasePacket {
     int batteryPercent;
 
     std::string toString() override {
-        return "SensorUpdate{timestamp=" + std::to_string(timestamp) + ", type=" +
-            std::to_string(static_cast<int>(type)) + ", pressure=" + std::to_string(pressure) +
+        return "SensorUpdate{base=" + BasePacket::toString() + ", pressure=" + std::to_string(pressure) +
             ", heading=" + std::to_string(heading) + ", batteryPercent=" + std::to_string(batteryPercent) + "}";
     }
 

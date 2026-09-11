@@ -6,8 +6,7 @@ struct PlannedRoutePacket : public BasePacket {
     std::vector<Coordinate> route;
 
     std::string toString() override {
-        return "PlannedRoutePacket{timestamp=" + std::to_string(timestamp) + ", type=" +
-            std::to_string(static_cast<int>(type)) + ", routeSize=" + std::to_string(route.size()) + "}";
+        return "PlannedRoutePacket{base=" + BasePacket::toString() + ", routeSize=" + std::to_string(route.size()) + "}";
     }
 
     PlannedRoutePacket(const PlannedRoutePacket& packet) : BasePacket(packet) {

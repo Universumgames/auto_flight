@@ -6,7 +6,7 @@ if (NOT NATIVE_BUILD)
             SRCS ${flight_com_srcs}
             INCLUDE_DIRS "."
             REQUIRES  driver freertos esp_timer flight_data lora_com battery
-            PRIV_REQUIRES nlohmann-json gps barometer
+            PRIV_REQUIRES nlohmann-json gps barometer device_id
     )
 
     if (FLIGHT_DEVICE_TYPE_PLANE EQUAL 1)

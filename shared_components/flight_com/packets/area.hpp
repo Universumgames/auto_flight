@@ -7,8 +7,7 @@ struct PlannedAreaPacket : public BasePacket {
     std::vector<Coordinate> shape;
 
     std::string toString() override {
-        return "PlannedAreaPacket{timestamp=" + std::to_string(timestamp) + ", type=" +
-            std::to_string(static_cast<int>(type)) + ", shapeSize=" + std::to_string(shape.size()) + "}";
+        return "PlannedAreaPacket{base=" + BasePacket::toString() + ", shapeSize=" + std::to_string(shape.size()) + "}";
     }
 
     PlannedAreaPacket(const PlannedAreaPacket& packet) : BasePacket(packet) {

@@ -12,8 +12,7 @@ struct ComponentStatus : public BasePacket {
     FlightState flightState;
 
     std::string toString() override {
-        return "ComponentStatus{timestamp=" + std::to_string(timestamp) + ", type=" + std::to_string(
-                static_cast<int>(type)) +
+        return "ComponentStatus{base=" + BasePacket::toString() +
             ", gps=" + (gps == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", barometer=" + (barometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", motorControl=" + (motorControl == ConnectionState::CONNECTED ? "connected" : "connecting") +

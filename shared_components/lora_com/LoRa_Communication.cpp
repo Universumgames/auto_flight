@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstring>
 
+#include "DeviceId.hpp"
 #include "driver/gpio.h"
 
 #include "FlightStorage.hpp"
@@ -276,7 +277,10 @@ LoRa_CommunicationClass::ReceivedPacket LoRa_CommunicationClass::joinData(Receiv
     return result;
 }
 
-bool LoRa_CommunicationClass::sendRawPacket(const LoRa_Packet_Internal& packet, const uint8_t* data, bool requireAck) {
+bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const uint8_t* data, bool requireAck) {
+    const auto deviceId = DeviceId::get();
+    std::memcpy(packet.senderId, deviceId.data(), sizeof(packet.senderId));
+
     // Helper: wait for ACK with timeout
     auto waitForAckId = [&](uint8_t msgId, time_t timeout) -> bool {
         vTaskDelay(pdMS_TO_TICKS(10)); // small initial
@@ -388,7 +392,11 @@ std::string LoRa_CommunicationClass::toString(PacketType packetType) {
 }
 
 std::string LoRa_CommunicationClass::LoRa_Packet_Internal::toString() const {
+    char senderIdHex[9];
+    snprintf(senderIdHex, sizeof(senderIdHex), "%02x%02x%02x%02x",
+             senderId[0], senderId[1], senderId[2], senderId[3]);
     return "LoRa_Packet{type=" + LoRa_CommunicationClass::toString(type) +
+        ", senderId=" + std::string(senderIdHex) +
         ", messageId=" + std::to_string(messageId) +
         ", payloadLength=" + std::to_string(payloadLength) + "}";
 }
