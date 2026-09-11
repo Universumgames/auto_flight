@@ -44,7 +44,7 @@ ios_app:
     - universum
   script:
     - cd app
-    - xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO build
+    - xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO EXCLUDED_ARCHS=x86_64 build
   artifacts:
     paths:
       - app/build/ios/Build/Products
