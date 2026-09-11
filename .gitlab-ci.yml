@@ -1,15 +1,104 @@
 stages:
-  - docs
+  - test
+  - build
+  - doc
 
-readme_pdf:
-  stage: docs
+flight_controller_test:
+  stage: test
+  needs: []
   image: debian:bookworm-slim
   before_script:
     - apt-get update -qq
-    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-lang-german texlive-latex-extra lmodern
+    - apt-get install -y --no-install-recommends -qq cmake g++ make libgtest-dev libgmock-dev nlohmann-json3-dev
+  script:
+    - make test_flight_controller
+  artifacts:
+    when: always
+    reports:
+      junit: flight_controller/build_native/report.xml
+    paths:
+      - flight_controller/build_native/report.xml
+    expire_in: 1 week
+
+readme_pdf:
+  stage: doc
+  needs: []
+  image: debian:bookworm-slim
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends -qq make pandoc texlive-latex-recommended texlive-fonts-recommended texlive-fonts-extra texlive-lang-german texlive-latex-extra texlive-xetex lmodern poppler-utils librsvg2-bin
   script:
     - make export_documentation
   artifacts:
     paths:
       - README.pdf
+    expire_in: 1 week
+
+ios_app:
+  stage: build
+  needs: []
+  tags:
+    - private
+    - macos
+    - arm
+    - universum
+  script:
+    - cd app
+    - xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -configuration Debug -sdk iphonesimulator -derivedDataPath build/ios CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO EXCLUDED_ARCHS=x86_64 build
+  artifacts:
+    paths:
+      - app/build/ios/Build/Products
+    expire_in: 1 week
+
+motor_controller:
+  stage: build
+  needs: []
+  image: python:3.12-slim
+  before_script:
+    - apt-get update -qq && apt-get install -y --no-install-recommends -qq git
+    - pip install --no-cache-dir platformio
+  script:
+    - cd motor_controller
+    - pio run
+  artifacts:
+    paths:
+      - motor_controller/.pio/build
+    expire_in: 1 week
+
+flight_controller:
+  stage: build
+  needs: []
+  image: espressif/idf:v6.0.1
+  script:
+    - cd flight_controller
+    - idf.py build
+  artifacts:
+    paths:
+      - flight_controller/build
+    expire_in: 1 week
+
+base_station:
+  stage: build
+  needs: []
+  image: espressif/idf:v6.0.1
+  script:
+    - cd base_station
+    - idf.py build
+  artifacts:
+    paths:
+      - base_station/build
+    expire_in: 1 week
+
+3d_models:
+  stage: build
+  needs: []
+  image: debian:bookworm-slim
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends -qq make openscad
+  script:
+    - make build_3d_models
+  artifacts:
+    paths:
+      - 3d_models/build
     expire_in: 1 week

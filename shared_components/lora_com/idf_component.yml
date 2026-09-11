@@ -2,4 +2,7 @@ dependencies:
   flight_data:
     path: ../flight_data
     require: public
+  device_id:
+    path: ../device_id
+    require: public
   jgromes/radiolib: ^7.6.0

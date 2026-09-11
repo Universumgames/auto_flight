@@ -4,6 +4,8 @@
 # CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.16)
 
+set(ENV{IDF_COMPONENT_SUPPRESS_UNKNOWN_FILE_WARNINGS} 1)
+
 add_compile_definitions(FLIGHT_DEVICE_TYPE_PLANE)
 set(FLIGHT_DEVICE_TYPE_PLANE 1)
 

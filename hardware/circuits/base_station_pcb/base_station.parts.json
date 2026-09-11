@@ -1,0 +1,333 @@
+[
+  {
+    "title": "PCB1",
+    "module_id_ref": "TwoLayerRectanglePCBModuleID",
+    "model_index": 24848,
+    "kind": "board",
+    "properties": {
+      "layers": "2",
+      "width": "100.00000000000001",
+      "height": "60"
+    },
+    "part_source": "core_part_no_fzp",
+    "schematic": {
+      "pos": null,
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": []
+  },
+  {
+    "title": "GPS Module",
+    "module_id_ref": "GT-U8-GPS-module_1",
+    "model_index": 25053,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 295.01,
+        "y": 292.35
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 216.35,
+        "y": 43.2574
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector4",
+        "name": "Pin 5",
+        "description": "PPS"
+      },
+      {
+        "connector_id": "connector2",
+        "name": "Pin 3",
+        "description": "TX"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "Pin 4",
+        "description": "RX"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "Pin 1",
+        "description": "VCC"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 2",
+        "description": "GND"
+      }
+    ]
+  },
+  {
+    "title": "BMP280 Breakout2",
+    "module_id_ref": "bmp180_breakout",
+    "model_index": 25659,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 18.3075,
+        "y": 351.24
+      },
+      "rotation_deg": 180.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 294.135,
+        "y": -26.0438
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector9",
+        "name": "SCL",
+        "description": "SCL"
+      },
+      {
+        "connector_id": "connector5",
+        "name": "VCC",
+        "description": "VCC"
+      },
+      {
+        "connector_id": "connector6",
+        "name": "GND",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector10",
+        "name": "SDA",
+        "description": "SDA"
+      }
+    ]
+  },
+  {
+    "title": "Mod1",
+    "module_id_ref": "Heltec_WiFi_LoRa_32_V3.2",
+    "model_index": 56504,
+    "kind": "part",
+    "properties": {
+      "part number": "HTIT-WB32LA"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 134.845,
+        "y": 260.911
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 142.306,
+        "y": -68.7275
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector23",
+        "name": "pin 24",
+        "description": "U0TXD, GPIO43, CP2102_RX"
+      },
+      {
+        "connector_id": "connector34",
+        "name": "pin 35",
+        "description": "GPIO20, U1CTS, ADC2_CH8, CLK_OUT1, USB_D+"
+      },
+      {
+        "connector_id": "connector4",
+        "name": "pin 5",
+        "description": "GPIO3, ADC1_CH2, Touch3"
+      },
+      {
+        "connector_id": "connector24",
+        "name": "pin 25",
+        "description": "RST, RST_SW"
+      },
+      {
+        "connector_id": "connector2",
+        "name": "pin 3",
+        "description": "GPIO5, ADC1_CH4, Touch5"
+      },
+      {
+        "connector_id": "connector9",
+        "name": "pin 10",
+        "description": "GPIO40, MTDO"
+      },
+      {
+        "connector_id": "connector35",
+        "name": "pin 36",
+        "description": "GPIO19, U1RST, ADC2_CH9, CLK_OUT2, USB_D-"
+      },
+      {
+        "connector_id": "connector33",
+        "name": "pin 34",
+        "description": "GPIO21, OLED_RST"
+      },
+      {
+        "connector_id": "connector5",
+        "name": "pin 6",
+        "description": "GPIO2, ADC1_CH1, Touch2"
+      },
+      {
+        "connector_id": "connector19",
+        "name": "pin 20",
+        "description": "5V"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "pin 4",
+        "description": "GPIO4, ADC1_CH3, Touch4"
+      },
+      {
+        "connector_id": "connector7",
+        "name": "pin 8",
+        "description": "GPIO38, FSPIWP, SUBSPIWP"
+      },
+      {
+        "connector_id": "connector26",
+        "name": "pin 27",
+        "description": "GPIO36, SPII07, FSPICLK, SUBSPICLK, Vext_Ctrl"
+      },
+      {
+        "connector_id": "connector12",
+        "name": "pin 13",
+        "description": "GPIO45"
+      },
+      {
+        "connector_id": "connector6",
+        "name": "pin 7",
+        "description": "GPIO1, ADC1_CH0, Vbat_Read, Touch1"
+      },
+      {
+        "connector_id": "connector30",
+        "name": "pin 31",
+        "description": "GPIO47"
+      },
+      {
+        "connector_id": "connector13",
+        "name": "pin 14",
+        "description": "GPIO46"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "pin 1",
+        "description": "GPIO7, ADC1_CH6, Touch7"
+      },
+      {
+        "connector_id": "connector16",
+        "name": "pin 17",
+        "description": "3V3"
+      },
+      {
+        "connector_id": "connector18",
+        "name": "pin 19",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector10",
+        "name": "pin 11",
+        "description": "GPIO41, MTDI"
+      },
+      {
+        "connector_id": "connector28",
+        "name": "pin 29",
+        "description": "GPIO34, SPII05, FSPICS0, SUBSPICS0"
+      },
+      {
+        "connector_id": "connector31",
+        "name": "pin 32",
+        "description": "GPIO48"
+      },
+      {
+        "connector_id": "connector29",
+        "name": "pin 30",
+        "description": "GPIO33, SPII04, FSPIHD, SUBSPIHD"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "pin 2",
+        "description": "GPIO6, ADC1_CH5, Touch6"
+      },
+      {
+        "connector_id": "connector8",
+        "name": "pin 9",
+        "description": "GPIO39, MTCK"
+      },
+      {
+        "connector_id": "connector20",
+        "name": "pin 21",
+        "description": "Ve, Vext"
+      },
+      {
+        "connector_id": "connector22",
+        "name": "pin 23",
+        "description": "U0RXD, GPIO44, CP2102_TX"
+      },
+      {
+        "connector_id": "connector17",
+        "name": "pin 18",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector27",
+        "name": "pin 28",
+        "description": "GPIO35, SPII06, FSPID, SUBSPID, LED_Write"
+      },
+      {
+        "connector_id": "connector25",
+        "name": "pin 26",
+        "description": "GPIO0, USER_SW"
+      },
+      {
+        "connector_id": "connector32",
+        "name": "pin 33",
+        "description": "GPIO26, SPICS1"
+      },
+      {
+        "connector_id": "connector15",
+        "name": "pin 16",
+        "description": "3V3"
+      },
+      {
+        "connector_id": "connector21",
+        "name": "pin 22",
+        "description": "Ve, Vext"
+      },
+      {
+        "connector_id": "connector11",
+        "name": "pin 12",
+        "description": "GPIO42, MTMS"
+      },
+      {
+        "connector_id": "connector14",
+        "name": "pin 15",
+        "description": "GPIO37, SPIDQS, FSPIQ, SUBSPIQ, ADC_Ctrl"
+      }
+    ]
+  }
+]

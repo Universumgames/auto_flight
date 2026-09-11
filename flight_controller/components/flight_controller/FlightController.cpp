@@ -16,6 +16,7 @@
 #include "freertos/task.h"
 #include <variant>
 
+#include "Battery.hpp"
 #include "geo_helper.hpp"
 #include "route_planner.hpp"
 #include "MotorComMaster.hpp"
@@ -86,6 +87,8 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         }
 
         auto currentTime = GPS_Reader.getGPSLatestTime();
+        auto batteryPercentage = Battery.getVoltagePercentage();
+        FlightStorage.updatePlaneBatteryPercentage(batteryPercentage, currentTime);
         //auto planeAngle = Gyroscope.getAngle();
         auto position = FlightStorage.updatePlanePosition(GPS_Reader.getCurrentPosition(), currentTime);
         auto pressure = FlightStorage.updatePlanePressure(Barometer.getPressure(), currentTime);
@@ -233,59 +236,27 @@ void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, Gyr
     if (FlightStorage.getFlightState() == FlightState::FLYING && !Coordinate::isInvalid(waypoint)) {
         auto currentPosition = GPS_Reader.getCurrentPosition();
         if (!Coordinate::isInvalid(currentPosition)) {
-            const float dLon = (waypoint.longitude - currentPosition.longitude) * M_PI / 180.0f;
-            const float lat1 = currentPosition.latitude * M_PI / 180.0f;
-            const float lat2 = waypoint.latitude * M_PI / 180.0f;
-            const float y = sinf(dLon) * cosf(lat2);
-            const float x = cosf(lat1) * sinf(lat2) - sinf(lat1) * cosf(lat2) * cosf(dLon);
-            float bearing = atan2f(y, x) * 180.0f / M_PI;
-            bearing = fmodf(bearing + 360.0f, 360.0f);
-
-            float headingError = bearing - compassHeading;
-            if (headingError >= 180.0f) headingError -= 360.0f;
-            if (headingError < -180.0f) headingError += 360.0f;
-
-            // normalize to [-1, 1]: full deflection at ±90° heading error
-            const float normalized = std::max(-1.0f, std::min(1.0f, headingError / 90.0f));
-            const float rudderF = normalized >= 0.0f
-                                      ? normalized * static_cast<float>(CONFIG_RUDDER_SERVO_MAX)
-                                      : normalized * static_cast<float>(-CONFIG_RUDDER_SERVO_MIN);
-            rudder = static_cast<int8_t>(rudderF);
+            const float bearing = SteeringLaw::computeBearing(currentPosition, waypoint);
+            const float headingErrorDeg = SteeringLaw::headingError(bearing, compassHeading);
+            rudder = SteeringLaw::computeRudder(headingErrorDeg, CONFIG_RUDDER_SERVO_MIN, CONFIG_RUDDER_SERVO_MAX);
             ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Rudder: bearing=%.1f heading=%.1f error=%.1f rudder=%d",
-                     bearing, compassHeading, headingError, rudder);
+                     bearing, compassHeading, headingErrorDeg, rudder);
         }
     }
 
     // --- Altitude hold: PI on altitude error drives thrust and sets target pitch ---
     const float altitudeError = targetAltitude - static_cast<float>(height);
-    thrustIntegral = std::max(-THRUST_I_LIMIT, std::min(THRUST_I_LIMIT,
-                                                        thrustIntegral + altitudeError * 0.05f));
-    const float thrustF = THRUST_BASE + altitudeError * THRUST_P_GAIN + thrustIntegral * THRUST_I_GAIN;
-    const auto thrust = static_cast<int8_t>(std::max(0.0f, std::min(100.0f, thrustF)));
-
-    // Target pitch is derived from altitude error; I term on pitch finds the unknown trim.
-    const float targetPitch = std::max(-MAX_CLIMB_PITCH, std::min(MAX_CLIMB_PITCH,
-                                                                  altitudeError * ALTITUDE_TO_PITCH_GAIN));
+    const auto [thrust, targetPitch] = altitudeHold.update(altitudeError);
 
     ESP_LOGI(TAG_FLIGHT_CONTROLLER, "AltHold: alt=%d target=%.0f err=%.1f targetPitch=%.1f thrust=%d",
              height, targetAltitude, altitudeError, targetPitch, thrust);
 
-    // --- Aileron: keep wings level, I term discovers roll trim offset ---
-    aileronIntegral = std::max(-AILERON_I_LIMIT, std::min(AILERON_I_LIMIT,
-                                                          aileronIntegral + angle.roll * 0.05f));
-    const float aileronF = angle.roll * AILERON_P_GAIN + aileronIntegral * AILERON_I_GAIN;
-    const auto aileron = static_cast<int8_t>(std::max(-100.0f, std::min(100.0f, aileronF)));
-    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Aileron: roll=%.1f integral=%.2f out=%d",
-             angle.roll, aileronIntegral, aileron);
-
-    // --- Pitch: drive toward targetPitch, I term discovers pitch trim offset ---
+    // --- Aileron/Pitch: keep wings level and drive toward targetPitch ---
     const float pitchError = targetPitch - angle.pitch;
-    pitchIntegral = std::max(-PITCH_I_LIMIT, std::min(PITCH_I_LIMIT,
-                                                      pitchIntegral + pitchError * 0.05f));
-    const float pitchF = pitchError * PITCH_P_GAIN + pitchIntegral * PITCH_I_GAIN;
-    const auto pitch = static_cast<int8_t>(std::max(-100.0f, std::min(100.0f, pitchF)));
-    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Pitch: pitch=%.1f target=%.1f err=%.1f integral=%.2f out=%d",
-             angle.pitch, targetPitch, pitchError, pitchIntegral, pitch);
+    const auto [aileron, pitch] = attitude.update(angle.roll, pitchError);
+    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Aileron: roll=%.1f out=%d", angle.roll, aileron);
+    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Pitch: pitch=%.1f target=%.1f err=%.1f out=%d",
+             angle.pitch, targetPitch, pitchError, pitch);
 
     MotorComMaster.sendFullControlPacket(aileron, pitch, thrust, rudder);
 }

@@ -1,13 +1,13 @@
-#include <bits/codecvt.h>
-
 #include "MotorComMaster.hpp"
+
+#ifndef NATIVE_BUILD
+
+#include <bits/codecvt.h>
 
 #include "FreeRTOSConfig.h"
 #include "i2c_manager.hpp"
 #include "portmacro.h"
 #include "esp_log.h"
-
-#ifndef NATIVE_BUILD
 
 #define ASSERT_VALID_SERVO_VALUE(value) \
     if (value < -100 || value > 100) { \

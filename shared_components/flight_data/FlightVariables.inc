@@ -22,3 +22,5 @@ FLIGHT_VAR(planeMagnetometerConnectionState,  PlaneMagnetometerConnectionState, 
 FLIGHT_VAR(planeAccelerometerConnectionState, PlaneAccelerometerConnectionState, ConnectionState,           ConnectionState::CONNECTING,   CONNECTION, {})
 FLIGHT_VAR(planeManualOverride,               PlaneManualOverride,               bool,                      false,                         CONNECTION, {})
 FLIGHT_VAR(flightState,                       FlightState,                       FlightState,               FlightState::PLANNING,         STATE,      {})
+FLIGHT_VAR(planeBatteryPercentage,            PlaneBatteryPercentage,            int,                       0,                             SENSOR,     {})
+FLIGHT_VAR(baseBatteryPercentage,             BaseBatteryPercentage,             int,                       0,                             SENSOR,     {})

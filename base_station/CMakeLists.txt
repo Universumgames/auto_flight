@@ -11,4 +11,4 @@ add_compile_definitions(FLIGHT_DEVICE_TYPE_BASE_STATION)
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(base_station)
 
-littlefs_create_partition_image(storage static FLASH_IN_PROJECT)
+#littlefs_create_partition_image(storage static FLASH_IN_PROJECT)

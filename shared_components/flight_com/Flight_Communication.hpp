@@ -1,5 +1,8 @@
 #pragma once
-#include "LoRa_Communication.hpp"
+#include <cstdint>
+#include <memory>
+
+#include "LoRaPacket.hpp"
 #include "Packets.hpp"
 
 class Flight_Communication {

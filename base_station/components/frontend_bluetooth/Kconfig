@@ -1,0 +1,14 @@
+menu "Bluetooth Handler Configuration"
+
+    config BLUETOOTH_DEVICE_NAME
+        string "Bluetooth Device Name"
+        default "Flight_Base_Station"
+        help
+          Set the name for the Bluetooth device. This is the name that will be broadcasted to nearby devices when the ESP32 is in Bluetooth mode.
+
+    config BLUETOOTH_SERVICE_UUID
+        hex "Bluetooth Service UUID"
+        default 0xABF0
+        help
+          Set the UUID for the Bluetooth service. This UUID is used to identify the service provided by the ESP32.
+endmenu

@@ -87,21 +87,23 @@ Beim Magnetometer wurde ursprünglich ein QMC5883P eingesetzt und im Projektverl
 
 ### Schaltpläne
 
-Die Schaltpläne für Flugzeug und Bodenstation wurden mit [Fritzing](https://fritzing.org/) erstellt. Die Quelldateien liegen als [`assets/schematics_plane.fzz`](./assets/schematics_plane.fzz) bzw. [`assets/schematics_base.fzz`](./assets/schematics_base.fzz) vor, zusammen mit selbst angelegten Fritzing-Bauteilen für Module ohne offizielle Fritzing-Unterstützung ([BMP280-Breakout](./assets/BMP280_Breakout_Board.fzpz), [GT-U8-GPS-Modul](./assets/GT-U8-GPS-module.fzpz), [Heltec WiFi Kit 32 (V3)](./assets/Heltec WiFi Kit 32 (V3).fzpz)).
+Die Schaltpläne für Flugzeug und Bodenstation wurden ursprünglich mit [Fritzing](https://fritzing.org/) erstellt. Die Quelldateien liegen als [`hardware/circuits/fritzing_source/schematics_plane.fzz`](./hardware/circuits/fritzing_source/schematics_plane.fzz) bzw. [`hardware/circuits/fritzing_source/schematics_base.fzz`](./hardware/circuits/fritzing_source/schematics_base.fzz) vor, zusammen mit selbst angelegten Fritzing-Bauteilen für Module ohne offizielle Fritzing-Unterstützung ([BMP280-Breakout](./hardware/circuits/fritzing_source/BMP280_Breakout_Board.fzpz), [GT-U8-GPS-Modul](./hardware/circuits/fritzing_source/GT-U8-GPS-module.fzpz), [Heltec WiFi Kit 32 (V3)](./hardware/circuits/fritzing_source/Heltec%20WiFi%20Kit%2032%20(V3).fzpz)).
+
+Da Fritzing nicht mehr weiterentwickelt wird, wurde der Entwurf zusätzlich in KiCad-Projekte überführt: [`hardware/circuits/plane_pcb/`](./hardware/circuits/plane_pcb/) und [`hardware/circuits/base_station_pcb/`](./hardware/circuits/base_station_pcb/), mit Schaltplan und Platzierung der PCB-Footprints. Da es keinen verlässlichen automatischen Fritzing-zu-KiCad-Konverter gibt, wurde dafür eine eigene Extraktions-Pipeline geschrieben (dokumentiert in [`hardware/circuits/tools/README.md`](./hardware/circuits/tools/README.md)), die das Netzwerk aus der Fritzing-Quelle rekonstruiert und daraus die KiCad-Dateien erzeugt. Einiges ist vor einer Nutzung als fertiges Ergebnis zu beachten: Symbole sind auf einem einfachen automatisch generierten Raster platziert statt von Hand angeordnet (Schaltplan wie PCB), auf der Platine ist noch keine Kupferverlegung vorhanden (nur korrekte Netzzuordnung/Ratsnest), und mehrere Footprints von Breakout-Boards nutzen generische Stiftleisten mit als geschätzt markierten Maßen, wo diese nicht anhand eines Datenblatts bestätigt werden konnten – siehe den Abschnitt "Known limitations" im Tooling-README für die vollständige Liste, bevor Platinen bestellt werden.
 
 Die Anbindung der 4 Servos wurde hier nicht im Schaltplan dargestellt, um die Übersichtlichkeit zu wahren. Die Servos werden direkt an den Arduino Nano angeschlossen, der die PWM-Signale erzeugt. Verwendet wurden die PWM-Pins 9, 10, 11 und 12 für Querruder links, Querruder rechts, Höhenruder und Seitenruder. Das Mapping zwischen Servo und Steuerfläche ist in der Regelung im ESP32-Flightcontroller festgelegt und kann bei Bedarf angepasst werden. Im Arduino Code gibt es ein festes Mapping: Byte 0 -> Servo 1, Byte 1 -> Servo 2, Byte 2 -> Servo 3, Byte 3 -> Servo 4. Welches Servo welcher Steuerfläche zugeordnet ist, wird dann in der Flugregelung im ESP32-Flightcontroller festgelegt.
 
 **Flugzeug:**
 
-![Schaltplan des Flugzeugs mit Heltec LoRa32 V3, GPS, IMU, Magnetometer, Barometer und Anbindung an den Arduino-Motor-Controller](assets/schematics_plane_schem.svg)
+![Schaltplan des Flugzeugs mit Heltec LoRa32 V3, GPS, IMU, Magnetometer, Barometer und Anbindung an den Arduino-Motor-Controller](hardware/circuits/fritzing_source/schematics_plane_schem.svg)
 
-![Steckplatinen-Ansicht der Verkabelung im Flugzeug](assets/schematics_plane_bb.svg)
+![Steckplatinen-Ansicht der Verkabelung im Flugzeug](hardware/circuits/fritzing_source/schematics_plane_bb.svg)
 
 **Bodenstation:**
 
-![Schaltplan der Bodenstation mit Heltec LoRa32 V3, GPS und Barometer](assets/schematics_base_schem.svg)
+![Schaltplan der Bodenstation mit Heltec LoRa32 V3, GPS und Barometer](hardware/circuits/fritzing_source/schematics_base_schem.svg)
 
-![Steckplatinen-Ansicht der Verkabelung der Bodenstation](assets/schematics_base_bb.svg)
+![Steckplatinen-Ansicht der Verkabelung der Bodenstation](hardware/circuits/fritzing_source/schematics_base_bb.svg)
 
 ### Mechanischer Aufbau
 
@@ -286,7 +288,7 @@ Der Arduino überwacht selbstständig die Aktualität eingehender I2C-Nachrichte
 
 Die sicherheitskritische Entscheidung, ob das Flugzeug autonom oder manuell gesteuert wird, ist bewusst nicht im Flugcontroller, sondern wird auf dem Arduino getroffen. Ein festgelegter SBUS-Kanal (Kanal 5) des RC-Empfängers wird als Override-Schalter interpretiert. Überschreitet sein Wert den Schwellwert von 1500 µs (Neutralstellung), steuert der Arduino die vier Servos direkt aus den SBUS-Kanälen an und ignoriert die zuletzt vom Flugcontroller empfangenen I2C-Werte. Der Flugcontroller selbst liest den Override-Status nur zu Anzeige-/Telemetriezwecken mit, hat aber keinen Einfluss darauf. Diese Entkopplung stellt sicher, dass die manuelle Kontrolle auch bei einem Absturz oder Hänger der ESP32-Firmware erhalten bleibt.
 Im aktuellen Aufbau wurde der SBUS Empfänger MRFS01 von Futaba verwendet (Link zu [Aliexpress](https://de.aliexpress.com/item/1005007253167246.html)). Der SBUS Empfänger übermittelt die Steuerbefehle über eine Serielle Schnittstelle (UART) an den Arduino, jedoch wurde von Futaba eine spezielle Konfiguration der UART Schnittstelle verwendet. DIe Arduino Bibliothek [SBUS](https://github.com/george-hawkins/arduino-sbus) unterstützt diese Konfiguration, mit ein paar Hardware Anpassungen für den Arduino Nano. 
-Der Futaba SBUS Empfänger kommuniziert über eine invertierte UART Schnittstelle mit 100000 Baud, 8 Datenbits, 2 Stopbits und gerader Parität. Der Arduino Nano hat jedoch keine invertierte UART Schnittstelle, daher wurde mithilfe eines 2N2222 Transistors eine Invertierung der UART Signale realisiert. Die Schaltung ist in der Schaltplan Datei `schematics_plane.fzz` oder im Kapitel [Schaltpläne](#schaltpläne) zu finden.
+Der Futaba SBUS Empfänger kommuniziert über eine invertierte UART Schnittstelle mit 100000 Baud, 8 Datenbits, 2 Stopbits und gerader Parität. Der Arduino Nano hat jedoch keine invertierte UART Schnittstelle, daher wurde mithilfe eines 2N2222 Transistors eine Invertierung der UART Signale realisiert. Die Schaltung ist in der Schaltplan Datei [`hardware/circuits/fritzing_source/schematics_plane.fzz`](./hardware/circuits/fritzing_source/schematics_plane.fzz) (auch als Symbol `U1` im KiCad-Schaltplan sichtbar) oder im Kapitel [Schaltpläne](#schaltpläne) zu finden.
 
 ## Wesentliche Designentscheidungen im Projektverlauf
 

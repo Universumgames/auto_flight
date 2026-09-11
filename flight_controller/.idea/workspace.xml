@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="BackendCodeEditorMiscSettings">
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="6" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="35" type="long" />
     <option name="/Default/Environment/StickyLines/DisabledLanguageList/@EntryValue" value="Jupyter" type="string" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
@@ -26,33 +26,33 @@
       <config projectName="flight_controller" targetName="__idf_esp_driver_twai" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_timg" />
       <config projectName="flight_controller" targetName="__idf_esp_common" />
-      <config projectName="flight_controller" targetName="__idf_esp_driver_touch_sens" />
       <config projectName="flight_controller" targetName="__idf_protobuf-c" />
+      <config projectName="flight_controller" targetName="__idf_esp_driver_touch_sens" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_i2s" />
       <config projectName="flight_controller" targetName="__idf_esp_bootloader_format" />
       <config projectName="flight_controller" targetName="uf2-app" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_gpspi" />
       <config projectName="flight_controller" targetName="mbedtls-apidoc" />
       <config projectName="flight_controller" targetName="__idf_http_parser" />
-      <config projectName="flight_controller" targetName="gen_project_binary" />
       <config projectName="flight_controller" targetName="__idf_esp_event" />
-      <config projectName="flight_controller" targetName="size-files" />
+      <config projectName="flight_controller" targetName="gen_project_binary" />
       <config projectName="flight_controller" targetName="__idf_waveshare__esp_oled_ssd1315" />
+      <config projectName="flight_controller" targetName="size-files" />
       <config projectName="flight_controller" targetName="__idf_minmea" />
       <config projectName="flight_controller" targetName="__idf_esp-tls" />
+      <config projectName="flight_controller" targetName="__idf_wpa_supplicant" />
       <config projectName="flight_controller" targetName="gen_flight_controller_binary" />
       <config projectName="flight_controller" targetName="lib" />
-      <config projectName="flight_controller" targetName="__idf_wpa_supplicant" />
-      <config projectName="flight_controller" targetName="__idf_esp_driver_i2c" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_pcnt" />
-      <config projectName="flight_controller" targetName="dfu" />
+      <config projectName="flight_controller" targetName="__idf_esp_driver_i2c" />
       <config projectName="flight_controller" targetName="__idf_barometer" />
+      <config projectName="flight_controller" targetName="dfu" />
       <config projectName="flight_controller" targetName="bootloader-flash" />
-      <config projectName="flight_controller" targetName="__idf_nvs_flash" />
       <config projectName="flight_controller" targetName="__idf_esp_http_server" />
-      <config projectName="flight_controller" targetName="efuse-common-table" />
-      <config projectName="flight_controller" targetName="encrypted-bootloader-flash" />
+      <config projectName="flight_controller" targetName="__idf_nvs_flash" />
       <config projectName="flight_controller" targetName="__idf_espressif__mpu6050" />
+      <config projectName="flight_controller" targetName="encrypted-bootloader-flash" />
+      <config projectName="flight_controller" targetName="efuse-common-table" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_tsens" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_cam" />
       <config projectName="flight_controller" targetName="partition_table-flash" />
@@ -61,23 +61,25 @@
       <config projectName="flight_controller" targetName="encrypted-partition-table-flash" />
       <config projectName="flight_controller" targetName="__idf_esp_stdio" />
       <config projectName="flight_controller" targetName="__idf_soc" />
-      <config projectName="flight_controller" targetName="confserver" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_dma" />
+      <config projectName="flight_controller" targetName="confserver" />
       <config projectName="flight_controller" targetName="__idf_esp_https_ota" />
       <config projectName="flight_controller" targetName="show-efuse-table" />
+      <config projectName="flight_controller" targetName="__idf_battery" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_sd" />
       <config projectName="flight_controller" targetName="__idf_esp_psram" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_mspi" />
       <config projectName="flight_controller" targetName="__idf_esp_blockdev_util" />
-      <config projectName="flight_controller" targetName="__idf_motor_com" />
       <config projectName="flight_controller" targetName="__idf_flight_data" />
+      <config projectName="flight_controller" targetName="__idf_motor_com" />
       <config projectName="flight_controller" targetName="__idf_flight_com" />
+      <config projectName="flight_controller" targetName="__idf_device_id" />
       <config projectName="flight_controller" targetName="flash" />
       <config projectName="flight_controller" targetName="encrypted-app-flash" />
       <config projectName="flight_controller" targetName="__idf_xtensa" />
       <config projectName="flight_controller" targetName="__idf_driver" />
-      <config projectName="flight_controller" targetName="__ldgen_output_sections.ld" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_rmt" />
+      <config projectName="flight_controller" targetName="__ldgen_output_sections.ld" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_sdspi" />
       <config projectName="flight_controller" targetName="__idf_spi_flash" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_spi" />
@@ -85,6 +87,7 @@
       <config projectName="flight_controller" targetName="__idf_rt" />
       <config projectName="flight_controller" targetName="config-report" />
       <config projectName="flight_controller" targetName="__idf_pthread" />
+      <config projectName="flight_controller" targetName="__idf_esp-idf-lib__ads111x" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_pmu" />
       <config projectName="flight_controller" targetName="partition-table" />
       <config projectName="flight_controller" targetName="__idf_esp_partition" />
@@ -92,8 +95,8 @@
       <config projectName="flight_controller" targetName="__idf_esp_rom" />
       <config projectName="flight_controller" targetName="__idf_log" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_gpio" />
-      <config projectName="flight_controller" targetName="__idf_lora_com" />
       <config projectName="flight_controller" targetName="__idf_espressif__i2c_bus" />
+      <config projectName="flight_controller" targetName="__idf_lora_com" />
       <config projectName="flight_controller" targetName="__idf_lvgl__lvgl" />
       <config projectName="flight_controller" targetName="__idf_esp_http_client" />
       <config projectName="flight_controller" targetName="custom_bundle" />
@@ -112,9 +115,9 @@
       <config projectName="flight_controller" targetName="dfu-flash" />
       <config projectName="flight_controller" targetName="__idf_esp_gdbstub" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_security" />
-      <config projectName="flight_controller" targetName="merge-bin" />
-      <config projectName="flight_controller" targetName="__idf_tcp_transport" />
       <config projectName="flight_controller" targetName="__idf_oled_display" />
+      <config projectName="flight_controller" targetName="__idf_tcp_transport" />
+      <config projectName="flight_controller" targetName="merge-bin" />
       <config projectName="flight_controller" targetName="__idf_protocomm" />
       <config projectName="flight_controller" targetName="__idf_esp-idf-lib__hmc5883l" />
       <config projectName="flight_controller" targetName="__idf_duruofu__qmc5883p" />
@@ -132,9 +135,8 @@
       <config projectName="flight_controller" targetName="__idf_esp_security" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_i2c" />
       <config projectName="flight_controller" targetName="efuse_common_table" />
-      <config projectName="flight_controller" targetName="menuconfig" />
-      <config projectName="flight_controller" targetName="monitor" />
       <config projectName="flight_controller" targetName="__idf_route_planner" />
+      <config projectName="flight_controller" targetName="menuconfig" />
       <config projectName="flight_controller" targetName="__idf_i2c_manager" />
       <config projectName="flight_controller" targetName="p256m" />
       <config projectName="flight_controller" targetName="__idf_espressif__bme280" />
@@ -143,8 +145,8 @@
       <config projectName="flight_controller" targetName="__idf_unity" />
       <config projectName="flight_controller" targetName="encrypted-flash" />
       <config projectName="flight_controller" targetName="tfpsacrypto-apidoc" />
-      <config projectName="flight_controller" targetName="__idf_esp_netif" />
       <config projectName="flight_controller" targetName="__idf_esp_phy" />
+      <config projectName="flight_controller" targetName="__idf_esp_netif" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_i2s" />
       <config projectName="flight_controller" targetName="everest" />
       <config projectName="flight_controller" targetName="__idf_perfmon" />
@@ -153,16 +155,16 @@
       <config projectName="flight_controller" targetName="app-flash" />
       <config projectName="flight_controller" targetName="_project_elf_src" />
       <config projectName="flight_controller" targetName="size" />
-      <config projectName="flight_controller" targetName="bootloader" folderName="ExternalProjectTargets/bootloader" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_rmt" />
+      <config projectName="flight_controller" targetName="bootloader" folderName="ExternalProjectTargets/bootloader" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_usb_serial_jtag" />
       <config projectName="flight_controller" targetName="__idf_wear_levelling" />
-      <config projectName="flight_controller" targetName="app_check_size" />
       <config projectName="flight_controller" targetName="size-components" />
-      <config projectName="flight_controller" targetName="show_efuse_table" />
+      <config projectName="flight_controller" targetName="__idf_freertos" />
       <config projectName="flight_controller" targetName="__idf_esp_eth" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_gpio" />
-      <config projectName="flight_controller" targetName="__idf_freertos" />
+      <config projectName="flight_controller" targetName="app_check_size" />
+      <config projectName="flight_controller" targetName="show_efuse_table" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_dma" />
       <config projectName="flight_controller" targetName="__idf_esp_coex" />
       <config projectName="flight_controller" targetName="__idf_esp_pm" />
@@ -178,8 +180,8 @@
       <config projectName="flight_controller" targetName="__idf_lwip" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_ledc" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_touch_sens" />
-      <config projectName="flight_controller" targetName="__idf_sdmmc" />
       <config projectName="flight_controller" targetName="__idf_main" />
+      <config projectName="flight_controller" targetName="__idf_sdmmc" />
       <config projectName="flight_controller" targetName="__idf_jgromes__radiolib" />
       <config projectName="flight_controller" targetName="__idf_cxx" />
       <config projectName="flight_controller" targetName="save-defconfig" />
@@ -187,8 +189,8 @@
       <config projectName="flight_controller" targetName="__idf_nvs_sec_provider" />
       <config projectName="flight_controller" targetName="__idf_esp_hw_support" />
       <config projectName="flight_controller" targetName="__idf_esp_wifi" />
-      <config projectName="flight_controller" targetName="erase-flash" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_ana_conv" />
+      <config projectName="flight_controller" targetName="erase-flash" />
       <config projectName="flight_controller" targetName="tfpsacrypto" />
       <config projectName="flight_controller" targetName="efuse_custom_table" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_uart" />
@@ -198,8 +200,8 @@
       <config projectName="flight_controller" targetName="__idf_flight_controller" />
       <config projectName="flight_controller" targetName="__idf_esp_driver_sdm" />
       <config projectName="flight_controller" targetName="__idf_esp-idf-lib__i2cdev" />
-      <config projectName="flight_controller" targetName="__idf_esp_driver_uart" />
       <config projectName="flight_controller" targetName="__idf_esp_lcd" />
+      <config projectName="flight_controller" targetName="__idf_esp_driver_uart" />
       <config projectName="flight_controller" targetName="efuse-custom-table" />
       <config projectName="flight_controller" targetName="partition_table_bin" />
       <config projectName="flight_controller" targetName="__idf_esp_hal_clock" />
@@ -216,17 +218,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="get magnetometer and i2c working again">
-      <change afterPath="$PROJECT_DIR$/../motor_controller/src/main2.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/.idea/editor.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/dependencies.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend_web/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend_web/vite.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../motor_controller/src/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../motor_controller/src/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../presentation/main.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/main.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../presentation/slides/04_communication.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/slides/04_communication.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../presentation/slides/05_lessons_learned.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/slides/05_lessons_learned.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../presentation/slides/06_status.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../presentation/slides/06_status.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/area.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/area.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/history.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/history.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/route.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/route.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/sensor.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/sensor.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/lora_com/LoRa_Communication.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -383,61 +388,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0" />
-      <entry key="S60" value="1.0" />
-      <entry key="M2" value="1.0" />
-      <entry key="M5" value="1.0" />
-      <entry key="M10" value="1.0000000000128717" />
-      <entry key="M15" value="1.0000000792131496" />
-      <entry key="M30" value="1.000487482509702" />
-      <entry key="H1" value="1.0382419583649105" />
-      <entry key="H2" value="1.339151750358914" />
-      <entry key="H4" value="2.190281490442236" />
-      <entry key="D1" value="87.29172748501463" />
-      <entry key="W1" value="1790.7477116974474" />
+      <entry key="MS100" value="7.079400188662862E-33" />
+      <entry key="MS500" value="3.7200042809296426E-7" />
+      <entry key="S2" value="0.032937011133157786" />
+      <entry key="S5" value="0.49754629063256195" />
+      <entry key="S10" value="1.7221950244885385" />
+      <entry key="S30" value="9.765555127228387" />
+      <entry key="S60" value="19.00991822083624" />
+      <entry key="M2" value="27.553243634885785" />
+      <entry key="M5" value="34.86042082060508" />
+      <entry key="M10" value="37.78501997836815" />
+      <entry key="M15" value="38.822874513149884" />
+      <entry key="M30" value="39.89412982266419" />
+      <entry key="H1" value="40.44330241757783" />
+      <entry key="H2" value="40.88761226093057" />
+      <entry key="H4" value="43.605912403318214" />
+      <entry key="D1" value="122.30664604990469" />
+      <entry key="W1" value="1756.2479447527603" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="4.4210682673873616E-215" />
-      <entry key="M2" value="9.377346773911594E-108" />
-      <entry key="M5" value="2.33970374112783E-43" />
-      <entry key="M10" value="6.839859630028412E-22" />
-      <entry key="M15" value="9.780567812256785E-15" />
-      <entry key="M30" value="1.3985940312583094E-7" />
-      <entry key="H1" value="5.28884111122521E-4" />
-      <entry key="H2" value="0.03267464115293972" />
-      <entry key="H4" value="0.31543642725638016" />
-      <entry key="D1" value="25.8091504986312" />
-      <entry key="W1" value="552.1204660831659" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.000001919874395" />
+      <entry key="S2" value="1.0471779765832387" />
+      <entry key="S5" value="1.4986404040348065" />
+      <entry key="S10" value="2.2663949508398797" />
+      <entry key="S30" value="3.844069075495441" />
+      <entry key="S60" value="4.697648155339835" />
+      <entry key="M2" value="5.276458770223762" />
+      <entry key="M5" value="5.690510780326094" />
+      <entry key="M10" value="5.841651750931369" />
+      <entry key="M15" value="5.893613252155675" />
+      <entry key="M30" value="5.946390759022078" />
+      <entry key="H1" value="5.973181068097898" />
+      <entry key="H2" value="6.009964493626512" />
+      <entry key="H4" value="6.386827781432961" />
+      <entry key="D1" value="26.007907675931744" />
+      <entry key="W1" value="528.3391929948486" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="7.360332503047952E-31" />
-      <entry key="MS500" value="9.40544800275191E-7" />
-      <entry key="S2" value="0.031141883213370865" />
-      <entry key="S5" value="0.24965366652525725" />
-      <entry key="S10" value="0.4996535464952263" />
-      <entry key="S30" value="0.7935171634071927" />
-      <entry key="S60" value="0.8907958034292667" />
-      <entry key="M2" value="0.9438197939380518" />
-      <entry key="M5" value="0.97713739150583" />
-      <entry key="M10" value="0.9885026006699413" />
-      <entry key="M15" value="0.9923203828743277" />
-      <entry key="M30" value="0.9966401175753464" />
-      <entry key="H1" value="1.0368352143538222" />
-      <entry key="H2" value="1.370815189701356" />
-      <entry key="H4" value="2.5051440966031793" />
-      <entry key="D1" value="113.0997222474023" />
-      <entry key="W1" value="2342.8653182058274" />
+      <entry key="MS100" value="0.0068011762757509715" />
+      <entry key="MS500" value="0.36856797280205145" />
+      <entry key="S2" value="0.8390977620939738" />
+      <entry key="S5" value="1.7956556909659454" />
+      <entry key="S10" value="3.7904874936025967" />
+      <entry key="S30" value="13.461645292842107" />
+      <entry key="S60" value="23.60369035208745" />
+      <entry key="M2" value="32.76516636177666" />
+      <entry key="M5" value="40.5208884339034" />
+      <entry key="M10" value="43.6108039311735" />
+      <entry key="M15" value="44.705708706687076" />
+      <entry key="M30" value="45.83502744198512" />
+      <entry key="H1" value="46.413710266693016" />
+      <entry key="H2" value="46.89617084171886" />
+      <entry key="H4" value="49.99193593947187" />
+      <entry key="D1" value="148.3135915195628" />
+      <entry key="W1" value="2284.584419610403" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -505,13 +510,14 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;copilot.chat.legacySessionMetadata.migrated&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller/shared_components&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;experiment/kotlin__multiplatform&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
@@ -532,12 +538,7 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="$USER_HOME$/.espressif/v6.0.1/esp-idf/tools/idf.py">
+    <configuration name="Upload &amp; Monitor" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="flash monitor" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_PATH="${IDF_PATH}/tools/idf.py">
       <method v="2" />
     </configuration>
     <configuration name="__idf_app_update" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_app_update" CONFIG_NAME="Debug-ESP-IDF">
@@ -546,6 +547,11 @@
       </method>
     </configuration>
     <configuration name="__idf_barometer" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_barometer" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_battery" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_battery" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -570,6 +576,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="__idf_device_id" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_device_id" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="__idf_driver" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_driver" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -581,6 +592,11 @@
       </method>
     </configuration>
     <configuration name="__idf_efuse" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_efuse" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_esp-idf-lib__ads111x" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="__idf_esp-idf-lib__ads111x" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1205,6 +1221,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="app-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="app-flash" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1221,6 +1242,11 @@
       </method>
     </configuration>
     <configuration name="bootloader-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="bootloader-flash" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="bootloader" type="CMakeRunConfiguration" factoryName="Application" folderName="ExternalProjectTargets/bootloader" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller" TARGET_NAME="bootloader" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1461,9 +1487,11 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="CMake Application.bootloader" />
       <item itemvalue="CMake Application.Upload &amp; Monitor" />
       <item itemvalue="CMake Application.__idf_app_update" />
       <item itemvalue="CMake Application.__idf_barometer" />
+      <item itemvalue="CMake Application.__idf_battery" />
       <item itemvalue="CMake Application.__idf_bootloader_support" />
       <item itemvalue="CMake Application.__idf_cmock" />
       <item itemvalue="CMake Application.__idf_console" />
@@ -1590,9 +1618,11 @@
       <item itemvalue="CMake Application.__idf_unity" />
       <item itemvalue="CMake Application.__idf_vfs" />
       <item itemvalue="CMake Application.__idf_waveshare__esp_oled_ssd1315" />
+      <item itemvalue="CMake Application.__idf_device_id" />
       <item itemvalue="CMake Application.__idf_wear_levelling" />
       <item itemvalue="CMake Application.__idf_wpa_supplicant" />
       <item itemvalue="CMake Application.__idf_xtensa" />
+      <item itemvalue="CMake Application.__idf_esp-idf-lib__ads111x" />
       <item itemvalue="CMake Application.__ldgen_output_sections.ld" />
       <item itemvalue="CMake Application._project_elf_src" />
       <item itemvalue="CMake Application.app-flash" />
@@ -1617,6 +1647,7 @@
       <item itemvalue="CMake Application.encrypted-partition-table-flash" />
       <item itemvalue="CMake Application.erase-flash" />
       <item itemvalue="CMake Application.everest" />
+      <item itemvalue="CMake Application.p256m" />
       <item itemvalue="CMake Application.flash" />
       <item itemvalue="CMake Application.flight_controller.elf" />
       <item itemvalue="CMake Application.gen_flight_controller_binary" />
@@ -1629,7 +1660,6 @@
       <item itemvalue="CMake Application.menuconfig" />
       <item itemvalue="CMake Application.merge-bin" />
       <item itemvalue="CMake Application.monitor" />
-      <item itemvalue="CMake Application.p256m" />
       <item itemvalue="CMake Application.partition-table-flash" />
       <item itemvalue="CMake Application.partition-table" />
       <item itemvalue="CMake Application.partition_table-flash" />
@@ -1648,6 +1678,18 @@
       <item itemvalue="CMake Application.uf2" />
     </list>
   </component>
+  <component name="SelectedDebugProfileService">{
+  &quot;profileIdByStamp&quot;: [
+    {
+      &quot;first&quot;: {
+        &quot;##RUN_CONFIGURATION##&quot;: &quot;CMake Application.Upload &amp; Monitor&quot;,
+        &quot;cmake&quot;: &quot;CMakeBuildProfile:Debug-ESP-IDF&quot;
+      },
+      &quot;second&quot;: &quot;d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4&quot;
+    }
+  ],
+  &quot;modificationCount&quot;: 9
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="" />

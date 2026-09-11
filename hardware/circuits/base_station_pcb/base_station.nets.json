@@ -1,0 +1,393 @@
+{
+  "PPS": [
+    {
+      "instance_title": "GPS Module",
+      "model_index": 25053,
+      "connector_id": "connector4",
+      "pin_name": "Pin 5",
+      "pin_description": "PPS"
+    }
+  ],
+  "NET_25053_connector2_MULTI": [
+    {
+      "instance_title": "GPS Module",
+      "model_index": 25053,
+      "connector_id": "connector2",
+      "pin_name": "Pin 3",
+      "pin_description": "TX"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector5",
+      "pin_name": "pin 6",
+      "pin_description": "GPIO2, ADC1_CH1, Touch2"
+    }
+  ],
+  "RX": [
+    {
+      "instance_title": "GPS Module",
+      "model_index": 25053,
+      "connector_id": "connector3",
+      "pin_name": "Pin 4",
+      "pin_description": "RX"
+    }
+  ],
+  "VCC": [
+    {
+      "instance_title": "GPS Module",
+      "model_index": 25053,
+      "connector_id": "connector0",
+      "pin_name": "Pin 1",
+      "pin_description": "VCC"
+    },
+    {
+      "instance_title": "BMP280 Breakout2",
+      "model_index": 25659,
+      "connector_id": "connector5",
+      "pin_name": "VCC",
+      "pin_description": "VCC"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector15",
+      "pin_name": "pin 16",
+      "pin_description": "3V3"
+    }
+  ],
+  "GND_0": [
+    {
+      "instance_title": "GPS Module",
+      "model_index": 25053,
+      "connector_id": "connector1",
+      "pin_name": "Pin 2",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector17",
+      "pin_name": "pin 18",
+      "pin_description": "GND"
+    }
+  ],
+  "GND_1": [
+    {
+      "instance_title": "BMP280 Breakout2",
+      "model_index": 25659,
+      "connector_id": "connector6",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector18",
+      "pin_name": "pin 19",
+      "pin_description": "GND"
+    }
+  ],
+  "NET_25659_connector9_MULTI": [
+    {
+      "instance_title": "BMP280 Breakout2",
+      "model_index": 25659,
+      "connector_id": "connector9",
+      "pin_name": "SCL",
+      "pin_description": "SCL"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector31",
+      "pin_name": "pin 32",
+      "pin_description": "GPIO48"
+    }
+  ],
+  "NET_25659_connector10_MULTI": [
+    {
+      "instance_title": "BMP280 Breakout2",
+      "model_index": 25659,
+      "connector_id": "connector10",
+      "pin_name": "SDA",
+      "pin_description": "SDA"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector30",
+      "pin_name": "pin 31",
+      "pin_description": "GPIO47"
+    }
+  ],
+  "U0TXD,_GPIO43,_CP2102_RX": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector23",
+      "pin_name": "pin 24",
+      "pin_description": "U0TXD, GPIO43, CP2102_RX"
+    }
+  ],
+  "GPIO20,_U1CTS,_ADC2_CH8,_CLK_OUT1,_USB_D+": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector34",
+      "pin_name": "pin 35",
+      "pin_description": "GPIO20, U1CTS, ADC2_CH8, CLK_OUT1, USB_D+"
+    }
+  ],
+  "GPIO3,_ADC1_CH2,_TOUCH3": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector4",
+      "pin_name": "pin 5",
+      "pin_description": "GPIO3, ADC1_CH2, Touch3"
+    }
+  ],
+  "RST,_RST_SW": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector24",
+      "pin_name": "pin 25",
+      "pin_description": "RST, RST_SW"
+    }
+  ],
+  "GPIO5,_ADC1_CH4,_TOUCH5": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector2",
+      "pin_name": "pin 3",
+      "pin_description": "GPIO5, ADC1_CH4, Touch5"
+    }
+  ],
+  "GPIO40,_MTDO": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector9",
+      "pin_name": "pin 10",
+      "pin_description": "GPIO40, MTDO"
+    }
+  ],
+  "GPIO19,_U1RST,_ADC2_CH9,_CLK_OUT2,_USB_D-": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector35",
+      "pin_name": "pin 36",
+      "pin_description": "GPIO19, U1RST, ADC2_CH9, CLK_OUT2, USB_D-"
+    }
+  ],
+  "GPIO21,_OLED_RST": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector33",
+      "pin_name": "pin 34",
+      "pin_description": "GPIO21, OLED_RST"
+    }
+  ],
+  "5V": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector19",
+      "pin_name": "pin 20",
+      "pin_description": "5V"
+    }
+  ],
+  "GPIO4,_ADC1_CH3,_TOUCH4": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector3",
+      "pin_name": "pin 4",
+      "pin_description": "GPIO4, ADC1_CH3, Touch4"
+    }
+  ],
+  "GPIO38,_FSPIWP,_SUBSPIWP": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector7",
+      "pin_name": "pin 8",
+      "pin_description": "GPIO38, FSPIWP, SUBSPIWP"
+    }
+  ],
+  "GPIO36,_SPII07,_FSPICLK,_SUBSPICLK,_VEXT_CTRL": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector26",
+      "pin_name": "pin 27",
+      "pin_description": "GPIO36, SPII07, FSPICLK, SUBSPICLK, Vext_Ctrl"
+    }
+  ],
+  "GPIO45": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector12",
+      "pin_name": "pin 13",
+      "pin_description": "GPIO45"
+    }
+  ],
+  "GPIO1,_ADC1_CH0,_VBAT_READ,_TOUCH1": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector6",
+      "pin_name": "pin 7",
+      "pin_description": "GPIO1, ADC1_CH0, Vbat_Read, Touch1"
+    }
+  ],
+  "GPIO46": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector13",
+      "pin_name": "pin 14",
+      "pin_description": "GPIO46"
+    }
+  ],
+  "GPIO7,_ADC1_CH6,_TOUCH7": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector0",
+      "pin_name": "pin 1",
+      "pin_description": "GPIO7, ADC1_CH6, Touch7"
+    }
+  ],
+  "3V3": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector16",
+      "pin_name": "pin 17",
+      "pin_description": "3V3"
+    }
+  ],
+  "GPIO41,_MTDI": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector10",
+      "pin_name": "pin 11",
+      "pin_description": "GPIO41, MTDI"
+    }
+  ],
+  "GPIO34,_SPII05,_FSPICS0,_SUBSPICS0": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector28",
+      "pin_name": "pin 29",
+      "pin_description": "GPIO34, SPII05, FSPICS0, SUBSPICS0"
+    }
+  ],
+  "GPIO33,_SPII04,_FSPIHD,_SUBSPIHD": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector29",
+      "pin_name": "pin 30",
+      "pin_description": "GPIO33, SPII04, FSPIHD, SUBSPIHD"
+    }
+  ],
+  "GPIO6,_ADC1_CH5,_TOUCH6": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector1",
+      "pin_name": "pin 2",
+      "pin_description": "GPIO6, ADC1_CH5, Touch6"
+    }
+  ],
+  "GPIO39,_MTCK": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector8",
+      "pin_name": "pin 9",
+      "pin_description": "GPIO39, MTCK"
+    }
+  ],
+  "VE,_VEXT_0": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector20",
+      "pin_name": "pin 21",
+      "pin_description": "Ve, Vext"
+    }
+  ],
+  "VE,_VEXT_1": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector21",
+      "pin_name": "pin 22",
+      "pin_description": "Ve, Vext"
+    }
+  ],
+  "U0RXD,_GPIO44,_CP2102_TX": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector22",
+      "pin_name": "pin 23",
+      "pin_description": "U0RXD, GPIO44, CP2102_TX"
+    }
+  ],
+  "GPIO35,_SPII06,_FSPID,_SUBSPID,_LED_WRITE": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector27",
+      "pin_name": "pin 28",
+      "pin_description": "GPIO35, SPII06, FSPID, SUBSPID, LED_Write"
+    }
+  ],
+  "GPIO0,_USER_SW": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector25",
+      "pin_name": "pin 26",
+      "pin_description": "GPIO0, USER_SW"
+    }
+  ],
+  "GPIO26,_SPICS1": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector32",
+      "pin_name": "pin 33",
+      "pin_description": "GPIO26, SPICS1"
+    }
+  ],
+  "GPIO42,_MTMS": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector11",
+      "pin_name": "pin 12",
+      "pin_description": "GPIO42, MTMS"
+    }
+  ],
+  "GPIO37,_SPIDQS,_FSPIQ,_SUBSPIQ,_ADC_CTRL": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 56504,
+      "connector_id": "connector14",
+      "pin_name": "pin 15",
+      "pin_description": "GPIO37, SPIDQS, FSPIQ, SUBSPIQ, ADC_Ctrl"
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+if(NOT NATIVE_BUILD)
 if("${IDF_VERSION_MAJOR}.${IDF_VERSION_MINOR}" VERSION_GREATER_EQUAL "5.3")
     set(REQ esp_driver_gpio esp_driver_i2c)
 else()
@@ -9,3 +10,4 @@ idf_component_register(
     INCLUDE_DIRS "include"
     REQUIRES ${REQ}
 )
+endif()

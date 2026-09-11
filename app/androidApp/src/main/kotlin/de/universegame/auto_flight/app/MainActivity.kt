@@ -1,0 +1,35 @@
+package de.universegame.auto_flight.app
+
+import android.content.Context
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
+import org.osmdroid.config.Configuration
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+
+        val osmPrefs = applicationContext.getSharedPreferences("osmdroid", Context.MODE_PRIVATE)
+        Configuration.getInstance().apply {
+            load(applicationContext, osmPrefs)
+            osmdroidBasePath = applicationContext.cacheDir
+            osmdroidTileCache = applicationContext.cacheDir
+            userAgentValue = applicationContext.packageName
+        }
+
+        setContent {
+            AppRoot()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun AppAndroidPreview() {
+    AppRoot()
+}

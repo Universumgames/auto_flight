@@ -1,7 +1,20 @@
+if(NOT NATIVE_BUILD)
+
 FILE(GLOB flight_control_srcs "*.cpp")
 
 idf_component_register(
         SRCS ${flight_control_srcs}
         INCLUDE_DIRS "."
-        REQUIRES gps barometer flight_data lora_com gyroscope flight_com route_planner homog2d motor_com_master magnetometer oled_display
+        REQUIRES gps barometer flight_data lora_com gyroscope flight_com route_planner homog2d motor_com_master magnetometer oled_display battery
 )
+
+else()
+# FlightController.cpp drives hardware/RTOS directly and is ESP-only;
+# SteeringLaw is plain C++ control-law math and needed by native tests.
+idf_component_register(
+        SRCS "SteeringLaw.cpp"
+        INCLUDE_DIRS "."
+        REQUIRES flight_data
+)
+
+endif()

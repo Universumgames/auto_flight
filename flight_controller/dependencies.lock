@@ -9,6 +9,20 @@ dependencies:
       path: ../shared_components/barometer
       type: local
     version: '*'
+  device_id:
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
+    source:
+      path: ../shared_components/device_id
+      type: local
+    version: '*'
+  esp-idf-lib/ads111x:
+    dependencies: []
+    source:
+      path: ../shared_components/esp-idf-lib__ads111x
+      type: local
+    version: 1.1.14
   esp-idf-lib/esp_idf_lib_helpers:
     component_hash: 689853bb8993434f9556af0f2816e808bf77b5d22100144b21f3519993daf237
     dependencies: []
@@ -176,6 +190,8 @@ dependencies:
     version: 2.0.0
 direct_dependencies:
 - barometer
+- device_id
+- esp-idf-lib/ads111x
 - esp-idf-lib/esp_idf_lib_helpers
 - esp-idf-lib/i2cdev
 - espressif/bme280
@@ -191,6 +207,6 @@ direct_dependencies:
 - magnetometer
 - motor_com
 - waveshare/esp_oled_ssd1315
-manifest_hash: b86f48d5e64e63a381ec603efb47ab0097d61f788d845c82ca0b2444eb6ab1b6
+manifest_hash: 336fd79896da4c23c583e34ad2d74e61058c78c38a965b0c66d3c7660289d6cf
 target: esp32s3
 version: 3.0.0
