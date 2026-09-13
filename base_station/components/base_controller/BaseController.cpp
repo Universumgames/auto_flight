@@ -48,9 +48,9 @@ void BaseControllerClass::init() {
         communicationCallback(packet);
     });
 
-    FlightStorage.registerDataChangeCallback([]() {
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d", FlightStorage.getPlannedArea().size());
-        Flight_Communication::sendPlannedArea(FlightStorage.getPlannedArea());
+    FlightStorage.registerDataChangeCallback([](uint32_t planeId) {
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d", FlightStorage.getPlannedArea(planeId).size());
+        Flight_Communication::sendPlannedArea(FlightStorage.getPlannedArea(planeId));
         ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area change sent");
     }, FlightStorageClass::DataUpdateType::AREA);
 }
@@ -94,22 +94,22 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
         auto sensorUpdate = reinterpret_cast<SensorUpdate*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER, "Received sensor update: pressure=%.2f, heading=%d", sensorUpdate->pressure,
                  sensorUpdate->heading);
-        FlightStorage.updatePlanePressure(sensorUpdate->pressure, sensorUpdate->timestamp);
-        FlightStorage.updatePlaneHeading(sensorUpdate->heading, sensorUpdate->timestamp);
-        FlightStorage.updatePlaneBatteryPercentage(sensorUpdate->batteryPercent, sensorUpdate->timestamp);
+        FlightStorage.updatePlanePressure(basePacket->id, sensorUpdate->pressure, sensorUpdate->timestamp);
+        FlightStorage.updatePlaneHeading(basePacket->id, sensorUpdate->heading, sensorUpdate->timestamp);
+        FlightStorage.updatePlaneBatteryPercentage(basePacket->id, sensorUpdate->batteryPercent, sensorUpdate->timestamp);
         break;
     }
     case PacketType::POSITION: {
         auto positionUpdate = reinterpret_cast<PositionUpdate*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER, "Received position update: %s", positionUpdate->position.toString().c_str());
-        FlightStorage.updatePlanePosition(positionUpdate->position, positionUpdate->timestamp);
+        FlightStorage.updatePlanePosition(basePacket->id, positionUpdate->position, positionUpdate->timestamp);
         break;
     }
     case PacketType::PLANNED_ROUTE: {
         auto plannedRoute = reinterpret_cast<PlannedRoutePacket*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route with %d points",
                                 plannedRoute->route.size());
-        FlightStorage.updatePlannedRoute(plannedRoute->route, plannedRoute->timestamp);
+        FlightStorage.updatePlannedRoute(basePacket->id, plannedRoute->route, plannedRoute->timestamp);
         break;
     }
     case PacketType::COMPONENT_STATUS: {
@@ -120,13 +120,13 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
                                 static_cast<int>(status->motorControl),
                                 static_cast<int>(status->magnetometer), static_cast<int>(status->accelerometer),
                                 static_cast<int>(status->manualOverride), static_cast<int>(status->flightState));
-        FlightStorage.updatePlaneBarometerConnectionState(status->barometer);
-        FlightStorage.updatePlaneMotorControlConnectionState(status->motorControl);
-        FlightStorage.updatePlaneGPSConnectionState(status->gps);
-        FlightStorage.updatePlaneMagnetometerConnectionState(status->magnetometer);
-        FlightStorage.updatePlaneAccelerometerConnectionState(status->accelerometer);
-        FlightStorage.updatePlaneManualOverride(status->manualOverride);
-        FlightStorage.updateFlightState(status->flightState);
+        FlightStorage.updatePlaneBarometerConnectionState(basePacket->id, status->barometer);
+        FlightStorage.updatePlaneMotorControlConnectionState(basePacket->id, status->motorControl);
+        FlightStorage.updatePlaneGPSConnectionState(basePacket->id, status->gps);
+        FlightStorage.updatePlaneMagnetometerConnectionState(basePacket->id, status->magnetometer);
+        FlightStorage.updatePlaneAccelerometerConnectionState(basePacket->id, status->accelerometer);
+        FlightStorage.updatePlaneManualOverride(basePacket->id, status->manualOverride);
+        FlightStorage.updateFlightState(basePacket->id, status->flightState);
         break;
     }
     default:

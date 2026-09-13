@@ -5,7 +5,7 @@ FILE(GLOB flight_data_srcs "*.cpp")
 idf_component_register(
         SRCS ${flight_data_srcs}
         INCLUDE_DIRS "."
-        REQUIRES nlohmann-json freertos esp_timer gps
+        REQUIRES nlohmann-json freertos esp_timer gps device_id
 )
 else()
 # FlightStorage.cpp pulls in FreeRTOS/GPS_Reader and is ESP-only; the rest

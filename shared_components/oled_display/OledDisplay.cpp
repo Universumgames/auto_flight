@@ -234,12 +234,17 @@ void OledDisplayClass::statusTaskEntry(void* param) {
         size_t lineCount = 0;
         lines[lineCount++] = std::string("Role: ") + (isPlane ? "PLANE" : "BASE");
 
-        const ConnectionState linkState = isPlane
-            ? FlightStorage.getBaseConnectionState()
-            : FlightStorage.getPlaneConnectionState();
+#ifdef FLIGHT_DEVICE_TYPE_PLANE
+        const ConnectionState linkState = FlightStorage.getBaseConnectionState();
+#else
+        const auto& knownPlanes = FlightStorage.getAllPlanes();
+        const uint32_t displayedPlaneId = knownPlanes.empty() ? FlightStorageClass::NO_PLANE_ID : knownPlanes.begin()->first;
+        const ConnectionState linkState = FlightStorage.getPlaneConnectionState(displayedPlaneId);
+#endif
         lines[lineCount++] = std::string("Link: ") +
                               (linkState == ConnectionState::CONNECTED ? "CONNECTED" : "CONNECTING");
 
+#ifdef FLIGHT_DEVICE_TYPE_PLANE
         const ConnectionState planeDevices[] = {
             FlightStorage.getPlaneGPSConnectionState(),
             FlightStorage.getPlaneBarometerConnectionState(),
@@ -247,6 +252,15 @@ void OledDisplayClass::statusTaskEntry(void* param) {
             FlightStorage.getPlaneMagnetometerConnectionState(),
             FlightStorage.getPlaneAccelerometerConnectionState(),
         };
+#else
+        const ConnectionState planeDevices[] = {
+            FlightStorage.getPlaneGPSConnectionState(displayedPlaneId),
+            FlightStorage.getPlaneBarometerConnectionState(displayedPlaneId),
+            FlightStorage.getPlaneMotorControlConnectionState(displayedPlaneId),
+            FlightStorage.getPlaneMagnetometerConnectionState(displayedPlaneId),
+            FlightStorage.getPlaneAccelerometerConnectionState(displayedPlaneId),
+        };
+#endif
         static constexpr const char* planeDeviceNames[] = {
             "Plane GPS", "Plane Barometer",
             "Plane MotorControl", "Plane Magnetometer", "Plane Accelerometer",

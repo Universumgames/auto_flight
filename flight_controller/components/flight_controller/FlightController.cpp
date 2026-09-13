@@ -65,7 +65,7 @@ void FlightControllerClass::init() {
         communicationCallback(packet);
     });
 
-    FlightStorage.registerDataChangeCallback([]() {
+    FlightStorage.registerDataChangeCallback([](uint32_t) {
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route changed, sending update with size %d",
                  FlightStorage.getPlannedRoute().size());
         Flight_Communication::sendPlannedRoute();

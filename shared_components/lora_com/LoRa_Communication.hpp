@@ -206,10 +206,23 @@ private:
     void updateLastSendTime();
 
     /**
-     * Updates the current connection state and notifies listeners if state changed
+     * Updates the current connection state and notifies listeners if state changed.
+     * Plane firmware only ever talks to the single base station, so no id is needed;
+     * on the base station this is a no-op, since a send's success/failure carries no
+     * addressee (see the id-taking overload, used from the receive path instead).
      * @param state The new connection state
      */
     void updateConnectionState(ConnectionState state);
+
+#ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
+    /**
+     * Updates the connection state of a specific plane, identified by its real device id as
+     * parsed from a received packet header (LoRa_Packet_Internal::senderId).
+     * @param planeId The plane's device id
+     * @param state The new connection state
+     */
+    void updateConnectionState(uint32_t planeId, ConnectionState state);
+#endif
 
     /**
      * Sends an ACK packet for a received message

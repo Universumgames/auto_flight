@@ -5,6 +5,14 @@
 
 #include <algorithm>
 
+namespace {
+    /// The base station may know about several planes; until there's real fleet-selection UI,
+    /// report on whichever plane we actually have data for.
+    uint32_t currentPlaneId() {
+        const auto& planes = FlightStorage.getAllPlanes();
+        return planes.empty() ? FlightStorageClass::NO_PLANE_ID : planes.begin()->first;
+    }
+}
 
 const char* FrontendHandlerBlClass::TAG_FRONTEND_BL = "FrontendBL";
 
@@ -62,7 +70,7 @@ void FrontendHandlerBlClass::registerReadCallbacks() {
     bluetoothManager.addDataWriteCallback(BLETopics::NotifyByte::BLE_TOPIC_AREA_DEFINE, [](const uint8_t* data, int len, BluetoothManager::TopicType topic) {
         try {
             auto packet = nlohmann::json::from_cbor(data, data + len).get<Frontend::AreaDefinePacket>();
-            FlightStorage.updatePlannedArea(packet.shape);
+            FlightStorage.updatePlannedArea(packet.planeId, packet.shape);
             ESP_LOGI(TAG_FRONTEND_BL, "Received new planned area with %d points", packet.shape.size());
         } catch (const std::exception& e) {
             ESP_LOGE(TAG_FRONTEND_BL, "Failed to parse AreaDefinePacket CBOR: %s", e.what());
@@ -90,62 +98,80 @@ void FrontendHandlerBlClass::registerReadCallbacks() {
 }
 
 Frontend::FlightUpdatePacket FrontendHandlerBlClass::buildFlightUpdatePacket() {
-    return Frontend::FlightUpdatePacket{
+    const uint32_t planeId = currentPlaneId();
+    Frontend::FlightUpdatePacket packet{
         .basePosition = FlightStorage.getBasePosition(),
         .basePositionUpdateTime = FlightStorage.getLastBasePositionUpdateTime(),
-        .planePosition = FlightStorage.getPlanePosition(),
-        .planePositionUpdateTime = FlightStorage.getLastPlanePositionUpdateTime(),
-        .flightRoute = FlightStorage.getFlightRoute(),
-        .flightRouteUpdateTime = FlightStorage.getLastFlightRouteUpdateTime(),
-        .plannedRoute = FlightStorage.getPlannedRoute(),
-        .plannedRouteUpdateTime = FlightStorage.getLastPlannedRouteUpdateTime()
+        .planePosition = FlightStorage.getPlanePosition(planeId),
+        .planePositionUpdateTime = FlightStorage.getLastPlanePositionUpdateTime(planeId),
+        .flightRoute = FlightStorage.getFlightRoute(planeId),
+        .flightRouteUpdateTime = FlightStorage.getLastFlightRouteUpdateTime(planeId),
+        .plannedRoute = FlightStorage.getPlannedRoute(planeId),
+        .plannedRouteUpdateTime = FlightStorage.getLastPlannedRouteUpdateTime(planeId)
     };
+    packet.planeId = planeId;
+    return packet;
 }
 
 Frontend::ConnectionUpdatePacket FrontendHandlerBlClass::buildConnectionUpdatePacket() {
-    return Frontend::ConnectionUpdatePacket{
+    const uint32_t planeId = currentPlaneId();
+    Frontend::ConnectionUpdatePacket packet{
         .baseConnectionState = FlightStorage.getBaseConnectionState(),
         .lastContactBaseStationTimestamp = FlightStorage.getLastBaseConnectionStateUpdateTime(),
-        .planeConnectionState = FlightStorage.getPlaneConnectionState(),
-        .lastContactPlaneTimestamp = FlightStorage.getLastPlaneConnectionStateUpdateTime(),
+        .planeConnectionState = FlightStorage.getPlaneConnectionState(planeId),
+        .lastContactPlaneTimestamp = FlightStorage.getLastPlaneConnectionStateUpdateTime(planeId),
         .gpsConnectionBase = FlightStorage.getBaseGPSConnectionState(),
-        .gpsConnectionPlane = FlightStorage.getPlaneGPSConnectionState(),
+        .gpsConnectionPlane = FlightStorage.getPlaneGPSConnectionState(planeId),
         .barometerConnectionBase = FlightStorage.getBaseBarometerConnectionState(),
-        .barometerConnectionPlane = FlightStorage.getPlaneBarometerConnectionState(),
-        .motorComConnectionPlane = FlightStorage.getPlaneMotorControlConnectionState(),
-        .magnetometerConnectionPlane = FlightStorage.getPlaneMagnetometerConnectionState(),
-        .accelerometerConnectionPlane = FlightStorage.getPlaneAccelerometerConnectionState(),
-        .manualOverridePlane = FlightStorage.getPlaneManualOverride(),
-        .flightState = FlightStorage.getFlightState()
+        .barometerConnectionPlane = FlightStorage.getPlaneBarometerConnectionState(planeId),
+        .motorComConnectionPlane = FlightStorage.getPlaneMotorControlConnectionState(planeId),
+        .magnetometerConnectionPlane = FlightStorage.getPlaneMagnetometerConnectionState(planeId),
+        .accelerometerConnectionPlane = FlightStorage.getPlaneAccelerometerConnectionState(planeId),
+        .manualOverridePlane = FlightStorage.getPlaneManualOverride(planeId),
+        .flightState = FlightStorage.getFlightState(planeId)
     };
+    packet.planeId = planeId;
+    return packet;
 }
 
 Frontend::SensorPacket FrontendHandlerBlClass::buildSensorPacket() {
-    return Frontend::SensorPacket{
+    const uint32_t planeId = currentPlaneId();
+    Frontend::SensorPacket packet{
         .barometerPressureBase = FlightStorage.getBasePressure(),
-        .barometerPressurePlane = FlightStorage.getPlanePressure(),
-        .calculatedAltitude = Barometer.calculateAltitude(FlightStorage.getBasePressure(), FlightStorage.getPlanePressure()),
-        .headingPlane = FlightStorage.getPlaneHeading()
+        .barometerPressurePlane = FlightStorage.getPlanePressure(planeId),
+        .calculatedAltitude = Barometer.calculateAltitude(FlightStorage.getBasePressure(), FlightStorage.getPlanePressure(planeId)),
+        .headingPlane = FlightStorage.getPlaneHeading(planeId)
     };
+    packet.planeId = planeId;
+    return packet;
 }
 
 Frontend::BatteryStatusPacket FrontendHandlerBlClass::buildBatteryStatusPacket() {
-    return Frontend::BatteryStatusPacket{
+    const uint32_t planeId = currentPlaneId();
+    Frontend::BatteryStatusPacket packet{
         .baseBatteryPercentage = FlightStorage.getBaseBatteryPercentage(),
-        .planeBatteryPercentage = FlightStorage.getPlaneBatteryPercentage()
+        .planeBatteryPercentage = FlightStorage.getPlaneBatteryPercentage(planeId)
     };
+    packet.planeId = planeId;
+    return packet;
 }
 
 Frontend::PlannedRoutePacket FrontendHandlerBlClass::buildPlannedRoutePacket() {
-    return Frontend::PlannedRoutePacket{
-        .route = FlightStorage.getPlannedRoute()
+    const uint32_t planeId = currentPlaneId();
+    Frontend::PlannedRoutePacket packet{
+        .route = FlightStorage.getPlannedRoute(planeId)
     };
+    packet.planeId = planeId;
+    return packet;
 }
 
 Frontend::AreaDefinePacket FrontendHandlerBlClass::buildAreaDefinePacket() {
-    return Frontend::AreaDefinePacket{
-        .shape = FlightStorage.getPlannedArea()
+    const uint32_t planeId = currentPlaneId();
+    Frontend::AreaDefinePacket packet{
+        .shape = FlightStorage.getPlannedArea(planeId)
     };
+    packet.planeId = planeId;
+    return packet;
 }
 
 void FrontendHandlerBlClass::sendUpdate(const BLETopics::NotifyByte topic, const nlohmann::json& packet) {

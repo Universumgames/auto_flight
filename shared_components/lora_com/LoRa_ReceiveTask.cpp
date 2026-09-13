@@ -145,7 +145,15 @@ void LoRa_CommunicationClass::receiveTaskLoop() {
                 processDataPacket(receivedHeader, packetBuffer + sizeof(LoRa_Packet_Internal),
                                   packetSize - sizeof(LoRa_Packet_Internal));
             }
+#ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
+            const uint32_t senderId = static_cast<uint32_t>(receivedHeader.senderId[0])
+                | (static_cast<uint32_t>(receivedHeader.senderId[1]) << 8)
+                | (static_cast<uint32_t>(receivedHeader.senderId[2]) << 16)
+                | (static_cast<uint32_t>(receivedHeader.senderId[3]) << 24);
+            updateConnectionState(senderId, ConnectionState::CONNECTED);
+#else
             updateConnectionState(ConnectionState::CONNECTED);
+#endif
             updateLastSendTime();
         }
         else {

@@ -8,7 +8,6 @@
 #include "driver/gpio.h"
 
 #include "FlightStorage.hpp"
-#include "helper.hpp"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "sdkconfig.h"
@@ -374,13 +373,16 @@ void LoRa_CommunicationClass::updateLastSendTime() {
 }
 
 void LoRa_CommunicationClass::updateConnectionState(ConnectionState state) {
-    if (isDeviceBaseStation()) {
-        FlightStorage.updatePlaneConnectionState(state);
-    }
-    else if (isDevicePlane()) {
-        FlightStorage.updateBaseConnectionState(state);
-    }
+#ifdef FLIGHT_DEVICE_TYPE_PLANE
+    FlightStorage.updateBaseConnectionState(state);
+#endif
 }
+
+#ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
+void LoRa_CommunicationClass::updateConnectionState(uint32_t planeId, ConnectionState state) {
+    FlightStorage.updatePlaneConnectionState(planeId, state);
+}
+#endif
 
 std::string LoRa_CommunicationClass::toString(PacketType packetType) {
     switch (packetType) {
