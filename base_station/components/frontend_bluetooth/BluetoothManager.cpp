@@ -346,8 +346,13 @@ int BluetoothManager::onSVCGattHandler(uint16_t conn_handle, uint16_t attr_handl
                                        void* arg) {
     switch (ctxt->op) {
     case BLE_GATT_ACCESS_OP_READ_CHR:
-        ESP_LOGD(TAG_BLUETOOTH_MANAGER, "Callback for read");
-        return writeReadResponse(ctxt, attr_handle);
+        /* Reads carry no data of their own - they're just a "send me a fresh
+         * notification now" trigger. ctxt->om is left empty, so this is a
+         * zero-length ack; the real value follows shortly via a notification
+         * on this same characteristic, same as the periodic 1s broadcast. */
+        ESP_LOGD(TAG_BLUETOOTH_MANAGER, "read request; requesting out-of-cycle notify");
+        callReadTriggerCallbacks(characteristicsByHandle.at(attr_handle)->topicID);
+        return 0;
 
     case BLE_GATT_ACCESS_OP_WRITE_CHR: {
         uint16_t om_len = OS_MBUF_PKTLEN(ctxt->om);
@@ -653,18 +658,6 @@ void BluetoothManager::clearReassemblyBuffers(const uint16_t conn_handle) {
             ++it;
         }
     }
-}
-
-int BluetoothManager::writeReadResponse(const ble_gatt_access_ctxt* ctxt, uint16_t attr_handle) const {
-    for (const auto& callback : dataReadCallbacks) {
-        int len = 0;
-        uint8_t* data = callback(&len, characteristicsByHandle.at(attr_handle)->topicID);
-        if (data == nullptr || len == 0) continue;
-        const int rc = os_mbuf_append(ctxt->om, data, len);
-        delete data; // Free the allocated memory after use
-        return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
-    }
-    return 0;
 }
 
 void BluetoothManager::populateGattCharacteristics(const std::vector<Characteristic>& characteristics) {

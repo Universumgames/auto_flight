@@ -41,18 +41,18 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
 
     // MARK: - Characteristic Operations
 
-    /// One-shot read — returns the characteristic's current value, or nil on failure.
-    /// Only for characteristics the base station still serves as a plain (unfragmented)
-    /// GATT read, i.e. those under the 512-byte attribute limit — see `awaitNextUpdate`
-    /// in ConnectionManager for characteristics served over the fragmented notify path.
-    func readCharacteristic(_ char: CharacteristicUUID) async -> Data? {
-        guard let characteristic = discoveredCharacteristics[char.uuid],
-              let peripheral = connectedPeripheral else { return nil }
-        return await withCheckedContinuation { continuation in
-            pendingRawReads.insert(char.uuid)
-            readCompletions[char.uuid] = { continuation.resume(returning: $0) }
-            peripheral.readValue(for: characteristic)
-        }
+    /// Requests a fresh value for `char` and returns it once it arrives. Issues a plain
+    /// GATT read purely as a "refresh now" signal — on this protocol reads carry no
+    /// payload of their own anymore (see BluetoothManager::onSVCGattHandler /
+    /// requestOutOfCycleUpdate on the base station) — then waits for the next value
+    /// delivered on this characteristic via `awaitNextUpdate`. The read's own zero-length
+    /// ack response is silently dropped by `FragmentReassemblyBuffer` in
+    /// `didUpdateValueFor` below (too short to be a real fragment), so this resolves with
+    /// the notification the read triggered, not the ack.
+    func requestUpdate(_ char: CharacteristicUUID) async -> Data? {
+        guard let characteristic = discoveredCharacteristics[char.uuid] else { return nil }
+        connectedPeripheral?.readValue(for: characteristic)
+        return await awaitNextUpdate(char)
     }
 
     /// Write data to a characteristic, split into `BLEFragmentFraming`-framed chunks that
@@ -136,7 +136,6 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
 
     func clearSubscriptions() {
         notificationHandlers.removeAll()
-        pendingRawReads.removeAll()
         reassemblyBuffers.removeAll()
     }
 
@@ -259,23 +258,15 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
             let uuid = characteristic.uuid
 
             guard error == nil, let raw = characteristic.value else {
-                self.pendingRawReads.remove(uuid)
                 if let completion = self.readCompletions.removeValue(forKey: uuid) {
                     completion(nil)
                 }
                 return
             }
 
-            // A plain GATT read response is delivered through this same delegate method,
-            // unframed — route it straight to the pending continuation without treating
-            // it as a notification fragment (see readCharacteristic/pendingRawReads).
-            if self.pendingRawReads.remove(uuid) != nil {
-                if let completion = self.readCompletions.removeValue(forKey: uuid) {
-                    completion(raw)
-                }
-                return
-            }
-
+            // Plain GATT reads carry no data of their own on this protocol anymore (see
+            // BluetoothManager::onSVCGattHandler on the base station) - every delivery
+            // through this method, read response or notification, is a fragment.
             var buffer = self.reassemblyBuffers[uuid] ?? FragmentReassemblyBuffer()
             let complete = buffer.ingest(raw)
             self.reassemblyBuffers[uuid] = buffer

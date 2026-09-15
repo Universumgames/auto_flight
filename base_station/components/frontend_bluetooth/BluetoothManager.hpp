@@ -120,16 +120,19 @@ private:
     void clearReassemblyBuffers(uint16_t conn_handle);
     void sendFragmented(uint16_t conn_handle, uint16_t val_handle, const uint8_t* data, uint16_t totalLength) const;
 
-    std::vector<std::function<uint8_t*(int*, TopicType)>> dataReadCallbacks;
-
-    /**
-     * Write the first available read callback's data into the GATT access
-     * context's mbuf, to be returned as the response to a read request.
-     * @param ctxt The GATT access context of the read request.
-     * @param attr_handle The attribute handle of the characteristic being read.
-     * @return 0 on success, or a BLE_ATT_ERR_* code on failure.
-     */
-    int writeReadResponse(const ble_gatt_access_ctxt* ctxt, uint16_t attr_handle) const;
+    /* A plain GATT read no longer carries a value: instead of trying to squeeze the
+     * (possibly-fragmented-sized) current packet into a single ATT response, a read
+     * is treated purely as a "send me a fresh notification now" trigger - the read
+     * response itself is a zero-length ack, and the real data follows shortly after
+     * over the same fragmented notify path every topic already uses. This removes the
+     * BLE_ATT_ATTR_MAX_LEN (512-byte) ceiling reads used to silently hit, and collapses
+     * "periodic push" and "client asked for a refresh" onto one delivery mechanism. */
+    std::vector<std::function<void(TopicType)>> readTriggerCallbacks;
+    void callReadTriggerCallbacks(const TopicType topic) const {
+        for (const auto& callback : readTriggerCallbacks) {
+            callback(topic);
+        }
+    }
 
     void populateGattCharacteristics(const std::vector<Characteristic>& characteristics);
     void populateBatteryService();
@@ -175,30 +178,25 @@ public:
     }
 
     /**
-     * Add a callback function that will be called when data is read from the Bluetooth SPP service.
-     * @param callback A function that takes a pointer to an int (to store the length of the data) and
-     *  returns a pointer to a uint8_t array containing the data to be sent.
-     *  The caller is responsible for freeing the returned data after use.
-     *  The first callback that returns non-null data will be used, and the rest will be ignored.
+     * Add a callback invoked when a client issues a plain GATT read against any topic
+     * characteristic. The read itself returns no data (see readTriggerCallbacks above) -
+     * this is the hook for reacting to it, e.g. by pushing a fresh out-of-cycle notification.
+     * @param callback A function that receives the topic that was read.
      */
-    void addDataReadCallback(const std::function<uint8_t*(int*, TopicType)>& callback) {
-        dataReadCallbacks.push_back(callback);
+    void addReadTriggerCallback(const std::function<void(TopicType)>& callback) {
+        readTriggerCallbacks.push_back(callback);
     }
 
     /**
-     * Add a callback function that will be called when data is read from the Bluetooth SPP service for a specific topic.
+     * Add a read-trigger callback scoped to a single topic.
      * @param topic The topic for which the callback should be invoked.
-     * @param callback A function that takes a pointer to an int (to store the length of the data) and
-     *  returns a pointer to a uint8_t array containing the data to be sent.
-     *  The caller is responsible for freeing the returned data after use.
-     *  The first callback that returns non-null data will be used, and the rest will be ignored.
+     * @param callback A function that receives the topic that was read.
      */
-    void addDataReadCallback(const TopicType topic, const std::function<uint8_t*(int*, TopicType)>& callback) {
-        dataReadCallbacks.emplace_back([callback, topic](int* len, const TopicType requestedTopic) -> uint8_t* {
+    void addReadTriggerCallback(const TopicType topic, const std::function<void(TopicType)>& callback) {
+        readTriggerCallbacks.emplace_back([callback, topic](const TopicType requestedTopic) {
             if (requestedTopic == topic) {
-                return callback(len, requestedTopic);
+                callback(requestedTopic);
             }
-            return nullptr;
         });
     }
 };

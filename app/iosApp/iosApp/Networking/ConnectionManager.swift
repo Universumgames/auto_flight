@@ -12,18 +12,6 @@ import SwiftUI
 final class ConnectionManager: NSObject {
     let state = AppState.shared
 
-    var host: String {
-        get {
-            access(keyPath: \.host)
-            return UserDefaults.standard.string(forKey: "host") ?? ""
-        }
-        set {
-            withMutation(keyPath: \.host) {
-                UserDefaults.standard.setValue(newValue, forKey: "host")
-            }
-        }
-    }
-
     private var shouldReconnect = false
     private var reconnectTask: Task<Void, Never>?
     internal var centralManager: CBCentralManager?
@@ -40,10 +28,7 @@ final class ConnectionManager: NSObject {
     internal var readCompletions: [CBUUID: (Data?) -> Void] = [:]
     internal var writeCompletions: [CBUUID: (Error?) -> Void] = [:]
     internal var notificationHandlers: [CBUUID: (Data) -> Void] = [:]
-    /// UUIDs of characteristics whose next `didUpdateValueFor` delivery is a plain,
-    /// unfragmented GATT read response rather than a fragmented notification.
-    internal var pendingRawReads: Set<CBUUID> = []
-    /// Per-characteristic fragment reassembly state for notified (not read) values.
+    /// Per-characteristic fragment reassembly state for notified values.
     internal var reassemblyBuffers: [CBUUID: FragmentReassemblyBuffer] = [:]
 
     override init() {
@@ -119,10 +104,9 @@ final class ConnectionManager: NSObject {
 
     // MARK: - Manual fetching
 
-    /// Waits for the next already-subscribed notification on `char`. Unlike
-    /// `readCharacteristic`, this issues no GATT read — it's for characteristics
-    /// (areaDefine, flightUpdate, plannedRoute) whose payload can exceed the 512-byte
-    /// GATT attribute limit and so are only ever served over the fragmented notify path.
+    /// Waits for the next already-subscribed notification on `char` — every topic is
+    /// only ever served over the fragmented notify path now (see BluetoothManager.swift's
+    /// `didUpdateValueFor`), so this is the one way to pull a value on demand.
     func awaitNextUpdate(_ char: CharacteristicUUID) async -> Data? {
         guard discoveredCharacteristics[char.uuid] != nil else { return nil }
         return await withCheckedContinuation { continuation in
@@ -132,7 +116,7 @@ final class ConnectionManager: NSObject {
 
     func fetchArea(onResult: @escaping ([Coordinate]?) -> Void) {
         Task {
-            let data = await awaitNextUpdate(.areaDefine)
+            let data = await requestUpdate(.areaDefine)
             if let data, let packet = wire.FrontendPackets.shared.decodeAreaDefine(hex: data.hexEncoded) {
                 Task { @MainActor in onResult(packet.shape) }
                 return
@@ -158,7 +142,7 @@ final class ConnectionManager: NSObject {
 
     func fetchRoute(onResult: @escaping ([Coordinate]) -> Void) {
         Task {
-            let data = await awaitNextUpdate(.plannedRoute)
+            let data = await requestUpdate(.plannedRoute)
             if let data, let packet = wire.FrontendPackets.shared.decodePlannedRoute(hex: data.hexEncoded) {
                 Task { @MainActor in onResult(packet.route) }
             } else {
@@ -169,7 +153,7 @@ final class ConnectionManager: NSObject {
 
     func fetchFlightState(onResult: @escaping (wire.FlightUpdatePacket?) -> Void) {
         Task {
-            let data = await awaitNextUpdate(.flightUpdate)
+            let data = await requestUpdate(.flightUpdate)
             if let data, let packet = wire.FrontendPackets.shared.decodeFlightUpdate(hex: data.hexEncoded) {
                 Task { @MainActor in onResult(packet) }
             } else {
@@ -177,10 +161,10 @@ final class ConnectionManager: NSObject {
             }
         }
     }
-    
+
     func fetchConnectionState(onResult: @escaping (wire.ConnectionUpdatePacket?) -> Void) {
         Task {
-            let data = await readCharacteristic(.connectionUpdate)
+            let data = await requestUpdate(.connectionUpdate)
             if let data, let packet = wire.FrontendPackets.shared.decodeConnectionUpdate(hex: data.hexEncoded) {
                 Task { @MainActor in onResult(packet) }
             } else {
@@ -188,10 +172,10 @@ final class ConnectionManager: NSObject {
             }
         }
     }
-    
+
     func fetchSensorState(onResult: @escaping (wire.SensorPacket?) -> Void) {
         Task {
-            let data = await readCharacteristic(.sensorData)
+            let data = await requestUpdate(.sensorData)
             if let data, let packet = wire.FrontendPackets.shared.decodeSensor(hex: data.hexEncoded) {
                 Task { @MainActor in onResult(packet) }
             } else {
@@ -202,7 +186,7 @@ final class ConnectionManager: NSObject {
 
     func fetchBatteryStatus(onResult: @escaping (wire.BatteryStatusPacket?) -> Void) {
         Task {
-            let data = await readCharacteristic(.batteryStatus)
+            let data = await requestUpdate(.batteryStatus)
             if let data, let packet = wire.FrontendPackets.shared.decodeBatteryStatus(hex: data.hexEncoded) {
                 Task { @MainActor in onResult(packet) }
             } else {

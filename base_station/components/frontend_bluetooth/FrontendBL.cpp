@@ -42,11 +42,21 @@ void FrontendHandlerBlClass::init() {
     }
     bluetoothManager.init(characteristics);
 
-    registerReadCallbacks();
+    refreshRequestQueue = xQueueCreate(BLETopics::ALL_NOTIFICATIONS_SIZE, sizeof(BLETopics::NotifyByte));
+
+    registerReadTriggerCallback();
 
     xTaskCreate(
         sendUpdateTaskEntry,
-        "ws_update_task",
+        "bl_update_task",
+        4096,
+        nullptr,
+        tskIDLE_PRIORITY + 1,
+        nullptr
+    );
+    xTaskCreate(
+        sendAutomaticUpdateTaskEntry,
+        "bl_auto_update_task",
         4096,
         nullptr,
         tskIDLE_PRIORITY + 1,
@@ -55,18 +65,7 @@ void FrontendHandlerBlClass::init() {
     ESP_LOGI(TAG_FRONTEND_BL, "Frontend handler initialized");
 }
 
-#define PACKET_TO_CBOR_RESPONSE(packet) \
-    std::vector<uint8_t> cborData = nlohmann::json::to_cbor(nlohmann::json(packet)); \
-    *len = static_cast<int>(cborData.size()); \
-    auto* data = new uint8_t[*len]; \
-    memcpy(data, cborData.data(), *len); \
-    return data;
-
-void FrontendHandlerBlClass::registerReadCallbacks() {
-    // AREA_DEFINE, FLIGHT_UPDATE and PLANNED_ROUTE can exceed the 512-byte GATT
-    // attribute limit (BLE_ATT_ATTR_MAX_LEN) once routes/areas have many points, so
-    // they're served exclusively over the fragmented notify path (see sendUpdate())
-    // rather than as GATT reads, which have no equivalent of unbounded fragmentation.
+void FrontendHandlerBlClass::registerReadTriggerCallback() {
     bluetoothManager.addDataWriteCallback(BLETopics::NotifyByte::BLE_TOPIC_AREA_DEFINE, [](const uint8_t* data, int len, BluetoothManager::TopicType topic) {
         try {
             auto packet = nlohmann::json::from_cbor(data, data + len).get<Frontend::AreaDefinePacket>();
@@ -78,23 +77,13 @@ void FrontendHandlerBlClass::registerReadCallbacks() {
     });
     ESP_LOGI(TAG_FRONTEND_BL, "Registered write callback for BLE_TOPIC_AREA_DEFINE");
 
-    bluetoothManager.addDataReadCallback(BLETopics::NotifyByte::BLE_TOPIC_CONNECTION_UPDATE, [this](int* len, BluetoothManager::TopicType topic) -> uint8_t* {
-        auto packet = buildConnectionUpdatePacket();
-        PACKET_TO_CBOR_RESPONSE(packet);
+    // Every topic is read-triggerable: a plain GATT read carries no data (see
+    // BluetoothManager::onSVCGattHandler) and instead just asks for a fresh
+    // notification on that characteristic. One callback handles all of them.
+    bluetoothManager.addReadTriggerCallback([this](const BluetoothManager::TopicType topic) {
+        requestOutOfCycleUpdate(static_cast<BLETopics::NotifyByte>(topic));
     });
-    ESP_LOGI(TAG_FRONTEND_BL, "Registered read callback for BLE_TOPIC_CONNECTION_UPDATE");
-
-    bluetoothManager.addDataReadCallback(BLETopics::NotifyByte::BLE_TOPIC_SENSOR_DATA, [this](int* len, BluetoothManager::TopicType topic) -> uint8_t* {
-        auto packet = buildSensorPacket();
-        PACKET_TO_CBOR_RESPONSE(packet);
-    });
-    ESP_LOGI(TAG_FRONTEND_BL, "Registered read callback for BLE_TOPIC_SENSOR_DATA");
-
-    bluetoothManager.addDataReadCallback(BLETopics::NotifyByte::BLE_TOPIC_BATTERY_STATUS, [this](int* len, BluetoothManager::TopicType topic) -> uint8_t* {
-        auto packet = buildBatteryStatusPacket();
-        PACKET_TO_CBOR_RESPONSE(packet);
-    });
-    ESP_LOGI(TAG_FRONTEND_BL, "Registered read callback for BLE_TOPIC_BATTERY_STATUS");
+    ESP_LOGI(TAG_FRONTEND_BL, "Registered read-trigger callback for all topics");
 }
 
 Frontend::FlightUpdatePacket FrontendHandlerBlClass::buildFlightUpdatePacket() {
@@ -179,24 +168,60 @@ void FrontendHandlerBlClass::sendUpdate(const BLETopics::NotifyByte topic, const
     bluetoothManager.notify(topic, const_cast<uint8_t*>(cborData.data()), static_cast<int>(cborData.size()));
 }
 
-void FrontendHandlerBlClass::sendUpdate() {
-    sendUpdate(BLETopics::BLE_TOPIC_FLIGHT_UPDATE, buildFlightUpdatePacket());
-    sendUpdate(BLETopics::BLE_TOPIC_CONNECTION_UPDATE, buildConnectionUpdatePacket());
-    sendUpdate(BLETopics::BLE_TOPIC_SENSOR_DATA, buildSensorPacket());
-    sendUpdate(BLETopics::BLE_TOPIC_BATTERY_STATUS, buildBatteryStatusPacket());
-    sendUpdate(BLETopics::BLE_TOPIC_PLANNED_ROUTE, buildPlannedRoutePacket());
-    sendUpdate(BLETopics::BLE_TOPIC_AREA_DEFINE, buildAreaDefinePacket());
+void FrontendHandlerBlClass::sendUpdate(const BLETopics::NotifyByte topic) {
+    switch (topic) {
+        case BLETopics::BLE_TOPIC_FLIGHT_UPDATE:
+            sendUpdate(topic, buildFlightUpdatePacket());
+            break;
+        case BLETopics::BLE_TOPIC_CONNECTION_UPDATE:
+            sendUpdate(topic, buildConnectionUpdatePacket());
+            break;
+        case BLETopics::BLE_TOPIC_SENSOR_DATA:
+            sendUpdate(topic, buildSensorPacket());
+            break;
+        case BLETopics::BLE_TOPIC_BATTERY_STATUS:
+            sendUpdate(topic, buildBatteryStatusPacket());
+            break;
+        case BLETopics::BLE_TOPIC_PLANNED_ROUTE:
+            sendUpdate(topic, buildPlannedRoutePacket());
+            break;
+        case BLETopics::BLE_TOPIC_AREA_DEFINE:
+            sendUpdate(topic, buildAreaDefinePacket());
+            break;
+        default:
+            // BLE_TOPIC_ALL (or anything unrecognized) has no packet of its own.
+            break;
+    }
+}
 
-    // Also publish the base station's own battery via the standard BLE Battery Service,
-    // for generic BLE clients that don't know this project's custom topics.
-    const int baseBatteryPercentage = std::max(0, std::min(100, FlightStorage.getBaseBatteryPercentage()));
-    bluetoothManager.notifyBatteryLevel(static_cast<uint8_t>(baseBatteryPercentage));
+void FrontendHandlerBlClass::requestOutOfCycleUpdate(const BLETopics::NotifyByte topic) {
+    if (refreshRequestQueue == nullptr) return; // Not initialized yet.
+    // Non-blocking: this runs on the NimBLE host task (see BluetoothManager::onSVCGattHandler),
+    // which must return promptly. If the queue is ever full, the request is simply dropped -
+    // the topic still gets its next periodic update within a second regardless.
+    xQueueSend(refreshRequestQueue, &topic, 0);
 }
 
 void FrontendHandlerBlClass::sendUpdateTaskEntry(void* param) {
     auto* instance = instanceBL;
     while (true) {
-        instance->sendUpdate();
-        vTaskDelay(pdMS_TO_TICKS(1000)); // Send updates every second
+        BLETopics::NotifyByte requestedTopic;
+        if (xQueueReceive(instance->refreshRequestQueue, &requestedTopic, pdMS_TO_TICKS(200))) {
+            instance->sendUpdate(requestedTopic);
+        }
+    }
+}
+
+void FrontendHandlerBlClass::sendAutomaticUpdateTaskEntry(void* param) {
+    auto* instance = instanceBL;
+    while (true) {
+        for (const auto topic : BLETopics::ALL_NOTIFICATIONS) {
+            instance->requestOutOfCycleUpdate(topic);
+        }
+        // Also publish the base station's own battery via the standard BLE Battery Service,
+        // for generic BLE clients that don't know this project's custom topics.
+        const int baseBatteryPercentage = std::max(0, std::min(100, FlightStorage.getBaseBatteryPercentage()));
+        instance->bluetoothManager.notifyBatteryLevel(static_cast<uint8_t>(baseBatteryPercentage));
+        vTaskDelay(pdMS_TO_TICKS(4000));
     }
 }
