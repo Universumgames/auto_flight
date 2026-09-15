@@ -25,9 +25,9 @@ BluetoothManager::BluetoothManager() {
 }
 
 void BluetoothManager::populateBuildVersionMfgData() {
-    // Company ID 0xFFFF, little-endian (both bytes equal, so byte order is moot here).
-    buildVersionMfgData[0] = 0xFF;
-    buildVersionMfgData[1] = 0xFF;
+    // Company ID, little-endian (see BLEProtocol::MFG_COMPANY_ID / ble_protocol.json).
+    buildVersionMfgData[0] = static_cast<uint8_t>(BLEProtocol::MFG_COMPANY_ID & 0xFF);
+    buildVersionMfgData[1] = static_cast<uint8_t>((BLEProtocol::MFG_COMPANY_ID >> 8) & 0xFF);
 
     const auto epoch = static_cast<uint32_t>(BUILD_EPOCH_TIMESTAMP);
     buildVersionMfgData[2] = static_cast<uint8_t>(epoch & 0xFF);

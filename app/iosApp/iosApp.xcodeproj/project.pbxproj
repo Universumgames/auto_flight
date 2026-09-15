@@ -79,6 +79,7 @@
 			buildPhases = (
 				55EED6B330385AD50011FC8A /* Compile Kotlin Framework */,
 				E72A2BF2FAAAB6F366DCE034 /* Compile Kotlin Framework */,
+				5510B6ED3059EFD8005A6907 /* ShellScript */,
 				7764E7D23DC4AAE92F27DC87 /* Sources */,
 				9A454F30EB169D3840D20C21 /* Frameworks */,
 				DF7E2F9852E61FB83148EE95 /* Resources */,
@@ -144,6 +145,25 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		5510B6ED3059EFD8005A6907 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../../base_station/components/frontend_bluetooth/ble_protocol.json",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/iosApp/Models/BluetoothUUIDs.generated.swift",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n  /usr/bin/env python3 \"$SRCROOT/../../base_station/components/frontend_bluetooth/gen_ble_protocol.py\" \\\n      --schema \"$SRCROOT/../../base_station/components/frontend_bluetooth/ble_protocol.json\" \\\n      --out-swift \"$SRCROOT/iosApp/Models/BluetoothUUIDs.generated.swift\"\n";
+		};
 		55EED6B330385AD50011FC8A /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;

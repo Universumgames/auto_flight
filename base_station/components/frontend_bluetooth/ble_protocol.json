@@ -1,0 +1,21 @@
+{
+  "//": "Single source of truth for the BLE wire contract between the base station (C++/NimBLE) and its clients. Edit this file, then regenerate: python3 gen_ble_protocol.py",
+  "serviceUUID": "ABF0",
+  "//serviceUUID": "Compiled-in default for clients that can't read Kconfig. The firmware itself advertises CONFIG_BLUETOOTH_SERVICE_UUID (base_station/components/frontend_bluetooth/Kconfig, same 0xABF0 default) — if that Kconfig value is ever changed for a deployment, update this field too.",
+  "topics": [
+    { "name": "BLE_TOPIC_ALL",              "value": "0x00", "uuid": "ABF1", "swiftCase": "allUpdate" },
+    { "name": "BLE_TOPIC_FLIGHT_UPDATE",     "value": "0x02", "uuid": "ABF2", "swiftCase": "flightUpdate" },
+    { "name": "BLE_TOPIC_CONNECTION_UPDATE", "value": "0x03", "uuid": "ABF3", "swiftCase": "connectionUpdate" },
+    { "name": "BLE_TOPIC_SENSOR_DATA",       "value": "0x04", "uuid": "ABF4", "swiftCase": "sensorData" },
+    { "name": "BLE_TOPIC_AREA_DEFINE",       "value": "0x05", "uuid": "ABF5", "swiftCase": "areaDefine" },
+    { "name": "BLE_TOPIC_PLANNED_ROUTE",     "value": "0x06", "uuid": "ABF6", "swiftCase": "plannedRoute" },
+    { "name": "BLE_TOPIC_BATTERY_STATUS",    "value": "0x07", "uuid": "ABF7", "swiftCase": "batteryStatus" }
+  ],
+  "fragmentHeaderSize": 4,
+  "//fragmentHeaderSize": "Every fragmented notify/write is prefixed with this many bytes: [0:2) totalLength, [2:4) offset, both little-endian uint16. See BluetoothManager::sendFragmented / handleFragmentedWrite.",
+  "manufacturerData": {
+    "companyID": "0xFFFF",
+    "buildEpochFieldSize": 4,
+    "//": "Scan-response manufacturer data layout: companyID (2 bytes LE) + build epoch (buildEpochFieldSize bytes LE, unix seconds). See BluetoothManager::populateBuildVersionMfgData."
+  }
+}

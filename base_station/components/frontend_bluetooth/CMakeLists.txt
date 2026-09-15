@@ -17,3 +17,18 @@ add_custom_target(frontend_bluetooth_build_timestamp
         COMMENT "Stamping frontend_bluetooth build timestamp"
 )
 add_dependencies(${COMPONENT_LIB} frontend_bluetooth_build_timestamp)
+
+# Regenerates BLETopics.generated.hpp from ble_protocol.json on every build (see
+# gen_ble_protocol.py) — the single source of truth for the BLE topic/UUID table,
+# fragmentation header layout and manufacturer-data layout, otherwise mirrored by hand
+# on iOS (BluetoothUUIDs.generated.swift) and, once it exists, Android (BleProtocol.generated.kt).
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
+add_custom_target(frontend_bluetooth_ble_protocol
+        COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_LIST_DIR}/gen_ble_protocol.py"
+                --schema "${CMAKE_CURRENT_LIST_DIR}/ble_protocol.json"
+                --out-cpp "${CMAKE_CURRENT_BINARY_DIR}/BLETopics.generated.hpp"
+        BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/BLETopics.generated.hpp"
+        DEPENDS "${CMAKE_CURRENT_LIST_DIR}/ble_protocol.json" "${CMAKE_CURRENT_LIST_DIR}/gen_ble_protocol.py"
+        COMMENT "Generating BLETopics.generated.hpp from ble_protocol.json"
+)
+add_dependencies(${COMPONENT_LIB} frontend_bluetooth_ble_protocol)

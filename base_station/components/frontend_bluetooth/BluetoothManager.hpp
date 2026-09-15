@@ -7,7 +7,7 @@
 #include "host/ble_gatt.h"
 #include "host/ble_uuid.h"
 
-#include "BLETopics.hpp"
+#include "BLETopics.generated.hpp"
 #include "FrontendPackets.hpp"
 
 extern "C" void ble_store_config_init(void);
@@ -39,12 +39,12 @@ private:
 
     /* Advertised in the scan response's manufacturer-specific data (AD type 0xFF) so the
      * phone can see which firmware build a base station is running before connecting:
-     * bytes [0:2) are the company ID (0xFFFF, the Bluetooth SIG's reserved "for testing"
-     * value — this project has no assigned company ID), bytes [2:6) are
-     * BUILD_EPOCH_TIMESTAMP (Unix seconds, from the generated build_timestamp.h — see
-     * CMakeLists.txt/generate_build_timestamp.cmake — freshly stamped on every build) as
-     * a little-endian uint32. The iOS app must mirror this exact layout when parsing. */
-    static constexpr uint8_t BUILD_VERSION_MFG_DATA_LEN = 6;
+     * bytes [0:2) are the company ID, bytes [2:6) are BUILD_EPOCH_TIMESTAMP (Unix seconds,
+     * from the generated build_timestamp.h — see CMakeLists.txt/generate_build_timestamp.cmake
+     * — freshly stamped on every build) as a little-endian uint32. Layout (company ID, field
+     * sizes) comes from ble_protocol.json / BLETopics.generated.hpp — the same source of truth
+     * clients (iOS today) generate their mirror of this from. */
+    static constexpr uint8_t BUILD_VERSION_MFG_DATA_LEN = BLEProtocol::MFG_DATA_LEN;
     uint8_t buildVersionMfgData[BUILD_VERSION_MFG_DATA_LEN]{};
     void populateBuildVersionMfgData();
 
@@ -95,12 +95,13 @@ private:
     /* --- Application-level fragmentation ---
      * A single BLE notification/write is capped at (negotiated ATT MTU - 3).
      * To carry payloads larger than that (e.g. routes with many coordinates),
-     * every notify/write is split into fragments, each prefixed with a 4-byte
-     * little-endian header: [0:2) totalLength, [2:4) offset. The receiver
-     * accumulates fragments per (conn_handle, attr_handle) until `offset +
-     * chunkLen == totalLength`, then delivers the reassembled buffer.
-     * The iOS app must mirror this exact framing on both directions. */
-    static constexpr uint16_t FRAGMENT_HEADER_SIZE = 4;
+     * every notify/write is split into fragments, each prefixed with a
+     * little-endian header: [0:2) totalLength, [2:4) offset (size given by
+     * BLEProtocol::FRAGMENT_HEADER_SIZE, generated from ble_protocol.json). The
+     * receiver accumulates fragments per (conn_handle, attr_handle) until `offset +
+     * chunkLen == totalLength`, then delivers the reassembled buffer. Clients (iOS
+     * today) generate their mirror of this framing from the same schema. */
+    static constexpr uint16_t FRAGMENT_HEADER_SIZE = BLEProtocol::FRAGMENT_HEADER_SIZE;
     /* Fixed by the BLE ATT protocol: 1-byte opcode + 2-byte attribute handle. */
     static constexpr uint16_t ATT_PDU_OVERHEAD = 3;
 

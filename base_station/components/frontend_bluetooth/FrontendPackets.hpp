@@ -2,90 +2,100 @@
 #include <vector>
 #include "types.hpp"
 
-namespace Frontend {
+namespace Frontend{
+    enum class PacketType: uint8_t {
+        UNDEFINED_PACKET = 255,
+        FLIGHT_UPDATE = 0x00,
+        CONNECTION_UPDATE = 0x01,
+        AREA_DEFINE = 0x02,
+        SENSOR_UPDATE = 0x03,
+        BATTERY_STATUS = 0x04,
+        PLANNED_ROUTE = 0x05
+    };
 
-/// Common base for packets exchanged with the frontend that concern a specific plane. Carries
-/// the plane's device id as real, explicit protocol data, so neither side has to guess which
-/// plane an update is about (mirrors BasePacket::id in flight_com).
-struct BaseUpdatePacket {
-    static constexpr const char* type = "base";
-    uint32_t planeId = 0;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(BaseUpdatePacket, type, planeId)
-};
+    /// Common base for packets exchanged with the frontend that concern a specific plane. Carries
+    /// the plane's device id as real, explicit protocol data, so neither side has to guess which
+    /// plane an update is about (mirrors BasePacket::id in flight_com).
+    struct BaseUpdatePacket {
+        static constexpr PacketType IDENTIFIER = PacketType::UNDEFINED_PACKET;
+        uint32_t planeId = 0;
 
-struct FlightUpdatePacket : public BaseUpdatePacket {
-    static constexpr const char* type = "flight";
-    Coordinate basePosition;
-    time_t basePositionUpdateTime;
-    Coordinate planePosition;
-    time_t planePositionUpdateTime;
-    FlightRoute flightRoute;
-    time_t flightRouteUpdateTime;
-    PlannedRoute plannedRoute;
-    time_t plannedRouteUpdateTime;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(BaseUpdatePacket, planeId)
+    };
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(FlightUpdatePacket, type, planeId, basePosition, basePositionUpdateTime,
-                                   planePosition, planePositionUpdateTime, flightRoute, flightRouteUpdateTime,
-                                   plannedRoute, plannedRouteUpdateTime)
-};
+    struct FlightUpdatePacket : public BaseUpdatePacket {
+        static constexpr auto IDENTIFIER = PacketType::FLIGHT_UPDATE;
+        Coordinate basePosition;
+        time_t basePositionUpdateTime;
+        Coordinate planePosition;
+        time_t planePositionUpdateTime;
+        FlightRoute flightRoute;
+        time_t flightRouteUpdateTime;
+        PlannedRoute plannedRoute;
+        time_t plannedRouteUpdateTime;
 
-struct ConnectionUpdatePacket : public BaseUpdatePacket {
-    static constexpr const char* type = "connection";
-    ConnectionState baseConnectionState;
-    time_t lastContactBaseStationTimestamp;
-    ConnectionState planeConnectionState;
-    time_t lastContactPlaneTimestamp;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(FlightUpdatePacket, planeId, basePosition, basePositionUpdateTime,
+                                       planePosition, planePositionUpdateTime, flightRoute, flightRouteUpdateTime,
+                                       plannedRoute, plannedRouteUpdateTime)
+    };
 
-    ConnectionState gpsConnectionBase;
-    ConnectionState gpsConnectionPlane;
+    struct ConnectionUpdatePacket : public BaseUpdatePacket {
+        static constexpr auto IDENTIFIER = PacketType::CONNECTION_UPDATE;
+        ConnectionState baseConnectionState;
+        time_t lastContactBaseStationTimestamp;
+        ConnectionState planeConnectionState;
+        time_t lastContactPlaneTimestamp;
 
-    ConnectionState barometerConnectionBase;
-    ConnectionState barometerConnectionPlane;
+        ConnectionState gpsConnectionBase;
+        ConnectionState gpsConnectionPlane;
 
-    ConnectionState motorComConnectionPlane;
-    ConnectionState magnetometerConnectionPlane;
-    ConnectionState accelerometerConnectionPlane;
-    bool manualOverridePlane;
-    FlightState flightState;
+        ConnectionState barometerConnectionBase;
+        ConnectionState barometerConnectionPlane;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectionUpdatePacket, type, planeId, baseConnectionState,
-                                   lastContactBaseStationTimestamp, planeConnectionState, lastContactPlaneTimestamp,
-                                   gpsConnectionBase, gpsConnectionPlane, barometerConnectionBase,
-                                   barometerConnectionPlane, motorComConnectionPlane, magnetometerConnectionPlane,
-                                   accelerometerConnectionPlane, manualOverridePlane, flightState)
-};
+        ConnectionState motorComConnectionPlane;
+        ConnectionState magnetometerConnectionPlane;
+        ConnectionState accelerometerConnectionPlane;
+        bool manualOverridePlane;
+        FlightState flightState;
 
-struct AreaDefinePacket : public BaseUpdatePacket {
-    std::vector<Coordinate> shape;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(ConnectionUpdatePacket, planeId, baseConnectionState,
+                                       lastContactBaseStationTimestamp, planeConnectionState, lastContactPlaneTimestamp,
+                                       gpsConnectionBase, gpsConnectionPlane, barometerConnectionBase,
+                                       barometerConnectionPlane, motorComConnectionPlane, magnetometerConnectionPlane,
+                                       accelerometerConnectionPlane, manualOverridePlane, flightState)
+    };
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(AreaDefinePacket, planeId, shape)
-};
+    struct AreaDefinePacket : public BaseUpdatePacket {
+        static constexpr auto IDENTIFIER = PacketType::AREA_DEFINE;
+        std::vector<Coordinate> shape;
 
-struct SensorPacket : public BaseUpdatePacket {
-    static constexpr const char* type = "sensor";
-    float barometerPressureBase;
-    float barometerPressurePlane;
-    float calculatedAltitude;
-    int headingPlane;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AreaDefinePacket, planeId, shape)
+    };
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(SensorPacket, type, planeId, barometerPressureBase, barometerPressurePlane,
-                                   calculatedAltitude, headingPlane)
-};
+    struct SensorPacket : public BaseUpdatePacket {
+        static constexpr auto IDENTIFIER = PacketType::SENSOR_UPDATE;
+        float barometerPressureBase;
+        float barometerPressurePlane;
+        float calculatedAltitude;
+        int headingPlane;
 
-struct BatteryStatusPacket : public BaseUpdatePacket {
-    static constexpr const char* type = "battery";
-    int baseBatteryPercentage;
-    int planeBatteryPercentage;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(SensorPacket, planeId, barometerPressureBase, barometerPressurePlane,
+                                       calculatedAltitude, headingPlane)
+    };
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(BatteryStatusPacket, type, planeId, baseBatteryPercentage, planeBatteryPercentage)
-};
+    struct BatteryStatusPacket : public BaseUpdatePacket {
+        static constexpr auto IDENTIFIER = PacketType::BATTERY_STATUS;
+        int baseBatteryPercentage;
+        int planeBatteryPercentage;
 
-struct PlannedRoutePacket : public BaseUpdatePacket {
-    static constexpr const char* type = "plannedRoute";
-    std::vector<Coordinate> route;
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(BatteryStatusPacket, planeId, baseBatteryPercentage, planeBatteryPercentage)
+    };
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlannedRoutePacket, type, planeId, route)
-};
+    struct PlannedRoutePacket : public BaseUpdatePacket {
+        static constexpr auto IDENTIFIER = PacketType::PLANNED_ROUTE;
+        std::vector<Coordinate> route;
 
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlannedRoutePacket, planeId, route)
+    };
 } // namespace Frontend

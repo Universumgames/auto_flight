@@ -39,7 +39,7 @@ void Flight_Communication::sendSensorUpdate() {
         GPS_Reader.getGPSLatestTime(),
         pressure,
         heading,
-        FlightStorage.getPlaneBatteryPercentage()
+        FlightStorage.getBaseBatteryPercentage()
     };
 
     sendPacket(packet);

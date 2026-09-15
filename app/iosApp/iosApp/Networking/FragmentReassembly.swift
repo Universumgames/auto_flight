@@ -8,11 +8,12 @@ import Foundation
 /// Shared framing for the base station's application-level BLE fragmentation
 /// (base_station/components/frontend_bluetooth/BluetoothManager.cpp: `sendFragmented` /
 /// `handleFragmentedWrite`). Every fragment — for both notify and write — is prefixed
-/// with a 4-byte little-endian header `[0:2) totalLength, [2:4) offset]` followed by
-/// that offset's chunk of the payload. Reads are the one exception: plain GATT read
+/// with a little-endian header `[0:2) totalLength, [2:4) offset]` (size given by
+/// `BLEProtocolConstants.fragmentHeaderSize`, generated from ble_protocol.json) followed
+/// by that offset's chunk of the payload. Reads are the one exception: plain GATT read
 /// responses on this project's small, fixed-size characteristics are not framed this way.
 enum BLEFragmentFraming {
-    static let headerSize = 4
+    static let headerSize = BLEProtocolConstants.fragmentHeaderSize
 
     /// Builds one `[totalLength, offset] + chunk` frame.
     static func makeFrame(totalLength: Int, offset: Int, chunk: Data) -> Data {
