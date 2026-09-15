@@ -44,23 +44,22 @@ final class AppState {
 /// take `ConnectionState`.
 extension AppState {
     var baseStationItem: ConnectionItem {
-        ConnectionItem(
-            label: "Base Station",
+        let gpsLabel = basePosition.map {
+            _ in String(localized: "connection.items.subtask.gpsPositionWithCoords")
+        } ?? String(localized: "connection.items.subtask.gpsPosition")
+        let barometerLabel = pressureBase != 0
+            ? String(localized: "connection.items.subtask.barometerWithPressure")
+            : String(localized: "connection.items.subtask.barometer")
+
+        return ConnectionItem(
+            label: String(localized: "connection.items.baseStation.label"),
             connectionItemType: .BASE_STATION,
             status: connectionStateBaseStation,
             batteryPercent: Int32(batteryPercentageBase),
             subTasks: [
-                SubTask(label: "Connection", state: stateOf(connectionStateBaseStation == .CONNECTED)),
-                SubTask(
-                    label: "GPS Position" + (basePosition.map {
-                        " (\(formatCoordinate($0.latitude)), \(formatCoordinate($0.longitude)))"
-                    } ?? ""),
-                    state: stateOf(gpsConnectionBase == .CONNECTED)
-                ),
-                SubTask(
-                    label: "Barometer" + (pressureBase != 0 ? " (\(formatPressure(pressureBase))hPa)" : ""),
-                    state: stateOf(barometerConnectionBase == .CONNECTED)
-                ),
+                SubTask(label: String(localized: "connection.items.subtask.connection"), state: stateOf(connectionStateBaseStation == .CONNECTED)),
+                SubTask(label: gpsLabel, state: stateOf(gpsConnectionBase == .CONNECTED)),
+                SubTask(label: barometerLabel, state: stateOf(barometerConnectionBase == .CONNECTED)),
             ]
         )
     }

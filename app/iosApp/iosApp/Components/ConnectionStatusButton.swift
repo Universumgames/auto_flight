@@ -10,7 +10,7 @@ struct ConnectionStatusButton: View {
         Button {
             showPopover = true
         } label: {
-            Text("Status:")
+            Text(String(localized: "connection.status.label"))
             Image(systemName: appState.totalIsConnected ? "checkmark.circle.fill" : "arrow.triangle.2.circlepath")
                 .font(.title2)
                 .foregroundStyle(appState.totalIsConnected ? .green : .orange)

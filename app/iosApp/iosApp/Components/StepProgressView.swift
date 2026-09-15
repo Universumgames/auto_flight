@@ -8,7 +8,7 @@ struct StepProgressView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Flight Planner").font(.headline)
+            Text(String(localized: "wizard.stepList.title")).font(.headline)
             ForEach(
                 ConfigurationState.allCases
                     .enumerated()

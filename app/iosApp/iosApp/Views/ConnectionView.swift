@@ -10,7 +10,7 @@ struct ConnectionView: View {
             VStack(alignment: .leading, spacing: 16) {
                 ConnectionItemsList(items: [appState.baseStationItem] + appState.planeItems)
 
-                Button("Next Step") {
+                Button(String(localized: "connection.btn.nextStep")) {
                     appState.navigationPath.append(.AREA_SELECTION)
                 }
                 .buttonStyle(.borderedProminent)

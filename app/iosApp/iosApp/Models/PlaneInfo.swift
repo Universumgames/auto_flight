@@ -45,33 +45,32 @@ final class PlaneInfo {
     }
     
     var connectionItem: ConnectionItem {
-        ConnectionItem(
-            label: "Plane (id: \(id))",
+        let gpsLabel = position.map {
+            _ in String(localized: "connection.items.subtask.gpsPositionWithCoords")
+        } ?? String(localized: "connection.items.subtask.gpsPosition")
+        let autopilotLabel = manualOverride
+            ? String(localized: "connection.items.subtask.autopilotControlManualOverride")
+            : String(localized: "connection.items.subtask.autopilotControl")
+        let magnetometerLabel = magnetometerConnection == .CONNECTED
+            ? String(localized: "connection.items.subtask.magnetometerWithHeading")
+            : String(localized: "connection.items.subtask.magnetometer")
+        let barometerLabel = pressure != 0
+            ? String(localized: "connection.items.subtask.barometerWithPressure")
+            : String(localized: "connection.items.subtask.barometer")
+
+        return ConnectionItem(
+            label: String(localized: "connection.items.plane.label"),
             connectionItemType: .PLANE,
             status: connectionState,
             batteryPercent: Int32(batteryPercentage),
             subTasks: [
-                SubTask(label: "Connection", state: stateOf(connectionState == .CONNECTED)),
-                SubTask(
-                    label: "GPS Position" + (position.map {
-                        " (\(formatCoordinate($0.latitude)), \(formatCoordinate($0.longitude)))"
-                    } ?? ""),
-                    state: stateOf(gpsConnection == .CONNECTED)
-                ),
-                SubTask(label: "Motor Controller", state: stateOf(motorComConnection == .CONNECTED)),
-                SubTask(
-                    label: "Autopilot Control" + (manualOverride ? " (manual override active)" : ""),
-                    state: stateOf(!manualOverride)
-                ),
-                SubTask(
-                    label: "Magnetometer" + (magnetometerConnection == .CONNECTED ? " (\(Int(heading))°)" : ""),
-                    state: stateOf(magnetometerConnection == .CONNECTED)
-                ),
-                SubTask(label: "Accelerometer", state: stateOf(accelerometerConnection == .CONNECTED)),
-                SubTask(
-                    label: "Barometer" + (pressure != 0 ? " (\(formatPressure(pressure))hPa)" : ""),
-                    state: stateOf(barometerConnection == .CONNECTED)
-                ),
+                SubTask(label: String(localized: "connection.items.subtask.connection"), state: stateOf(connectionState == .CONNECTED)),
+                SubTask(label: gpsLabel, state: stateOf(gpsConnection == .CONNECTED)),
+                SubTask(label: String(localized: "connection.items.subtask.motorController"), state: stateOf(motorComConnection == .CONNECTED)),
+                SubTask(label: autopilotLabel, state: stateOf(!manualOverride)),
+                SubTask(label: magnetometerLabel, state: stateOf(magnetometerConnection == .CONNECTED)),
+                SubTask(label: String(localized: "connection.items.subtask.accelerometer"), state: stateOf(accelerometerConnection == .CONNECTED)),
+                SubTask(label: barometerLabel, state: stateOf(barometerConnection == .CONNECTED)),
             ]
         )
     }

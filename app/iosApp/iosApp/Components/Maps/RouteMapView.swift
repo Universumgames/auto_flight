@@ -28,16 +28,16 @@ struct RouteMapView: View {
                 MapPolyline(coordinates: flightHistory.map(\.clCoordinate)).stroke(Color.red, lineWidth: 4)
             }
             if let start = plannedRoute.first {
-                Annotation("Start", coordinate: start.clCoordinate) { MarkerBadge.routeStart() }
+                Annotation(String(localized: "map.annotation.routeStart"), coordinate: start.clCoordinate) { MarkerBadge.routeStart() }
             }
             if let end = plannedRoute.last, plannedRoute.count > 1 {
-                Annotation("End", coordinate: end.clCoordinate) { MarkerBadge.routeEnd() }
+                Annotation(String(localized: "map.annotation.routeEnd"), coordinate: end.clCoordinate) { MarkerBadge.routeEnd() }
             }
             if let base = basePosition {
-                Annotation("Base Station", coordinate: base.clCoordinate) { MarkerBadge.baseStation() }
+                Annotation(String(localized: "map.annotation.baseStation"), coordinate: base.clCoordinate) { MarkerBadge.baseStation() }
             }
             if let plane = planePosition {
-                Annotation("Plane", coordinate: plane.clCoordinate) {
+                Annotation(String(localized: "map.annotation.plane"), coordinate: plane.clCoordinate) {
                     MarkerBadge.plane(rotation: planeHeading ?? 0)
                 }
             }

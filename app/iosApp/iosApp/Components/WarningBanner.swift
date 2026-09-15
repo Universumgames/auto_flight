@@ -11,11 +11,11 @@ struct WarningBanner: View {
 
     var body: some View {
         if appState.motorControllerDisconnectedError {
-            banner(text: "Motor controller disconnected", systemImage: "xmark.circle.fill", color: .red)
+            banner(text: String(localized: "warning.motorControllerDisconnected"), systemImage: "xmark.circle.fill", color: .red)
         } else if !suppressGpsWarning && appState.gpsPlaneUnavailableError {
-            banner(text: "No GPS position available for the plane", systemImage: "xmark.circle.fill", color: .red)
+            banner(text: String(localized: "warning.gpsUnavailable"), systemImage: "xmark.circle.fill", color: .red)
         } else if appState.autopilotDisabledWarning {
-            banner(text: "Autopilot control is disabled — manual override active", systemImage: "exclamationmark.triangle.fill", color: .orange)
+            banner(text: String(localized: "warning.autopilotDisabled"), systemImage: "exclamationmark.triangle.fill", color: .orange)
         }
     }
 

@@ -28,12 +28,12 @@ struct RouteView: View {
             if plannedRoute.isEmpty {
                 HStack {
                     ProgressView()
-                    Text("Waiting for the planned route…").foregroundStyle(.secondary)
+                    Text(String(localized: "route.waitingForRoute")).foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
             }
         }
-        .navigationTitle("Route Preview")
+        .navigationTitle(String(localized: "route.navTitle"))
         .padding(.bottom)
         .connectedToolbar()
         .onAppear {

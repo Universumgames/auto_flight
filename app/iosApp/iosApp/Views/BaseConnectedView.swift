@@ -9,7 +9,7 @@ struct BaseConnectedView: View {
         VStack(spacing: 0) {
             NavigationStack(path: Bindable(appState).navigationPath) {
                 ConnectionView()
-                    .navigationTitle(Text("Component Connections"))
+                    .navigationTitle(Text(String(localized: "connection.navTitle")))
                     .navigationDestination(for: ConfigurationState.self) { state in
                         switch state {
                         case .AREA_SELECTION:

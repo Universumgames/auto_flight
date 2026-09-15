@@ -32,7 +32,7 @@ struct ConnectionItemsList: View {
                         StatusDot(connected: ConnectionItems.shared.isConnected(status: item.status))
                         Text(item.label).font(.headline)
                         batteryIcon(Int(item.batteryPercent))
-                        Text("(\(item.batteryPercent)%)").font(.subheadline).foregroundStyle(.secondary)
+                        Text(String(localized: "connection.items.batteryPercent")).font(.subheadline).foregroundStyle(.secondary)
                         Spacer()
                         Text(ConnectionItems.shared.formatStatus(status: item.status))
                             .font(.caption)

@@ -4,12 +4,12 @@ import SharedLogic
 private extension ConfigurationState {
     var displayLabel: String {
         switch self {
-        case .CONNECTION: return "Connect"
-        case .AREA_SELECTION: return "Area"
-        case .ROUTE_APPROVAL: return "Route"
-        case .STARTING: return "Starting"
-        case .FLYING: return "Flying"
-        case .FINISHING: return "Done"
+        case .CONNECTION: return String(localized: "wizard.progress.step.connect")
+        case .AREA_SELECTION: return String(localized: "wizard.progress.step.area")
+        case .ROUTE_APPROVAL: return String(localized: "wizard.progress.step.route")
+        case .STARTING: return String(localized: "wizard.progress.step.starting")
+        case .FLYING: return String(localized: "wizard.progress.step.flying")
+        case .FINISHING: return String(localized: "wizard.progress.step.done")
         default: return translationKey
         }
     }

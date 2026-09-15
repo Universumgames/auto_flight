@@ -50,12 +50,12 @@ struct PolygonMapView: View {
                     }
                 }
                 if let base = basePosition {
-                    Annotation("Base Station", coordinate: base.clCoordinate) {
+                    Annotation(String(localized: "map.annotation.baseStation"), coordinate: base.clCoordinate) {
                         MarkerBadge.baseStation()
                     }
                 }
                 if let plane = planePosition {
-                    Annotation("Plane", coordinate: plane.clCoordinate) {
+                    Annotation(String(localized: "map.annotation.plane"), coordinate: plane.clCoordinate) {
                         MarkerBadge.plane(rotation: planeHeading)
                     }
                 }

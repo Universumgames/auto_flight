@@ -12,10 +12,10 @@ struct AreaView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Tap the map to draw a polygon for your route.").font(.subheadline).foregroundStyle(.secondary)
+                    Text(String(localized: "area.instructions")).font(.subheadline).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("Next Step") {
+                Button(String(localized: "area.btn.nextStep")) {
                     submit()
                 }
                 .buttonStyle(.borderedProminent)
@@ -34,7 +34,7 @@ struct AreaView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             .padding(.horizontal)
         }
-        .navigationTitle("Route Planner")
+        .navigationTitle(String(localized: "area.navTitle"))
         .padding(.bottom)
         .connectedToolbar()
         .onAppear {
