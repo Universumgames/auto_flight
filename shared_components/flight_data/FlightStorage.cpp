@@ -178,6 +178,32 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
 #undef FLIGHT_VAR_PLANE_SELF
 #undef FLIGHT_VAR_PLANE_COMMON
 
+// Universal accessors — dispatch to the base or plane implementation based on
+// sourceId (see UniversalVariables.inc).
+#define FLIGHT_VAR_UNIVERSAL(name, Name, type, BaseName, PlaneName)\
+    time_t FlightStorageClass::getLast##Name##UpdateTime(uint32_t sourceId) const {\
+        return sourceId == BASE_ID ? getLast##BaseName##UpdateTime() : getLast##PlaneName##UpdateTime(sourceId);\
+    }\
+    type FlightStorageClass::get##Name(uint32_t sourceId) const {\
+        return sourceId == BASE_ID ? get##BaseName() : get##PlaneName(sourceId);\
+    }\
+    type FlightStorageClass::update##Name(uint32_t sourceId, type value, time_t lastUpdateTime) {\
+        return sourceId == BASE_ID ? update##BaseName(value, lastUpdateTime) : update##PlaneName(sourceId, value, lastUpdateTime);\
+    }
+#define FLIGHT_VAR_UNIVERSAL_PLANE_ONLY(name, Name, type, initialValue, PlaneName)\
+    time_t FlightStorageClass::getLast##Name##UpdateTime(uint32_t sourceId) const {\
+        return sourceId == BASE_ID ? 0 : getLast##PlaneName##UpdateTime(sourceId);\
+    }\
+    type FlightStorageClass::get##Name(uint32_t sourceId) const {\
+        return sourceId == BASE_ID ? type(initialValue) : get##PlaneName(sourceId);\
+    }\
+    type FlightStorageClass::update##Name(uint32_t sourceId, type value, time_t lastUpdateTime) {\
+        return sourceId == BASE_ID ? type(initialValue) : update##PlaneName(sourceId, value, lastUpdateTime);\
+    }
+#include "UniversalVariables.inc"
+#undef FLIGHT_VAR_UNIVERSAL_PLANE_ONLY
+#undef FLIGHT_VAR_UNIVERSAL
+
 void FlightStorageClass::addPointToFlightRoute(const Coordinate& point, uint32_t planeId) {
     planes[planeId].flightRoute.push_back(point);
     queueUpdate(DataUpdateType::HISTORY, planeId, portMAX_DELAY);

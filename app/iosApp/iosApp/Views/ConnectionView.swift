@@ -9,6 +9,10 @@ struct ConnectionView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 ConnectionItemsList(items: [appState.baseStationItem] + appState.planeItems)
+                
+                if appState.planeItems.isEmpty{
+                    Text("connection.planes.empty")
+                }
 
                 Button(String(localized: "connection.btn.nextStep")) {
                     appState.navigationPath.append(.AREA_SELECTION)

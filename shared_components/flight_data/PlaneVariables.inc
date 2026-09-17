@@ -14,7 +14,7 @@ FLIGHT_VAR_PLANE(planeGPSConnectionState,           PlaneGPSConnectionState,    
 FLIGHT_VAR_PLANE(planeMagnetometerConnectionState,  PlaneMagnetometerConnectionState,  ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(planeAccelerometerConnectionState, PlaneAccelerometerConnectionState, ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(planeManualOverride,               PlaneManualOverride,               bool,             false,                       CONNECTION, {})
-FLIGHT_VAR_PLANE(planeBatteryPercentage,            PlaneBatteryPercentage,            int,              0,                           SENSOR,     {})
+FLIGHT_VAR_PLANE(planeBatteryPercentage,            PlaneBatteryPercentage,            int,              0,                           BATTERY,     {})
 FLIGHT_VAR_PLANE(plannedRoute,                      PlannedRoute,                      PlannedRoute,     PlannedRoute{},              ROUTE,      {})
 FLIGHT_VAR_PLANE(flightRoute,                       FlightRoute,                       FlightRoute,      FlightRoute{},               HISTORY,    {})
 FLIGHT_VAR_PLANE(plannedArea,                       PlannedArea,                       std::vector<Coordinate>, std::vector<Coordinate>{}, AREA, { info.plannedRoute.clear(); })

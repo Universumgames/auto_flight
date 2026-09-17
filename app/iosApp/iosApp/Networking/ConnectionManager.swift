@@ -43,15 +43,29 @@ final class ConnectionManager: NSObject {
     }
 
     func afterFullyConnected(service: CBService) {
-        subscribe(to: CharacteristicUUID.connectionUpdate, handler: onFrameConnectionUpdate)
-        subscribe(to: CharacteristicUUID.sensorData, handler: onFrameSensorUpdate)
-        subscribe(to: CharacteristicUUID.batteryStatus, handler: onFrameBatteryStatus)
-        subscribe(to: CharacteristicUUID.flightUpdate, handler: onFrameFlightData)
-        // areaDefine and plannedRoute have no persistent handler — they're only ever
-        // pulled on demand via awaitNextUpdate(_:) below — but still need their CCCD
-        // enabled so the base station's notifications for them reach us at all.
-        enableNotifications(for: .areaDefine)
-        enableNotifications(for: .plannedRoute)
+        for topic in CharacteristicUUID.allCases {
+            subscribe(to: topic, handler: { data in self.onNotify(topic, data) })
+        }
+    }
+    
+    func onNotify(_ topic: CharacteristicUUID, _ data: Data){
+        switch(topic){
+            case .allUpdate:
+                print("Unexcpected packet")
+            case .positionUpdate:
+                onFramePositionData(data: data)
+            case .connectionUpdate:
+                onFrameConnectionUpdate(data: data)
+            case .sensorData:
+                onFrameSensorUpdate(data: data)
+            case .areaDefine:
+                // TODO: onAreaDefine Receive
+                break
+            case .plannedRoute:
+                onFrameRoutePlanned(data: data)
+            case .batteryStatus:
+                onFrameBatteryStatus(data: data)
+        }
     }
 
     func disconnect() {
@@ -90,9 +104,11 @@ final class ConnectionManager: NSObject {
         print("Sensor update received: \(packet)")
     }
 
-    private func onFrameFlightData(data: Data) {
-        guard let packet = wire.FrontendPackets.shared.decodeFlightUpdate(hex: data.hexEncoded) else { return }
-        PacketParsing.applyFlightPacket(state, packet)
+    private func onFramePositionData(data: Data) {
+        guard let packet = wire.FrontendPackets.shared.decodePositionUpdate(hex: data.hexEncoded) else {
+            return
+        }
+        PacketParsing.applyPositionPacket(packet)
         print("Flight update received: \(packet)")
     }
 
@@ -100,6 +116,14 @@ final class ConnectionManager: NSObject {
         guard let packet = wire.FrontendPackets.shared.decodeBatteryStatus(hex: data.hexEncoded) else { return }
         PacketParsing.applyBatteryStatusPacket(state, packet)
         print("Battery status received: \(packet)")
+    }
+    
+    private func onFrameRoutePlanned(data: Data){
+        guard let packet = wire.FrontendPackets.shared.decodePlannedRoute(
+            hex: data.hexEncoded
+        ) else { return }
+        PacketParsing.applyRoutePlannedPacket(state, packet)
+        print("Route plan update received: \(packet)")
     }
 
     // MARK: - Manual fetching
@@ -114,21 +138,9 @@ final class ConnectionManager: NSObject {
         }
     }
 
-    func fetchArea(onResult: @escaping ([Coordinate]?) -> Void) {
-        Task {
-            let data = await requestUpdate(.areaDefine)
-            if let data, let packet = wire.FrontendPackets.shared.decodeAreaDefine(hex: data.hexEncoded) {
-                Task { @MainActor in onResult(packet.shape) }
-                return
-            } else {
-                onResult(nil)
-            }
-        }
-    }
-
     func submitArea(polygon: [Coordinate], onResult: @escaping (AreaSubmitResult) -> Void) {
         Task {
-            guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.AreaDefinePacket(type: "area", shape: polygon))) else {
+            guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.AreaDefinePacket(sourceId: 0, shape: polygon))) else {
                 onResult(.FAILED); return
             }
             do {
@@ -136,61 +148,6 @@ final class ConnectionManager: NSObject {
                 Task { @MainActor in onResult(.ACCEPTED) }
             } catch {
                 onResult(.FAILED)
-            }
-        }
-    }
-
-    func fetchRoute(onResult: @escaping ([Coordinate]) -> Void) {
-        Task {
-            let data = await requestUpdate(.plannedRoute)
-            if let data, let packet = wire.FrontendPackets.shared.decodePlannedRoute(hex: data.hexEncoded) {
-                Task { @MainActor in onResult(packet.route) }
-            } else {
-                onResult([])
-            }
-        }
-    }
-
-    func fetchFlightState(onResult: @escaping (wire.FlightUpdatePacket?) -> Void) {
-        Task {
-            let data = await requestUpdate(.flightUpdate)
-            if let data, let packet = wire.FrontendPackets.shared.decodeFlightUpdate(hex: data.hexEncoded) {
-                Task { @MainActor in onResult(packet) }
-            } else {
-                onResult(nil)
-            }
-        }
-    }
-
-    func fetchConnectionState(onResult: @escaping (wire.ConnectionUpdatePacket?) -> Void) {
-        Task {
-            let data = await requestUpdate(.connectionUpdate)
-            if let data, let packet = wire.FrontendPackets.shared.decodeConnectionUpdate(hex: data.hexEncoded) {
-                Task { @MainActor in onResult(packet) }
-            } else {
-                onResult(nil)
-            }
-        }
-    }
-
-    func fetchSensorState(onResult: @escaping (wire.SensorPacket?) -> Void) {
-        Task {
-            let data = await requestUpdate(.sensorData)
-            if let data, let packet = wire.FrontendPackets.shared.decodeSensor(hex: data.hexEncoded) {
-                Task { @MainActor in onResult(packet) }
-            } else {
-                onResult(nil)
-            }
-        }
-    }
-
-    func fetchBatteryStatus(onResult: @escaping (wire.BatteryStatusPacket?) -> Void) {
-        Task {
-            let data = await requestUpdate(.batteryStatus)
-            if let data, let packet = wire.FrontendPackets.shared.decodeBatteryStatus(hex: data.hexEncoded) {
-                Task { @MainActor in onResult(packet) }
-            } else {
-                onResult(nil)
             }
         }
     }

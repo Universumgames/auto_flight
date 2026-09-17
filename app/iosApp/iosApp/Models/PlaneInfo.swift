@@ -59,7 +59,9 @@ final class PlaneInfo {
             : String(localized: "connection.items.subtask.barometer")
 
         return ConnectionItem(
-            label: String(localized: "connection.items.plane.label"),
+            label: String(
+                localized: "connection.items.plane.label \(String(format: "%X", id))"
+            ),
             connectionItemType: .PLANE,
             status: connectionState,
             batteryPercent: Int32(batteryPercentage),
@@ -67,7 +69,12 @@ final class PlaneInfo {
                 SubTask(label: String(localized: "connection.items.subtask.connection"), state: stateOf(connectionState == .CONNECTED)),
                 SubTask(label: gpsLabel, state: stateOf(gpsConnection == .CONNECTED)),
                 SubTask(label: String(localized: "connection.items.subtask.motorController"), state: stateOf(motorComConnection == .CONNECTED)),
-                SubTask(label: autopilotLabel, state: stateOf(!manualOverride)),
+                SubTask(
+                    label: autopilotLabel,
+                    state: stateOf(
+                        !manualOverride && motorComConnection == .CONNECTED
+                    )
+                ),
                 SubTask(label: magnetometerLabel, state: stateOf(magnetometerConnection == .CONNECTED)),
                 SubTask(label: String(localized: "connection.items.subtask.accelerometer"), state: stateOf(accelerometerConnection == .CONNECTED)),
                 SubTask(label: barometerLabel, state: stateOf(barometerConnection == .CONNECTED)),
@@ -75,7 +82,7 @@ final class PlaneInfo {
         )
     }
     
-    static var defaultPlaneID: PlaneID { "default" }
+    static var defaultPlaneID: PlaneID { SharedLogic.DEFAULT_PLANE_ID }
     static var defaultPlane: PlaneInfo {
         PlaneInfo(id: defaultPlaneID)
     }

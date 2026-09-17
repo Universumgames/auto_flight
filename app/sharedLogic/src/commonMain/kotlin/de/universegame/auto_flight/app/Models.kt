@@ -2,10 +2,11 @@ package de.universegame.auto_flight.app
 
 import kotlin.uuid.Uuid
 
-typealias PlaneID = String
+typealias PlaneID = UInt
 
 /** Key used for the single plane reported by the current base-station protocol, which doesn't yet tag packets with a plane id. */
-const val DEFAULT_PLANE_ID: PlaneID = "default"
+const val DEFAULT_PLANE_ID: PlaneID = 0u
+const val BASE_ID: PlaneID = DEFAULT_PLANE_ID
 
 /**
  * Mirrors the connection lifecycle reported by the base station / plane links.

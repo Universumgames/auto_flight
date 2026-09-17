@@ -4,7 +4,7 @@
   "//serviceUUID": "Compiled-in default for clients that can't read Kconfig. The firmware itself advertises CONFIG_BLUETOOTH_SERVICE_UUID (base_station/components/frontend_bluetooth/Kconfig, same 0xABF0 default) — if that Kconfig value is ever changed for a deployment, update this field too.",
   "topics": [
     { "name": "BLE_TOPIC_ALL",              "value": "0x00", "uuid": "ABF1", "swiftCase": "allUpdate" },
-    { "name": "BLE_TOPIC_FLIGHT_UPDATE",     "value": "0x02", "uuid": "ABF2", "swiftCase": "flightUpdate" },
+    { "name": "BLE_TOPIC_POSITION_UPDATE",     "value": "0x02", "uuid": "ABF2", "swiftCase": "positionUpdate" },
     { "name": "BLE_TOPIC_CONNECTION_UPDATE", "value": "0x03", "uuid": "ABF3", "swiftCase": "connectionUpdate" },
     { "name": "BLE_TOPIC_SENSOR_DATA",       "value": "0x04", "uuid": "ABF4", "swiftCase": "sensorData" },
     { "name": "BLE_TOPIC_AREA_DEFINE",       "value": "0x05", "uuid": "ABF5", "swiftCase": "areaDefine" },

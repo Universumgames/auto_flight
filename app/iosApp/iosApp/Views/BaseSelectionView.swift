@@ -50,12 +50,13 @@ struct BaseSelectionView: View {
                                 Image(systemName: "antenna.radiowaves.left.and.right")
                                 VStack(alignment: .leading) {
                                     Text(station.name)
-                                    Text(String(localized: "setup.baseScan.buildDate"))
+                                    Text(String(localized: "setup.baseScan.buildDate  \(station.buildDate?.formatted(date: .abbreviated, time: .shortened) ?? "Unkown")"))
                                         .font(.caption2)
                                         .foregroundStyle(.secondary)
                                 }
                                 Spacer()
                                 Button {
+                                    appState.clearData()
                                     connectionManager.tryConnectToPeripheral(station.peripheral)
                                 } label: {
                                     Text(String(localized: "setup.baseScan.btn.connect"))

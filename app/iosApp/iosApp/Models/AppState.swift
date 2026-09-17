@@ -66,7 +66,7 @@ extension AppState {
 
     /// One `ConnectionItem` per connected plane, keyed by `planes`.
     var planeItems: [ConnectionItem] {
-        let planes = planes.isEmpty ? [PlaneInfo(id: defaultPlaneID)] : Array(planes.values)
+        let planes = planes.isEmpty ? [] : Array(planes.values)
         return planes.map { $0.connectionItem }
     }
 
@@ -87,6 +87,12 @@ extension AppState {
     /// True when a plane is connected but no GPS position is available for it.
     var gpsPlaneUnavailableError: Bool {
         planes.values.contains { $0.connectionState == .CONNECTED && $0.gpsConnection != .CONNECTED }
+    }
+    
+    func clearData(){
+        navigationPath = []
+        basePosition = nil
+        planes = [:]
     }
 }
 

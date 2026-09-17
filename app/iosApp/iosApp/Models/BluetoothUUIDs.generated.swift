@@ -17,7 +17,7 @@ enum BLEProtocolConstants {
 
 enum NotifyByte: UInt8, CaseIterable, Identifiable {
     case BLE_TOPIC_ALL = 0x00
-    case BLE_TOPIC_FLIGHT_UPDATE = 0x02
+    case BLE_TOPIC_POSITION_UPDATE = 0x02
     case BLE_TOPIC_CONNECTION_UPDATE = 0x03
     case BLE_TOPIC_SENSOR_DATA = 0x04
     case BLE_TOPIC_AREA_DEFINE = 0x05
@@ -29,7 +29,7 @@ enum NotifyByte: UInt8, CaseIterable, Identifiable {
     var characteristic: CharacteristicUUID {
         switch self {
             case .BLE_TOPIC_ALL: return .allUpdate
-            case .BLE_TOPIC_FLIGHT_UPDATE: return .flightUpdate
+            case .BLE_TOPIC_POSITION_UPDATE: return .positionUpdate
             case .BLE_TOPIC_CONNECTION_UPDATE: return .connectionUpdate
             case .BLE_TOPIC_SENSOR_DATA: return .sensorData
             case .BLE_TOPIC_AREA_DEFINE: return .areaDefine
@@ -41,7 +41,7 @@ enum NotifyByte: UInt8, CaseIterable, Identifiable {
 
 enum CharacteristicUUID: String, CaseIterable, Identifiable {
     case allUpdate = "ABF1"
-    case flightUpdate = "ABF2"
+    case positionUpdate = "ABF2"
     case connectionUpdate = "ABF3"
     case sensorData = "ABF4"
     case areaDefine = "ABF5"

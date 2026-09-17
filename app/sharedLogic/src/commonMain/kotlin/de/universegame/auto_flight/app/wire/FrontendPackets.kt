@@ -47,70 +47,56 @@ enum class FlightState {
  * `static constexpr const char* type` member.
  */
 sealed interface FrontendPacket {
-    val type: String
+    val sourceId: UInt
 }
 
 /** Mirrors `BaseUpdatePacket`. */
 data class BaseUpdatePacket(
-    override val type: String = "base",
+    override val sourceId: UInt,
 ) : FrontendPacket
 
-/** Mirrors `FlightUpdatePacket`. */
-data class FlightUpdatePacket(
-    override val type: String = "flight",
-    val basePosition: Coordinate,
-    val basePositionUpdateTime: Long,
-    val planePosition: Coordinate,
-    val planePositionUpdateTime: Long,
-    val flightRoute: FlightRoute,
-    val flightRouteUpdateTime: Long,
-    val plannedRoute: PlannedRoute,
-    val plannedRouteUpdateTime: Long,
+/** Mirrors `PositionUpdatePacket`. */
+data class PositionUpdatePacket(
+    override val sourceId: UInt,
+    val position: Coordinate,
+    val positionUpdateTime: Long
 ) : FrontendPacket
 
 /** Mirrors `ConnectionUpdatePacket`. */
 data class ConnectionUpdatePacket(
-    override val type: String = "connection",
-    val baseConnectionState: ConnectionState,
-    val lastContactBaseStationTimestamp: Long,
-    val planeConnectionState: ConnectionState,
-    val lastContactPlaneTimestamp: Long,
-    val gpsConnectionBase: ConnectionState,
-    val gpsConnectionPlane: ConnectionState,
-    val barometerConnectionBase: ConnectionState,
-    val barometerConnectionPlane: ConnectionState,
-    val motorComConnectionPlane: ConnectionState,
-    val magnetometerConnectionPlane: ConnectionState,
-    val accelerometerConnectionPlane: ConnectionState,
-    val manualOverridePlane: Boolean,
-    val flightState: FlightState,
+    override val sourceId: UInt,
+    val gpsConnection: ConnectionState,
+    val barometer: ConnectionState,
+    val motorCom: ConnectionState,
+    val magnetometer: ConnectionState,
+    val accelerometer: ConnectionState,
+    val manualOverride: Boolean,
+    val flightState: FlightState
 ) : FrontendPacket
 
 /** Mirrors `AreaDefinePacket`. Unlike the others it carries no `type` tag on the wire. */
 data class AreaDefinePacket(
-    override val type: String = "area",
+    override val sourceId: UInt,
     val shape: List<Coordinate>,
 ) : FrontendPacket
 
 /** Mirrors `SensorPacket`. */
 data class SensorPacket(
-    override val type: String = "sensor",
-    val barometerPressureBase: Float,
-    val barometerPressurePlane: Float,
+    override val sourceId: UInt,
+    val barometerPressure: Float,
     val calculatedAltitude: Float,
     val headingPlane: Int,
 ) : FrontendPacket
 
 /** Mirrors `BatteryStatusPacket`. */
 data class BatteryStatusPacket(
-    override val type: String = "battery",
-    val baseBatteryPercentage: Int,
-    val planeBatteryPercentage: Int,
+    override val sourceId: UInt,
+    val batteryPercentage: Int
 ) : FrontendPacket
 
 /** Mirrors `PlannedRoutePacket`. */
 data class PlannedRoutePacket(
-    override val type: String = "plannedRoute",
+    override val sourceId: UInt,
     val route: List<Coordinate>,
 ) : FrontendPacket
 
@@ -133,8 +119,8 @@ object FrontendPackets {
     fun decodeBaseUpdate(hex: String): BaseUpdatePacket? =
         runCatching { cbor.decodeFromByteArray<BaseUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
-    fun decodeFlightUpdate(hex: String): FlightUpdatePacket? =
-        runCatching { cbor.decodeFromByteArray<FlightUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+    fun decodePositionUpdate(hex: String): PositionUpdatePacket? =
+        runCatching { cbor.decodeFromByteArray<PositionUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
     fun decodeConnectionUpdate(hex: String): ConnectionUpdatePacket? =
         runCatching { cbor.decodeFromByteArray<ConnectionUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
@@ -154,7 +140,7 @@ object FrontendPackets {
     /** Encodes any [FrontendPacket] to its CBOR wire form, hex-encoded. */
     fun encode(packet: FrontendPacket): String = when (packet) {
         is BaseUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
-        is FlightUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
+        is PositionUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
         is ConnectionUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
         is AreaDefinePacket -> cbor.encodeToByteArray(packet.toWire())
         is SensorPacket -> cbor.encodeToByteArray(packet.toWire())

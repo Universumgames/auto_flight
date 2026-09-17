@@ -24,6 +24,7 @@ public:
 
     /// sourceId used for updates that don't originate from a specific plane (base station state)
     static constexpr uint32_t NO_PLANE_ID = 0;
+    static constexpr uint32_t BASE_ID = NO_PLANE_ID;
 
     /// Specifying which kind of stored data got updated
     enum class DataUpdateType {
@@ -41,6 +42,8 @@ public:
         AREA,
         /// Sensor changes
         SENSOR,
+        /// Battery changes
+        BATTERY,
         /// Flight state changes (planning/planned/flying/returning)
         STATE
     };
@@ -98,8 +101,28 @@ public:
 #undef FLIGHT_VAR_PLANE_SELF
 #undef FLIGHT_VAR_PLANE_COMMON
 
+    // Universal accessors: dispatch purely on `sourceId`. BASE_ID proxies to the
+    // base implementation, any other id to the plane implementation for that id.
+    // See UniversalVariables.inc for which variables get one and why.
+#define FLIGHT_VAR_UNIVERSAL(name, Name, type, BaseName, PlaneName) \
+    public: type update##Name(uint32_t sourceId, type value, time_t lastUpdateTime = 0); \
+            [[nodiscard]] type get##Name(uint32_t sourceId) const; \
+            [[nodiscard]] time_t getLast##Name##UpdateTime(uint32_t sourceId) const;
+#define FLIGHT_VAR_UNIVERSAL_PLANE_ONLY(name, Name, type, initialValue, PlaneName) \
+    public: type update##Name(uint32_t sourceId, type value, time_t lastUpdateTime = 0); \
+            [[nodiscard]] type get##Name(uint32_t sourceId) const; \
+            [[nodiscard]] time_t getLast##Name##UpdateTime(uint32_t sourceId) const;
+#include "UniversalVariables.inc"
+#undef FLIGHT_VAR_UNIVERSAL_PLANE_ONLY
+#undef FLIGHT_VAR_UNIVERSAL
+
     [[nodiscard]] const BaseInfo& getBaseInfo() const { return baseInfo; }
     [[nodiscard]] const std::unordered_map<uint32_t, PlaneInfo>& getAllPlanes() const { return planes; }
+
+    [[nodiscard]] const PlaneInfo* getPlaneInfo(uint32_t planeId) const {
+        auto it = planes.find(planeId);
+        return it != planes.end() ? &it->second : nullptr;
+    }
 
 private:
     void addPointToFlightRoute(const Coordinate &point, uint32_t planeId);

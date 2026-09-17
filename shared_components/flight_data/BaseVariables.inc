@@ -5,4 +5,4 @@ FLIGHT_VAR_BASE(baseConnectionState,           BaseConnectionState,           Co
 FLIGHT_VAR_BASE(basePressure,                  BasePressure,                  float,            0.0f,                        SENSOR,     {})
 FLIGHT_VAR_BASE(baseBarometerConnectionState,  BaseBarometerConnectionState,  ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_BASE(baseGPSConnectionState,        BaseGPSConnectionState,        ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
-FLIGHT_VAR_BASE(baseBatteryPercentage,         BaseBatteryPercentage,         int,              0,                           SENSOR,     {})
+FLIGHT_VAR_BASE(baseBatteryPercentage,         BaseBatteryPercentage,         int,              0,                           BATTERY,     {})
