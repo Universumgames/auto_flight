@@ -55,10 +55,11 @@ void Flight_Communication::requestRouteHistory() {
     sendPacket(packet);
 }
 
-void Flight_Communication::sendPlannedArea(const std::vector<Coordinate>& shape) {
+void Flight_Communication::sendPlannedArea(const AreaData& areaData) {
     PlannedAreaPacket packet = {
-        GPS_Reader.getGPSLatestTime(),
-        shape
+         GPS_Reader.getGPSLatestTime(),
+        areaData.areaPoints,
+        areaData.settings
     };
     sendPacket(packet);
 }
@@ -75,10 +76,11 @@ void Flight_Communication::sendRouteHistory() {
 }
 
 void Flight_Communication::sendPlannedRoute() {
-    PlannedRoute plannedRoute = FlightStorage.getPlannedRoute();
+    auto plannedRoute = FlightStorage.getPlannedRoute();
     PlannedRoutePacket packet = {
         GPS_Reader.getGPSLatestTime(),
-        plannedRoute
+        plannedRoute.getRoutePoints(),
+        plannedRoute.getSettings()
     };
     sendPacket(packet);
 }

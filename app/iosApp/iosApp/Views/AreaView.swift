@@ -37,11 +37,10 @@ struct AreaView: View {
         .navigationTitle(String(localized: "area.navTitle"))
         .padding(.bottom)
         .connectedToolbar()
-        .onAppear {
-            connectionManager.fetchArea { fetched in
-                if let fetched, polygon.isEmpty {
-                    polygon = fetched
-                }
+        .task {
+            let areaDefinition = await connectionManager.queryArea(DEFAULT_PLANE_ID)
+            if let areaDefinition, polygon.isEmpty {
+                polygon = areaDefinition.shape
             }
         }
     }
@@ -59,7 +58,7 @@ struct AreaView: View {
 }
 
 #Preview {
-    VStack{
+    VStack {
         NavigationStack {
             AreaView()
         }

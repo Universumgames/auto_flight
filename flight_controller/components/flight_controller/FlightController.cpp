@@ -67,7 +67,7 @@ void FlightControllerClass::init() {
 
     FlightStorage.registerDataChangeCallback([](uint32_t) {
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route changed, sending update with size %d",
-                 FlightStorage.getPlannedRoute().size());
+                 FlightStorage.getPlannedRoute().getRoutePoints().size());
         Flight_Communication::sendPlannedRoute();
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route sent");
     }, FlightStorageClass::DataUpdateType::ROUTE);
@@ -83,7 +83,7 @@ void FlightControllerClass::flightTaskEntry(void* param) {
 [[noreturn]] void FlightControllerClass::flightTask() {
     while (true) {
         if (plannedAreaChanged) {
-            recalculateRoute();
+            recalculateRoute(FlightStorage.getPlannedArea());
         }
 
         auto currentTime = GPS_Reader.getGPSLatestTime();
@@ -152,7 +152,6 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
     }
     auto basePacket = decodedPacket.get();
 
-    assert(((BasePacket*)packet.payload)->type == basePacket->type); // sanity check, should always hold
     ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type,
              basePacket->timestamp);
 
@@ -172,13 +171,13 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
     case PacketType::PLANNED_AREA: {
         auto plannedArea = reinterpret_cast<PlannedAreaPacket*>(decodedPacket.get());
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area with %d points", plannedArea->shape.size());
-        if (plannedArea->shape.size() == FlightStorage.getPlannedArea().size() && std::equal(
-            plannedArea->shape.begin(), plannedArea->shape.end(), FlightStorage.getPlannedArea().begin(),
-            FlightStorage.getPlannedArea().end(), [](const Coordinate& a, const Coordinate& b) { return a == b; })) {
+        if (plannedArea->shape.size() == FlightStorage.getPlannedArea().areaPoints.size() && std::equal(
+            plannedArea->shape.begin(), plannedArea->shape.end(), FlightStorage.getPlannedArea().areaPoints.begin(),
+            FlightStorage.getPlannedArea().areaPoints.end(), [](const Coordinate& a, const Coordinate& b) { return a == b; })) {
             ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area is the same as current, ignoring");
             break;
         }
-        FlightStorage.updatePlannedArea(plannedArea->shape);
+        FlightStorage.updatePlannedArea(AreaData{plannedArea->shape, plannedArea->settings});
         plannedAreaChanged = true;
         break;
     }
@@ -191,21 +190,21 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
 
 Coordinate FlightControllerClass::getNextWaypoint() const {
     auto plannedRoute = FlightStorage.getPlannedRoute();
-    if (nextWaypointIndex < plannedRoute.size()) {
-        return plannedRoute[nextWaypointIndex];
+    if (nextWaypointIndex < plannedRoute.getRoutePoints().size()) {
+        return plannedRoute.getRoutePoints()[nextWaypointIndex];
     }
     return COORDINATE_INIT_INVALID();
 }
 
 
-void FlightControllerClass::recalculateRoute() {
+void FlightControllerClass::recalculateRoute(const AreaData& newPlannedArea) {
     plannedAreaChanged = false;
-    if (FlightStorage.getPlannedArea().empty()) {
+    if (newPlannedArea.areaPoints.empty()) {
         ESP_LOGE(TAG_FLIGHT_CONTROLLER, "Cannot recalculate route: planned area is empty");
         return;
     }
-    auto plannedRoute = RoutePlanner.planRoute(FlightStorage.getPlannedArea(), 60, metersToLatitudeDegree(40), 0.2);
-    FlightStorage.updatePlannedRoute(plannedRoute);
+    auto plannedRoute = RoutePlanner.planRoute(newPlannedArea.areaPoints, newPlannedArea.settings.routeAlgorithm, 60, metersToLatitudeDegree(40), (float)newPlannedArea.settings.overlapPercentage / 100.0f);
+    FlightStorage.updatePlannedRoute(RouteData{plannedRoute, newPlannedArea.settings});
     nextWaypointIndex = 0;
     FlightStorage.updateFlightState(FlightState::FLYING);
 }
@@ -215,16 +214,16 @@ void FlightControllerClass::checkAndAdvanceWaypoint(Coordinate currentPosition) 
     if (Coordinate::isInvalid(currentPosition)) return;
 
     auto plannedRoute = FlightStorage.getPlannedRoute();
-    if (nextWaypointIndex >= plannedRoute.size()) {
+    if (nextWaypointIndex >= plannedRoute.getRoutePoints().size()) {
         FlightStorage.updateFlightState(FlightState::RETURNING);
         return;
     }
 
-    const Coordinate waypoint = plannedRoute[nextWaypointIndex];
+    const Coordinate waypoint = plannedRoute.getRoutePoints()[nextWaypointIndex];
     if (distanceInMeters(currentPosition, waypoint) <= CONFIG_WAYPOINT_REACHED_RADIUS_M) {
         nextWaypointIndex++;
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Waypoint %d reached, advancing to %d/%d",
-                 nextWaypointIndex - 1, nextWaypointIndex, plannedRoute.size());
+                 nextWaypointIndex - 1, nextWaypointIndex, plannedRoute.getRoutePoints().size());
     }
 }
 

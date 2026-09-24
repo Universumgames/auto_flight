@@ -206,5 +206,8 @@ void FlightStorageClass::callbackLoopEntry(void* param) {
 
 void FlightStorageClass::addPointToFlightRoute(const Coordinate& point, uint32_t planeId) {
     planes[planeId].flightRoute.push_back(point);
+    if (planes[planeId].flightRoute.size() > 1000) {
+        planes[planeId].flightRoute.erase(planes[planeId].flightRoute.begin());
+    }
     queueUpdate(DataUpdateType::HISTORY, planeId, portMAX_DELAY);
 }

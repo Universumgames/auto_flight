@@ -207,6 +207,6 @@ direct_dependencies:
 - magnetometer
 - motor_com
 - waveshare/esp_oled_ssd1315
-manifest_hash: 336fd79896da4c23c583e34ad2d74e61058c78c38a965b0c66d3c7660289d6cf
+manifest_hash: 298d11e9f044c7a0d3dfa5d27ea871106f1d6381d2a6e2d8cbccd64ece63e698
 target: esp32s3
 version: 3.0.0

@@ -49,7 +49,8 @@ void BaseControllerClass::init() {
     });
 
     FlightStorage.registerDataChangeCallback([](uint32_t planeId) {
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d", FlightStorage.getPlannedArea(planeId).size());
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d",
+                 FlightStorage.getPlannedArea(planeId).getAreaPoints().size());
         Flight_Communication::sendPlannedArea(FlightStorage.getPlannedArea(planeId));
         ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area change sent");
     }, FlightStorageClass::DataUpdateType::AREA);
@@ -69,7 +70,7 @@ void BaseControllerClass::loopTaskEntry(void* param) {
         FlightStorage.updateBaseBarometerConnectionState(Barometer.available()
                                                              ? ConnectionState::CONNECTED
                                                              : ConnectionState::CONNECTING);
-        FlightStorage.updateBaseBatteryPercentage(Battery.voltageToPercentage(Battery.getVoltageMillivolts()), time);
+        FlightStorage.updateBaseBatteryPercentage(BatteryClass::voltageToPercentage(Battery.getVoltageMillivolts()), time);
 
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
@@ -83,7 +84,6 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     }
     auto basePacket = decodedPacket.get();
 
-    assert(((BasePacket*)packet.payload)->type == basePacket->type); // sanity check, should always hold
     ESP_LOGD(TAG_BASE_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type,
              basePacket->timestamp);
 
@@ -92,34 +92,35 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
         break;
     case PacketType::SENSOR_UPDATE: {
         auto sensorUpdate = reinterpret_cast<SensorUpdate*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received sensor update: pressure=%.2f, heading=%d", sensorUpdate->pressure,
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received sensor update: [id=%d] pressure=%.2f, heading=%d", basePacket->id, sensorUpdate->pressure,
                  sensorUpdate->heading);
         FlightStorage.updatePlanePressure(basePacket->id, sensorUpdate->pressure, sensorUpdate->timestamp);
         FlightStorage.updatePlaneHeading(basePacket->id, sensorUpdate->heading, sensorUpdate->timestamp);
-        FlightStorage.updatePlaneBatteryPercentage(basePacket->id, sensorUpdate->batteryPercent, sensorUpdate->timestamp);
+        FlightStorage.updatePlaneBatteryPercentage(basePacket->id, sensorUpdate->batteryPercent,
+                                                   sensorUpdate->timestamp);
         break;
     }
     case PacketType::POSITION: {
         auto positionUpdate = reinterpret_cast<PositionUpdate*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received position update: %s", positionUpdate->position.toString().c_str());
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received position update: [id=%d] %s", basePacket->id, positionUpdate->position.toString().c_str());
         FlightStorage.updatePlanePosition(basePacket->id, positionUpdate->position, positionUpdate->timestamp);
         break;
     }
     case PacketType::PLANNED_ROUTE: {
         auto plannedRoute = reinterpret_cast<PlannedRoutePacket*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route with %d points",
-                                plannedRoute->route.size());
-        FlightStorage.updatePlannedRoute(basePacket->id, plannedRoute->route, plannedRoute->timestamp);
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route: [id=%d] with %d points",
+                 basePacket->id, plannedRoute->route.size());
+        FlightStorage.updatePlannedRoute(basePacket->id, RouteData{plannedRoute->route, plannedRoute->settings}, plannedRoute->timestamp);
         break;
     }
     case PacketType::COMPONENT_STATUS: {
         auto status = reinterpret_cast<ComponentStatus*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER,
-                                "Component status - GPS: %d, Barometer: %d, MotorControl: %d, Magnetometer: %d, Accelerometer: %d, ManualOverride: %d, FlightState: %d",
-                                static_cast<int>(status->gps), static_cast<int>(status->barometer),
-                                static_cast<int>(status->motorControl),
-                                static_cast<int>(status->magnetometer), static_cast<int>(status->accelerometer),
-                                static_cast<int>(status->manualOverride), static_cast<int>(status->flightState));
+                 "Received component status: [id=%d] GPS: %d, Barometer: %d, MotorControl: %d, Magnetometer: %d, Accelerometer: %d, ManualOverride: %d, FlightState: %d",
+                 basePacket->id, static_cast<int>(status->gps), static_cast<int>(status->barometer),
+                 static_cast<int>(status->motorControl),
+                 static_cast<int>(status->magnetometer), static_cast<int>(status->accelerometer),
+                 static_cast<int>(status->manualOverride), static_cast<int>(status->flightState));
         FlightStorage.updatePlaneBarometerConnectionState(basePacket->id, status->barometer);
         FlightStorage.updatePlaneMotorControlConnectionState(basePacket->id, status->motorControl);
         FlightStorage.updatePlaneGPSConnectionState(basePacket->id, status->gps);
@@ -129,8 +130,13 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
         FlightStorage.updateFlightState(basePacket->id, status->flightState);
         break;
     }
+    case PacketType::PLANNED_ROUTE_CONFIRMATION: {
+        auto confirmation = reinterpret_cast<PlannedRouteConfirmationPacket*>(decodedPacket.get());
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route confirmation: [id=%d] hash: %zu", basePacket->id, confirmation->hash);
+        break;
+    }
     default:
-        ESP_LOGW(TAG_BASE_CONTROLLER, "Unknown packet type: %02x", static_cast<int>(basePacket->type));
+        ESP_LOGW(TAG_BASE_CONTROLLER, "Unknown packet type: [id=%d] %02x", basePacket->id, static_cast<int>(basePacket->type));
         break;
     }
 }

@@ -49,10 +49,8 @@ struct RouteView: View {
         pollTask = Task {
             var tries = 0
             while !Task.isCancelled && plannedRoute.isEmpty && tries < 50 {
-                let route = await withCheckedContinuation { continuation in
-                    connectionManager.fetchRoute { continuation.resume(returning: $0) }
-                }
-                if !route.isEmpty {
+                let route = await connectionManager.queryRoute(DEFAULT_PLANE_ID)
+                if let route, !route.isEmpty {
                     plannedRoute = route
                     return
                 }

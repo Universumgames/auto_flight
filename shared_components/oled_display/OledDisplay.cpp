@@ -41,6 +41,8 @@ void OledDisplayClass::begin() {
     // transaction to it blocks forever (the IDF I2C driver waits without a
     // timeout). Drive it LOW to switch the rail on.
     if (CONFIG_OLED_PIN_VEXT >= 0) {
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+
         const gpio_num_t vextPin = static_cast<gpio_num_t>(CONFIG_OLED_PIN_VEXT);
         gpio_config_t vextConfig = {
             .pin_bit_mask = 1ULL << vextPin,
@@ -108,6 +110,7 @@ void OledDisplayClass::begin() {
                                                    &SSD1315_ADDR_MODE_VERTICAL, 1));
     }
     ESP_LOGI(TAG_OLED_DISPLAY, "OLED vertical addressing mode set");
+#pragma GCC diagnostic pop
 
     // Not inverted: our I1 framebuffer already uses bit=1 for lit (text)
     // pixels and bit=0 for the (mostly background) off pixels: inverting at

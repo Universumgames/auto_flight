@@ -1,48 +1,60 @@
 #pragma once
 
+#include <utility>
+
 #include "base.hpp"
+#include "RouteData.hpp"
+
+struct PlannedRouteConfirmationPacket: public BasePacket {
+    size_t hash;
+
+    std::string toString() override {
+        return "PlannedRouteConfirmationPacket{base=" + BasePacket::toString() + ", hash=" + std::to_string(hash) + "}";
+    }
+
+    PlannedRouteConfirmationPacket(const PlannedRouteConfirmationPacket& packet) : BasePacket(packet) {
+        this->hash = packet.hash;
+    }
+
+    PlannedRouteConfirmationPacket(RawSerializedPacket packet, size_t len) : BasePacket() {
+        DESERIALIZE_TO_THIS_PACKET(packet, len);
+    }
+
+    PlannedRouteConfirmationPacket(time_t time = 0, size_t hash = 0) : BasePacket(time, PacketType::PLANNED_ROUTE_CONFIRMATION),
+                                                                  hash(hash) {}
+
+    [[nodiscard]] SerializedPacket serialize() const override {
+        SERIALIZE_THIS_PACKET();
+    }
+
+    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(PlannedRouteConfirmationPacket, BasePacket, hash)
+};
 
 struct PlannedRoutePacket : public BasePacket {
     std::vector<Coordinate> route;
+    RouteSettings settings;
+    size_t hash;
 
     std::string toString() override {
         return "PlannedRoutePacket{base=" + BasePacket::toString() + ", routeSize=" + std::to_string(route.size()) + "}";
     }
 
     PlannedRoutePacket(const PlannedRoutePacket& packet) : BasePacket(packet) {
+        this->hash = packet.hash;
         this->route = std::vector(packet.route);
+        this->settings = packet.settings;
     }
 
-    PlannedRoutePacket(RawSerializedPacket packet) : BasePacket(packet) {
-        size_t dataOffset = sizeof(BasePacket);
-        size_t length = 0;
-        std::memcpy(&length, packet + dataOffset, sizeof(size_t));
-        if (length > 255 || length < 1) {
-            ESP_LOGE("PlannedRoutePacket", "Invalid planned area packet with length %u", length);
-            return;
-        }
-        route = std::vector<Coordinate>(length);
-        dataOffset += sizeof(size_t);
-        memcpy(route.data(), packet + dataOffset, length * sizeof(Coordinate));
+    PlannedRoutePacket(RawSerializedPacket packet, size_t len) : BasePacket() {
+        DESERIALIZE_TO_THIS_PACKET(packet, len);
     }
 
-    PlannedRoutePacket(time_t time = 0, std::vector<Coordinate> route = {}) : BasePacket(time, PacketType::PLANNED_ROUTE),
-                                                                  route(route) {}
+    PlannedRoutePacket(time_t time = 0, std::vector<Coordinate> route = {}, RouteSettings settings = {}) : BasePacket(time, PacketType::PLANNED_ROUTE),
+                                                                  route(std::move(route)), settings(settings) {}
 
-    std::pair<std::unique_ptr<uint8_t[]>, size_t> serialize() const override {
-        BasePacket packet = {
-            timestamp,
-            type
-        };
-        size_t length = route.size();
-        size_t dataSize = sizeof(BasePacket) + sizeof(size_t) + (route.size() * sizeof(Coordinate));
-        auto data = std::make_unique<uint8_t[]>(dataSize);
-        uint8_t dataOffset = 0;
-        std::memcpy(data.get(), &packet, sizeof(BasePacket));
-        dataOffset += sizeof(BasePacket);
-        std::memcpy(data.get() + dataOffset, &length, sizeof(size_t));
-        dataOffset += sizeof(size_t);
-        std::memcpy(data.get() + dataOffset, route.data(), sizeof(Coordinate) * route.size());
-        return {std::move(data), dataSize};
+    [[nodiscard]] SerializedPacket serialize() const override {
+        SERIALIZE_THIS_PACKET();
     }
+
+    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(PlannedRoutePacket, BasePacket, route, settings)
 };

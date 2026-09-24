@@ -587,6 +587,7 @@ void BluetoothManager::sendFragmented(const uint16_t conn_handle, const uint16_t
             return;
         }
         const int rc = ble_gatts_notify_custom(conn_handle, val_handle, txom);
+        frame.resize(0);
         if (rc != 0) {
             ESP_LOGE(TAG_BLUETOOTH_MANAGER, "notify: error sending fragment rc=%d (offset=%u len=%u)", rc, offset,
                      thisChunkLen);

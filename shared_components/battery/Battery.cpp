@@ -71,7 +71,7 @@ std::array<int, MAX_BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts(
 
     std::array<int, MAX_BATTERY_CELL_COUNT> cumulativeMillivolts{};
     for (int i = 0; i < batteryCellCount; i++) {
-        cumulativeMillivolts[i] = readChannelMillivolts(channelMux[i]);
+        //cumulativeMillivolts[i] = readChannelMillivolts(channelMux[i]);
     }
 
     std::array<int, MAX_BATTERY_CELL_COUNT> cellVoltages{};

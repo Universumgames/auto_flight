@@ -83,11 +83,6 @@ private:
         std::vector<PacketFragment> fragments;
     };
 
-    struct SentPacketData {
-        LoRa_Packet_Internal header;
-        time_t timestamp;
-    };
-
     static constexpr size_t LORA_MAX_PACKET_SIZE = 255;
     static constexpr size_t LORA_MAX_DATA_LENGTH = LORA_MAX_PACKET_SIZE - sizeof(LoRa_Packet_Internal);
     const char* TAG_LORA = "LoRa_Communication";
@@ -98,7 +93,7 @@ private:
     static constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second
     static constexpr int LORA_MAX_SEND_RETRIES = 3;
 
-    static constexpr time_t SENT_PACKET_HISTORY_TIMEOUT = 10; // seconds to keep sent packet history for ACK matching
+    static constexpr size_t SENT_PACKET_HISTORY_MAX = 100; // max number of sent packets to remember for isOwnPacket() detection
 
 public:
     ~LoRa_CommunicationClass() = delete;
@@ -266,7 +261,7 @@ private:
     bool dio0IsrInstalled = false;
 
     bool sending = false;
-    std::vector<SentPacketData> sentPackets;
+    std::vector<LoRa_Packet_Internal> sentPackets;
 
     SX1262* loraRadio = nullptr;
 

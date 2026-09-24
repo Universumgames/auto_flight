@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 #include <freertos/FreeRTOS.h>
 #include <hal/uart_types.h>
 #include <soc/gpio_num.h>

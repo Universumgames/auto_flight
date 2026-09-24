@@ -25,7 +25,7 @@ public:
 #ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
     static void requestRouteHistory();
 
-    static void sendPlannedArea(const std::vector<Coordinate>& shape);
+    static void sendPlannedArea(const AreaData& areaData);
 #endif
 
     static std::unique_ptr<BasePacket> decodePacket(const uint8_t* data, std::size_t len);

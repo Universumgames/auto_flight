@@ -30,6 +30,13 @@ final class ConnectionManager: NSObject {
     internal var notificationHandlers: [CBUUID: (Data) -> Void] = [:]
     /// Per-characteristic fragment reassembly state for notified values.
     internal var reassemblyBuffers: [CBUUID: FragmentReassemblyBuffer] = [:]
+    
+    internal struct WaitRequestKey: Hashable {
+        let characteristic: CharacteristicUUID
+        let sourceId: PlaneID
+    }
+    
+    internal var waitingRequests: [WaitRequestKey : [(Data?) -> Void]] = [:]
 
     override init() {
         super.init()
@@ -65,6 +72,15 @@ final class ConnectionManager: NSObject {
                 onFrameRoutePlanned(data: data)
             case .batteryStatus:
                 onFrameBatteryStatus(data: data)
+        }
+        guard let sourceId = wire.FrontendPackets.shared.decodeBaseUpdate(
+            hex: data.hexEncoded
+        )?.sourceId else { return }
+        let key = WaitRequestKey(characteristic: topic, sourceId: sourceId)
+        let callbacks = waitingRequests[key]
+        waitingRequests[key] = []
+        callbacks?.forEach{ callback in
+            callback(data)
         }
     }
 
@@ -140,7 +156,7 @@ final class ConnectionManager: NSObject {
 
     func submitArea(polygon: [Coordinate], onResult: @escaping (AreaSubmitResult) -> Void) {
         Task {
-            guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.AreaDefinePacket(sourceId: 0, shape: polygon))) else {
+            guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.AreaDefinePacket(sourceId: 0, shape: polygon, settings: wire.RouteSettings(routeAlgorithm: wire.RouteAlgorithm.BASIC, overlapPercentage: 20)))) else {
                 onResult(.FAILED); return
             }
             do {
@@ -150,5 +166,97 @@ final class ConnectionManager: NSObject {
                 onResult(.FAILED)
             }
         }
+    }
+    
+    func queryPositions(){
+        Task{
+            await requestUpdate(CharacteristicUUID.positionUpdate)
+        }
+    }
+    
+    func queryConnections(){
+        Task{
+            await requestUpdate(CharacteristicUUID.connectionUpdate)
+        }
+    }
+    
+    func querySensorData(){
+        Task{
+            await requestUpdate(CharacteristicUUID.sensorData)
+        }
+    }
+    
+    func queryAreas(){
+        Task{
+            await requestUpdate(CharacteristicUUID.areaDefine)
+        }
+    }
+    
+    func queryRoutes(){
+        Task{
+            await requestUpdate(CharacteristicUUID.plannedRoute)
+        }
+    }
+    
+    func queryBattery(){
+        Task{
+            await requestUpdate(CharacteristicUUID.batteryStatus)
+        }
+    }
+    
+    private func querySingle(_ sourceId: PlaneID, _ characteristic: CharacteristicUUID) async -> Data? {
+        let key = WaitRequestKey(
+            characteristic: characteristic,
+            sourceId: sourceId
+        )
+        return await withCheckedContinuation { continuation in
+            waitingRequests[key, default: []].append { data in
+                continuation.resume(returning: data)
+            }
+        }
+    }
+    
+    func queryPosition(_ sourceId: PlaneID) async -> Coordinate? {
+        guard let data = await querySingle(
+            sourceId,
+            CharacteristicUUID.positionUpdate
+        ) else { return nil }
+        return wire.FrontendPackets.shared
+            .decodePositionUpdate(hex: data.hexEncoded)?.position
+    }
+    
+    func queryConnection(_ sourceId: PlaneID) async -> wire.ConnectionUpdatePacket?{
+        guard let data = await querySingle(
+            sourceId,
+            CharacteristicUUID.connectionUpdate
+        ) else { return nil }
+        return wire.FrontendPackets.shared.decodeConnectionUpdate(hex: data.hexEncoded)
+    }
+    
+    func queryArea(_ sourceId: PlaneID) async -> wire.AreaDefinePacket? {
+        guard let data = await querySingle(
+            sourceId,
+            CharacteristicUUID.areaDefine
+        ) else { return nil }
+        return wire.FrontendPackets.shared
+            .decodeAreaDefine(hex: data.hexEncoded)
+    }
+    
+    func queryRoute(_ sourceId: PlaneID) async -> [Coordinate]? {
+        guard let data = await querySingle(
+            sourceId,
+            CharacteristicUUID.plannedRoute
+        ) else { return nil }
+        return wire.FrontendPackets.shared
+            .decodePlannedRoute(hex: data.hexEncoded)?.route
+    }
+    
+    func queryBattery(_ sourceId: PlaneID) async -> wire.BatteryStatusPacket? {
+        guard let data = await querySingle(
+            sourceId,
+            CharacteristicUUID.batteryStatus
+        ) else { return nil }
+        return wire.FrontendPackets.shared
+            .decodeBatteryStatus(hex: data.hexEncoded)
     }
 }

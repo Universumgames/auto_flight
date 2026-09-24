@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "freertos/FreeRTOS.h"
+#include "RouteData.hpp"
 
 class FlightStorageClass {
 private:
@@ -40,6 +41,8 @@ public:
         HISTORY,
         /// area changes
         AREA,
+        /// Area settings
+        AREA_SETTINGS,
         /// Sensor changes
         SENSOR,
         /// Battery changes

@@ -55,8 +55,9 @@ namespace Frontend{
     struct AreaDefinePacket : public BaseUpdatePacket {
         static constexpr auto IDENTIFIER = PacketType::AREA_DEFINE;
         std::vector<Coordinate> shape;
+        RouteSettings settings;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AreaDefinePacket, sourceId, shape)
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(AreaDefinePacket, sourceId, shape, settings)
     };
 
     struct SensorPacket : public BaseUpdatePacket {
@@ -83,7 +84,16 @@ namespace Frontend{
     struct PlannedRoutePacket : public BaseUpdatePacket {
         static constexpr auto IDENTIFIER = PacketType::PLANNED_ROUTE;
         std::vector<Coordinate> route;
+        RouteSettings settings;
+        size_t hash;
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlannedRoutePacket, sourceId, route)
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlannedRoutePacket, sourceId, route, settings, hash)
     };
+
+    struct PlannedRouteConfirmationPacket : public BaseUpdatePacket {
+        static constexpr auto IDENTIFIER = PacketType::PLANNED_ROUTE;
+        size_t hash = 0;
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlannedRouteConfirmationPacket, sourceId, hash)
+    }
 } // namespace Frontend

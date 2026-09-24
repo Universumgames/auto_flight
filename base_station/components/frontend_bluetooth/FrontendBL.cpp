@@ -1,4 +1,4 @@
-#include "./FrontendBl.hpp"
+#include "FrontendBl.hpp"
 #include "esp_log.h"
 #include "FlightStorage.hpp"
 #include "Barometer.hpp"
@@ -62,7 +62,7 @@ void FrontendHandlerBlClass::registerReadTriggerCallback() {
                                               try {
                                                   auto packet = nlohmann::json::from_cbor(data, data + len).get<
                                                       Frontend::AreaDefinePacket>();
-                                                  FlightStorage.updatePlannedArea(packet.sourceId, packet.shape);
+                                                  FlightStorage.updatePlannedArea(packet.sourceId, AreaData{packet.shape, packet.settings});
                                                   ESP_LOGI(TAG_FRONTEND_BL, "Received new planned area with %d points",
                                                            packet.shape.size());
                                               }
@@ -132,7 +132,7 @@ Frontend::BatteryStatusPacket FrontendHandlerBlClass::buildBatteryStatusPacket(u
 
 Frontend::PlannedRoutePacket FrontendHandlerBlClass::buildPlannedRoutePacket(uint32_t sourceId) {
     Frontend::PlannedRoutePacket packet{
-        .route = FlightStorage.getPlannedRoute(sourceId)
+        .route = FlightStorage.getPlannedRoute(sourceId).getRoutePoints()
     };
     packet.sourceId = sourceId;
     return packet;
@@ -140,7 +140,8 @@ Frontend::PlannedRoutePacket FrontendHandlerBlClass::buildPlannedRoutePacket(uin
 
 Frontend::AreaDefinePacket FrontendHandlerBlClass::buildAreaDefinePacket(uint32_t sourceId) {
     Frontend::AreaDefinePacket packet{
-        .shape = FlightStorage.getPlannedArea(sourceId)
+        .shape = FlightStorage.getPlannedArea(sourceId).getAreaPoints(),
+        .settings = FlightStorage.getPlannedArea(sourceId).getSettings()
     };
     packet.sourceId = sourceId;
     return packet;

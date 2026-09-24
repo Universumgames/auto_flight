@@ -64,7 +64,7 @@ void LoRa_CommunicationClass::begin() {
     }
 
     outstandingAcks.reserve(20);
-    sentPackets.reserve(40);
+    sentPackets.reserve(SENT_PACKET_HISTORY_MAX + 1);
 
     ESP_LOGI(TAG_LORA, "initializing LoRa radio");
 
@@ -346,7 +346,7 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
 
     // Send header first
     ESP_LOGD(TAG_LORA, "Sending packet: %s", packet.toString().c_str());
-    sentPackets.push_back({packet, time(nullptr)});
+    sentPackets.push_back(packet);
     auto success = sendBufferWithRetries(sendBuffer, sendSize, packet.messageId, packet.type);
     if (!success) {
         // Remove from outstanding ACKs if send failed
@@ -410,12 +410,14 @@ void LoRa_CommunicationClass::registerReceivePacketCallback(std::function<void(c
 
 bool LoRa_CommunicationClass::isOwnPacket(const LoRa_Packet_Internal& packet) {
     // Check if the packet is one of our recently sent packets to avoid processing it as a received packet
-    return std::ranges::find(sentPackets, packet, &SentPacketData::header) != sentPackets.end();
+    return std::ranges::find(sentPackets, packet) != sentPackets.end();
 }
 
 void LoRa_CommunicationClass::cleanupSendHistory() {
-    auto now = time(nullptr);
-    std::ranges::remove_if(sentPackets, [&](const SentPacketData& sent) {
-        return sent.timestamp < (now - SENT_PACKET_HISTORY_TIMEOUT);
-    });
+    if (sentPackets.size() <= SENT_PACKET_HISTORY_MAX) return;
+    const size_t excess = sentPackets.size() - SENT_PACKET_HISTORY_MAX;
+    ESP_LOGD(TAG_LORA, "Cleaning up sent packet history (currentCount=%zu, dropping oldest %zu)",
+             sentPackets.size(), excess);
+    // sentPackets is append-only (see sendRawPacket), so the oldest entries are at the front
+    sentPackets.erase(sentPackets.begin(), sentPackets.begin() + excess);
 }

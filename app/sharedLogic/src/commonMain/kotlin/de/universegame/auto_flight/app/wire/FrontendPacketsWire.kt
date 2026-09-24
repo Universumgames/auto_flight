@@ -57,6 +57,31 @@ internal fun FlightStateWire.toPublic() = when (this) {
 }
 
 @Serializable
+internal enum class RouteAlgorithmWire {
+    @SerialName("basic") BASIC,
+    @SerialName("boustrophedon") BOUSTROPHEDON,
+}
+
+internal fun RouteAlgorithm.toWire() = when (this) {
+    RouteAlgorithm.BASIC -> RouteAlgorithmWire.BASIC
+    RouteAlgorithm.BOUSTROPHEDON -> RouteAlgorithmWire.BOUSTROPHEDON
+}
+
+internal fun RouteAlgorithmWire.toPublic() = when (this) {
+    RouteAlgorithmWire.BASIC -> RouteAlgorithm.BASIC
+    RouteAlgorithmWire.BOUSTROPHEDON -> RouteAlgorithm.BOUSTROPHEDON
+}
+
+@Serializable
+internal data class RouteSettingsWire(
+    val routeAlgorithm: RouteAlgorithmWire,
+    val overlapPercentage: UInt,
+)
+
+internal fun RouteSettings.toWire() = RouteSettingsWire(routeAlgorithm.toWire(), overlapPercentage)
+internal fun RouteSettingsWire.toPublic() = RouteSettings(routeAlgorithm.toPublic(), overlapPercentage)
+
+@Serializable
 internal data class BaseUpdatePacketWire(
     val sourceId: UInt
 )
@@ -122,10 +147,11 @@ internal fun ConnectionUpdatePacketWire.toPublic() = ConnectionUpdatePacket(
 internal data class AreaDefinePacketWire(
     val sourceId: UInt,
     val shape: List<CoordinateWire>,
+    val settings: RouteSettingsWire,
 )
 
-internal fun AreaDefinePacket.toWire() = AreaDefinePacketWire(sourceId, shape.map { it.toWire() })
-internal fun AreaDefinePacketWire.toPublic() = AreaDefinePacket(sourceId = sourceId, shape = shape.map { it.toPublic() })
+internal fun AreaDefinePacket.toWire() = AreaDefinePacketWire(sourceId, shape.map { it.toWire() }, settings.toWire())
+internal fun AreaDefinePacketWire.toPublic() = AreaDefinePacket(sourceId = sourceId, shape = shape.map { it.toPublic() }, settings.toPublic())
 
 @Serializable
 internal data class SensorPacketWire(
@@ -162,7 +188,18 @@ internal fun BatteryStatusPacketWire.toPublic() = BatteryStatusPacket(sourceId, 
 internal data class PlannedRoutePacketWire(
     val sourceId: UInt,
     val route: List<CoordinateWire>,
+    val settings: RouteSettingsWire,
+    val hash: ULong,
 )
 
-internal fun PlannedRoutePacket.toWire() = PlannedRoutePacketWire(sourceId, route.map { it.toWire() })
-internal fun PlannedRoutePacketWire.toPublic() = PlannedRoutePacket(sourceId, route.map { it.toPublic() })
+internal fun PlannedRoutePacket.toWire() = PlannedRoutePacketWire(sourceId, route.map { it.toWire() }, settings.toWire(), hash)
+internal fun PlannedRoutePacketWire.toPublic() = PlannedRoutePacket(sourceId, route.map { it.toPublic() }, settings.toPublic(), hash)
+
+@Serializable
+internal data class PlannedRouteConfirmationPacketWire(
+    val sourceId: UInt,
+    val hash: ULong,
+)
+
+internal fun PlannedRouteConfirmationPacket.toWire() = PlannedRouteConfirmationPacketWire(sourceId, hash)
+internal fun PlannedRouteConfirmationPacketWire.toPublic() = PlannedRouteConfirmationPacket(sourceId, hash)

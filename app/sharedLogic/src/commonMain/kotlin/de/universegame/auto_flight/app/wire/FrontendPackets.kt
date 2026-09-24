@@ -42,6 +42,17 @@ enum class FlightState {
     RETURNING,
 }
 
+enum class RouteAlgorithm {
+    BASIC,
+    BOUSTROPHEDON
+}
+
+/** Mirrors `RouteSettings` (shared_components/flight_data/RouteData.hpp). */
+data class RouteSettings(
+    val routeAlgorithm: RouteAlgorithm,
+    val overlapPercentage: UInt
+)
+
 /**
  * Common supertype of the `type`-tagged packets in FrontendPackets.hpp, matching the C++ structs'
  * `static constexpr const char* type` member.
@@ -78,6 +89,7 @@ data class ConnectionUpdatePacket(
 data class AreaDefinePacket(
     override val sourceId: UInt,
     val shape: List<Coordinate>,
+    val settings: RouteSettings
 ) : FrontendPacket
 
 /** Mirrors `SensorPacket`. */
@@ -98,6 +110,14 @@ data class BatteryStatusPacket(
 data class PlannedRoutePacket(
     override val sourceId: UInt,
     val route: List<Coordinate>,
+    val settings: RouteSettings,
+    val hash: ULong,
+) : FrontendPacket
+
+/** Mirrors `PlannedRouteConfirmationPacket`. */
+data class PlannedRouteConfirmationPacket(
+    override val sourceId: UInt,
+    val hash: ULong,
 ) : FrontendPacket
 
 /**
@@ -137,6 +157,9 @@ object FrontendPackets {
     fun decodePlannedRoute(hex: String): PlannedRoutePacket? =
         runCatching { cbor.decodeFromByteArray<PlannedRoutePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
+    fun decodePlannedRouteConfirmation(hex: String): PlannedRouteConfirmationPacket? =
+        runCatching { cbor.decodeFromByteArray<PlannedRouteConfirmationPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
     /** Encodes any [FrontendPacket] to its CBOR wire form, hex-encoded. */
     fun encode(packet: FrontendPacket): String = when (packet) {
         is BaseUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
@@ -146,5 +169,6 @@ object FrontendPackets {
         is SensorPacket -> cbor.encodeToByteArray(packet.toWire())
         is BatteryStatusPacket -> cbor.encodeToByteArray(packet.toWire())
         is PlannedRoutePacket -> cbor.encodeToByteArray(packet.toWire())
+        is PlannedRouteConfirmationPacket -> cbor.encodeToByteArray(packet.toWire())
     }.toHexString()
 }
