@@ -1,0 +1,19 @@
+menu "Magnetometer"
+
+    choice MAGNETOMETER_DRIVER
+        prompt "Magnetometer driver"
+        default MAGNETOMETER_DRIVER_QMC5883P_EIL
+        help
+            Selects which sensor driver the Magnetometer helper uses.
+
+        config MAGNETOMETER_DRIVER_HMC5883L
+            bool "HMC5883L (esp-idf-lib hmc5883l)"
+
+        config MAGNETOMETER_DRIVER_QMC5883P_DURUOFU
+            bool "QMC5883P (duruofu qmc5883p)"
+
+        config MAGNETOMETER_DRIVER_QMC5883P_EIL
+            bool "QMC5883P (qmc5883p_eil)"
+    endchoice
+
+endmenu

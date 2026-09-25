@@ -92,7 +92,7 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
         break;
     case PacketType::SENSOR_UPDATE: {
         auto sensorUpdate = reinterpret_cast<SensorUpdate*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received sensor update: [id=%d] pressure=%.2f, heading=%d", basePacket->id, sensorUpdate->pressure,
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received sensor update: [id=%u] pressure=%.2f, heading=%d", basePacket->id, sensorUpdate->pressure,
                  sensorUpdate->heading);
         FlightStorage.updatePlanePressure(basePacket->id, sensorUpdate->pressure, sensorUpdate->timestamp);
         FlightStorage.updatePlaneHeading(basePacket->id, sensorUpdate->heading, sensorUpdate->timestamp);
@@ -102,13 +102,13 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     }
     case PacketType::POSITION: {
         auto positionUpdate = reinterpret_cast<PositionUpdate*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received position update: [id=%d] %s", basePacket->id, positionUpdate->position.toString().c_str());
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received position update: [id=%u] %s", basePacket->id, positionUpdate->position.toString().c_str());
         FlightStorage.updatePlanePosition(basePacket->id, positionUpdate->position, positionUpdate->timestamp);
         break;
     }
     case PacketType::PLANNED_ROUTE: {
         auto plannedRoute = reinterpret_cast<PlannedRoutePacket*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route: [id=%d] with %d points",
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route: [id=%u] with %d points",
                  basePacket->id, plannedRoute->route.size());
         FlightStorage.updatePlannedRoute(basePacket->id, RouteData{plannedRoute->route, plannedRoute->settings}, plannedRoute->timestamp);
         break;
@@ -116,7 +116,7 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     case PacketType::COMPONENT_STATUS: {
         auto status = reinterpret_cast<ComponentStatus*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER,
-                 "Received component status: [id=%d] GPS: %d, Barometer: %d, MotorControl: %d, Magnetometer: %d, Accelerometer: %d, ManualOverride: %d, FlightState: %d",
+                 "Received component status: [id=%u] GPS: %d, Barometer: %d, MotorControl: %d, Magnetometer: %d, Accelerometer: %d, ManualOverride: %d, FlightState: %d",
                  basePacket->id, static_cast<int>(status->gps), static_cast<int>(status->barometer),
                  static_cast<int>(status->motorControl),
                  static_cast<int>(status->magnetometer), static_cast<int>(status->accelerometer),
@@ -132,11 +132,11 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     }
     case PacketType::PLANNED_ROUTE_CONFIRMATION: {
         auto confirmation = reinterpret_cast<PlannedRouteConfirmationPacket*>(decodedPacket.get());
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route confirmation: [id=%d] hash: %zu", basePacket->id, confirmation->hash);
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route confirmation: [id=%u] hash: %zu", basePacket->id, confirmation->hash);
         break;
     }
     default:
-        ESP_LOGW(TAG_BASE_CONTROLLER, "Unknown packet type: [id=%d] %02x", basePacket->id, static_cast<int>(basePacket->type));
+        ESP_LOGW(TAG_BASE_CONTROLLER, "Unknown packet type: [id=%u] %02x", basePacket->id, static_cast<int>(basePacket->type));
         break;
     }
 }

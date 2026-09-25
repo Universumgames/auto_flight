@@ -35,6 +35,8 @@ private:
 
     void registerReadTriggerCallback();
 
+    void registerInternalDataChangeCallbacks();
+
     void planeDataUpdateCallback(FlightStorageClass::DataUpdateType type, uint32_t sourceId);
 
     Frontend::PositionUpdatePacket buildPositionUpdatePacket(uint32_t sourceId);

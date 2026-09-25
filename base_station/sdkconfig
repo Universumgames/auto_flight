@@ -4262,6 +4262,13 @@ CONFIG_OLED_REQUIRE_UNSCII_8_FONT=y
 # end of OLED Display Settings
 
 #
+# QMC5883P (esp-idf-lib style)
+#
+# default:
+CONFIG_QMC5883P_EIL_MEAS_TIMEOUT=10000
+# end of QMC5883P (esp-idf-lib style)
+
+#
 # I2C Device Library
 #
 # default:

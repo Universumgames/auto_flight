@@ -103,7 +103,7 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         vTaskDelay(1);
 
         //ESP_LOGI("GNDANG", "roll: %f, pitch: %f, yaw deg: %f", planeAngle.roll, planeAngle.pitch, planeAngle.yaw);
-        //ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ready: %d, locked: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.isAvailable(), Magnetometer.isLocked());
+        //ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ready: %d, overflow: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.isAvailable(), Magnetometer.isOverflow());
 
         FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()
                                                         ? ConnectionState::CONNECTED
@@ -229,7 +229,7 @@ void FlightControllerClass::checkAndAdvanceWaypoint(Coordinate currentPosition) 
 
 void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::GroundAngle angle,
                                             float compassHeading) {
-    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Steering to waypoint: %s", waypoint.toString().c_str());
+    ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Steering to waypoint: %s", waypoint.toString().c_str());
     // --- Rudder: steer toward waypoint ---
     int8_t rudder = 0;
     if (FlightStorage.getFlightState() == FlightState::FLYING && !Coordinate::isInvalid(waypoint)) {
@@ -238,7 +238,7 @@ void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, Gyr
             const float bearing = SteeringLaw::computeBearing(currentPosition, waypoint);
             const float headingErrorDeg = SteeringLaw::headingError(bearing, compassHeading);
             rudder = SteeringLaw::computeRudder(headingErrorDeg, CONFIG_RUDDER_SERVO_MIN, CONFIG_RUDDER_SERVO_MAX);
-            ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Rudder: bearing=%.1f heading=%.1f error=%.1f rudder=%d",
+            ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Rudder: bearing=%.1f heading=%.1f error=%.1f rudder=%d",
                      bearing, compassHeading, headingErrorDeg, rudder);
         }
     }
@@ -247,14 +247,14 @@ void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, Gyr
     const float altitudeError = targetAltitude - static_cast<float>(height);
     const auto [thrust, targetPitch] = altitudeHold.update(altitudeError);
 
-    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "AltHold: alt=%d target=%.0f err=%.1f targetPitch=%.1f thrust=%d",
+    ESP_LOGD(TAG_FLIGHT_CONTROLLER, "AltHold: alt=%d target=%.0f err=%.1f targetPitch=%.1f thrust=%d",
              height, targetAltitude, altitudeError, targetPitch, thrust);
 
     // --- Aileron/Pitch: keep wings level and drive toward targetPitch ---
     const float pitchError = targetPitch - angle.pitch;
     const auto [aileron, pitch] = attitude.update(angle.roll, pitchError);
-    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Aileron: roll=%.1f out=%d", angle.roll, aileron);
-    ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Pitch: pitch=%.1f target=%.1f err=%.1f out=%d",
+    ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Aileron: roll=%.1f out=%d", angle.roll, aileron);
+    ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Pitch: pitch=%.1f target=%.1f err=%.1f out=%d",
              angle.pitch, targetPitch, pitchError, pitch);
 
     MotorComMaster.sendFullControlPacket(aileron, pitch, thrust, rudder);

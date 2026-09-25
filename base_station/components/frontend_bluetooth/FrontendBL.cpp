@@ -36,6 +36,7 @@ void FrontendHandlerBlClass::init() {
     refreshRequestQueue = xQueueCreate(BLETopics::ALL_NOTIFICATIONS_SIZE, sizeof(BLETopics::NotifyByte));
 
     registerReadTriggerCallback();
+    registerInternalDataChangeCallbacks();
 
     xTaskCreate(
         sendUpdateTaskEntry,
@@ -80,6 +81,12 @@ void FrontendHandlerBlClass::registerReadTriggerCallback() {
         requestOutOfCycleUpdate(static_cast<BLETopics::NotifyByte>(topic));
     });
     ESP_LOGI(TAG_FRONTEND_BL, "Registered read-trigger callback for all topics");
+}
+
+void FrontendHandlerBlClass::registerInternalDataChangeCallbacks() {
+    FlightStorage.registerDataChangeCallback(([&](uint32_t sourceId) {
+        sendUpdate(BLETopics::NotifyByte::BLE_TOPIC_PLANNED_ROUTE, buildPlannedRoutePacket(sourceId));
+    }), FlightStorageClass::DataUpdateType::ROUTE);
 }
 
 // Designated initializers can't name sourceId since it's inherited from BaseUpdatePacket rather
@@ -132,7 +139,9 @@ Frontend::BatteryStatusPacket FrontendHandlerBlClass::buildBatteryStatusPacket(u
 
 Frontend::PlannedRoutePacket FrontendHandlerBlClass::buildPlannedRoutePacket(uint32_t sourceId) {
     Frontend::PlannedRoutePacket packet{
-        .route = FlightStorage.getPlannedRoute(sourceId).getRoutePoints()
+        .route = FlightStorage.getPlannedRoute(sourceId).getRoutePoints(),
+        .settings = FlightStorage.getPlannedRoute(sourceId).getSettings(),
+        .hash = FlightStorage.getPlannedRoute(sourceId).getHash()
     };
     packet.sourceId = sourceId;
     return packet;

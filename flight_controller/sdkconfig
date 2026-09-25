@@ -3678,6 +3678,14 @@ CONFIG_LORA_SYNC_WORD=0x34
 # end of LoRa Communication Settings
 
 #
+# Magnetometer
+#
+CONFIG_MAGNETOMETER_DRIVER_HMC5883L=y
+# CONFIG_MAGNETOMETER_DRIVER_QMC5883P_DURUOFU is not set
+# CONFIG_MAGNETOMETER_DRIVER_QMC5883P_EIL is not set
+# end of Magnetometer
+
+#
 # OLED Display Settings
 #
 # default:
@@ -3691,6 +3699,13 @@ CONFIG_OLED_PIN_VEXT=36
 # default:
 CONFIG_OLED_REQUIRE_UNSCII_8_FONT=y
 # end of OLED Display Settings
+
+#
+# QMC5883P (esp-idf-lib style)
+#
+# default:
+CONFIG_QMC5883P_EIL_MEAS_TIMEOUT=10000
+# end of QMC5883P (esp-idf-lib style)
 
 #
 # I2C Device Library

@@ -4,7 +4,7 @@
 #include "geometry_helper.hpp"
 
 std::vector<Coordinate> BoustrophedonRoutePlanner::planRoute(const std::vector<Coordinate>& shape, float overlapFactor) {
-    auto rawPath = generateSimpleSweepPath(shape, 40 * (1.0f - overlapFactor));
+    auto rawPath = generateSimpleSweepPath(shape, metersToLatitudeDegree(40) * (1.0f - overlapFactor));
     if (rawPath.empty()) {
         std::cerr << "No raw path generated for the given shape, cannot plan route" << std::endl;
         return {};
@@ -31,11 +31,17 @@ std::vector<std::pair<Coordinate, Coordinate>> BoustrophedonRoutePlanner::genera
 
 
     const double latDiff = topMost.latitude - bottomMost.latitude - swathDistance * 0.9f;
-    const int lineCount = std::ceil(latDiff / swathDistance);
+    int lineCount = std::ceil(latDiff / swathDistance);
+    if (lineCount <= 0) lineCount = 1;
     const double lineDistance = latDiff / (float)lineCount;
 
     ESP_LOGI("RoutePlanner", "Generating %d sweep lines with distance %.6f degrees for shape with lat diff %.6f degrees, with swathDistance %.6f",
              lineCount, lineDistance, latDiff, swathDistance);
+
+    if (isnan(lineDistance) || lineDistance <= 0.0) {
+        std::cerr << "Calculated line distance is NaN or non-positive, cannot generate sweep lines" << std::endl;
+        return {};
+    }
 
     std::vector<std::pair<Coordinate, Coordinate>> lines;
     for (int i = 0; i < lineCount; i++) {

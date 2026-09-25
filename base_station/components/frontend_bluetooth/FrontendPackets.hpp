@@ -95,5 +95,5 @@ namespace Frontend{
         size_t hash = 0;
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(PlannedRouteConfirmationPacket, sourceId, hash)
-    }
+    };
 } // namespace Frontend

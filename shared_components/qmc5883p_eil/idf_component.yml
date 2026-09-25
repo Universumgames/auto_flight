@@ -1,0 +1,6 @@
+## IDF Component Manager Manifest File
+description: Driver for 3-axis digital compass QMC5883P, API modeled after esp-idf-lib/hmc5883l
+dependencies:
+  ## Required IDF version
+  idf:
+    version: '>=4.1.0'
