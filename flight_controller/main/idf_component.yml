@@ -4,3 +4,6 @@ dependencies:
   idf:
     version: '>=4.1.0'
     ## Required components
+  espressif/gmf_core:
+    require: public
+    version: "~1.0"

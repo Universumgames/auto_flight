@@ -1,4 +1,5 @@
 #include "BaseController.hpp"
+#include "esp_gmf_app_cli.h"
 #include "esp_log.h"
 
 static void checkSystemStats(void* param) {
@@ -12,6 +13,8 @@ static void checkSystemStats(void* param) {
 
 extern "C" void app_main(void) {
     //xTaskCreate(checkSystemStats, "SystemStatsTask", 4096, nullptr, tskIDLE_PRIORITY + 1, nullptr);
+
+    esp_gmf_app_cli_init("cmd> ", []{});
 
     BaseController.init();
 }

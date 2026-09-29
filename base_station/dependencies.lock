@@ -91,6 +91,13 @@ dependencies:
       registry_url: https://components.espressif.com
       type: service
     version: 0.5.3
+  espressif/gmf_core:
+    component_hash: 025de674bdfaec7b9d98019f904e91d59318a6ed4e47baef134c136b98a7a745
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.0.2
   espressif/i2c_bus:
     component_hash: 483112c1619c54c38d0b734fb25f1678733267858a77b7af2f48cc7db6dbbd84
     dependencies:
@@ -171,6 +178,7 @@ direct_dependencies:
 - esp-idf-lib/esp_idf_lib_helpers
 - esp-idf-lib/i2cdev
 - espressif/bme280
+- espressif/gmf_core
 - espressif/i2c_bus
 - espressif/mpu6050
 - flight_data
@@ -180,6 +188,6 @@ direct_dependencies:
 - johboh/nlohmann-json
 - lvgl/lvgl
 - waveshare/esp_oled_ssd1315
-manifest_hash: a52023a12ba418c672cea0e452532c703d760184d4d14fc0fc27b0f945665ad5
+manifest_hash: 9aa930a01cf9409728b4015e46abb7590bd3501a398c26bc6be77b64bffbe469
 target: esp32s3
 version: 3.0.0
