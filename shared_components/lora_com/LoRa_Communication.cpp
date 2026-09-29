@@ -203,10 +203,10 @@ float LoRa_CommunicationClass::getLastPacketSNR() const {
     return (loraRadio == nullptr) ? 0.0f : loraRadio->getSNR();
 }
 
-void LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
+bool LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
     if (data == nullptr || size == 0) {
         ESP_LOGE(TAG_LORA, "Invalid arguments passed");
-        return;
+        return false;
     }
 
     auto fragments = splitData(size);
@@ -215,8 +215,11 @@ void LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
         ESP_LOGI(TAG_LORA, "Sending fragment %d/%d for messageId=%d with payload size %d",
                  fragmentHeader.fragmentId + 1, fragmentHeader.totalFragments, fragmentHeader.messageId,
                  fragmentHeader.payloadLength);
-        sendRawPacket(fragmentHeader, data + offset, true);
+        if (!sendRawPacket(fragmentHeader, data + offset, true)) {
+            return false;
+        }
     }
+    return true;
 }
 
 std::vector<LoRa_CommunicationClass::LoRa_Packet_Internal> LoRa_CommunicationClass::splitData(const size_t size) {

@@ -119,8 +119,9 @@ public:
      * Sends data packet via LoRa radio with encryption and optional acknowledgement
      * @param data Pointer to the data to be sent
      * @param size Number of bytes to send
+     * @return true if the data was sent successfully, false otherwise
      */
-    void sendData(const uint8_t* data, size_t size);
+    bool sendData(const uint8_t* data, size_t size);
 
     /**
      * Gets the RSSI (Received Signal Strength Indicator) of the last received packet
