@@ -155,6 +155,12 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
     ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Received packet of type 0x%02x at time %ld", basePacket->type,
              basePacket->timestamp);
 
+    if (basePacket->id != 0 && basePacket->id != DeviceId::get32()) {
+        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Received packet with unexpected source/destination ID: %u, expected: %u",
+                 basePacket->id, DeviceId::get32());
+        return; // ignore packets from other planes
+    }
+
     switch (basePacket->type) {
     case PacketType::SENSOR_UPDATE: {
         auto sensorUpdate = reinterpret_cast<SensorUpdate*>(decodedPacket.get());
@@ -174,7 +180,8 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
         if (plannedArea->shape.size() == FlightStorage.getPlannedArea().areaPoints.size() && std::equal(
             plannedArea->shape.begin(), plannedArea->shape.end(), FlightStorage.getPlannedArea().areaPoints.begin(),
             FlightStorage.getPlannedArea().areaPoints.end(), [](const Coordinate& a, const Coordinate& b) { return a == b; })) {
-            ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area is the same as current, ignoring");
+            ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area is the same as current, resending planned route");
+            Flight_Communication::sendPlannedRoute();
             break;
         }
         FlightStorage.updatePlannedArea(AreaData{plannedArea->shape, plannedArea->settings});

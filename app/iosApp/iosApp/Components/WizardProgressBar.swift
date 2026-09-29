@@ -16,6 +16,7 @@ private extension ConfigurationState {
 }
 
 struct WizardProgressBar: View {
+    let wizardStep: ConfigurationState
     @Environment(AppState.self) private var appState
 
     private var steps: [ConfigurationState] {
@@ -25,7 +26,7 @@ struct WizardProgressBar: View {
     }
 
     var body: some View {
-        let currentIdx = Int(appState.wizardStep.index)
+        let currentIdx = Int(wizardStep.index)
         HStack(alignment: .bottom, spacing: 0) {
             ForEach(Array(steps.enumerated()), id: \.offset) { i, step in
                 let idx = Int(step.index)
@@ -60,7 +61,7 @@ struct WizardProgressBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(.bar, ignoresSafeAreaEdges: .bottom)
+        //.background(.bar, ignoresSafeAreaEdges: .bottom)
     }
 
     @ViewBuilder
@@ -89,6 +90,6 @@ struct WizardProgressBar: View {
 }
 
 #Preview {
-    WizardProgressBar()
+    WizardProgressBar(wizardStep: .CONNECTION)
         .environment(AppState.shared)
 }

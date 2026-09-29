@@ -14,14 +14,14 @@
 
 void Flight_Communication::begin() {}
 
-void Flight_Communication::sendPacket(const BasePacket& packet) {
-    auto data = packet.serialize();
-    LoRa_Communication.sendData(data.first.get(), data.second);
+bool Flight_Communication::sendPacket(const BasePacket& packet) {
+    auto [data, length] = packet.serialize();
+    return LoRa_Communication.sendData(data.get(), length);
 }
 
 void Flight_Communication::sendPosition() {
-    Coordinate position = GPS_Reader.getCurrentPosition();
-    PositionUpdate packet = {
+    const Coordinate position = GPS_Reader.getCurrentPosition();
+    const PositionUpdate packet = {
         GPS_Reader.getGPSLatestTime(),
         position
     };
@@ -35,7 +35,7 @@ void Flight_Communication::sendSensorUpdate() {
 #else
     int heading = 0;
 #endif
-    SensorUpdate packet = {
+    const SensorUpdate packet = {
         GPS_Reader.getGPSLatestTime(),
         pressure,
         heading,
@@ -46,29 +46,31 @@ void Flight_Communication::sendSensorUpdate() {
 }
 
 #ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
-void Flight_Communication::requestRouteHistory() {
+void Flight_Communication::requestRouteHistory(uint32_t sourceId) {
     BasePacket packet = {
         GPS_Reader.getGPSLatestTime(),
         PacketType::ROUTE_HISTORY_REQUEST
     };
+    packet.id = sourceId;
 
     sendPacket(packet);
 }
 
-void Flight_Communication::sendPlannedArea(const AreaData& areaData) {
+void Flight_Communication::sendPlannedArea(const uint32_t destId, const AreaData& areaData) {
     PlannedAreaPacket packet = {
          GPS_Reader.getGPSLatestTime(),
         areaData.areaPoints,
         areaData.settings
     };
+    packet.id = destId;
     sendPacket(packet);
 }
 #endif
 
 #ifdef FLIGHT_DEVICE_TYPE_PLANE
 void Flight_Communication::sendRouteHistory() {
-    FlightRoute flightRoute = FlightStorage.getFlightRoute();
-    FlightHistoryPacket packet = {
+    const FlightRoute flightRoute = FlightStorage.getFlightRoute();
+    const FlightHistoryPacket packet = {
         GPS_Reader.getGPSLatestTime(),
         flightRoute
     };
@@ -76,13 +78,16 @@ void Flight_Communication::sendRouteHistory() {
 }
 
 void Flight_Communication::sendPlannedRoute() {
-    auto plannedRoute = FlightStorage.getPlannedRoute();
-    PlannedRoutePacket packet = {
+    const auto plannedRoute = FlightStorage.getPlannedRoute();
+    const PlannedRoutePacket packet = {
         GPS_Reader.getGPSLatestTime(),
         plannedRoute.getRoutePoints(),
         plannedRoute.getSettings()
     };
-    sendPacket(packet);
+    bool ret = sendPacket(packet);
+    if (!ret) {
+        sendPacket(packet);
+    }
 }
 
 void Flight_Communication::sendComponentStatus() {

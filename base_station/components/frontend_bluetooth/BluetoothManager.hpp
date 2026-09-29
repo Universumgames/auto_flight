@@ -140,6 +140,8 @@ private:
     std::unordered_map<uint16_t, Characteristic*> characteristicsByHandle;
     std::unordered_map<TopicType, Characteristic*> characteristicsByTopic;
 
+    //std::vector<std::function<void()>> onConnectCallbacks;
+
 public:
 
     void init(const std::vector<Characteristic>& characteristics);
@@ -199,4 +201,13 @@ public:
             }
         });
     }
+
+    /**
+     * Add a callback invoked when a client connects to the Bluetooth SPP service.
+     * @param callback A function that takes no arguments and returns void.
+     */
+    /*void addOnConnectCallback(const std::function<void()>& callback) {
+        onConnectCallbacks.push_back(callback);
+    }
+    */
 };

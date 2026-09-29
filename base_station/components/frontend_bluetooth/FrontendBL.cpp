@@ -37,7 +37,13 @@ void FrontendHandlerBlClass::init() {
 
     registerReadTriggerCallback();
     registerInternalDataChangeCallbacks();
-
+    /*bluetoothManager.addOnConnectCallback([this]() {
+        ESP_LOGI(TAG_FRONTEND_BL, "New Bluetooth device connected, sending latest updates for all topics");
+        // Send all updates for all topics to the frontend on connect
+        for (const auto i : BLETopics::ALL_NOTIFICATIONS) {
+            requestOutOfCycleUpdate(static_cast<BLETopics::NotifyByte>(i));
+        }
+    });*/
     xTaskCreate(
         sendUpdateTaskEntry,
         "bl_update_task",
@@ -59,11 +65,12 @@ void FrontendHandlerBlClass::init() {
 
 void FrontendHandlerBlClass::registerReadTriggerCallback() {
     bluetoothManager.addDataWriteCallback(BLETopics::NotifyByte::BLE_TOPIC_AREA_DEFINE,
-                                          [](const uint8_t* data, int len, BluetoothManager::TopicType topic) {
+                                          [this](const uint8_t* data, int len, BluetoothManager::TopicType topic) {
                                               try {
                                                   auto packet = nlohmann::json::from_cbor(data, data + len).get<
                                                       Frontend::AreaDefinePacket>();
                                                   FlightStorage.updatePlannedArea(packet.sourceId, AreaData{packet.shape, packet.settings});
+                                                  requestOutOfCycleUpdate(static_cast<BLETopics::NotifyByte>(topic));
                                                   ESP_LOGI(TAG_FRONTEND_BL, "Received new planned area with %d points",
                                                            packet.shape.size());
                                               }
@@ -115,6 +122,15 @@ Frontend::ConnectionUpdatePacket FrontendHandlerBlClass::buildConnectionUpdatePa
         .flightState = FlightStorage.getFlightState(sourceId)
     };
     packet.sourceId = sourceId;
+    ESP_LOGI(TAG_FRONTEND_BL, "Building connection update packet for sourceId %u: GPS=%d, Barometer=%d, MotorCom=%d, Magnetometer=%d, Accelerometer=%d, ManualOverride=%d, FlightState=%d",
+             sourceId,
+             static_cast<int>(packet.gpsConnection),
+             static_cast<int>(packet.barometer),
+             static_cast<int>(packet.motorCom),
+             static_cast<int>(packet.magnetometer),
+             static_cast<int>(packet.accelerometer),
+             static_cast<int>(packet.manualOverride),
+             static_cast<int>(packet.flightState));
     return packet;
 }
 
@@ -126,6 +142,11 @@ Frontend::SensorPacket FrontendHandlerBlClass::buildSensorPacket(uint32_t source
         .heading = FlightStorage.getHeading(sourceId)
     };
     packet.sourceId = sourceId;
+    ESP_LOGI(TAG_FRONTEND_BL, "Building sensor packet for sourceId %u: Pressure=%.2f, Altitude=%.2f, Heading=%d",
+             sourceId,
+             packet.barometerPressure,
+             packet.calculatedAltitude,
+             packet.heading);
     return packet;
 }
 
@@ -134,6 +155,9 @@ Frontend::BatteryStatusPacket FrontendHandlerBlClass::buildBatteryStatusPacket(u
         .batteryPercentage = FlightStorage.getBatteryPercentage(sourceId)
     };
     packet.sourceId = sourceId;
+    ESP_LOGI(TAG_FRONTEND_BL, "Building battery status packet for sourceId %u: BatteryPercentage=%d",
+             sourceId,
+             packet.batteryPercentage);
     return packet;
 }
 
@@ -144,6 +168,12 @@ Frontend::PlannedRoutePacket FrontendHandlerBlClass::buildPlannedRoutePacket(uin
         .hash = FlightStorage.getPlannedRoute(sourceId).getHash()
     };
     packet.sourceId = sourceId;
+    ESP_LOGI(TAG_FRONTEND_BL, "Building planned route packet for sourceId %u: RoutePoints=%d, Algorithm=%d, Overlap=%d, Hash=%zu",
+             sourceId,
+             static_cast<int>(packet.route.size()),
+             static_cast<int>(packet.settings.routeAlgorithm),
+             packet.settings.overlapPercentage,
+             packet.hash);
     return packet;
 }
 
@@ -153,6 +183,11 @@ Frontend::AreaDefinePacket FrontendHandlerBlClass::buildAreaDefinePacket(uint32_
         .settings = FlightStorage.getPlannedArea(sourceId).getSettings()
     };
     packet.sourceId = sourceId;
+    ESP_LOGI(TAG_FRONTEND_BL, "Building area define packet for sourceId %u: AreaPoints=%d, Algorithm=%d, Overlap=%d",
+             sourceId,
+             static_cast<int>(packet.shape.size()),
+             static_cast<int>(packet.settings.routeAlgorithm),
+             packet.settings.overlapPercentage);
     return packet;
 }
 

@@ -4,6 +4,7 @@ import SwiftUI
 /// Mirrors `RoutePreviewView.vue`: poll for the planned route until the base
 /// station has one ready, then show it alongside the live flight history.
 struct RouteView: View {
+    let planeId: PlaneID
     @Environment(ConnectionManager.self) private var connectionManager: ConnectionManager
     @Environment(AppState.self) private var appState
 
@@ -15,10 +16,12 @@ struct RouteView: View {
             ZStack {
                 RouteMapView(
                     plannedRoute: plannedRoute,
-                    flightHistory: appState.planes[defaultPlaneID]?.flightRoute ?? [],
+                    flightHistory: appState.planes[planeId]?.flightRoute ?? [],
+                    areaPolygon: appState
+                        .planes[planeId]?.area?.areaPoints ?? [],
                     basePosition: appState.basePosition,
-                    planePosition: appState.planes[defaultPlaneID]?.position,
-                    planeHeading: appState.planes[defaultPlaneID]?.heading ?? 0
+                    planePosition: appState.planes[planeId]?.position,
+                    planeHeading: appState.planes[planeId]?.heading ?? 0
                 )
             }
             .frame(minHeight: 400, maxHeight: .infinity)
@@ -35,7 +38,7 @@ struct RouteView: View {
         }
         .navigationTitle(String(localized: "route.navTitle"))
         .padding(.bottom)
-        .connectedToolbar()
+        .connectedToolbar(planeId: planeId)
         .onAppear {
             startPolling()
         }
@@ -49,7 +52,7 @@ struct RouteView: View {
         pollTask = Task {
             var tries = 0
             while !Task.isCancelled && plannedRoute.isEmpty && tries < 50 {
-                let route = await connectionManager.queryRoute(DEFAULT_PLANE_ID)
+                let route = await connectionManager.queryRoute(planeId)
                 if let route, !route.isEmpty {
                     plannedRoute = route
                     return
@@ -64,10 +67,10 @@ struct RouteView: View {
 #Preview {
     VStack {
         NavigationStack {
-            RouteView()
+            RouteView(planeId: DEFAULT_PLANE_ID)
         }
 
-        WizardProgressBar()
+        WizardProgressBar(wizardStep: .ROUTE_APPROVAL)
     }
     .environment(ConnectionManager())
     .environment(AppState.shared)

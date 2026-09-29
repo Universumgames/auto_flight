@@ -2,10 +2,16 @@ import SharedLogic
 import SwiftUI
 
 struct AreaView: View {
+    let planeId: PlaneID
+    
     @Environment(ConnectionManager.self) private var connectionManager: ConnectionManager
     @Environment(AppState.self) private var appState
 
     @State private var polygon: [Coordinate] = []
+    @State private var routeSettings: wire.RouteSettings = .init(
+        routeAlgorithm: .BASIC,
+        overlapPercentage: 20
+    )
     @State private var loading = false
 
     var body: some View {
@@ -25,7 +31,12 @@ struct AreaView: View {
             .padding(.horizontal)
 
             ZStack {
-                PolygonMapView(polygon: $polygon, basePosition: appState.basePosition, planePosition: appState.planes[defaultPlaneID]?.position, planeHeading: appState.planes[defaultPlaneID]?.heading)
+                PolygonMapView(
+                    polygon: $polygon,
+                    basePosition: appState.basePosition,
+                    planePosition: appState.planes[planeId]?.position,
+                    planeHeading: appState.planes[planeId]?.heading
+                )
 
                 if loading {
                     ProgressView().padding().background(.thinMaterial).clipShape(RoundedRectangle(cornerRadius: 12))
@@ -36,22 +47,34 @@ struct AreaView: View {
         }
         .navigationTitle(String(localized: "area.navTitle"))
         .padding(.bottom)
-        .connectedToolbar()
+        .connectedToolbar(planeId: planeId)
         .task {
-            let areaDefinition = await connectionManager.queryArea(DEFAULT_PLANE_ID)
-            if let areaDefinition, polygon.isEmpty {
+            loading = true
+            let areaDefinition = await connectionManager.queryArea(planeId)
+            if let areaDefinition {
                 polygon = areaDefinition.shape
             }
+            loading = false
         }
     }
 
     private func submit() {
         guard !polygon.isEmpty, !loading else { return }
         loading = true
-        connectionManager.submitArea(polygon: polygon) { result in
+        connectionManager
+            .submitArea(
+                planeId: planeId,
+                polygon: polygon,
+                routeSettings: routeSettings
+            ) { result in
             loading = false
             if result == .ACCEPTED {
-                appState.navigationPath.append(.ROUTE_APPROVAL)
+                appState
+                    .planes[planeId]?.area = AreaData(
+                        areaPoints: polygon,
+                        settings: routeSettings
+                    )
+                appState.planes[planeId]!.wizardStep.append(.ROUTE_APPROVAL)
             }
         }
     }
@@ -60,9 +83,9 @@ struct AreaView: View {
 #Preview {
     VStack {
         NavigationStack {
-            AreaView()
+            AreaView(planeId: DEFAULT_PLANE_ID)
         }
-        WizardProgressBar()
+        WizardProgressBar(wizardStep: .AREA_SELECTION)
     }
     .environment(AppState.shared)
     .environment(ConnectionManager())

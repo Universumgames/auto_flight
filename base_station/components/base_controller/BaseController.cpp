@@ -49,9 +49,9 @@ void BaseControllerClass::init() {
     });
 
     FlightStorage.registerDataChangeCallback([](uint32_t planeId) {
-        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d",
-                 FlightStorage.getPlannedArea(planeId).getAreaPoints().size());
-        Flight_Communication::sendPlannedArea(FlightStorage.getPlannedArea(planeId));
+        ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area changed, sending update with size %d to plane %u",
+                 FlightStorage.getPlannedArea(planeId).getAreaPoints().size(), planeId);
+        Flight_Communication::sendPlannedArea(planeId, FlightStorage.getPlannedArea(planeId));
         ESP_LOGI(TAG_BASE_CONTROLLER, "Planned area change sent");
     }, FlightStorageClass::DataUpdateType::AREA);
 }
@@ -110,7 +110,7 @@ void BaseControllerClass::communicationCallback(LoRaPacket packet) {
         auto plannedRoute = reinterpret_cast<PlannedRoutePacket*>(decodedPacket.get());
         ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned route: [id=%u] with %d points",
                  basePacket->id, plannedRoute->route.size());
-        FlightStorage.updatePlannedRoute(basePacket->id, RouteData{plannedRoute->route, plannedRoute->settings}, plannedRoute->timestamp);
+        FlightStorage.updatePlannedRoute(basePacket->id, RouteData{plannedRoute->route, plannedRoute->settings, plannedRoute->hash}, plannedRoute->timestamp);
         break;
     }
     case PacketType::COMPONENT_STATUS: {

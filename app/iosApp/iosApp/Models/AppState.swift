@@ -20,8 +20,7 @@ import SharedLogic
 final class AppState {
     public static let shared = AppState()
 
-    var navigationPath: [ConfigurationState] = []
-    var wizardStep: ConfigurationState { navigationPath.last ?? .CONNECTION }
+    var navigationPath: [PlaneID] = []
 
     func resetNavigation() { navigationPath = [] }
 
@@ -93,6 +92,12 @@ extension AppState {
         navigationPath = []
         basePosition = nil
         planes = [:]
+    }
+    
+    static var preview: AppState {
+        let state = AppState()
+        state.planes[DEFAULT_PLANE_ID] = PlaneInfo.defaultPlane
+        return state
     }
 }
 

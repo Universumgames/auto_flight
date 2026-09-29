@@ -27,15 +27,14 @@ struct AreaData {
         : areaPoints(), settings() {}
 
     AreaData(const std::vector<Coordinate>& points, RouteAlgorithm algorithm, int overlap) : areaPoints(points),
-        settings(RouteSettings(algorithm, overlap)) {
-    }
+        settings(RouteSettings(algorithm, overlap)) {}
 
-    AreaData(const std::vector<Coordinate>& points, const RouteSettings& settings) : areaPoints(points), settings(settings) {
-    }
+    AreaData(const std::vector<Coordinate>& points, const RouteSettings& settings) : areaPoints(points),
+        settings(settings) {}
 
     [[nodiscard]] bool operator==(const AreaData& other) const {
         return areaPoints == other.areaPoints &&
-               settings == other.settings;
+            settings == other.settings;
     }
 
     [[nodiscard]] bool isInitialized() const {
@@ -74,13 +73,19 @@ public:
         calculateHash();
     }
 
-    RouteData(const std::vector<Coordinate>& points, const RouteSettings& settings) : routePoints(points), settings(settings) {
+    RouteData(const std::vector<Coordinate>& points, const RouteSettings& settings) : routePoints(points),
+        settings(settings) {
         calculateHash();
     }
 
+#if FLIGHT_DEVICE_TYPE_BASE_STATION
+    RouteData(const std::vector<Coordinate>& points, const RouteSettings& settings, size_t hash) : routePoints(points),
+        settings(settings), hash(hash) {}
+#endif
+
     [[nodiscard]] bool operator==(const RouteData& other) const {
         return routePoints == other.routePoints &&
-               settings == other.settings;
+            settings == other.settings;
     }
 
     [[nodiscard]] bool isInitialized() const {

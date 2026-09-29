@@ -5,9 +5,9 @@
 //  Created by Tom Arlt on 23.08.26.
 //
 
-
 import Observation
 import SharedLogic
+import Foundation
 
 /// Native Swift counterpart to the shared Kotlin `PlaneInfo` (`sharedLogic/.../Models.kt`):
 /// everything a single connected plane reports. Held in `AppState.planes`, keyed by
@@ -39,11 +39,16 @@ final class PlaneInfo {
     var flightRouteUpdateTime: Int64?
     var plannedRoute: [Coordinate]?
     var plannedRouteUpdateTime: Int64?
+    /// The area polygon submitted in `AreaView`, kept around so `RouteView` can
+    /// center its map on it while waiting for the base station's planned route.
+    var area: AreaData?
+
+    var wizardStep: [ConfigurationState] = []
 
     init(id: PlaneID) {
         self.id = id
     }
-    
+
     var connectionItem: ConnectionItem {
         let gpsLabel = position.map {
             _ in String(localized: "connection.items.subtask.gpsPositionWithCoords")
@@ -81,9 +86,20 @@ final class PlaneInfo {
             ]
         )
     }
-    
+
     static var defaultPlaneID: PlaneID { SharedLogic.DEFAULT_PLANE_ID }
     static var defaultPlane: PlaneInfo {
         PlaneInfo(id: defaultPlaneID)
+    }
+}
+
+@Observable
+final class AreaData {
+    var areaPoints: [Coordinate]
+    var settings: wire.RouteSettings
+    
+    init(areaPoints: [Coordinate], settings: wire.RouteSettings) {
+        self.areaPoints = areaPoints
+        self.settings = settings
     }
 }

@@ -4,6 +4,7 @@ import SharedLogic
 /// Sidebar/step list mirroring `StepView.vue` - the six `ConfigurationState` steps
 /// with a checkmark for completed steps and a spinner for the current one.
 struct StepProgressView: View {
+    let wizardStep: ConfigurationState
     @Environment(AppState.self) private var appState
 
     var body: some View {
@@ -18,9 +19,9 @@ struct StepProgressView: View {
             ) { step in
                 HStack(spacing: 8) {
                     Text(step.translationKey)
-                    if appState.wizardStep.rawValue > step.index {
+                    if wizardStep.rawValue > step.index {
                         Image(systemName: "checkmark.circle.fill").foregroundStyle(.green)
-                    } else if appState.wizardStep.rawValue == step.index {
+                    } else if wizardStep.rawValue == step.index {
                         ProgressView().scaleEffect(0.7).frame(width: 14, height: 14)
                     }
                     Spacer()
@@ -35,6 +36,6 @@ struct StepProgressView: View {
 }
 
 #Preview {
-    StepProgressView()
+    StepProgressView(wizardStep: .AREA_SELECTION)
         .environment(AppState.shared)
 }

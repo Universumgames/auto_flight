@@ -1,10 +1,16 @@
-import SwiftUI
 import SharedLogic
+import SwiftUI
 
 /// Top-trailing connection status button that pops over the connection details.
 struct ConnectionStatusButton: View {
+    let planeId: PlaneID?
     @Environment(AppState.self) private var appState
     @State private var showPopover = false
+
+    func totalIsConnected(plane: PlaneInfo) -> Bool {
+        return appState.baseStationItem.status == .CONNECTED && plane.connectionItem
+            .status == .CONNECTED
+    }
 
     var body: some View {
         Button {
@@ -18,8 +24,20 @@ struct ConnectionStatusButton: View {
         }
         .popover(isPresented: $showPopover) {
             ScrollView {
-                ConnectionItemsList(items: [appState.baseStationItem] + appState.planeItems)
-                    .padding()
+                VStack(alignment: .leading, spacing: 12) {
+                    ConnectionItemList(item: appState.baseStationItem) {
+                        EmptyView()
+                    }
+
+                    if let planeId, let plane = appState
+                        .planes[planeId] {
+                        ConnectionItemList(
+                            item: plane.connectionItem) {
+                                EmptyView()
+                            }
+                    }
+                }
+                .padding()
             }
             .frame(minWidth: 300, minHeight: 200)
             .presentationCompactAdaptation(.popover)
@@ -28,6 +46,6 @@ struct ConnectionStatusButton: View {
 }
 
 #Preview {
-    ConnectionStatusButton()
+    ConnectionStatusButton(planeId: defaultPlaneID)
         .environment(AppState.shared)
 }

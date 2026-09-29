@@ -4247,6 +4247,17 @@ CONFIG_LORA_SYNC_WORD=0x34
 # end of LoRa Communication Settings
 
 #
+# Magnetometer
+#
+# default:
+# CONFIG_MAGNETOMETER_DRIVER_HMC5883L is not set
+# default:
+# CONFIG_MAGNETOMETER_DRIVER_QMC5883P_DURUOFU is not set
+# default:
+CONFIG_MAGNETOMETER_DRIVER_QMC5883P_EIL=y
+# end of Magnetometer
+
+#
 # OLED Display Settings
 #
 # default:

@@ -7,7 +7,7 @@ private let defaultCenter = Coordinate.Companion.shared.defaultLocation.clCoordi
 
 private class DeviceLocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
-    private(set) var lastLocation: CLLocationCoordinate2D?
+    @Published private(set) var lastLocation: CLLocationCoordinate2D?
 
     override init() {
         super.init()
@@ -34,6 +34,12 @@ struct PolygonMapView: View {
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(center: defaultCenter, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
     )
+    /// Set right before a programmatic camera move, so the `onMapCameraChange`
+    /// callback it triggers isn't mistaken for user interaction.
+    @State private var isRecentering = false
+    /// Once the user has manually panned/zoomed, automatic recentering on
+    /// base/device location becoming available stops.
+    @State private var userMovedCamera = false
 
     var body: some View {
         MapReader { proxy in
@@ -82,8 +88,25 @@ struct PolygonMapView: View {
                 MapCompass()
             }
             .mapControlVisibility(.visible)
+            .onMapCameraChange(frequency: .onEnd) { _ in
+                if isRecentering {
+                    isRecentering = false
+                } else {
+                    userMovedCamera = true
+                }
+            }
         }
-        .onAppear { recenter() }
+        .task { recenter() }
+        .onChange(of: basePosition == nil) { wasNil, isNil in
+            if wasNil, !isNil, !userMovedCamera {
+                recenter()
+            }
+        }
+        .onChange(of: locationManager.lastLocation == nil) { wasNil, isNil in
+            if wasNil, !isNil, !userMovedCamera {
+                recenter()
+            }
+        }
     }
 
     private func mapButton(systemImage: String, action: @escaping () -> Void) -> some View {
@@ -99,6 +122,8 @@ struct PolygonMapView: View {
 
     private func recenter() {
         let center = basePosition?.clCoordinate ?? locationManager.lastLocation ?? defaultCenter
+        isRecentering = true
+        userMovedCamera = false
         withAnimation {
             cameraPosition = .region(MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)))
         }

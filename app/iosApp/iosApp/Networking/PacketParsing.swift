@@ -100,4 +100,19 @@ enum PacketParsing {
         plane.plannedRoute = packet.route
         plane.plannedRouteUpdateTime = -1 // TODO: update packet to include timestamp
     }
+    
+    static func applyAreaDefinePacket(
+        _ current: AppState,
+        _ packet: wire.AreaDefinePacket
+    ){
+        if packet.sourceId == SharedLogic.BASE_ID{
+            return
+        }
+        let plane = self.plane(current, id: packet.sourceId)
+        plane.area = AreaData(
+            areaPoints: packet.shape,
+            settings: packet.settings
+        )
+        // TODO: implement area define, add to storage as well
+    }
 }

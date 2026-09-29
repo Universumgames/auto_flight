@@ -8,27 +8,43 @@ struct ConnectionView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                ConnectionItemsList(items: [appState.baseStationItem] + appState.planeItems)
-                
-                if appState.planeItems.isEmpty{
-                    Text("connection.planes.empty")
+                ConnectionItemList(item: appState.baseStationItem) { EmptyView() }
+
+                ForEach(
+                    appState.planes
+                        .sorted(
+                            by: { (
+                                $0.value.wizardStep.last ?? .CONNECTING
+                            ) > ($1.value.wizardStep.last ?? .CONNECTING)
+                            }),
+                    id: \.key
+                ) {
+                    pair in
+                    ConnectionItemList(item: pair.value.connectionItem) {
+                        WizardProgressBar(
+                            wizardStep: pair.value.wizardStep.last
+                                ?? .CONNECTION)
+                        Button(String(localized: "connection.btn.nextStep")) {
+                            appState.navigationPath.append(pair.key)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(!appState.totalIsConnected)
+                        .padding(.top, 8)
+                    }
                 }
 
-                Button(String(localized: "connection.btn.nextStep")) {
-                    appState.navigationPath.append(.AREA_SELECTION)
+                if appState.planeItems.isEmpty {
+                    Text("connection.planes.empty")
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(!appState.totalIsConnected)
-                .padding(.top, 8)
             }
             .padding()
         }
-        .connectedToolbar()
+        .connectedToolbar(planeId: nil)
     }
 }
 
 #Preview {
     ConnectionView()
         .environment(ConnectionManager())
-        .environment(AppState.shared)
+        .environment(AppState.preview)
 }

@@ -1,11 +1,13 @@
 import SwiftUI
+import SharedLogic
 
 private struct ConnectedToolbar: ViewModifier {
+    let planeId: PlaneID?
     func body(content: Content) -> some View {
         content
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    ConnectionStatusButton()
+                    ConnectionStatusButton(planeId: planeId)
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     BaseDisconnectButton()
@@ -15,7 +17,7 @@ private struct ConnectedToolbar: ViewModifier {
 }
 
 extension View {
-    func connectedToolbar() -> some View {
-        modifier(ConnectedToolbar())
+    func connectedToolbar(planeId: PlaneID?) -> some View {
+        modifier(ConnectedToolbar(planeId: planeId))
     }
 }

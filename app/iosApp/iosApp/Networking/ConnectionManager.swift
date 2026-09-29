@@ -30,13 +30,13 @@ final class ConnectionManager: NSObject {
     internal var notificationHandlers: [CBUUID: (Data) -> Void] = [:]
     /// Per-characteristic fragment reassembly state for notified values.
     internal var reassemblyBuffers: [CBUUID: FragmentReassemblyBuffer] = [:]
-    
+
     internal struct WaitRequestKey: Hashable {
         let characteristic: CharacteristicUUID
         let sourceId: PlaneID
     }
-    
-    internal var waitingRequests: [WaitRequestKey : [(Data?) -> Void]] = [:]
+
+    internal var waitingRequests: [WaitRequestKey: [(Data?) -> Void]] = [:]
 
     override init() {
         super.init()
@@ -53,25 +53,31 @@ final class ConnectionManager: NSObject {
         for topic in CharacteristicUUID.allCases {
             subscribe(to: topic, handler: { data in self.onNotify(topic, data) })
         }
+
+        CharacteristicUUID.allCases.forEach { uuid in
+            Task {
+                await requestUpdate(uuid)
+            }
+        }
     }
-    
-    func onNotify(_ topic: CharacteristicUUID, _ data: Data){
-        switch(topic){
-            case .allUpdate:
-                print("Unexcpected packet")
-            case .positionUpdate:
-                onFramePositionData(data: data)
-            case .connectionUpdate:
-                onFrameConnectionUpdate(data: data)
-            case .sensorData:
-                onFrameSensorUpdate(data: data)
-            case .areaDefine:
-                // TODO: onAreaDefine Receive
-                break
-            case .plannedRoute:
-                onFrameRoutePlanned(data: data)
-            case .batteryStatus:
-                onFrameBatteryStatus(data: data)
+
+    func onNotify(_ topic: CharacteristicUUID, _ data: Data) {
+        switch topic {
+        case .allUpdate:
+            print("Unexcpected packet")
+        case .positionUpdate:
+            onFramePositionData(data: data)
+        case .connectionUpdate:
+            onFrameConnectionUpdate(data: data)
+        case .sensorData:
+            onFrameSensorUpdate(data: data)
+        case .areaDefine:
+            // TODO: onAreaDefine Receive
+            break
+        case .plannedRoute:
+            onFrameRoutePlanned(data: data)
+        case .batteryStatus:
+            onFrameBatteryStatus(data: data)
         }
         guard let sourceId = wire.FrontendPackets.shared.decodeBaseUpdate(
             hex: data.hexEncoded
@@ -79,7 +85,7 @@ final class ConnectionManager: NSObject {
         let key = WaitRequestKey(characteristic: topic, sourceId: sourceId)
         let callbacks = waitingRequests[key]
         waitingRequests[key] = []
-        callbacks?.forEach{ callback in
+        callbacks?.forEach { callback in
             callback(data)
         }
     }
@@ -105,7 +111,7 @@ final class ConnectionManager: NSObject {
         clearSubscriptions()
         centralManager?.connect(peripheral, options: nil)
     }
-    
+
     // MARK: - Notifications
 
     private func onFrameConnectionUpdate(data: Data) {
@@ -133,13 +139,21 @@ final class ConnectionManager: NSObject {
         PacketParsing.applyBatteryStatusPacket(state, packet)
         print("Battery status received: \(packet)")
     }
-    
-    private func onFrameRoutePlanned(data: Data){
+
+    private func onFrameRoutePlanned(data: Data) {
         guard let packet = wire.FrontendPackets.shared.decodePlannedRoute(
             hex: data.hexEncoded
         ) else { return }
         PacketParsing.applyRoutePlannedPacket(state, packet)
         print("Route plan update received: \(packet)")
+    }
+
+    private func onFrameAreaDefine(data: Data) {
+        guard let packet = wire.FrontendPackets.shared.decodeAreaDefine(
+            hex: data.hexEncoded
+        ) else { return }
+        PacketParsing.applyAreaDefinePacket(state, packet)
+        print("Area define update received: \(packet)")
     }
 
     // MARK: - Manual fetching
@@ -154,9 +168,9 @@ final class ConnectionManager: NSObject {
         }
     }
 
-    func submitArea(polygon: [Coordinate], onResult: @escaping (AreaSubmitResult) -> Void) {
+    func submitArea(planeId: PlaneID, polygon: [Coordinate], routeSettings: wire.RouteSettings, onResult: @escaping (AreaSubmitResult) -> Void) {
         Task {
-            guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.AreaDefinePacket(sourceId: 0, shape: polygon, settings: wire.RouteSettings(routeAlgorithm: wire.RouteAlgorithm.BASIC, overlapPercentage: 20)))) else {
+            guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.AreaDefinePacket(sourceId: planeId, shape: polygon, settings: routeSettings))) else {
                 onResult(.FAILED); return
             }
             do {
@@ -167,43 +181,43 @@ final class ConnectionManager: NSObject {
             }
         }
     }
-    
-    func queryPositions(){
-        Task{
+
+    func queryPositions() {
+        Task {
             await requestUpdate(CharacteristicUUID.positionUpdate)
         }
     }
-    
-    func queryConnections(){
-        Task{
+
+    func queryConnections() {
+        Task {
             await requestUpdate(CharacteristicUUID.connectionUpdate)
         }
     }
-    
-    func querySensorData(){
-        Task{
+
+    func querySensorData() {
+        Task {
             await requestUpdate(CharacteristicUUID.sensorData)
         }
     }
-    
-    func queryAreas(){
-        Task{
+
+    func queryAreas() {
+        Task {
             await requestUpdate(CharacteristicUUID.areaDefine)
         }
     }
-    
-    func queryRoutes(){
-        Task{
+
+    func queryRoutes() {
+        Task {
             await requestUpdate(CharacteristicUUID.plannedRoute)
         }
     }
-    
-    func queryBattery(){
-        Task{
+
+    func queryBattery() {
+        Task {
             await requestUpdate(CharacteristicUUID.batteryStatus)
         }
     }
-    
+
     private func querySingle(_ sourceId: PlaneID, _ characteristic: CharacteristicUUID) async -> Data? {
         let key = WaitRequestKey(
             characteristic: characteristic,
@@ -215,7 +229,7 @@ final class ConnectionManager: NSObject {
             }
         }
     }
-    
+
     func queryPosition(_ sourceId: PlaneID) async -> Coordinate? {
         guard let data = await querySingle(
             sourceId,
@@ -224,15 +238,15 @@ final class ConnectionManager: NSObject {
         return wire.FrontendPackets.shared
             .decodePositionUpdate(hex: data.hexEncoded)?.position
     }
-    
-    func queryConnection(_ sourceId: PlaneID) async -> wire.ConnectionUpdatePacket?{
+
+    func queryConnection(_ sourceId: PlaneID) async -> wire.ConnectionUpdatePacket? {
         guard let data = await querySingle(
             sourceId,
             CharacteristicUUID.connectionUpdate
         ) else { return nil }
         return wire.FrontendPackets.shared.decodeConnectionUpdate(hex: data.hexEncoded)
     }
-    
+
     func queryArea(_ sourceId: PlaneID) async -> wire.AreaDefinePacket? {
         guard let data = await querySingle(
             sourceId,
@@ -241,7 +255,7 @@ final class ConnectionManager: NSObject {
         return wire.FrontendPackets.shared
             .decodeAreaDefine(hex: data.hexEncoded)
     }
-    
+
     func queryRoute(_ sourceId: PlaneID) async -> [Coordinate]? {
         guard let data = await querySingle(
             sourceId,
@@ -250,7 +264,7 @@ final class ConnectionManager: NSObject {
         return wire.FrontendPackets.shared
             .decodePlannedRoute(hex: data.hexEncoded)?.route
     }
-    
+
     func queryBattery(_ sourceId: PlaneID) async -> wire.BatteryStatusPacket? {
         guard let data = await querySingle(
             sourceId,

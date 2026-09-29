@@ -248,6 +248,9 @@ int BluetoothManager::onSPPGapEvent(ble_gap_event* event, void* arg) {
                  event->subscribe.cur_indicate);
         if (event->subscribe.conn_handle <= CONFIG_BT_NIMBLE_MAX_CONNECTIONS) {
             conn_handle_subs[event->subscribe.conn_handle] = true;
+            /*for (const auto & on_connect_callback : onConnectCallbacks) {
+                on_connect_callback();
+            }*/
         }
         return 0;
 
