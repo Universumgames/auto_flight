@@ -1,4 +1,5 @@
 #include "BoustrophedonRoutePlanner.hpp"
+#include <cmath>
 
 #include "esp_log.h"
 #include "geometry_helper.hpp"
@@ -38,7 +39,7 @@ std::vector<std::pair<Coordinate, Coordinate>> BoustrophedonRoutePlanner::genera
     ESP_LOGI("RoutePlanner", "Generating %d sweep lines with distance %.6f degrees for shape with lat diff %.6f degrees, with swathDistance %.6f",
              lineCount, lineDistance, latDiff, swathDistance);
 
-    if (isnan(lineDistance) || lineDistance <= 0.0) {
+    if (std::isnan(lineDistance) || lineDistance <= 0.0) {
         std::cerr << "Calculated line distance is NaN or non-positive, cannot generate sweep lines" << std::endl;
         return {};
     }

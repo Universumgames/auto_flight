@@ -12,7 +12,9 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const LoRaPacket&
     return decodePacket(packet.payload, packet.length);
 }
 
-std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* data, std::size_t len) {
+// Function-try-block: packets are CBOR encoded, so malformed or truncated
+// payloads make nlohmann throw - reject them instead of crashing.
+std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* data, std::size_t len) try {
     if (len < sizeof(BasePacket)) {
         ESP_LOGE(TAG_FLIGHT_COMMUNICATION, "Received packet too small: %d bytes, should be at least %d bytes", len,
                  static_cast<int>(sizeof(BasePacket)));
@@ -89,4 +91,7 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
         std::cout << std::dec << std::endl;
         return nullptr;
     }
+} catch (const nlohmann::json::exception& e) {
+    ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Failed to decode packet of %d bytes: %s", static_cast<int>(len), e.what());
+    return nullptr;
 }
