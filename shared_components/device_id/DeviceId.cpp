@@ -20,6 +20,9 @@ namespace {
 }
 
 uint32_t DeviceId::get32() {
+#if FLIGHT_DEVICE_TYPE_BASE_STATION
+    return getBaseStationId();
+#else
     static uint32_t id = {};
     static bool initialized = false;
     if (!initialized) {
@@ -30,6 +33,7 @@ uint32_t DeviceId::get32() {
         initialized = true;
     }
     return id;
+#endif
 }
 
 std::array<uint8_t, 4> DeviceId::get() {
@@ -46,4 +50,9 @@ std::array<uint8_t, 4> DeviceId::get() {
         initialized = true;
     }
     return id;
+}
+
+uint32_t DeviceId::getBaseStationId() {
+    // Base station ID is derived from the device ID, but with the last byte set to 0xFF
+    return 0;
 }

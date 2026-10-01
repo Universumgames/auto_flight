@@ -35,5 +35,5 @@ struct PlannedAreaPacket : public BasePacket {
         SERIALIZE_THIS_PACKET();
     }
 
-    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(PlannedAreaPacket, BasePacket, timestamp, type, id, shape, settings)
+    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(PlannedAreaPacket, BasePacket, shape, settings)
 };

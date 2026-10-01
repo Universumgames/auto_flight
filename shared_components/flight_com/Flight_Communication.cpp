@@ -32,12 +32,15 @@ void Flight_Communication::sendSensorUpdate() {
     float pressure = Barometer.getPressure();
 #ifdef FLIGHT_DEVICE_TYPE_PLANE
     int heading = static_cast<int>(std::lround(Magnetometer.getHeading()));
+    float altitude = Barometer.calculateAltitude(FlightStorage.getBasePressure(), pressure);
 #else
+    float altitude = 0.0;
     int heading = 0;
 #endif
     const SensorUpdate packet = {
         GPS_Reader.getGPSLatestTime(),
         pressure,
+        altitude,
         heading,
         FlightStorage.getBaseBatteryPercentage()
     };
@@ -82,7 +85,8 @@ void Flight_Communication::sendPlannedRoute() {
     const PlannedRoutePacket packet = {
         GPS_Reader.getGPSLatestTime(),
         plannedRoute.getRoutePoints(),
-        plannedRoute.getSettings()
+        plannedRoute.getSettings(),
+        plannedRoute.getHash()
     };
     bool ret = sendPacket(packet);
     if (!ret) {
