@@ -63,7 +63,14 @@ private:
     };
 
     struct ReceivedPacket {
-        LoRa_Packet_Internal header;
+        struct SimpleHeader {
+            PacketType type;
+            uint8_t senderId[4];
+            uint8_t messageId;
+            uint8_t totalFragments;
+            size_t payloadLength;
+        };
+        SimpleHeader header;
         std::unique_ptr<uint8_t[]> payload;
     };
 
@@ -135,6 +142,10 @@ public:
      */
     [[nodiscard]] float getLastPacketSNR() const;
 
+    /**
+     * Registers a callback function to be invoked when a new LoRa packet is received
+     * @param callback The callback function to register; it takes a const reference to a LoRaPacket, data pointer is valid only during the callback execution
+     */
     void registerReceivePacketCallback(std::function<void(const LoRaPacket&)> callback);
 
 private:

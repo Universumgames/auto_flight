@@ -218,6 +218,7 @@ bool LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
         if (!sendRawPacket(fragmentHeader, data + offset, true)) {
             return false;
         }
+        vTaskDelay(pdMS_TO_TICKS(LORA_SEND_DELAY));
     }
     return true;
 }
@@ -242,8 +243,19 @@ std::vector<LoRa_CommunicationClass::LoRa_Packet_Internal> LoRa_CommunicationCla
 }
 
 LoRa_CommunicationClass::ReceivedPacket LoRa_CommunicationClass::joinData(ReceivedFragmentsCache& fragmentCache) const {
-    ReceivedPacket result{};
-    result.header = fragmentCache.header;
+    ReceivedPacket result{
+        .header = {
+            .type = fragmentCache.header.type,
+            .senderId = {
+                fragmentCache.header.senderId[0], fragmentCache.header.senderId[1],
+                fragmentCache.header.senderId[2], fragmentCache.header.senderId[3]
+            },
+            .messageId = fragmentCache.header.messageId,
+            .totalFragments = fragmentCache.header.totalFragments,
+            .payloadLength = 0, // will be calculated after joining
+        },
+        .payload = nullptr
+    };
 
     if (fragmentCache.fragments.empty()) {
         ESP_LOGW(TAG_LORA, "No fragments found for messageId=%d", fragmentCache.header.messageId);
