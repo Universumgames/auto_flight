@@ -13,7 +13,7 @@ namespace {
 }
 
 TEST(PacketCodecTest, sensorUpdateRoundTrips) {
-    const SensorUpdate original(1234, 987.6f, 42);
+    const SensorUpdate original(1234, 987.6f, 120.5f, 42);
     const auto decoded = roundTrip(original);
     ASSERT_NE(decoded, nullptr);
     ASSERT_EQ(decoded->type, PacketType::SENSOR_UPDATE);
@@ -21,6 +21,7 @@ TEST(PacketCodecTest, sensorUpdateRoundTrips) {
     ASSERT_NE(sensorUpdate, nullptr);
     EXPECT_EQ(sensorUpdate->timestamp, 1234);
     EXPECT_FLOAT_EQ(sensorUpdate->pressure, 987.6f);
+    EXPECT_FLOAT_EQ(sensorUpdate->altitude, 120.5f);
     EXPECT_EQ(sensorUpdate->heading, 42);
 }
 
