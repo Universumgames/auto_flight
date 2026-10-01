@@ -51,16 +51,16 @@ final class PlaneInfo {
 
     var connectionItem: ConnectionItem {
         let gpsLabel = position.map {
-            _ in String(localized: "connection.items.subtask.gpsPositionWithCoords")
+            position in String(localized: "connection.items.subtask.gpsPositionWithCoords \(String(format: "%.6f", position.latitude)), \(String(format: "%.6f", position.longitude))")
         } ?? String(localized: "connection.items.subtask.gpsPosition")
         let autopilotLabel = manualOverride
             ? String(localized: "connection.items.subtask.autopilotControlManualOverride")
             : String(localized: "connection.items.subtask.autopilotControl")
         let magnetometerLabel = magnetometerConnection == .CONNECTED
-            ? String(localized: "connection.items.subtask.magnetometerWithHeading")
+            ? String(localized: "connection.items.subtask.magnetometerWithHeading \(String(format: "%.2f", heading))")
             : String(localized: "connection.items.subtask.magnetometer")
         let barometerLabel = pressure != 0
-            ? String(localized: "connection.items.subtask.barometerWithPressure")
+            ? String(localized: "connection.items.subtask.barometerWithPressure \(String(format: "%.2f", pressure))")
             : String(localized: "connection.items.subtask.barometer")
 
         return ConnectionItem(

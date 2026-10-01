@@ -69,7 +69,7 @@ void BaseControllerClass::loopTaskEntry(void* param) {
 [[noreturn]] void BaseControllerClass::loopTask() {
     while (true) {
         const auto time = GPS_Reader.getGPSLatestTime();
-        auto sensor = SensorUpdate {
+        auto sensor = SensorUpdate{
             time,
             Barometer.getPressure(),
             0,
@@ -77,10 +77,10 @@ void BaseControllerClass::loopTaskEntry(void* param) {
         };
         Cache.savePacket(DeviceId::BASE_STATION, PacketType::SENSOR_UPDATE, sensor.serialize());
 
-        auto connection = ComponentStatus {
+        auto connection = ComponentStatus{
             time,
-            Barometer.available() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING,
             GPS_Reader.hasValidPosition() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING,
+            Barometer.available() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING,
             ConnectionState::CONNECTING,
             ConnectionState::CONNECTING,
             ConnectionState::CONNECTING,
@@ -89,7 +89,7 @@ void BaseControllerClass::loopTaskEntry(void* param) {
         };
         Cache.savePacket(DeviceId::BASE_STATION, PacketType::COMPONENT_STATUS, connection.serialize());
 
-        auto position = PositionUpdate {
+        auto position = PositionUpdate{
             time,
             GPS_Reader.getCurrentPosition()
         };

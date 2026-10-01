@@ -21,7 +21,11 @@ import kotlinx.serialization.Serializable
 internal data class CoordinateWire(val latitude: Double, val longitude: Double)
 
 internal fun Coordinate.toWire() = CoordinateWire(latitude, longitude)
-internal fun CoordinateWire.toPublic() = Coordinate(latitude, longitude)
+/** Throws on a NaN component, so the enclosing packet decodes to `null` as a whole. */
+internal fun CoordinateWire.toPublic(): Coordinate {
+    require(!latitude.isNaN() && !longitude.isNaN()) { "coordinate has NaN component: $this" }
+    return Coordinate(latitude, longitude)
+}
 
 @Serializable
 internal enum class ConnectionStateWire {
