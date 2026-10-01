@@ -233,12 +233,17 @@
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment=".idea updates">
       <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Localizable.xcstrings" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Localizable.xcstrings" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/AppState.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/AppState.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/PlaneInfo.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/PlaneInfo.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/BluetoothManager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/BluetoothManager.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -368,7 +373,7 @@
   <component name="EmbeddingIndexingInfo">
     <option name="cachedIndexableFilesCount" value="11129" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-Native-Tests" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-ESP-IDF" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -379,7 +384,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="flight_communication_cleanup" />
+        <entry key="$PROJECT_DIR$/.." value="communication_rewrite_base_as_proxy" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -393,12 +398,17 @@
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.hpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/qmc5883p.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/proxy_cache/Cache.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/proxy_cache/Cache.hpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller/components/flight_controller/FlightController.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller/main/main.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller/test/flight_com/packet_codec_test.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller/test/test.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/battery/Battery.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/battery/Battery.hpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/device_id/DeviceId_native.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/flight_com/Flight_Communication.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/flight_com/packets/base.hpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/flight_data/RouteData.hpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/lora_com/LoRa_Communication.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/lora_com/LoRa_Communication.hpp" root0="SKIP_HIGHLIGHTING" />
@@ -409,61 +419,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0487870640462582" />
-      <entry key="MS500" value="1.8471071605789826" />
-      <entry key="S2" value="2.980856106725313" />
-      <entry key="S5" value="3.8864706606971553" />
-      <entry key="S10" value="5.897782061032056" />
-      <entry key="S30" value="11.014580055086332" />
-      <entry key="S60" value="13.55821306147961" />
-      <entry key="M2" value="15.148723944037402" />
-      <entry key="M5" value="16.22553553207319" />
-      <entry key="M10" value="16.606870783005157" />
-      <entry key="M15" value="16.736585176858632" />
-      <entry key="M30" value="16.867624356074664" />
-      <entry key="H1" value="16.937356167894727" />
-      <entry key="H2" value="17.249308345380562" />
-      <entry key="H4" value="19.589044358799626" />
-      <entry key="D1" value="73.47785827255365" />
-      <entry key="W1" value="1138.1347359115357" />
+      <entry key="MS100" value="1.8022147626184876E-31" />
+      <entry key="MS500" value="7.098436475734866E-7" />
+      <entry key="S2" value="0.03167993155447485" />
+      <entry key="S5" value="0.46068496407052095" />
+      <entry key="S10" value="1.7534711474270623" />
+      <entry key="S30" value="5.868152213416819" />
+      <entry key="S60" value="8.449851671453976" />
+      <entry key="M2" value="10.603640915420366" />
+      <entry key="M5" value="12.746075438793822" />
+      <entry key="M10" value="13.796153932168066" />
+      <entry key="M15" value="14.443448464680804" />
+      <entry key="M30" value="16.822258140529904" />
+      <entry key="H1" value="20.98327865273528" />
+      <entry key="H2" value="25.33026725411092" />
+      <entry key="H4" value="30.18569303483987" />
+      <entry key="D1" value="85.45972748612897" />
+      <entry key="W1" value="1146.3563065742967" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="3.3435837628856394E-220" />
-      <entry key="M2" value="5.526964344041868E-110" />
-      <entry key="M5" value="8.089653977110023E-44" />
-      <entry key="M10" value="9.373069322548414E-22" />
-      <entry key="M15" value="2.1278061534054713E-14" />
-      <entry key="M30" value="4.92505839655573E-7" />
-      <entry key="H1" value="0.0025970540834491765" />
-      <entry key="H2" value="0.21249380196055806" />
-      <entry key="H4" value="2.052590118374165" />
-      <entry key="D1" value="17.666218778336777" />
-      <entry key="W1" value="335.8234587925014" />
+      <entry key="MS100" value="1.000000000397039" />
+      <entry key="MS500" value="1.0132018696801564" />
+      <entry key="S2" value="1.4104679886954277" />
+      <entry key="S5" value="1.997043892967426" />
+      <entry key="S10" value="2.395690544768742" />
+      <entry key="S30" value="2.842997244381979" />
+      <entry key="S60" value="3.4295647954668884" />
+      <entry key="M2" value="4.53288166650949" />
+      <entry key="M5" value="6.102765757954295" />
+      <entry key="M10" value="6.933212024547981" />
+      <entry key="M15" value="7.259253888815716" />
+      <entry key="M30" value="7.613919821729033" />
+      <entry key="H1" value="7.803799672249729" />
+      <entry key="H2" value="8.029039643944401" />
+      <entry key="H4" value="9.547139764295286" />
+      <entry key="D1" value="24.93450116793339" />
+      <entry key="W1" value="341.82259028927336" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.0272033383237937" />
-      <entry key="MS500" value="1.8394086274680617" />
-      <entry key="S2" value="2.9776221632566013" />
-      <entry key="S5" value="3.8847242973641563" />
-      <entry key="S10" value="5.896396755281263" />
-      <entry key="S30" value="11.013682132366473" />
-      <entry key="S60" value="13.557655479226934" />
-      <entry key="M2" value="15.148411169176361" />
-      <entry key="M5" value="16.225401215433834" />
-      <entry key="M10" value="16.606801994162673" />
-      <entry key="M15" value="16.736538947848278" />
-      <entry key="M30" value="16.86760154694417" />
-      <entry key="H1" value="16.939940500030026" />
-      <entry key="H2" value="17.461748222652528" />
-      <entry key="H4" value="21.641378439070124" />
-      <entry key="D1" value="91.14366154366931" />
-      <entry key="W1" value="1473.9566034584966" />
+      <entry key="MS100" value="1.799196617587706E-9" />
+      <entry key="MS500" value="0.017963735143260873" />
+      <entry key="S2" value="0.5317837216566498" />
+      <entry key="S5" value="1.7655457083176536" />
+      <entry key="S10" value="3.6612720261890535" />
+      <entry key="S30" value="8.459960246797625" />
+      <entry key="S60" value="11.708225936226542" />
+      <entry key="M2" value="15.010527705534656" />
+      <entry key="M5" value="18.773251639379055" />
+      <entry key="M10" value="20.684444943789213" />
+      <entry key="M15" value="21.67084014398651" />
+      <entry key="M30" value="24.419188762735487" />
+      <entry key="H1" value="28.7782966435441" />
+      <entry key="H2" value="33.354812063156984" />
+      <entry key="H4" value="39.7303837081488" />
+      <entry key="D1" value="110.39345254775117" />
+      <entry key="W1" value="1488.177261083656" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -532,7 +542,8 @@
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "copilot.chat.legacySessionMetadata.migrated": "true",
     "ctest.advertisement.all.test.configuration.is.created": "true",
-    "git-widget-placeholder": "communication__rewrite__base__as__proxy",
+    "git-widget-placeholder": "flight__communication__cleanup",
+    "git.auto.fetch.suggestion.counter": "1",
     "last_opened_file_path": "/Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller/main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -559,7 +570,7 @@
       <recent name="$PROJECT_DIR$/components" />
     </key>
   </component>
-  <component name="RunManager" selected="Google Test.flight_controller_test">
+  <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
     <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="CLION.EXTERNAL.BUILD" enabled="true" />

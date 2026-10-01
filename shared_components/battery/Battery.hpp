@@ -31,19 +31,19 @@ public:
 
     /// Average per-cell voltage in millivolts, for feeding voltageToPercentage()
     /// which is calibrated against a single LiPo cell's discharge curve.
-    int getVoltageMillivolts();
+    uint32_t getVoltageMillivolts();
 
-    int getVoltagePercentage() {
+    uint8_t getVoltagePercentage() {
         return voltageToPercentage(getVoltageMillivolts());
     }
 
     /// Convert a raw per-cell voltage reading to an estimated charge percentage (0-100).
-    static int voltageToPercentage(int millivolts);
+    static uint8_t voltageToPercentage(uint32_t millivolts);
 
 private:
     // TODO: calibrate for the actual battery chemistry/cell count once known.
-    static constexpr int emptyVoltageMillivolts = 3600;
-    static constexpr int fullVoltageMillivolts = 4400;
+    static constexpr uint32_t emptyVoltageMillivolts = 3600;
+    static constexpr uint32_t fullVoltageMillivolts = 4400;
 
     // TODO: measure the real sense-board resistor-divider ratio; this assumes
     // every AINx-to-GND channel is scaled down by the same ratio before reaching
@@ -52,17 +52,17 @@ private:
 
     // Conversions can take a few ms; bound the busy-poll so a stuck/disconnected
     // ADC can't hang whoever is reading the battery state.
-    static constexpr int maxConversionPollAttempts = 20;
+    static constexpr uint32_t maxConversionPollAttempts = 20;
 
     static const char* TAG_BATTERY;
 
     /// Starts a conversion on the given single-ended channel, waits for it to
     /// finish and returns the un-scaled (real, post-divider-correction) voltage
     /// in millivolts.
-    int readChannelMillivolts(ads111x_mux_t mux);
+    uint32_t readChannelMillivolts(ads111x_mux_t mux);
 
     ads111x_handle_t adsHandle = nullptr;
-    char batteryCellCount = MAX_BATTERY_CELL_COUNT;
+    uint8_t batteryCellCount = MAX_BATTERY_CELL_COUNT;
 };
 
 extern BatteryClass& Battery;

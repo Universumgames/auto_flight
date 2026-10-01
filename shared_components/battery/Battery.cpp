@@ -40,7 +40,7 @@ bool BatteryClass::isAvailable() const {
     return ads111x_is_busy(adsHandle, &busy) == ESP_OK;
 }
 
-int BatteryClass::readChannelMillivolts(const ads111x_mux_t mux) {
+uint32_t BatteryClass::readChannelMillivolts(const ads111x_mux_t mux) {
     esp_err_t err = ads111x_set_input_mux(adsHandle, mux);
     I2C_ERROR_LOG(TAG_BATTERY, "set mux failed", err);
     err = ads111x_start_conversion(adsHandle);
@@ -61,7 +61,7 @@ int BatteryClass::readChannelMillivolts(const ads111x_mux_t mux) {
     I2C_ERROR_LOG(TAG_BATTERY, "get value failed", err);
 
     const float adcVolts = (static_cast<float>(raw) / ADS111X_MAX_VALUE) * ads111x_gain_values[ADS111X_GAIN_6V144];
-    return static_cast<int>(adcVolts * voltageDividerRatio * 1000.0f);
+    return static_cast<uint32_t>(adcVolts * voltageDividerRatio * 1000.0f);
 }
 
 std::array<int, MAX_BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts() {
@@ -83,7 +83,7 @@ std::array<int, MAX_BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts(
     return cellVoltages;
 }
 
-int BatteryClass::getVoltageMillivolts() {
+uint32_t BatteryClass::getVoltageMillivolts() {
     const auto cells = getCellVoltagesMillivolts();
     int sum = 0;
     for (const int cellMillivolts : cells) {
@@ -92,7 +92,7 @@ int BatteryClass::getVoltageMillivolts() {
     return sum / batteryCellCount;
 }
 
-int BatteryClass::voltageToPercentage(const int millivolts) {
-    const int clamped = std::max(emptyVoltageMillivolts, std::min(fullVoltageMillivolts, millivolts));
+uint8_t BatteryClass::voltageToPercentage(const uint32_t millivolts) {
+    const auto clamped = std::max(emptyVoltageMillivolts, std::min(fullVoltageMillivolts, millivolts));
     return (clamped - emptyVoltageMillivolts) * 100 / (fullVoltageMillivolts - emptyVoltageMillivolts);
 }

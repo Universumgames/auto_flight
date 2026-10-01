@@ -74,13 +74,13 @@ void FrontendHandlerBlClass::init() {
 
 void FrontendHandlerBlClass::registerReadTriggerCallback() {
     bluetoothManager.addDataWriteCallback(BLETopics::NotifyByte::BLE_PLANNED_AREA,
-                                          [](const uint8_t* data, int len, BluetoothManager::TopicType topic) {
+                                          [](const uint8_t* data, size_t len, BluetoothManager::TopicType topic) {
                                               try {
-                                                  auto basePacket = BasePacket(data, static_cast<size_t>(len));
+                                                  const auto basePacket = BasePacket(data, len);
                                                   auto packet = std::make_unique<uint8_t[]>(len);
                                                   std::memcpy(packet.get(), data, len);
                                                   Cache.savePacket(basePacket.id, basePacket.type, {
-                                                                       std::move(packet), static_cast<size_t>(len)
+                                                                       std::move(packet), len
                                                                    });
                                               }
                                               catch (const std::exception& e) {
@@ -101,16 +101,17 @@ void FrontendHandlerBlClass::registerReadTriggerCallback() {
 
 void FrontendHandlerBlClass::sendAllSourcesData(const BLETopics::NotifyByte topic) {
     for (const auto& planeId : FlightStorage.getAllPlanes() | std::views::keys) {
-        auto [packet, len] = Cache.getLatestPacket(planeId, static_cast<PacketType>(topic));
+        auto packetType = BLETopics::toPacketType(topic).value();
+        auto [packet, len] = Cache.getLatestPacket(planeId, packetType);
         if (packet != nullptr) {
-            sendRawData(static_cast<PacketType>(topic), packet, len);
+            sendRawData(packetType, packet, len);
         }
         else {
-            ESP_LOGW(TAG_FRONTEND_BL, "No cached packet found for planeId=%u and topic=0x%02x", planeId,
-                     static_cast<int>(topic));
-            auto empty = BasePacket::nullPacket(planeId, (PacketType)topic);
+            ESP_LOGD(TAG_FRONTEND_BL, "No cached packet found for planeId=%" PRIu32 " and topic=0x%02x", planeId,
+                     topic);
+            auto empty = BasePacket::nullPacket(planeId, packetType);
             auto serializedPacket = empty.serialize();
-            sendRawData(static_cast<PacketType>(topic), serializedPacket.first.get(), serializedPacket.second);
+            sendRawData(packetType, serializedPacket.first.get(), serializedPacket.second);
         }
     }
 }
@@ -141,8 +142,8 @@ void FrontendHandlerBlClass::triggerPeriodicUpdateTaskEntry(void* param) {
         }
         // Also publish the base station's own battery via the standard BLE Battery Service,
         // for generic BLE clients that don't know this project's custom topics.
-        const int baseBatteryPercentage = std::max(0, std::min(100, FlightStorage.getBaseBatteryPercentage()));
-        instance->bluetoothManager.notifyBatteryLevel(static_cast<uint8_t>(baseBatteryPercentage));
+        const uint8_t baseBatteryPercentage = std::max(0, std::min(100, FlightStorage.getBaseBatteryPercentage()));
+        instance->bluetoothManager.notifyBatteryLevel(baseBatteryPercentage);
         vTaskDelay(pdMS_TO_TICKS(4000));
     }
 }

@@ -118,3 +118,12 @@ void CacheClass::callbackLoopEntry(void* param) {
 void CacheClass::registerPacketCallback(const std::function<void(uint32_t, PacketType, RawSerializedPacket, size_t)>& callback) {
     packetCallbacks.push_back(callback);
 }
+
+
+bool CacheClass::hasSource(uint32_t sourceId) {
+    bool found = false;
+    WITH_RECURSIVE_MUTEX(cacheMutex) {
+        found = cache.find(sourceId) != cache.end();
+    }
+    return found;
+}

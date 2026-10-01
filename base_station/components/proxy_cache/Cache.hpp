@@ -68,6 +68,8 @@ public:
 
     bool hasPacket(uint32_t sourceId, PacketType type);
 
+    bool hasSource(uint32_t sourceId);
+
     std::pair<RawSerializedPacket, size_t> getLatestPacket(uint32_t sourceId, PacketType type);
 
     void registerPacketCallback(const std::function<void(uint32_t, PacketType, RawSerializedPacket, size_t)>& callback);

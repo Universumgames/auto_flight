@@ -102,10 +102,14 @@ void BaseControllerClass::loopTaskEntry(void* param) {
 void BaseControllerClass::communicationCallback(LoRaPacket packet) {
     auto basePacket = BasePacket(packet.payload, packet.length);
 
-    ESP_LOGI(TAG_BASE_CONTROLLER, "Received packet of length %u with type 0x%02x at time %lld from %" PRIu32,
-             packet.length, static_cast<long long>(basePacket.timestamp), basePacket.id);
+    ESP_LOGI(TAG_BASE_CONTROLLER, "Received packet of length %u with type 0x%02x at time %" PRIi64 " from %" PRIu32,
+             packet.length, basePacket.type, basePacket.timestamp, basePacket.id);
     if (basePacket.id == DeviceId::BASE_STATION) {
         ESP_LOGE(TAG_BASE_CONTROLLER, "Received packet supposedly from self");
+    }
+
+    if (!Cache.hasSource(basePacket.id)) {
+        ESP_LOGI(TAG_BASE_CONTROLLER, "New source detected: %" PRIu32, basePacket.id);
     }
 
     auto data = std::make_unique<uint8_t[]>(packet.length);
