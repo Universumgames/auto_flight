@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Generates the BLE wire-contract sources from ble_protocol.json.
 
+The topic table itself is not listed in the JSON: it mirrors enum PacketType from
+base_station/shared_components/flight_com/packets/base.hpp (see the schema's
+"topics" entry), so adding a packet type automatically adds a BLE topic.
+
 This is the single source of truth for the BLE topic table (byte value ->
 characteristic UUID), the service UUID, the application-level fragmentation
 header layout, and the scan-response manufacturer-data layout shared between
@@ -23,6 +27,7 @@ Usage:
 """
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -32,6 +37,7 @@ DEFAULT_SCHEMA = SCRIPT_DIR / "ble_protocol.json"
 GENERATED_NOTICE = (
     "GENERATED FILE - DO NOT EDIT BY HAND.\n"
     "Source of truth: base_station/components/frontend_bluetooth/ble_protocol.json\n"
+    "(topics mirror enum PacketType in base_station/shared_components/flight_com/packets/base.hpp)\n"
     "Regenerate with base_station/components/frontend_bluetooth/gen_ble_protocol.py"
 )
 
@@ -40,7 +46,78 @@ def load_schema(path: Path) -> dict:
     with open(path, "r", encoding="utf-8") as f:
         raw = json.load(f)
     # "//"-prefixed keys are documentation-only comments (JSON has no comment syntax).
-    return {k: v for k, v in raw.items() if not k.startswith("//")}
+    schema = {k: v for k, v in raw.items() if not k.startswith("//")}
+    schema["topicEnum"] = schema["topics"]["enum"]
+    schema["topicEnumInclude"] = schema["topics"]["cppInclude"]
+    schema["topics"] = resolve_topics(schema["topics"], path.parent)
+    return schema
+
+
+def snake_to_camel(name: str) -> str:
+    """SENSOR_UPDATE -> sensorUpdate"""
+    first, *rest = name.lower().split("_")
+    return first + "".join(part.capitalize() for part in rest)
+
+
+def parse_cpp_enum(header: Path, enum_name: str) -> list[tuple[str, int, list[str]]]:
+    """Returns (name, value, doc lines) for every entry of `enum class <enum_name>` in `header`.
+
+    Only handles what an enum body can reasonably contain here: `NAME = <int literal>`,
+    implicit `NAME` (previous value + 1), `///` doc comments and `//` / `/* */` comments.
+    """
+    text = header.read_text(encoding="utf-8")
+    match = re.search(rf"enum\s+class\s+{re.escape(enum_name)}\b[^{{;]*\{{(.*?)\}}", text, re.DOTALL)
+    if not match:
+        raise SystemExit(f"error: enum class {enum_name} not found in {header}")
+    body = re.sub(r"/\*.*?\*/", "", match.group(1), flags=re.DOTALL)
+
+    entries = []
+    doc: list[str] = []
+    next_value = 0
+    for line in body.splitlines():
+        line = line.strip()
+        if line.startswith("///"):
+            doc.append(line[3:].strip())
+            continue
+        line = line.split("//", 1)[0].strip().rstrip(",").strip()
+        if not line:
+            doc = []  # a blank / plain-comment line detaches any preceding doc comment
+            continue
+        entry = re.fullmatch(r"(\w+)\s*(?:=\s*(\w+))?", line)
+        if not entry:
+            raise SystemExit(f"error: can't parse {enum_name} entry {line!r} in {header}")
+        value = int(entry.group(2), 0) if entry.group(2) else next_value
+        entries.append((entry.group(1), value, doc))
+        next_value = value + 1
+        doc = []
+    return entries
+
+
+def resolve_topics(spec: dict, schema_dir: Path) -> list[dict]:
+    """Expands the schema's `topics` reference into one topic per entry of the referenced enum."""
+    header = (schema_dir / spec["sourceHeader"]).resolve()
+    prefix = spec["uuidPrefix"].removeprefix("0x").removeprefix("0X").upper()
+    if not re.fullmatch(r"[0-9A-F]{2}", prefix):
+        raise SystemExit(f"error: uuidPrefix must be a single hex byte, got {spec['uuidPrefix']!r}")
+
+    topics = []
+    for name, value, doc in parse_cpp_enum(header, spec["enum"]):
+        if not 0 <= value <= 0xFF:
+            raise SystemExit(f"error: {spec['enum']}::{name} = {value} does not fit in one byte")
+        topics.append({
+            "name": f"BLE_{name}",
+            "sourceName": name,
+            "value": f"0x{value:02X}",
+            "uuid": f"{prefix}{value:02X}",
+            "caseName": snake_to_camel(name),
+            "doc": doc,
+        })
+    return topics
+
+
+def _doc(topic: dict, indent: str) -> str:
+    """Renders a topic's doc comment lines as `///` comments (valid in C++, Swift and Kotlin)."""
+    return "".join(f"{indent}/// {line}\n" for line in topic["doc"])
 
 
 def _comment(text: str) -> str:
@@ -54,9 +131,14 @@ def render_cpp(schema: dict) -> str:
     company_id_hex = mfg["companyID"].removeprefix("0x").removeprefix("0X")
 
     notice = _comment(GENERATED_NOTICE)
-    enum_entries = "\n".join(f"        {t['name']} = {t['value']}," for t in topics)
+    enum_entries = "\n".join(f"{_doc(t, '        ')}        {t['name']} = {t['value']}," for t in topics)
     notify_entries = "\n".join(f"        {t['name']}," for t in topics)
     uuid_entries = "\n".join(f"        BLE_UUID16_INIT(0x{t['uuid']}), // {t['name']}" for t in topics)
+    packet_type = schema["topicEnum"]
+    to_notify_cases = "\n".join(
+        f"            case {packet_type}::{t['sourceName']}: return {t['name']};" for t in topics)
+    to_packet_cases = "\n".join(
+        f"            case {t['name']}: return {packet_type}::{t['sourceName']};" for t in topics)
 
     # Templates below are emitted flush-left (ignoring this function's own indentation) so
     # they read as plain C++/Swift/Kotlin instead of a wall of per-line .append() calls.
@@ -68,8 +150,11 @@ def render_cpp(schema: dict) -> str:
 // three in sync by editing ble_protocol.json and regenerating, never by hand.
 #include <cstddef>
 #include <cstdint>
+#include <iterator>
+#include <optional>
 
 #include "host/ble_uuid.h"
+#include "{schema['topicEnumInclude']}"
 
 namespace BLETopics {{
     enum NotifyByte : uint8_t {{
@@ -99,6 +184,30 @@ namespace BLETopics {{
             }}
         }}
         return nullptr; // Invalid/unregistered topic
+    }}
+
+    /**
+     * Map a {packet_type} to the topic carrying it.
+     * @return The matching topic, or std::nullopt for a value outside the enum
+     *         (e.g. a {packet_type} cast from an unvalidated wire byte).
+     */
+    inline constexpr std::optional<NotifyByte> toNotifyByte(const {packet_type} type) {{
+        switch (type) {{
+{to_notify_cases}
+        }}
+        return std::nullopt;
+    }}
+
+    /**
+     * Map a topic back to the {packet_type} it carries.
+     * @return The matching {packet_type}, or std::nullopt for a value outside the enum
+     *         (e.g. a NotifyByte cast from an unvalidated TopicType).
+     */
+    inline constexpr std::optional<{packet_type}> toPacketType(const NotifyByte topic) {{
+        switch (topic) {{
+{to_packet_cases}
+        }}
+        return std::nullopt;
     }}
 }}
 
@@ -130,9 +239,9 @@ def render_swift(schema: dict) -> str:
     company_id_hex = mfg["companyID"].removeprefix("0x").removeprefix("0X")
 
     notice = _comment(GENERATED_NOTICE)
-    case_entries = "\n".join(f"    case {t['name']} = {t['value']}" for t in topics)
-    characteristic_cases = "\n".join(f"            case .{t['name']}: return .{t['swiftCase']}" for t in topics)
-    uuid_cases = "\n".join(f'    case {t["swiftCase"]} = "{t["uuid"]}"' for t in topics)
+    case_entries = "\n".join(f"{_doc(t, '    ')}    case {t['name']} = {t['value']}" for t in topics)
+    characteristic_cases = "\n".join(f"            case .{t['name']}: return .{t['caseName']}" for t in topics)
+    uuid_cases = "\n".join(f'{_doc(t, "    ")}    case {t["caseName"]} = "{t["uuid"]}"' for t in topics)
 
     return f"""//
 {notice}
@@ -183,7 +292,10 @@ def render_kotlin(schema: dict) -> str:
     company_id_hex = mfg["companyID"].removeprefix("0x").removeprefix("0X")
 
     notice = _comment(GENERATED_NOTICE)
-    topic_entries = "\n".join(f'    {t["name"]}({t["value"]}u, "{t["uuid"]}"),' for t in topics)
+    topic_entries = "\n".join(f'{_doc(t, "    ")}    {t["name"]}({t["value"]}u, "{t["uuid"]}"),' for t in topics)
+    packet_type = schema["topicEnum"]
+    to_packet_cases = "\n".join(f"            {t['name']} -> {packet_type}.{t['sourceName']}" for t in topics)
+    to_topic_cases = "\n".join(f"        {packet_type}.{t['sourceName']} -> BleTopic.{t['name']}" for t in topics)
 
     return f"""{notice}
 //
@@ -205,7 +317,23 @@ object BleProtocol {{
 
 enum class BleTopic(val value: UByte, val characteristicUUID: String) {{
 {topic_entries}
+    ;
+
+    /** The [{packet_type}] carried by this topic. */
+    val packetType: {packet_type}
+        get() = when (this) {{
+{to_packet_cases}
+        }}
 }}
+
+/**
+ * The [BleTopic] carrying this packet type. Exhaustive on purpose: if the hand-written
+ * [{packet_type}] in FrontendPackets.kt drifts from the C++ enum, this stops compiling.
+ */
+val {packet_type}.bleTopic: BleTopic
+    get() = when (this) {{
+{to_topic_cases}
+    }}
 """
 
 
@@ -213,7 +341,7 @@ def write_or_check(content: str, out_path: Path, check: bool) -> bool:
     """Returns True if content is/was up to date (i.e. no error)."""
     if check:
         if not out_path.exists() or out_path.read_text(encoding="utf-8") != content:
-            print(f"STALE: {out_path} does not match ble_protocol.json - regenerate it", file=sys.stderr)
+            print(f"STALE: {out_path} does not match ble_protocol.json / the mirrored enum - regenerate it", file=sys.stderr)
             return False
         print(f"OK: {out_path} is up to date")
         return True

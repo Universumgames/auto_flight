@@ -3,7 +3,7 @@ FILE(GLOB frontend_bl_srcs "*.cpp")
 idf_component_register(
         SRCS ${frontend_bl_srcs}
         INCLUDE_DIRS "." "${CMAKE_CURRENT_BINARY_DIR}"
-        REQUIRES bt nvs_flash esp_driver_uart freertos flight_data barometer nlohmann-json
+        REQUIRES bt nvs_flash esp_driver_uart freertos barometer nlohmann-json proxy_cache device_id flight_com
 )
 
 # Regenerates build_timestamp.h (BUILD_EPOCH_TIMESTAMP, see BluetoothManager::startAdvertising)
@@ -29,6 +29,7 @@ add_custom_target(frontend_bluetooth_ble_protocol
                 --out-cpp "${CMAKE_CURRENT_BINARY_DIR}/BLETopics.generated.hpp"
         BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/BLETopics.generated.hpp"
         DEPENDS "${CMAKE_CURRENT_LIST_DIR}/ble_protocol.json" "${CMAKE_CURRENT_LIST_DIR}/gen_ble_protocol.py"
+                "${CMAKE_CURRENT_LIST_DIR}/../../shared_components/flight_com/packets/base.hpp"
         COMMENT "Generating BLETopics.generated.hpp from ble_protocol.json"
 )
 add_dependencies(${COMPONENT_LIB} frontend_bluetooth_ble_protocol)
