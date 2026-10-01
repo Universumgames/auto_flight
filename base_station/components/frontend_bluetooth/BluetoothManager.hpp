@@ -8,7 +8,6 @@
 #include "host/ble_uuid.h"
 
 #include "BLETopics.generated.hpp"
-#include "FrontendPackets.hpp"
 
 extern "C" void ble_store_config_init(void);
 
@@ -85,8 +84,8 @@ private:
     int onSVCGattHandler(uint16_t conn_handle, uint16_t attr_handle, ble_gatt_access_ctxt *ctxt, void *arg);
     int onBatterySvcGattHandler(uint16_t conn_handle, uint16_t attr_handle, ble_gatt_access_ctxt *ctxt, void *arg) const;
 
-    std::vector<std::function<void(uint8_t*, int, TopicType)>> dataReceivedCallbacks;
-    void callDataReceivedCallbacks(uint8_t* data, int len, uint16_t attr_handle) const {
+    std::vector<std::function<void(uint8_t*, size_t, TopicType)>> dataReceivedCallbacks;
+    void callDataReceivedCallbacks(uint8_t* data, size_t len, uint16_t attr_handle) const {
         for (const auto& callback : dataReceivedCallbacks) {
             callback(data, len, characteristicsByHandle.at(attr_handle)->topicID);
         }
@@ -154,7 +153,7 @@ public:
      * @param data Pointer to the data to be sent.
      * @param len Length of the data to be sent.
      */
-    void notify(TopicType topic, uint8_t * data, int len);
+    void notify(TopicType topic, uint8_t * data, size_t len);
 
     /**
      * Update and notify connected clients of the base station's own battery level via
@@ -171,8 +170,8 @@ public:
         dataReceivedCallbacks.push_back(callback);
     }
 
-    void addDataWriteCallback(const TopicType topic, const std::function<void(uint8_t*, int, TopicType)>& callback) {
-        dataReceivedCallbacks.emplace_back([callback, topic](uint8_t* data, int len, const TopicType receivedTopic) {
+    void addDataWriteCallback(const TopicType topic, const std::function<void(uint8_t*, size_t, TopicType)>& callback) {
+        dataReceivedCallbacks.emplace_back([callback, topic](uint8_t* data, size_t len, const TopicType receivedTopic) {
             if (receivedTopic == topic) {
                 callback(data, len, receivedTopic);
             }

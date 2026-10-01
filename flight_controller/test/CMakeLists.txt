@@ -8,6 +8,8 @@ include(GoogleTest)
 
 find_package(GTest REQUIRED)
 
+enable_testing()
+
 include(../cmake/idf_compat.cmake)
 
 # ---------------------------------------------------------
@@ -27,7 +29,8 @@ if(NOT nlohmann_json_FOUND)
     FetchContent_MakeAvailable(json)
 endif()
 
-FILE(GLOB_RECURSE test_sources ${CMAKE_SOURCE_DIR}/test/*.*)
+# CONFIGURE_DEPENDS: new test files get picked up on the next build / CLion reload
+file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/test/*.cpp)
 
 file(GLOB COMPONENT_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/components/*
@@ -66,11 +69,10 @@ target_link_libraries(${PROJECT_NAME}
     idf_components
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+# test/test.cpp provides main(), so link plain gtest (not GTest::Main)
+target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GTest::GTest GTest::Main)
-
-gtest_add_tests(TARGET ${PROJECT_NAME})
+gtest_discover_tests(${PROJECT_NAME})
 
 # ---------------------------------------------------------
 # Share all component includes globally

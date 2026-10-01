@@ -13,13 +13,22 @@ typedef std::pair<std::unique_ptr<uint8_t[]>, size_t> SerializedPacket;
 #define SERIALIZE_THIS_PACKET() \
     nlohmann::json j = *this; \
     std::vector<uint8_t> buffer; \
-    nlohmann::json::to_cbor(j, buffer); \
+    try{ \
+        nlohmann::json::to_cbor(j, buffer); \
+    } catch (const std::exception& e) { \
+        ESP_LOGE("BasePacket", "Error serializing packet: %s", e.what()); \
+    } \
     auto packet = std::make_unique<uint8_t[]>(buffer.size()); \
     std::memcpy(packet.get(), buffer.data(), buffer.size()); \
     return {std::move(packet), buffer.size()};
 
 #define DESERIALIZE_TO_THIS_PACKET(packet, len) \
-    nlohmann::json::from_cbor(packet, packet + len).get_to(*this);
+    try { \
+        nlohmann::json j = nlohmann::json::from_cbor(packet, packet + len); \
+        j.get_to(*this); \
+    } catch (const std::exception& e) { \
+        ESP_LOGE("BasePacket", "Error deserializing packet: %s", e.what()); \
+    }
 
 enum class PacketType: uint8_t {
     // sensors
@@ -62,7 +71,13 @@ struct BasePacket : public IBasePacket {
         this->id = packet.id;
     }
 
-    BasePacket(RawSerializedPacket packet, size_t len) : timestamp(), type(PacketType::COMPONENT_STATUS), id(0) {
+    BasePacket(RawSerializedPacket packet, size_t len) : timestamp(), type(PacketType::COMPONENT_STATUS) {
+        for (size_t i = 0; i < len; i++) {
+            printf("%02x ", packet[i]);
+        }
+        printf("\n");
+        printf("\n");
+        printf("\n");
         DESERIALIZE_TO_THIS_PACKET(packet, len);
     }
 
@@ -73,5 +88,12 @@ struct BasePacket : public IBasePacket {
 
     [[nodiscard]] SerializedPacket serialize() const override {
         SERIALIZE_THIS_PACKET();
+    }
+
+private:
+    BasePacket(time_t time, PacketType type, uint32_t id) : timestamp(time), type(type), id(id) {}
+public:
+    static BasePacket nullPacket(uint32_t id, PacketType type) {
+        return {0, type, id};
     }
 };

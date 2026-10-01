@@ -57,7 +57,13 @@ void LoRa_CommunicationClass::processDataPacket(const LoRa_Packet_Internal& head
         std::memcpy(payload.get(), data, header.payloadLength);
         if (header.totalFragments == 1) {
             ReceivedPacket receivedPacket{
-                .header = header,
+                .header = {
+                .type = header.type,
+                    .senderId = {header.senderId[0], header.senderId[1], header.senderId[2], header.senderId[3]},
+                    .messageId = header.messageId,
+                    .totalFragments = header.totalFragments,
+                    .payloadLength = header.payloadLength,
+                },
                 .payload = std::move(payload),
             };
             WITH_MUTEX(receivedPacketsMutex) {

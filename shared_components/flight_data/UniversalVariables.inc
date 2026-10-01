@@ -15,6 +15,7 @@ FLIGHT_VAR_UNIVERSAL(pressure,                 Pressure,                 float, 
 FLIGHT_VAR_UNIVERSAL(barometerConnectionState, BarometerConnectionState, ConnectionState,  BaseBarometerConnectionState, PlaneBarometerConnectionState)
 FLIGHT_VAR_UNIVERSAL(gpsConnectionState,       GPSConnectionState,       ConnectionState,  BaseGPSConnectionState,       PlaneGPSConnectionState)
 FLIGHT_VAR_UNIVERSAL(batteryPercentage,        BatteryPercentage,        int,              BaseBatteryPercentage,        PlaneBatteryPercentage)
+FLIGHT_VAR_UNIVERSAL(batteryConnectionState,   BatteryConnectionState,   ConnectionState,  BaseBatteryConnectionState,   PlaneBatteryConnectionState)
 
 // Variables that only exist on planes; sourceId == BASE_ID reports/discards `initialValue`.
 // FLIGHT_VAR_UNIVERSAL_PLANE_ONLY(name, Name, type, initialValue, PlaneName)

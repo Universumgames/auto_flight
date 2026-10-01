@@ -218,6 +218,7 @@ bool LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
         if (!sendRawPacket(fragmentHeader, data + offset, true)) {
             return false;
         }
+        vTaskDelay(pdMS_TO_TICKS(LORA_SEND_DELAY));
     }
     return true;
 }
@@ -242,8 +243,19 @@ std::vector<LoRa_CommunicationClass::LoRa_Packet_Internal> LoRa_CommunicationCla
 }
 
 LoRa_CommunicationClass::ReceivedPacket LoRa_CommunicationClass::joinData(ReceivedFragmentsCache& fragmentCache) const {
-    ReceivedPacket result{};
-    result.header = fragmentCache.header;
+    ReceivedPacket result{
+        .header = {
+            .type = fragmentCache.header.type,
+            .senderId = {
+                fragmentCache.header.senderId[0], fragmentCache.header.senderId[1],
+                fragmentCache.header.senderId[2], fragmentCache.header.senderId[3]
+            },
+            .messageId = fragmentCache.header.messageId,
+            .totalFragments = fragmentCache.header.totalFragments,
+            .payloadLength = 0, // will be calculated after joining
+        },
+        .payload = nullptr
+    };
 
     if (fragmentCache.fragments.empty()) {
         ESP_LOGW(TAG_LORA, "No fragments found for messageId=%d", fragmentCache.header.messageId);
@@ -286,8 +298,8 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
     // Helper: wait for ACK with timeout
     auto waitForAckId = [&](uint8_t msgId, time_t timeout) -> bool {
         vTaskDelay(pdMS_TO_TICKS(10)); // small initial
-        time_t start = time(nullptr);
-        while ((time(nullptr) - start) < timeout) {
+        TickType_t start = xTaskGetTickCount();
+        while (pdTICKS_TO_MS(xTaskGetTickCount() - start) < timeout * 100) {
             bool ackReceived = false;
             WITH_MUTEX(ackMutex) {
                 // ACK received when msgId is no longer in outstandingAcks
@@ -302,7 +314,8 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
     };
 
     // Helper: send a buffer with retry logic. Returns true if (no ACK required) or ack received.
-    auto sendBufferWithRetries = [&](const std::unique_ptr<uint8_t[]>& buf, size_t len, uint8_t msgId, PacketType type) -> bool {
+    auto sendBufferWithRetries = [&](const std::unique_ptr<uint8_t[]>& buf, size_t len, uint8_t msgId,
+                                     PacketType type) -> bool {
         if (len == 0) return true;
         if (len > LORA_MAX_PACKET_SIZE) {
             ESP_LOGE(TAG_LORA, "Packet too large: %zu > %zu", len, LORA_MAX_PACKET_SIZE);
@@ -323,7 +336,7 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
             }
 
             if (!requireAck) return true;
-            if (waitForAckId(msgId, LORA_ACK_TIMEOUT)) return true;
+            if (waitForAckId(msgId, LORA_ACK_TIMEOUT * (attempts + 1))) return true;
 
             ESP_LOGW(TAG_LORA, "No ACK for msgId=%d type=%d (attempt %d)", msgId, type, attempts);
             attempts++;

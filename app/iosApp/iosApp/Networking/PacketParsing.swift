@@ -44,51 +44,50 @@ enum PacketParsing {
     }
 
     static func applyPositionPacket(
-        _ packet: wire.PositionUpdatePacket
+        _ packet: wire.PositionUpdate
     ) {
         if packet.sourceId == SharedLogic.BASE_ID {
             AppState.shared.basePosition = packet.position
-            AppState.shared.basePositionUpdateTime = packet.positionUpdateTime
+            AppState.shared.basePositionUpdateTime = packet.timestamp
         } else {
             let plane = self.plane(AppState.shared, id: packet.sourceId)
             plane.position = packet.position
-            plane.positionUpdateTime = packet.positionUpdateTime
+            plane.positionUpdateTime = packet.timestamp
         }
     }
 
-    static func applyConnectionPacket(_ current: AppState, _ packet: wire.ConnectionUpdatePacket) {
+    static func applyConnectionPacket(
+        _ current: AppState,
+        _ packet: wire.ComponentStatus
+    ) {
         if packet.sourceId == SharedLogic.BASE_ID{
-            current.gpsConnectionBase = toConnectionState(packet.gpsConnection)
+            current.gpsConnectionBase = toConnectionState(packet.gps)
             current.barometerConnectionBase = toConnectionState(packet.barometer)
         }else {
             let plane = self.plane(current, id: packet.sourceId)
             plane.connectionState = .CONNECTED
-            plane.gpsConnection = toConnectionState(packet.gpsConnection)
+            plane.gpsConnection = toConnectionState(packet.gps)
             plane.barometerConnection = toConnectionState(packet.barometer)
-            plane.motorComConnection = toConnectionState(packet.motorCom)
+            plane.motorComConnection = toConnectionState(packet.motorControl)
             plane.accelerometerConnection = toConnectionState(packet.accelerometer)
             plane.manualOverride = packet.manualOverride
             plane.flightState = toFlightState(packet.flightState)
         }
     }
 
-    static func applySensorPacket(_ current: AppState, _ packet: wire.SensorPacket) {
+    static func applySensorPacket(
+        _ current: AppState,
+        _ packet: wire.SensorUpdate
+    ) {
         if packet.sourceId == SharedLogic.BASE_ID {
-            current.pressureBase = Double(packet.barometerPressure)
+            current.pressureBase = Double(packet.pressure)
+            current.batteryPercentageBase = Int(packet.batteryPercent)
         }else{
             let plane = self.plane(current, id: packet.sourceId)
-            plane.pressure = Double(packet.barometerPressure)
-            plane.calculatedAltitude = Double(packet.calculatedAltitude)
-            plane.heading = Double(packet.headingPlane)
-        }
-    }
-
-    static func applyBatteryStatusPacket(_ current: AppState, _ packet: wire.BatteryStatusPacket) {
-        if packet.sourceId == SharedLogic.BASE_ID{
-            current.batteryPercentageBase = Int(packet.batteryPercentage)
-        }else{
-            let plane = self.plane(current, id: packet.sourceId)
-            plane.batteryPercentage = Int(packet.batteryPercentage)
+            plane.pressure = Double(packet.pressure)
+            //plane.calculatedAltitude = Double(packet.altitude)
+            plane.heading = Double(packet.heading)
+            plane.batteryPercentage = Int(packet.batteryPercent)
         }
     }
     
@@ -103,7 +102,7 @@ enum PacketParsing {
     
     static func applyAreaDefinePacket(
         _ current: AppState,
-        _ packet: wire.AreaDefinePacket
+        _ packet: wire.PlannedAreaPacket
     ){
         if packet.sourceId == SharedLogic.BASE_ID{
             return

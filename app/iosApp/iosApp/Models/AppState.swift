@@ -44,10 +44,10 @@ final class AppState {
 extension AppState {
     var baseStationItem: ConnectionItem {
         let gpsLabel = basePosition.map {
-            _ in String(localized: "connection.items.subtask.gpsPositionWithCoords")
+            basePosition in String(localized: "connection.items.subtask.gpsPositionWithCoords \(String(format: "%.6f", basePosition.latitude)), \(String(format: "%.6f", basePosition.longitude))")
         } ?? String(localized: "connection.items.subtask.gpsPosition")
         let barometerLabel = pressureBase != 0
-            ? String(localized: "connection.items.subtask.barometerWithPressure")
+            ? String(localized: "connection.items.subtask.barometerWithPressure \(String(format: "%.2f", pressureBase))")
             : String(localized: "connection.items.subtask.barometer")
 
         return ConnectionItem(

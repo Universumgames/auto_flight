@@ -272,7 +272,7 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
             self.reassemblyBuffers[uuid] = buffer
             guard let complete else { return }
 
-            print("Received notification from \(uuid)")
+            //print("Received notification from \(uuid)")
             // Satisfy a pending awaitNextUpdate(_:), if any.
             if let completion = self.readCompletions.removeValue(forKey: uuid) {
                 completion(complete)

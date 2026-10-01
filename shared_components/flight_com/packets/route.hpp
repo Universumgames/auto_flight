@@ -32,8 +32,8 @@ struct PlannedRouteConfirmationPacket: public BasePacket {
 
 struct PlannedRoutePacket : public BasePacket {
     std::vector<Coordinate> route;
-    RouteSettings settings;
-    size_t hash;
+    RouteSettings settings{};
+    size_t hash{};
 
     std::string toString() override {
         return "PlannedRoutePacket{base=" + BasePacket::toString() + ", routeSize=" + std::to_string(route.size()) + "}";
@@ -43,18 +43,19 @@ struct PlannedRoutePacket : public BasePacket {
         this->hash = packet.hash;
         this->route = std::vector(packet.route);
         this->settings = packet.settings;
+        this->hash = packet.hash;
     }
 
-    PlannedRoutePacket(RawSerializedPacket packet, size_t len) : BasePacket() {
+    PlannedRoutePacket(const RawSerializedPacket packet, const size_t len) : BasePacket() {
         DESERIALIZE_TO_THIS_PACKET(packet, len);
     }
 
-    PlannedRoutePacket(time_t time = 0, std::vector<Coordinate> route = {}, RouteSettings settings = {}) : BasePacket(time, PacketType::PLANNED_ROUTE),
-                                                                  route(std::move(route)), settings(settings) {}
+    PlannedRoutePacket(const time_t time = 0, std::vector<Coordinate> route = {}, const RouteSettings settings = {}, const size_t hash = 0) : BasePacket(time, PacketType::PLANNED_ROUTE),
+                                                                  route(std::move(route)), settings(settings), hash(hash) {}
 
     [[nodiscard]] SerializedPacket serialize() const override {
         SERIALIZE_THIS_PACKET();
     }
 
-    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(PlannedRoutePacket, BasePacket, route, settings)
+    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(PlannedRoutePacket, BasePacket, route, settings, hash)
 };

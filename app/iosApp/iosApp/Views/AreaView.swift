@@ -74,7 +74,7 @@ struct AreaView: View {
                         areaPoints: polygon,
                         settings: routeSettings
                     )
-                appState.planes[planeId]!.wizardStep.append(.ROUTE_APPROVAL)
+                appState.planes[planeId]?.wizardStep.append(.ROUTE_APPROVAL)
             }
         }
     }

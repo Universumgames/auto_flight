@@ -12,7 +12,7 @@
 
 #define I2C_ADDRESS 0x42
 
-#define I2C_RESET_TIMEOUT_MILLIS (1000L)
+#define I2C_RESET_TIMEOUT_MILLIS (5000L)
 
 #define DEBUG_I2C // serial logging if I2C messages arrive
 #define DEBUG_PLANE // no need for SBUS channel 5, manual override is always disabled
@@ -27,12 +27,23 @@ Servo servo4;
 
 int lastServoValues[4] = {0, 0, 0, 0};
 
-int desiredValueServo1 = 0;
-int desiredValueServo2 = 0;
-int desiredValueServo3 = 0;
-int desiredValueServo4 = 0;
+// written from the TWI ISR
+volatile int8_t desiredValueServo1 = 0;
+volatile int8_t desiredValueServo2 = 0;
+volatile int8_t desiredValueServo3 = 0;
+volatile int8_t desiredValueServo4 = 0;
 
-unsigned long lastI2CMessageTime = 0;
+volatile unsigned long lastI2CMessageTime = 0;
+volatile bool i2cFrameReceived = false;
+volatile bool i2cFrameDropped = false;
+volatile int lastI2CByteCount = 0;
+
+// SDA held low longer than this (a 100 kHz byte takes ~0.1 ms) means a
+// transaction got cut off and the TWI slave is waiting for clocks that
+// will never come -> reinit TWI to release the line.
+#define I2C_SDA_STUCK_MILLIS 25
+
+unsigned long sdaLowSince = 0;
 
 // Returns normalized channel value in [-100, 100]
 int getChannel(int channel) {
@@ -63,33 +74,24 @@ void I2C_TxHandler() {
     Wire.write(isManualOverride());
 }
 
+// Runs inside the TWI ISR: interrupts are disabled, so millis() is frozen.
+// Never block here (no Wire.readBytes - its timeout relies on millis() and
+// would spin forever on a short frame, e.g. when the master resets mid-write
+// or probes with a 0-byte write) and don't print to Serial.
 void I2C_RxHandler(int numBytes) {
-#if defined(DEBUG_I2C) && !defined(VIRTUAL_DEBUG)
-    Serial.print("I2C_RxHandler called with ");
-    Serial.print(numBytes);
-    Serial.println(" bytes");
-#endif
-
-    char buf[4];
-    int bytesRead = Wire.readBytes(buf, 4);
-    if (bytesRead != 4) {
-        // Handle error: not enough bytes received
+    lastI2CByteCount = numBytes;
+    if (numBytes != 4) {
+        // incomplete/foreign frame: drain and drop it
+        while (Wire.available()) Wire.read();
+        i2cFrameDropped = true;
         return;
     }
-    desiredValueServo1 = (int8_t)buf[0];
-    desiredValueServo2 = (int8_t)buf[1];
-    desiredValueServo3 = (int8_t)buf[2];
-    desiredValueServo4 = (int8_t)buf[3];
-#if defined(DEBUG_I2C) || defined(VIRTUAL_DEBUG)
-    Serial.print(desiredValueServo1);
-    Serial.print(",");
-    Serial.print(desiredValueServo2);
-    Serial.print(",");
-    Serial.print(desiredValueServo3);
-    Serial.print(",");
-    Serial.println(desiredValueServo4);
-#endif
+    desiredValueServo1 = (int8_t)Wire.read();
+    desiredValueServo2 = (int8_t)Wire.read();
+    desiredValueServo3 = (int8_t)Wire.read();
+    desiredValueServo4 = (int8_t)Wire.read();
     lastI2CMessageTime = millis();
+    i2cFrameReceived = true;
 }
 
 // Hardware I2C pins on the Nano (ATmega328) - not remappable.
@@ -97,24 +99,47 @@ void I2C_RxHandler(int numBytes) {
 #define PIN_I2C_SCL A5
 
 void setupI2C() {
-    // clear internal I2C state machine
+    // Disabling TWEN resets the TWI state machine and hands SDA/SCL back to
+    // the port registers (inputs), releasing anything the slave was driving.
     Wire.end();
-
-    // Wire.end() disables the TWI peripheral but doesn't guarantee SDA/SCL
-    // come back up cleanly - if the AVR was clock-stretching (holding SCL
-    // low) at the moment TWEN got cleared, the pin can stay low afterward.
-    // Explicitly release both lines to inputs with pull-ups so we never hand
-    // a stuck-low line back to a bus shared with other devices (magnetometer
-    // etc.) while TWI is offline.
-    pinMode(PIN_I2C_SDA, INPUT_PULLUP);
-    pinMode(PIN_I2C_SCL, INPUT_PULLUP);
-    delay(10);
+    TWCR = 0;
+    pinMode(PIN_I2C_SDA, INPUT);
+    pinMode(PIN_I2C_SCL, INPUT);
 
     Wire.begin(I2C_ADDRESS);
     Wire.onRequest(I2C_TxHandler);
     Wire.onReceive(I2C_RxHandler);
 
+    noInterrupts();
     lastI2CMessageTime = millis();
+    interrupts();
+    sdaLowSince = 0;
+}
+
+// Watches for a stuck bus / dead master and reinitializes TWI if needed.
+void checkI2C() {
+    unsigned long now = millis();
+
+    // PINC reflects the real pin level even while TWI owns the pin
+    if (digitalRead(PIN_I2C_SDA) == LOW) {
+        if (sdaLowSince == 0) sdaLowSince = now ? now : 1;
+        else if (now - sdaLowSince > I2C_SDA_STUCK_MILLIS) {
+#if defined(DEBUG_I2C) && !defined(VIRTUAL_DEBUG)
+            Serial.println("I2C: SDA stuck low, resetting TWI");
+#endif
+            setupI2C();
+            return;
+        }
+    } else {
+        sdaLowSince = 0;
+    }
+
+    noInterrupts();
+    unsigned long last = lastI2CMessageTime;
+    interrupts();
+    if (now - last > I2C_RESET_TIMEOUT_MILLIS) {
+        setupI2C();
+    }
 }
 
 // value in [-100, 100]
@@ -174,8 +199,27 @@ void loop() {
     writeServo(servo3, channel3, 3);
     writeServo(servo4, channel4, 4);
 
-    if (lastI2CMessageTime < (millis() - I2C_RESET_TIMEOUT_MILLIS)) {
-        setupI2C();
+#if defined(DEBUG_I2C) || defined(VIRTUAL_DEBUG)
+    if (i2cFrameReceived) {
+        i2cFrameReceived = false;
+        Serial.print(channel1);
+        Serial.print(",");
+        Serial.print(channel2);
+        Serial.print(",");
+        Serial.print(channel3);
+        Serial.print(",");
+        Serial.println(channel4);
     }
+#endif
+#if defined(DEBUG_I2C) && !defined(VIRTUAL_DEBUG)
+    if (i2cFrameDropped) {
+        i2cFrameDropped = false;
+        Serial.print("I2C: dropped frame with ");
+        Serial.print(lastI2CByteCount);
+        Serial.println(" bytes");
+    }
+#endif
+
+    checkI2C();
 }
 #endif

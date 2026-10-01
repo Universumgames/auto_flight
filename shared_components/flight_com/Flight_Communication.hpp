@@ -31,7 +31,7 @@ public:
     static std::unique_ptr<BasePacket> decodePacket(const uint8_t* data, std::size_t len);
     static std::unique_ptr<BasePacket> decodePacket(const LoRaPacket& packet);
 
-private:
+//private:
     /**
      * @brief Send a packet over LoRa communication.
      * @param packet The packet to send.

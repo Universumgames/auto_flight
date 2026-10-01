@@ -15,6 +15,9 @@
 #include <cstring>
 #include <cstdio>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+
 const char* BluetoothManager::TAG_BLUETOOTH_MANAGER = "BluetoothManager";
 
 static BluetoothManager* instanceBT = nullptr;
@@ -512,7 +515,7 @@ void BluetoothManager::init(const std::vector<Characteristic>& characteristics) 
     nimble_port_freertos_init(ble_spp_server_host_task);
 }
 
-void BluetoothManager::notify(TopicType topic, uint8_t* data, int len) {
+void BluetoothManager::notify(TopicType topic, uint8_t* data, size_t len) {
     const auto it = characteristicsByTopic.find(topic);
     if (it == characteristicsByTopic.end()) {
         ESP_LOGE(TAG_BLUETOOTH_MANAGER, "notify: unknown topic %d", topic);
@@ -707,3 +710,5 @@ void BluetoothManager::populateBatteryService() {
         .characteristics = battery_svc_gatt_chrs
     };
 }
+
+#pragma GCC diagnostic pop

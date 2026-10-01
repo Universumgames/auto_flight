@@ -16,4 +16,8 @@ namespace DeviceId {
      * cached for the lifetime of the process.
      */
     uint32_t get32();
+
+    uint32_t getBaseStationId();
+
+    const uint32_t BASE_STATION = getBaseStationId();
 }

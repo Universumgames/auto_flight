@@ -10,13 +10,22 @@ import kotlinx.serialization.Serializable
  * surface - see the doc comment on [FrontendPackets] there for why: Swift Export only ever
  * bridges `public` declarations, so `internal` is enough to keep kotlinx-serialization-core out
  * of its view, same as `private` would, without forcing everything into one file.
+ *
+ * Every packet struct repeats the `BasePacket` fields (`timestamp`, `type`, `id`) since
+ * NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE flattens them into the same CBOR map. `type` is kept as
+ * its raw integer value here (the C++ enum has no string mapping); decoding throws on an unknown
+ * or mismatching value, which the `runCatching` in [FrontendPackets] turns into `null`.
  */
 
 @Serializable
 internal data class CoordinateWire(val latitude: Double, val longitude: Double)
 
 internal fun Coordinate.toWire() = CoordinateWire(latitude, longitude)
-internal fun CoordinateWire.toPublic() = Coordinate(latitude, longitude)
+/** Throws on a NaN component, so the enclosing packet decodes to `null` as a whole. */
+internal fun CoordinateWire.toPublic(): Coordinate {
+    require(!latitude.isNaN() && !longitude.isNaN()) { "coordinate has NaN component: $this" }
+    return Coordinate(latitude, longitude)
+}
 
 @Serializable
 internal enum class ConnectionStateWire {
@@ -75,131 +84,185 @@ internal fun RouteAlgorithmWire.toPublic() = when (this) {
 @Serializable
 internal data class RouteSettingsWire(
     val routeAlgorithm: RouteAlgorithmWire,
-    val overlapPercentage: UInt,
+    val overlapPercentage: Int,
 )
 
 internal fun RouteSettings.toWire() = RouteSettingsWire(routeAlgorithm.toWire(), overlapPercentage)
 internal fun RouteSettingsWire.toPublic() = RouteSettings(routeAlgorithm.toPublic(), overlapPercentage)
 
+private fun packetTypeOf(wireValue: Int) =
+    requireNotNull(PacketType.fromWireValue(wireValue)) { "unknown packet type $wireValue" }
+
+private fun Int.requireType(expected: PacketType) =
+    require(this == expected.wireValue) { "expected packet type ${expected.wireValue}, got $this" }
+
 @Serializable
-internal data class BaseUpdatePacketWire(
-    val sourceId: UInt
+internal data class BasePacketWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
 )
 
-internal fun BaseUpdatePacket.toWire() = BaseUpdatePacketWire(sourceId)
-internal fun BaseUpdatePacketWire.toPublic() = BaseUpdatePacket(sourceId)
+internal fun BasePacket.toWire() = BasePacketWire(timestamp, type.wireValue, id)
+internal fun BasePacketWire.toPublic() = BasePacket(type = packetTypeOf(type), id = id, timestamp = timestamp)
 
 @Serializable
-internal data class PositionUpdatePacketWire (
-    val sourceId: UInt,
+internal data class SensorUpdateWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
+    val pressure: Float,
+    val heading: Int,
+    val batteryPercent: Int,
+)
+
+internal fun SensorUpdate.toWire() = SensorUpdateWire(
+    timestamp = timestamp,
+    type = type.wireValue,
+    id = id,
+    pressure = pressure,
+    heading = heading,
+    batteryPercent = batteryPercent,
+)
+
+internal fun SensorUpdateWire.toPublic(): SensorUpdate {
+    type.requireType(PacketType.SENSOR_UPDATE)
+    return SensorUpdate(
+        timestamp = timestamp,
+        id = id,
+        pressure = pressure,
+        heading = heading,
+        batteryPercent = batteryPercent,
+    )
+}
+
+@Serializable
+internal data class PositionUpdateWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
     val position: CoordinateWire,
-    val positionUpdateTime: Long
 )
 
-internal fun PositionUpdatePacket.toWire() = PositionUpdatePacketWire(
-    sourceId = sourceId,
-    position = position.toWire(),
-    positionUpdateTime = positionUpdateTime
-)
+internal fun PositionUpdate.toWire() = PositionUpdateWire(timestamp, type.wireValue, id, position.toWire())
 
-internal fun PositionUpdatePacketWire.toPublic() = PositionUpdatePacket(
-    sourceId = sourceId,
-    position = position.toPublic(),
-    positionUpdateTime = positionUpdateTime
-)
+internal fun PositionUpdateWire.toPublic(): PositionUpdate {
+    type.requireType(PacketType.POSITION)
+    return PositionUpdate(id = id, position = position.toPublic(), timestamp = timestamp)
+}
 
 @Serializable
-internal data class ConnectionUpdatePacketWire(
-    val sourceId: UInt,
-    val gpsConnection: ConnectionStateWire,
+internal data class ComponentStatusWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
+    val gps: ConnectionStateWire,
     val barometer: ConnectionStateWire,
-    val motorCom: ConnectionStateWire,
+    val motorControl: ConnectionStateWire,
     val magnetometer: ConnectionStateWire,
     val accelerometer: ConnectionStateWire,
     val manualOverride: Boolean,
-    val flightState: FlightStateWire
+    val flightState: FlightStateWire,
 )
 
-internal fun ConnectionUpdatePacket.toWire() = ConnectionUpdatePacketWire(
-    sourceId = sourceId,
-    gpsConnection = gpsConnection.toWire(),
+internal fun ComponentStatus.toWire() = ComponentStatusWire(
+    timestamp = timestamp,
+    type = type.wireValue,
+    id = id,
+    gps = gps.toWire(),
     barometer = barometer.toWire(),
-    motorCom = motorCom.toWire(),
+    motorControl = motorControl.toWire(),
     magnetometer = magnetometer.toWire(),
     accelerometer = accelerometer.toWire(),
     manualOverride = manualOverride,
     flightState = flightState.toWire(),
 )
 
-internal fun ConnectionUpdatePacketWire.toPublic() = ConnectionUpdatePacket(
-    sourceId = sourceId,
-    gpsConnection = gpsConnection.toPublic(),
-    barometer = barometer.toPublic(),
-    motorCom = motorCom.toPublic(),
-    magnetometer = magnetometer.toPublic(),
-    accelerometer = accelerometer.toPublic(),
-    manualOverride = manualOverride,
-    flightState = flightState.toPublic(),
-)
+internal fun ComponentStatusWire.toPublic(): ComponentStatus {
+    type.requireType(PacketType.COMPONENT_STATUS)
+    return ComponentStatus(
+        timestamp = timestamp,
+        id = id,
+        gps = gps.toPublic(),
+        barometer = barometer.toPublic(),
+        motorControl = motorControl.toPublic(),
+        magnetometer = magnetometer.toPublic(),
+        accelerometer = accelerometer.toPublic(),
+        manualOverride = manualOverride,
+        flightState = flightState.toPublic(),
+    )
+}
 
-/** Unlike [AreaDefinePacket] this carries no `type` field at all - it's not tagged on the wire. */
 @Serializable
-internal data class AreaDefinePacketWire(
-    val sourceId: UInt,
+internal data class PlannedAreaPacketWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
     val shape: List<CoordinateWire>,
     val settings: RouteSettingsWire,
 )
 
-internal fun AreaDefinePacket.toWire() = AreaDefinePacketWire(sourceId, shape.map { it.toWire() }, settings.toWire())
-internal fun AreaDefinePacketWire.toPublic() = AreaDefinePacket(sourceId = sourceId, shape = shape.map { it.toPublic() }, settings.toPublic())
+internal fun PlannedAreaPacket.toWire() =
+    PlannedAreaPacketWire(timestamp, type.wireValue, id, shape.map { it.toWire() }, settings.toWire())
+
+internal fun PlannedAreaPacketWire.toPublic(): PlannedAreaPacket {
+    type.requireType(PacketType.PLANNED_AREA)
+    return PlannedAreaPacket(id = id, shape = shape.map { it.toPublic() }, settings = settings.toPublic(), timestamp = timestamp)
+}
 
 @Serializable
-internal data class SensorPacketWire(
-    val sourceId: UInt,
-    val barometerPressure: Float,
-    val calculatedAltitude: Float,
-    val headingPlane: Int,
+internal data class FlightHistoryPacketWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
+    val history: List<CoordinateWire>,
 )
 
-internal fun SensorPacket.toWire() = SensorPacketWire(
-    sourceId = sourceId,
-    barometerPressure = barometerPressure,
-    calculatedAltitude = calculatedAltitude,
-    headingPlane = headingPlane,
-)
+internal fun FlightHistoryPacket.toWire() =
+    FlightHistoryPacketWire(timestamp, type.wireValue, id, history.map { it.toWire() })
 
-internal fun SensorPacketWire.toPublic() = SensorPacket(
-    sourceId = sourceId,
-    barometerPressure = barometerPressure,
-    calculatedAltitude = calculatedAltitude,
-    headingPlane = headingPlane
-)
+internal fun FlightHistoryPacketWire.toPublic(): FlightHistoryPacket {
+    type.requireType(PacketType.ROUTE_HISTORY)
+    return FlightHistoryPacket(id = id, history = history.map { it.toPublic() }, timestamp = timestamp)
+}
 
-@Serializable
-internal data class BatteryStatusPacketWire(
-    val sourceId: UInt,
-    val batteryPercentage: Int
-)
-
-internal fun BatteryStatusPacket.toWire() = BatteryStatusPacketWire(sourceId = sourceId, batteryPercentage = batteryPercentage)
-internal fun BatteryStatusPacketWire.toPublic() = BatteryStatusPacket(sourceId, batteryPercentage)
-
+/** `hash` is optional since the C++ side currently doesn't serialize it, see [PlannedRoutePacket]. */
 @Serializable
 internal data class PlannedRoutePacketWire(
-    val sourceId: UInt,
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
     val route: List<CoordinateWire>,
     val settings: RouteSettingsWire,
-    val hash: ULong,
+    val hash: ULong = 0u,
 )
 
-internal fun PlannedRoutePacket.toWire() = PlannedRoutePacketWire(sourceId, route.map { it.toWire() }, settings.toWire(), hash)
-internal fun PlannedRoutePacketWire.toPublic() = PlannedRoutePacket(sourceId, route.map { it.toPublic() }, settings.toPublic(), hash)
+internal fun PlannedRoutePacket.toWire() =
+    PlannedRoutePacketWire(timestamp, type.wireValue, id, route.map { it.toWire() }, settings.toWire(), hash)
+
+internal fun PlannedRoutePacketWire.toPublic(): PlannedRoutePacket {
+    type.requireType(PacketType.PLANNED_ROUTE)
+    return PlannedRoutePacket(
+        id = id,
+        route = route.map { it.toPublic() },
+        settings = settings.toPublic(),
+        hash = hash,
+        timestamp = timestamp,
+    )
+}
 
 @Serializable
 internal data class PlannedRouteConfirmationPacketWire(
-    val sourceId: UInt,
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
     val hash: ULong,
 )
 
-internal fun PlannedRouteConfirmationPacket.toWire() = PlannedRouteConfirmationPacketWire(sourceId, hash)
-internal fun PlannedRouteConfirmationPacketWire.toPublic() = PlannedRouteConfirmationPacket(sourceId, hash)
+internal fun PlannedRouteConfirmationPacket.toWire() =
+    PlannedRouteConfirmationPacketWire(timestamp, type.wireValue, id, hash)
+
+internal fun PlannedRouteConfirmationPacketWire.toPublic(): PlannedRouteConfirmationPacket {
+    type.requireType(PacketType.PLANNED_ROUTE_CONFIRMATION)
+    return PlannedRouteConfirmationPacket(id = id, hash = hash, timestamp = timestamp)
+}

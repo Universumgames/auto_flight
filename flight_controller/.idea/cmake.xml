@@ -3,6 +3,7 @@
   <component name="CMakeSharedSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug-ESP-IDF" ENABLED="true" GENERATION_DIR="build" CONFIG_NAME="Debug" TOOLCHAIN_NAME="ESP-IDF" GENERATION_OPTIONS="-DIDF_TARGET=esp32s3" />
+      <configuration PROFILE_NAME="Debug-Native-Tests" ENABLED="true" GENERATION_DIR="cmake-build-native" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Default" GENERATION_OPTIONS="-DFC_NATIVE_TESTS=ON" />
     </configurations>
   </component>
 </project>

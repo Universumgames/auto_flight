@@ -15,6 +15,7 @@ FLIGHT_VAR_PLANE(planeMagnetometerConnectionState,  PlaneMagnetometerConnectionS
 FLIGHT_VAR_PLANE(planeAccelerometerConnectionState, PlaneAccelerometerConnectionState, ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(planeManualOverride,               PlaneManualOverride,               bool,             false,                       CONNECTION, {})
 FLIGHT_VAR_PLANE(planeBatteryPercentage,            PlaneBatteryPercentage,            int,              0,                           BATTERY,    {})
+FLIGHT_VAR_PLANE(planeBatteryConnectionState,       PlaneBatteryConnectionState,       ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(plannedRoute,                      PlannedRoute,                      RouteData,        RouteData{},                 ROUTE,      {})
 FLIGHT_VAR_PLANE(flightRoute,                       FlightRoute,                       FlightRoute,      FlightRoute{},               HISTORY,    {})
 FLIGHT_VAR_PLANE(plannedArea,                       PlannedArea,                       AreaData,         AreaData{},                  AREA,       { info.plannedRoute.clear(); })

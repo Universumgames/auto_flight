@@ -63,7 +63,14 @@ private:
     };
 
     struct ReceivedPacket {
-        LoRa_Packet_Internal header;
+        struct SimpleHeader {
+            PacketType type;
+            uint8_t senderId[4];
+            uint8_t messageId;
+            uint8_t totalFragments;
+            size_t payloadLength;
+        };
+        SimpleHeader header;
         std::unique_ptr<uint8_t[]> payload;
     };
 
@@ -88,12 +95,14 @@ private:
     const char* TAG_LORA = "LoRa_Communication";
 
     static constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
+    static constexpr TickType_t LORA_SEND_DELAY = pdMS_TO_TICKS(10);
     /// ACK timeout in seconds
     static constexpr time_t LORA_ACK_TIMEOUT = 2;
     static constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second
     static constexpr int LORA_MAX_SEND_RETRIES = 3;
 
-    static constexpr size_t SENT_PACKET_HISTORY_MAX = 100; // max number of sent packets to remember for isOwnPacket() detection
+    static constexpr size_t SENT_PACKET_HISTORY_MAX = 100;
+    // max number of sent packets to remember for isOwnPacket() detection
 
 public:
     ~LoRa_CommunicationClass() = delete;
@@ -135,6 +144,10 @@ public:
      */
     [[nodiscard]] float getLastPacketSNR() const;
 
+    /**
+     * Registers a callback function to be invoked when a new LoRa packet is received
+     * @param callback The callback function to register; it takes a const reference to a LoRaPacket, data pointer is valid only during the callback execution
+     */
     void registerReceivePacketCallback(std::function<void(const LoRaPacket&)> callback);
 
 private:
