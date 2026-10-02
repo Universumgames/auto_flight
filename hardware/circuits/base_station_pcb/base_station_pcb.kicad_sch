@@ -417,7 +417,7 @@
 							)
 						)
 					)
-					(number "1"
+					(number "18"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -435,7 +435,7 @@
 							)
 						)
 					)
-					(number "2"
+					(number "17"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -453,7 +453,7 @@
 							)
 						)
 					)
-					(number "3"
+					(number "16"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -471,7 +471,7 @@
 							)
 						)
 					)
-					(number "4"
+					(number "15"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -489,7 +489,7 @@
 							)
 						)
 					)
-					(number "5"
+					(number "14"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -507,7 +507,7 @@
 							)
 						)
 					)
-					(number "6"
+					(number "13"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -525,7 +525,7 @@
 							)
 						)
 					)
-					(number "7"
+					(number "12"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -543,7 +543,7 @@
 							)
 						)
 					)
-					(number "8"
+					(number "11"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -561,7 +561,7 @@
 							)
 						)
 					)
-					(number "9"
+					(number "10"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -579,7 +579,7 @@
 							)
 						)
 					)
-					(number "10"
+					(number "9"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -597,7 +597,7 @@
 							)
 						)
 					)
-					(number "11"
+					(number "8"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -615,7 +615,7 @@
 							)
 						)
 					)
-					(number "12"
+					(number "7"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -633,7 +633,7 @@
 							)
 						)
 					)
-					(number "13"
+					(number "6"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -651,7 +651,7 @@
 							)
 						)
 					)
-					(number "14"
+					(number "5"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -669,7 +669,7 @@
 							)
 						)
 					)
-					(number "15"
+					(number "4"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -687,7 +687,7 @@
 							)
 						)
 					)
-					(number "16"
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -705,7 +705,7 @@
 							)
 						)
 					)
-					(number "17"
+					(number "2"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -723,7 +723,7 @@
 							)
 						)
 					)
-					(number "18"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2041,58 +2041,58 @@
 				)
 			)
 		)
-		(pin "1"
+		(pin "18"
 			(uuid "c1e93696-19f5-4f69-8e3a-2aacb5f50314")
 		)
-		(pin "2"
+		(pin "17"
 			(uuid "524dbacd-f190-4628-8d39-bf4f4ed9e923")
 		)
-		(pin "3"
+		(pin "16"
 			(uuid "89b4c5ef-9727-4133-9bc5-ccb70815da68")
 		)
-		(pin "4"
+		(pin "15"
 			(uuid "bf1c6970-6229-4e66-a73f-de45aaa57da2")
 		)
-		(pin "5"
+		(pin "14"
 			(uuid "025f47ed-8396-4aab-8c36-1358c2edff4d")
 		)
-		(pin "6"
+		(pin "13"
 			(uuid "6f034381-5cf9-47ad-af79-e3b0174fc4bd")
 		)
-		(pin "7"
+		(pin "12"
 			(uuid "54c577d3-25aa-4c4a-8b5e-70462698d797")
 		)
-		(pin "8"
+		(pin "11"
 			(uuid "ed2f2b3d-b8c8-44cd-b3fe-e822ddd87653")
 		)
-		(pin "9"
+		(pin "10"
 			(uuid "88d49235-7e7a-49e8-854a-17137f28632e")
 		)
-		(pin "10"
+		(pin "9"
 			(uuid "62331c8a-af60-4ff8-9f15-3a1f620cc422")
 		)
-		(pin "11"
+		(pin "8"
 			(uuid "78e9c0e6-382c-4dfe-bd25-3cd2bcaaf3a0")
 		)
-		(pin "12"
+		(pin "7"
 			(uuid "82adf442-ebd9-4ce1-a6f7-5ed89640faa8")
 		)
-		(pin "13"
+		(pin "6"
 			(uuid "49fbd1a7-de1c-4e82-8b55-d44beb95f0e7")
 		)
-		(pin "14"
+		(pin "5"
 			(uuid "d02d5065-1568-4465-8107-080a5c749af8")
 		)
-		(pin "15"
+		(pin "4"
 			(uuid "6b4f1a28-317f-45a3-821f-2b1701b6dd7e")
 		)
-		(pin "16"
+		(pin "3"
 			(uuid "c7433fbd-4948-4819-90e0-2b789be506a3")
 		)
-		(pin "17"
+		(pin "2"
 			(uuid "494d391d-1044-41ba-b2f8-3e2d30fe478d")
 		)
-		(pin "18"
+		(pin "1"
 			(uuid "ef6a1db2-9b76-44fc-82c2-81a519d01a1d")
 		)
 		(pin "19"

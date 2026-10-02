@@ -231,7 +231,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix pcb issues">
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="add more pcb descriptions">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -411,23 +412,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0239094736243959" />
-      <entry key="MS500" value="1.7046239749785013" />
-      <entry key="S2" value="2.947135546371729" />
-      <entry key="S5" value="3.5066918631725863" />
-      <entry key="S10" value="3.7391145464360696" />
-      <entry key="S30" value="3.9096359479214797" />
-      <entry key="S60" value="3.9543767089980455" />
-      <entry key="M2" value="3.9770767994943492" />
-      <entry key="M5" value="3.9908037863175894" />
-      <entry key="M10" value="3.995397390816621" />
-      <entry key="M15" value="3.9969305923599503" />
-      <entry key="M30" value="3.9984647951982506" />
-      <entry key="H1" value="3.999247569129073" />
-      <entry key="H2" value="4.018535998457024" />
-      <entry key="H4" value="4.831316529159734" />
-      <entry key="D1" value="51.66379601260628" />
-      <entry key="W1" value="1054.7707320221775" />
+      <entry key="MS100" value="1.0000029782042263" />
+      <entry key="MS500" value="1.1041786966578806" />
+      <entry key="S2" value="2.4344605558129726" />
+      <entry key="S5" value="3.9403487474896286" />
+      <entry key="S10" value="4.814225081132875" />
+      <entry key="S30" value="5.563324738480636" />
+      <entry key="S60" value="5.775991839836433" />
+      <entry key="M2" value="5.886538247620962" />
+      <entry key="M5" value="5.9542601964926565" />
+      <entry key="M10" value="5.977070470252783" />
+      <entry key="M15" value="5.984700363322768" />
+      <entry key="M30" value="5.9923762884281855" />
+      <entry key="H1" value="6.007616907249291" />
+      <entry key="H2" value="6.2130759285601584" />
+      <entry key="H4" value="7.11652797140898" />
+      <entry key="D1" value="46.47753132863911" />
+      <entry key="W1" value="1024.6369038748549" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -437,35 +438,35 @@
       <entry key="S10" value="0.0" />
       <entry key="S30" value="0.0" />
       <entry key="S60" value="0.0" />
-      <entry key="M2" value="2.263661052743758E-198" />
-      <entry key="M5" value="2.9167654539617746E-79" />
-      <entry key="M10" value="1.5157301344158278E-39" />
-      <entry key="M15" value="2.634411346136477E-26" />
-      <entry key="M30" value="4.586739762553157E-13" />
-      <entry key="H1" value="1.9153758744238873E-6" />
-      <entry key="H2" value="0.003977750624212434" />
-      <entry key="H4" value="0.2125006464498905" />
-      <entry key="D1" value="13.224578740922064" />
-      <entry key="W1" value="312.216041172482" />
+      <entry key="M2" value="1.1376064094558467E-274" />
+      <entry key="M5" value="8.818074429843622E-110" />
+      <entry key="M10" value="8.334086645123805E-55" />
+      <entry key="M15" value="1.768103453321512E-36" />
+      <entry key="M30" value="3.757648411361432E-18" />
+      <entry key="H1" value="5.482265118788733E-9" />
+      <entry key="H2" value="2.1280928035373518E-4" />
+      <entry key="H4" value="0.04915149826855381" />
+      <entry key="D1" value="10.361228807283103" />
+      <entry key="W1" value="301.5203010335179" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9960678029408446" />
-      <entry key="MS500" value="1.6949658228301068" />
-      <entry key="S2" value="2.9419296606583276" />
-      <entry key="S5" value="3.504032797212795" />
-      <entry key="S10" value="3.7376613358015605" />
-      <entry key="S30" value="3.9091208995145736" />
-      <entry key="S60" value="3.9541151388433526" />
-      <entry key="M2" value="3.976944986062943" />
-      <entry key="M5" value="3.990750811950112" />
-      <entry key="M10" value="3.9953708619499255" />
-      <entry key="M15" value="3.996912897172278" />
-      <entry key="M30" value="3.9984559429631807" />
-      <entry key="H1" value="3.999245055058517" />
-      <entry key="H2" value="4.022509304484334" />
-      <entry key="H4" value="5.043761508570514" />
-      <entry key="D1" value="64.88796282616401" />
-      <entry key="W1" value="1366.9852790429427" />
+      <entry key="MS100" value="0.9726578441375381" />
+      <entry key="MS500" value="1.09804107766905" />
+      <entry key="S2" value="2.4309053846160413" />
+      <entry key="S5" value="3.9380064167666844" />
+      <entry key="S10" value="4.812786383521222" />
+      <entry key="S30" value="5.562768649116904" />
+      <entry key="S60" value="5.775702926752882" />
+      <entry key="M2" value="5.886390965832432" />
+      <entry key="M5" value="5.954200591400422" />
+      <entry key="M10" value="5.977040551097049" />
+      <entry key="M15" value="5.984680391215074" />
+      <entry key="M30" value="5.992366289277155" />
+      <entry key="H1" value="6.007611897253731" />
+      <entry key="H2" value="6.213285997839513" />
+      <entry key="H4" value="7.1656653425538" />
+      <entry key="D1" value="56.83843718937368" />
+      <entry key="W1" value="1326.1557619127561" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -2016,7 +2017,8 @@
     <MESSAGE value=".idea updates" />
     <MESSAGE value="fix types" />
     <MESSAGE value="fix pcb issues" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix pcb issues" />
+    <MESSAGE value="add more pcb descriptions" />
+    <option name="LAST_COMMIT_MESSAGE" value="add more pcb descriptions" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
