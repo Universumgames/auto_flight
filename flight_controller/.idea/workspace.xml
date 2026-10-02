@@ -231,19 +231,10 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment=".idea updates">
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Localizable.xcstrings" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Localizable.xcstrings" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/BluetoothManager.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/BluetoothManager.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.hpp" afterDir="false" />
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix types">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/plane_pcb.kicad_pro" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../resources/data_sheet_magnetometer_QMC5883P.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../resources/data_sheet_magnetometer_QMC5883P.pdf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -398,6 +389,9 @@
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.hpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/qmc5883p.c" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/base_controller/BaseController.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/frontend_bluetooth/BluetoothManager.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/frontend_bluetooth/FrontendBL.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/proxy_cache/Cache.cpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/proxy_cache/Cache.hpp" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/flight_controller/components/flight_controller/FlightController.cpp" root0="SKIP_HIGHLIGHTING" />
@@ -419,61 +413,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.8022147626184876E-31" />
-      <entry key="MS500" value="7.098436475734866E-7" />
-      <entry key="S2" value="0.03167993155447485" />
-      <entry key="S5" value="0.46068496407052095" />
-      <entry key="S10" value="1.7534711474270623" />
-      <entry key="S30" value="5.868152213416819" />
-      <entry key="S60" value="8.449851671453976" />
-      <entry key="M2" value="10.603640915420366" />
-      <entry key="M5" value="12.746075438793822" />
-      <entry key="M10" value="13.796153932168066" />
-      <entry key="M15" value="14.443448464680804" />
-      <entry key="M30" value="16.822258140529904" />
-      <entry key="H1" value="20.98327865273528" />
-      <entry key="H2" value="25.33026725411092" />
-      <entry key="H4" value="30.18569303483987" />
-      <entry key="D1" value="85.45972748612897" />
-      <entry key="W1" value="1146.3563065742967" />
+      <entry key="MS100" value="1.004334255758172" />
+      <entry key="MS500" value="1.3428284810004727" />
+      <entry key="S2" value="2.040357343677843" />
+      <entry key="S5" value="2.4998352902730305" />
+      <entry key="S10" value="2.778133105270946" />
+      <entry key="S30" value="3.284439269924336" />
+      <entry key="S60" value="3.569015338965052" />
+      <entry key="M2" value="3.761642815546767" />
+      <entry key="M5" value="3.898451741750728" />
+      <entry key="M10" value="3.9481363611540705" />
+      <entry key="M15" value="3.9664218322294533" />
+      <entry key="M30" value="4.13925467961656" />
+      <entry key="H1" value="6.0170156743449645" />
+      <entry key="H2" value="11.866109945094632" />
+      <entry key="H4" value="20.8238738255272" />
+      <entry key="D1" value="81.52761264629771" />
+      <entry key="W1" value="1134.5149613027097" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.000000000397039" />
-      <entry key="MS500" value="1.0132018696801564" />
-      <entry key="S2" value="1.4104679886954277" />
-      <entry key="S5" value="1.997043892967426" />
-      <entry key="S10" value="2.395690544768742" />
-      <entry key="S30" value="2.842997244381979" />
-      <entry key="S60" value="3.4295647954668884" />
-      <entry key="M2" value="4.53288166650949" />
-      <entry key="M5" value="6.102765757954295" />
-      <entry key="M10" value="6.933212024547981" />
-      <entry key="M15" value="7.259253888815716" />
-      <entry key="M30" value="7.613919821729033" />
-      <entry key="H1" value="7.803799672249729" />
-      <entry key="H2" value="8.029039643944401" />
-      <entry key="H4" value="9.547139764295286" />
-      <entry key="D1" value="24.93450116793339" />
-      <entry key="W1" value="341.82259028927336" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="4.178756257611104E-122" />
+      <entry key="S60" value="4.157902613791566E-61" />
+      <entry key="M2" value="1.5783089963523487E-30" />
+      <entry key="M5" value="4.001785081919862E-12" />
+      <entry key="M10" value="5.614330976552715E-6" />
+      <entry key="M15" value="6.306683055774589E-4" />
+      <entry key="M30" value="0.07096803970094581" />
+      <entry key="H1" value="0.7534134470576234" />
+      <entry key="H2" value="2.4947511401854108" />
+      <entry key="H4" value="5.321757662779518" />
+      <entry key="D1" value="22.62026316599311" />
+      <entry key="W1" value="337.0990050764758" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.799196617587706E-9" />
-      <entry key="MS500" value="0.017963735143260873" />
-      <entry key="S2" value="0.5317837216566498" />
-      <entry key="S5" value="1.7655457083176536" />
-      <entry key="S10" value="3.6612720261890535" />
-      <entry key="S30" value="8.459960246797625" />
-      <entry key="S60" value="11.708225936226542" />
-      <entry key="M2" value="15.010527705534656" />
-      <entry key="M5" value="18.773251639379055" />
-      <entry key="M10" value="20.684444943789213" />
-      <entry key="M15" value="21.67084014398651" />
-      <entry key="M30" value="24.419188762735487" />
-      <entry key="H1" value="28.7782966435441" />
-      <entry key="H2" value="33.354812063156984" />
-      <entry key="H4" value="39.7303837081488" />
-      <entry key="D1" value="110.39345254775117" />
-      <entry key="W1" value="1488.177261083656" />
+      <entry key="MS100" value="0.9568246131394501" />
+      <entry key="MS500" value="1.3307784513730672" />
+      <entry key="S2" value="2.0358440672511353" />
+      <entry key="S5" value="2.497576909895933" />
+      <entry key="S10" value="2.7768709078383607" />
+      <entry key="S30" value="3.28395001169488" />
+      <entry key="S60" value="3.5687528779179933" />
+      <entry key="M2" value="3.7615056617595646" />
+      <entry key="M5" value="3.898395211861291" />
+      <entry key="M10" value="3.9481133724596402" />
+      <entry key="M15" value="3.967030619063548" />
+      <entry key="M30" value="4.210054774289246" />
+      <entry key="H1" value="6.769576494276349" />
+      <entry key="H2" value="14.359462063591984" />
+      <entry key="H4" value="26.14426511549032" />
+      <entry key="D1" value="104.14717153794221" />
+      <entry key="W1" value="1471.6123531751703" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -2022,7 +2016,8 @@
     <MESSAGE value="add basic serial cli" />
     <MESSAGE value="fix unit tests and test development in clion" />
     <MESSAGE value=".idea updates" />
-    <option name="LAST_COMMIT_MESSAGE" value=".idea updates" />
+    <MESSAGE value="fix types" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix types" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
