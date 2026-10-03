@@ -526,7 +526,7 @@
       "netlist": "",
       "plot": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "../plane_pcb.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
