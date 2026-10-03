@@ -1,0 +1,1349 @@
+[
+  {
+    "title": "PCB1",
+    "module_id_ref": "TwoLayerRectanglePCBModuleID",
+    "model_index": 5799,
+    "kind": "board",
+    "properties": {
+      "layers": "2",
+      "width": "71.09160877614077",
+      "height": "93.717611609663"
+    },
+    "part_source": "core_part_no_fzp",
+    "schematic": {
+      "pos": null,
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 53.3427,
+        "y": -2.93017
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": []
+  },
+  {
+    "title": "U1",
+    "module_id_ref": "SparkFun-DiscreteSemi-TRANSISTOR_NPN_2-PTH",
+    "model_index": 13879,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 332.562,
+        "y": 179.562
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 195.255,
+        "y": 14.3552
+      },
+      "rotation_deg": 90.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "E",
+        "description": "E"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "C",
+        "description": "C"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "B",
+        "description": "B"
+      }
+    ]
+  },
+  {
+    "title": "Part2",
+    "module_id_ref": "I2C_level_converter_444e27d4b4b231371fe2ccfc428902c1_1",
+    "model_index": 16098,
+    "kind": "part",
+    "properties": {},
+    "part_source": "manual_override",
+    "schematic": {
+      "pos": {
+        "x": -49.5,
+        "y": 166.5
+      },
+      "rotation_deg": 270.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 139.5,
+        "y": 148.5
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector4",
+        "name": "HV1",
+        "description": "HV1"
+      },
+      {
+        "connector_id": "connector2",
+        "name": "GND",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector9",
+        "name": "GND",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector5",
+        "name": "HV2",
+        "description": "HV2"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "HV",
+        "description": "HV"
+      },
+      {
+        "connector_id": "connector7",
+        "name": "LV1",
+        "description": "LV1"
+      },
+      {
+        "connector_id": "connector6",
+        "name": "LV2",
+        "description": "LV2"
+      },
+      {
+        "connector_id": "connector8",
+        "name": "LV",
+        "description": "LV"
+      }
+    ]
+  },
+  {
+    "title": "GPS Modul",
+    "module_id_ref": "GT-U8-GPS-module_1",
+    "model_index": 17653,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 265.05,
+        "y": 319.05
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 287.137,
+        "y": 223.962
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector4",
+        "name": "Pin 5",
+        "description": "PPS"
+      },
+      {
+        "connector_id": "connector2",
+        "name": "Pin 3",
+        "description": "TX"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "Pin 4",
+        "description": "RX"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "Pin 1",
+        "description": "VCC"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 2",
+        "description": "GND"
+      }
+    ]
+  },
+  {
+    "title": "Part4",
+    "module_id_ref": "adafruit_2d459a7ab102a5fe885fef0d2637801e_1_32",
+    "model_index": 18269,
+    "kind": "part",
+    "properties": {
+      "part number": "1746"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": -153.0,
+        "y": 306.0
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 398.7,
+        "y": 150.75
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector13",
+        "name": "VIN",
+        "description": "VIN"
+      },
+      {
+        "connector_id": "connector16",
+        "name": "SDA",
+        "description": "SDA"
+      },
+      {
+        "connector_id": "connector18",
+        "name": "RDY",
+        "description": "RDY"
+      },
+      {
+        "connector_id": "connector17",
+        "name": "SCL",
+        "description": "SCL"
+      },
+      {
+        "connector_id": "connector15",
+        "name": "3.3V",
+        "description": "3.3V"
+      },
+      {
+        "connector_id": "connector14",
+        "name": "GND",
+        "description": "GND"
+      }
+    ]
+  },
+  {
+    "title": "BMP280",
+    "module_id_ref": "bmp180_breakout",
+    "model_index": 24812,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": -125.692,
+        "y": 504.24
+      },
+      "rotation_deg": 180.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 340.397,
+        "y": 144.355
+      },
+      "rotation_deg": 90.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector9",
+        "name": "SCL",
+        "description": "SCL"
+      },
+      {
+        "connector_id": "connector5",
+        "name": "VCC",
+        "description": "VCC"
+      },
+      {
+        "connector_id": "connector6",
+        "name": "GND",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector10",
+        "name": "SDA",
+        "description": "SDA"
+      }
+    ]
+  },
+  {
+    "title": "Part3",
+    "module_id_ref": "MPU6050_GY521_782354e339f672575bb20992ece4ab1b_9",
+    "model_index": 18217,
+    "kind": "part",
+    "properties": {},
+    "part_source": "manual_override",
+    "schematic": {
+      "pos": {
+        "x": -135.0,
+        "y": 405.198
+      },
+      "rotation_deg": 180.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 481.5,
+        "y": 148.713
+      },
+      "rotation_deg": 0.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector4",
+        "name": "XDA",
+        "description": "XDA"
+      },
+      {
+        "connector_id": "connector2",
+        "name": "SCL",
+        "description": "SCL"
+      },
+      {
+        "connector_id": "connector5",
+        "name": "XCL",
+        "description": "XCL"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "SDA",
+        "description": "SDA"
+      },
+      {
+        "connector_id": "connector7",
+        "name": "INT",
+        "description": "INT"
+      },
+      {
+        "connector_id": "connector6",
+        "name": "AD0",
+        "description": "AD0"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "VCC",
+        "description": "VCC"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "GND",
+        "description": "GND"
+      }
+    ]
+  },
+  {
+    "title": "SBUS Empf\u00e4nger",
+    "module_id_ref": "Dagu_DGServo_9g_header_male",
+    "model_index": 34929,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 306.008,
+        "y": 108.383
+      },
+      "rotation_deg": 270.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 137.7,
+        "y": 2.7
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "pulse",
+        "description": "pulse"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "gnd",
+        "description": "ground"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Vcc",
+        "description": "Vcc"
+      }
+    ]
+  },
+  {
+    "title": "J1",
+    "module_id_ref": "sbus_receiver_d42a1b7f2dae5e4bdc8f8fe0cce01852_1",
+    "model_index": 39454,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 305.617,
+        "y": 26.992
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 101.7,
+        "y": 2.7
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "signal",
+        "description": "signal"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "gnd",
+        "description": "ground"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Vcc",
+        "description": "Vcc"
+      }
+    ]
+  },
+  {
+    "title": "J2",
+    "module_id_ref": "sbus_receiver_d42a1b7f2dae5e4bdc8f8fe0cce01852_1",
+    "model_index": 39457,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 278.617,
+        "y": 26.992
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 92.7,
+        "y": 2.7
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "signal",
+        "description": "signal"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "gnd",
+        "description": "ground"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Vcc",
+        "description": "Vcc"
+      }
+    ]
+  },
+  {
+    "title": "J3",
+    "module_id_ref": "sbus_receiver_d42a1b7f2dae5e4bdc8f8fe0cce01852_1",
+    "model_index": 39460,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 251.617,
+        "y": 26.992
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 83.7,
+        "y": 2.7
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "signal",
+        "description": "signal"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "gnd",
+        "description": "ground"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Vcc",
+        "description": "Vcc"
+      }
+    ]
+  },
+  {
+    "title": "J4",
+    "module_id_ref": "sbus_receiver_d42a1b7f2dae5e4bdc8f8fe0cce01852_1",
+    "model_index": 39463,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 224.617,
+        "y": 26.992
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 74.7,
+        "y": 2.7
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "signal",
+        "description": "signal"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "gnd",
+        "description": "ground"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Vcc",
+        "description": "Vcc"
+      }
+    ]
+  },
+  {
+    "title": "ADS1115",
+    "module_id_ref": "ADS1115_0c5b9a9f966b84ee9b687c538575febb_1",
+    "model_index": 41941,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": -161.943,
+        "y": 572.949
+      },
+      "rotation_deg": 180.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 195.75,
+        "y": 117.0
+      },
+      "rotation_deg": 180.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector9",
+        "name": "GND",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector12",
+        "name": "ADDR",
+        "description": "ADDR"
+      },
+      {
+        "connector_id": "connector16",
+        "name": "A2",
+        "description": "A2"
+      },
+      {
+        "connector_id": "connector10",
+        "name": "SCL",
+        "description": "SCL"
+      },
+      {
+        "connector_id": "connector8",
+        "name": "VDD",
+        "description": "VDD"
+      },
+      {
+        "connector_id": "connector15",
+        "name": "A1",
+        "description": "A1"
+      },
+      {
+        "connector_id": "connector11",
+        "name": "SDA",
+        "description": "SDA"
+      },
+      {
+        "connector_id": "connector14",
+        "name": "A0",
+        "description": "A0"
+      }
+    ]
+  },
+  {
+    "title": "R2",
+    "module_id_ref": "5BandResistorModuleID",
+    "model_index": 48416,
+    "kind": "part",
+    "properties": {
+      "tolerance": "\u00b15%",
+      "resistance": "220",
+      "pin spacing": "400 mil",
+      "power": "0.25W"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 287.562,
+        "y": 176.13
+      },
+      "rotation_deg": 90.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 149.625,
+        "y": 23.13
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector0",
+        "name": "Pin 0",
+        "description": "Pin0"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 1",
+        "description": "Pin 1"
+      }
+    ]
+  },
+  {
+    "title": "R1",
+    "module_id_ref": "5BandResistorModuleID",
+    "model_index": 48482,
+    "kind": "part",
+    "properties": {
+      "tolerance": "\u00b15%",
+      "resistance": "220",
+      "pin spacing": "400 mil",
+      "power": "0.25W"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 260.562,
+        "y": 239.13
+      },
+      "rotation_deg": 90.0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 203.625,
+        "y": 32.13
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector0",
+        "name": "Pin 0",
+        "description": "Pin0"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 1",
+        "description": "Pin 1"
+      }
+    ]
+  },
+  {
+    "title": "R3",
+    "module_id_ref": "5BandResistorModuleID",
+    "model_index": 48803,
+    "kind": "part",
+    "properties": {
+      "tolerance": "\u00b15%",
+      "resistance": "4.7k",
+      "pin spacing": "400 mil",
+      "power": "0.25W"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 17.5627,
+        "y": 122.13
+      },
+      "rotation_deg": 180.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 104.625,
+        "y": 167.13
+      },
+      "rotation_deg": 90.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector0",
+        "name": "Pin 0",
+        "description": "Pin0"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 1",
+        "description": "Pin 1"
+      }
+    ]
+  },
+  {
+    "title": "R4",
+    "module_id_ref": "5BandResistorModuleID",
+    "model_index": 48825,
+    "kind": "part",
+    "properties": {
+      "tolerance": "\u00b15%",
+      "resistance": "4.7k",
+      "pin spacing": "400 mil",
+      "power": "0.25W"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 44.5627,
+        "y": 257.13
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 95.625,
+        "y": 167.13
+      },
+      "rotation_deg": 90.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector0",
+        "name": "Pin 0",
+        "description": "Pin0"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 1",
+        "description": "Pin 1"
+      }
+    ]
+  },
+  {
+    "title": "R5",
+    "module_id_ref": "5BandResistorModuleID",
+    "model_index": 48837,
+    "kind": "part",
+    "properties": {
+      "tolerance": "\u00b15%",
+      "resistance": "4.7k",
+      "pin spacing": "400 mil",
+      "power": "0.25W"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 44.5627,
+        "y": 338.13
+      },
+      "rotation_deg": 180.0,
+      "mirrored": true
+    },
+    "pcb": {
+      "pos": {
+        "x": 194.625,
+        "y": 167.13
+      },
+      "rotation_deg": 90.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector0",
+        "name": "Pin 0",
+        "description": "Pin0"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 1",
+        "description": "Pin 1"
+      }
+    ]
+  },
+  {
+    "title": "R6",
+    "module_id_ref": "5BandResistorModuleID",
+    "model_index": 48927,
+    "kind": "part",
+    "properties": {
+      "tolerance": "\u00b15%",
+      "resistance": "4.7k",
+      "pin spacing": "400 mil",
+      "power": "0.25W"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": -108.438,
+        "y": 284.13
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 185.625,
+        "y": 167.13
+      },
+      "rotation_deg": 90.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector0",
+        "name": "Pin 0",
+        "description": "Pin0"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "Pin 1",
+        "description": "Pin 1"
+      }
+    ]
+  },
+  {
+    "title": "Mod1",
+    "module_id_ref": "Heltec_WiFi_LoRa_32_V3.2",
+    "model_index": 51152,
+    "kind": "part",
+    "properties": {
+      "part number": "HTIT-WB32LA"
+    },
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 115.926,
+        "y": 305.935
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 61.3124,
+        "y": 219.269
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector23",
+        "name": "pin 24",
+        "description": "U0TXD, GPIO43, CP2102_RX"
+      },
+      {
+        "connector_id": "connector34",
+        "name": "pin 35",
+        "description": "GPIO20, U1CTS, ADC2_CH8, CLK_OUT1, USB_D+"
+      },
+      {
+        "connector_id": "connector4",
+        "name": "pin 5",
+        "description": "GPIO3, ADC1_CH2, Touch3"
+      },
+      {
+        "connector_id": "connector24",
+        "name": "pin 25",
+        "description": "RST, RST_SW"
+      },
+      {
+        "connector_id": "connector2",
+        "name": "pin 3",
+        "description": "GPIO5, ADC1_CH4, Touch5"
+      },
+      {
+        "connector_id": "connector9",
+        "name": "pin 10",
+        "description": "GPIO40, MTDO"
+      },
+      {
+        "connector_id": "connector35",
+        "name": "pin 36",
+        "description": "GPIO19, U1RST, ADC2_CH9, CLK_OUT2, USB_D-"
+      },
+      {
+        "connector_id": "connector33",
+        "name": "pin 34",
+        "description": "GPIO21, OLED_RST"
+      },
+      {
+        "connector_id": "connector5",
+        "name": "pin 6",
+        "description": "GPIO2, ADC1_CH1, Touch2"
+      },
+      {
+        "connector_id": "connector19",
+        "name": "pin 20",
+        "description": "5V"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "pin 4",
+        "description": "GPIO4, ADC1_CH3, Touch4"
+      },
+      {
+        "connector_id": "connector7",
+        "name": "pin 8",
+        "description": "GPIO38, FSPIWP, SUBSPIWP"
+      },
+      {
+        "connector_id": "connector26",
+        "name": "pin 27",
+        "description": "GPIO36, SPII07, FSPICLK, SUBSPICLK, Vext_Ctrl"
+      },
+      {
+        "connector_id": "connector12",
+        "name": "pin 13",
+        "description": "GPIO45"
+      },
+      {
+        "connector_id": "connector6",
+        "name": "pin 7",
+        "description": "GPIO1, ADC1_CH0, Vbat_Read, Touch1"
+      },
+      {
+        "connector_id": "connector30",
+        "name": "pin 31",
+        "description": "GPIO47"
+      },
+      {
+        "connector_id": "connector13",
+        "name": "pin 14",
+        "description": "GPIO46"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "pin 1",
+        "description": "GPIO7, ADC1_CH6, Touch7"
+      },
+      {
+        "connector_id": "connector16",
+        "name": "pin 17",
+        "description": "3V3"
+      },
+      {
+        "connector_id": "connector18",
+        "name": "pin 19",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector10",
+        "name": "pin 11",
+        "description": "GPIO41, MTDI"
+      },
+      {
+        "connector_id": "connector28",
+        "name": "pin 29",
+        "description": "GPIO34, SPII05, FSPICS0, SUBSPICS0"
+      },
+      {
+        "connector_id": "connector31",
+        "name": "pin 32",
+        "description": "GPIO48"
+      },
+      {
+        "connector_id": "connector29",
+        "name": "pin 30",
+        "description": "GPIO33, SPII04, FSPIHD, SUBSPIHD"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "pin 2",
+        "description": "GPIO6, ADC1_CH5, Touch6"
+      },
+      {
+        "connector_id": "connector8",
+        "name": "pin 9",
+        "description": "GPIO39, MTCK"
+      },
+      {
+        "connector_id": "connector20",
+        "name": "pin 21",
+        "description": "Ve, Vext"
+      },
+      {
+        "connector_id": "connector22",
+        "name": "pin 23",
+        "description": "U0RXD, GPIO44, CP2102_TX"
+      },
+      {
+        "connector_id": "connector17",
+        "name": "pin 18",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector27",
+        "name": "pin 28",
+        "description": "GPIO35, SPII06, FSPID, SUBSPID, LED_Write"
+      },
+      {
+        "connector_id": "connector25",
+        "name": "pin 26",
+        "description": "GPIO0, USER_SW"
+      },
+      {
+        "connector_id": "connector32",
+        "name": "pin 33",
+        "description": "GPIO26, SPICS1"
+      },
+      {
+        "connector_id": "connector15",
+        "name": "pin 16",
+        "description": "3V3"
+      },
+      {
+        "connector_id": "connector21",
+        "name": "pin 22",
+        "description": "Ve, Vext"
+      },
+      {
+        "connector_id": "connector11",
+        "name": "pin 12",
+        "description": "GPIO42, MTMS"
+      },
+      {
+        "connector_id": "connector14",
+        "name": "pin 15",
+        "description": "GPIO37, SPIDQS, FSPIQ, SUBSPIQ, ADC_Ctrl"
+      }
+    ]
+  },
+  {
+    "title": "I2C Bus",
+    "module_id_ref": "SparkFun-Connectors-M04-JST-PTH",
+    "model_index": 53356,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 89.9737,
+        "y": 535.49
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 174.75,
+        "y": 319.034
+      },
+      "rotation_deg": 180.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "3",
+        "description": "3"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "4",
+        "description": "4"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "1",
+        "description": "1"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "2",
+        "description": "2"
+      }
+    ]
+  },
+  {
+    "title": "Arduino Nano",
+    "module_id_ref": "Arduino Nano3(fix)",
+    "model_index": 13600,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 108.0,
+        "y": 99.0001
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 112.47,
+        "y": 4.4699
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector23",
+        "name": "D5",
+        "description": "D5"
+      },
+      {
+        "connector_id": "connector44",
+        "name": "3V3",
+        "description": "3V3"
+      },
+      {
+        "connector_id": "connector34",
+        "name": "5V",
+        "description": "5V"
+      },
+      {
+        "connector_id": "connector24",
+        "name": "D6",
+        "description": "D6"
+      },
+      {
+        "connector_id": "connector40",
+        "name": "A2",
+        "description": "A2"
+      },
+      {
+        "connector_id": "connector35",
+        "name": "A7",
+        "description": "A7"
+      },
+      {
+        "connector_id": "connector42",
+        "name": "A0",
+        "description": "A0"
+      },
+      {
+        "connector_id": "connector33",
+        "name": "RESET",
+        "description": "RESET"
+      },
+      {
+        "connector_id": "connector19",
+        "name": "GND",
+        "description": "GND"
+      },
+      {
+        "connector_id": "connector38",
+        "name": "A4",
+        "description": "A4"
+      },
+      {
+        "connector_id": "connector26",
+        "name": "D8",
+        "description": "D8"
+      },
+      {
+        "connector_id": "connector37",
+        "name": "A5",
+        "description": "A5"
+      },
+      {
+        "connector_id": "connector43",
+        "name": "AREF",
+        "description": "AREF"
+      },
+      {
+        "connector_id": "connector30",
+        "name": "D12/MISO",
+        "description": "D12/MISO"
+      },
+      {
+        "connector_id": "connector16",
+        "name": "D1/TX",
+        "description": "D1/TX"
+      },
+      {
+        "connector_id": "connector31",
+        "name": "VIN",
+        "description": "VIN"
+      },
+      {
+        "connector_id": "connector18",
+        "name": "RESET",
+        "description": "RESET"
+      },
+      {
+        "connector_id": "connector41",
+        "name": "A1",
+        "description": "A1"
+      },
+      {
+        "connector_id": "connector28",
+        "name": "D10",
+        "description": "D10"
+      },
+      {
+        "connector_id": "connector45",
+        "name": "D13/SCK",
+        "description": "D13/SCK"
+      },
+      {
+        "connector_id": "connector29",
+        "name": "D11/MOSI",
+        "description": "D11/MOSI"
+      },
+      {
+        "connector_id": "connector20",
+        "name": "D2",
+        "description": "D2"
+      },
+      {
+        "connector_id": "connector39",
+        "name": "A3",
+        "description": "A3"
+      },
+      {
+        "connector_id": "connector22",
+        "name": "D4",
+        "description": "D4"
+      },
+      {
+        "connector_id": "connector17",
+        "name": "D0/RX",
+        "description": "D0/RX"
+      },
+      {
+        "connector_id": "connector27",
+        "name": "D9",
+        "description": "D9"
+      },
+      {
+        "connector_id": "connector36",
+        "name": "A6",
+        "description": "A6"
+      },
+      {
+        "connector_id": "connector25",
+        "name": "D7",
+        "description": "D7"
+      },
+      {
+        "connector_id": "connector21",
+        "name": "D3",
+        "description": "D3"
+      },
+      {
+        "connector_id": "connector32",
+        "name": "GND",
+        "description": "GND"
+      }
+    ]
+  },
+  {
+    "title": "Battery Balancer",
+    "module_id_ref": "SparkFun-Connectors-M04-JST-PTH",
+    "model_index": 62558,
+    "kind": "part",
+    "properties": {},
+    "part_source": "embedded_or_fzpz",
+    "schematic": {
+      "pos": {
+        "x": 139.214,
+        "y": 494.67
+      },
+      "rotation_deg": 0,
+      "mirrored": false
+    },
+    "pcb": {
+      "pos": {
+        "x": 256.884,
+        "y": 135.986
+      },
+      "rotation_deg": 270.0,
+      "mirrored": false
+    },
+    "pins": [
+      {
+        "connector_id": "connector2",
+        "name": "3",
+        "description": "3"
+      },
+      {
+        "connector_id": "connector3",
+        "name": "4",
+        "description": "4"
+      },
+      {
+        "connector_id": "connector0",
+        "name": "1",
+        "description": "1"
+      },
+      {
+        "connector_id": "connector1",
+        "name": "2",
+        "description": "2"
+      }
+    ]
+  }
+]

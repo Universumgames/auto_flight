@@ -1,0 +1,1155 @@
+{
+  "NET_13879_connector2_MULTI": [
+    {
+      "instance_title": "U1",
+      "model_index": 13879,
+      "connector_id": "connector2",
+      "pin_name": "E",
+      "pin_description": "E"
+    },
+    {
+      "instance_title": "R1",
+      "model_index": 48482,
+      "connector_id": "connector0",
+      "pin_name": "Pin 0",
+      "pin_description": "Pin0"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector17",
+      "pin_name": "D0/RX",
+      "pin_description": "D0/RX"
+    }
+  ],
+  "GND_0": [
+    {
+      "instance_title": "U1",
+      "model_index": 13879,
+      "connector_id": "connector0",
+      "pin_name": "C",
+      "pin_description": "C"
+    },
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector2",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector9",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "GPS Modul",
+      "model_index": 17653,
+      "connector_id": "connector1",
+      "pin_name": "Pin 2",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "Part4",
+      "model_index": 18269,
+      "connector_id": "connector14",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "BMP280",
+      "model_index": 24812,
+      "connector_id": "connector6",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector1",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "SBUS Empf\u00e4nger",
+      "model_index": 34929,
+      "connector_id": "connector0",
+      "pin_name": "gnd",
+      "pin_description": "ground"
+    },
+    {
+      "instance_title": "J1",
+      "model_index": 39454,
+      "connector_id": "connector0",
+      "pin_name": "gnd",
+      "pin_description": "ground"
+    },
+    {
+      "instance_title": "J2",
+      "model_index": 39457,
+      "connector_id": "connector0",
+      "pin_name": "gnd",
+      "pin_description": "ground"
+    },
+    {
+      "instance_title": "J3",
+      "model_index": 39460,
+      "connector_id": "connector0",
+      "pin_name": "gnd",
+      "pin_description": "ground"
+    },
+    {
+      "instance_title": "J4",
+      "model_index": 39463,
+      "connector_id": "connector0",
+      "pin_name": "gnd",
+      "pin_description": "ground"
+    },
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector9",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector12",
+      "pin_name": "ADDR",
+      "pin_description": "ADDR"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector18",
+      "pin_name": "pin 19",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "I2C Bus",
+      "model_index": 53356,
+      "connector_id": "connector1",
+      "pin_name": "2",
+      "pin_description": "2"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector19",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector32",
+      "pin_name": "GND",
+      "pin_description": "GND"
+    },
+    {
+      "instance_title": "Battery Balancer",
+      "model_index": 62558,
+      "connector_id": "connector3",
+      "pin_name": "4",
+      "pin_description": "4"
+    }
+  ],
+  "GND_1": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector17",
+      "pin_name": "pin 18",
+      "pin_description": "GND"
+    }
+  ],
+  "NET_13879_connector1_MULTI": [
+    {
+      "instance_title": "U1",
+      "model_index": 13879,
+      "connector_id": "connector1",
+      "pin_name": "B",
+      "pin_description": "B"
+    },
+    {
+      "instance_title": "R2",
+      "model_index": 48416,
+      "connector_id": "connector1",
+      "pin_name": "Pin 1",
+      "pin_description": "Pin 1"
+    }
+  ],
+  "SCL": [
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector4",
+      "pin_name": "HV1",
+      "pin_description": "HV1"
+    },
+    {
+      "instance_title": "Part4",
+      "model_index": 18269,
+      "connector_id": "connector17",
+      "pin_name": "SCL",
+      "pin_description": "SCL"
+    },
+    {
+      "instance_title": "BMP280",
+      "model_index": 24812,
+      "connector_id": "connector9",
+      "pin_name": "SCL",
+      "pin_description": "SCL"
+    },
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector2",
+      "pin_name": "SCL",
+      "pin_description": "SCL"
+    },
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector10",
+      "pin_name": "SCL",
+      "pin_description": "SCL"
+    },
+    {
+      "instance_title": "R5",
+      "model_index": 48837,
+      "connector_id": "connector1",
+      "pin_name": "Pin 1",
+      "pin_description": "Pin 1"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector31",
+      "pin_name": "pin 32",
+      "pin_description": "GPIO48"
+    },
+    {
+      "instance_title": "I2C Bus",
+      "model_index": 53356,
+      "connector_id": "connector2",
+      "pin_name": "3",
+      "pin_description": "3"
+    }
+  ],
+  "SDA": [
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector5",
+      "pin_name": "HV2",
+      "pin_description": "HV2"
+    },
+    {
+      "instance_title": "Part4",
+      "model_index": 18269,
+      "connector_id": "connector16",
+      "pin_name": "SDA",
+      "pin_description": "SDA"
+    },
+    {
+      "instance_title": "BMP280",
+      "model_index": 24812,
+      "connector_id": "connector10",
+      "pin_name": "SDA",
+      "pin_description": "SDA"
+    },
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector3",
+      "pin_name": "SDA",
+      "pin_description": "SDA"
+    },
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector11",
+      "pin_name": "SDA",
+      "pin_description": "SDA"
+    },
+    {
+      "instance_title": "R6",
+      "model_index": 48927,
+      "connector_id": "connector1",
+      "pin_name": "Pin 1",
+      "pin_description": "Pin 1"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector30",
+      "pin_name": "pin 31",
+      "pin_description": "GPIO47"
+    },
+    {
+      "instance_title": "I2C Bus",
+      "model_index": 53356,
+      "connector_id": "connector3",
+      "pin_name": "4",
+      "pin_description": "4"
+    }
+  ],
+  "NET_16098_connector3_MULTI": [
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector3",
+      "pin_name": "HV",
+      "pin_description": "HV"
+    },
+    {
+      "instance_title": "GPS Modul",
+      "model_index": 17653,
+      "connector_id": "connector0",
+      "pin_name": "Pin 1",
+      "pin_description": "VCC"
+    },
+    {
+      "instance_title": "Part4",
+      "model_index": 18269,
+      "connector_id": "connector13",
+      "pin_name": "VIN",
+      "pin_description": "VIN"
+    },
+    {
+      "instance_title": "BMP280",
+      "model_index": 24812,
+      "connector_id": "connector5",
+      "pin_name": "VCC",
+      "pin_description": "VCC"
+    },
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector0",
+      "pin_name": "VCC",
+      "pin_description": "VCC"
+    },
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector8",
+      "pin_name": "VDD",
+      "pin_description": "VDD"
+    },
+    {
+      "instance_title": "R5",
+      "model_index": 48837,
+      "connector_id": "connector0",
+      "pin_name": "Pin 0",
+      "pin_description": "Pin0"
+    },
+    {
+      "instance_title": "R6",
+      "model_index": 48927,
+      "connector_id": "connector0",
+      "pin_name": "Pin 0",
+      "pin_description": "Pin0"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector15",
+      "pin_name": "pin 16",
+      "pin_description": "3V3"
+    },
+    {
+      "instance_title": "I2C Bus",
+      "model_index": 53356,
+      "connector_id": "connector0",
+      "pin_name": "1",
+      "pin_description": "1"
+    }
+  ],
+  "NET_16098_connector7_MULTI": [
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector7",
+      "pin_name": "LV1",
+      "pin_description": "LV1"
+    },
+    {
+      "instance_title": "R4",
+      "model_index": 48825,
+      "connector_id": "connector1",
+      "pin_name": "Pin 1",
+      "pin_description": "Pin 1"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector37",
+      "pin_name": "A5",
+      "pin_description": "A5"
+    }
+  ],
+  "NET_16098_connector6_MULTI": [
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector6",
+      "pin_name": "LV2",
+      "pin_description": "LV2"
+    },
+    {
+      "instance_title": "R3",
+      "model_index": 48803,
+      "connector_id": "connector1",
+      "pin_name": "Pin 1",
+      "pin_description": "Pin 1"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector38",
+      "pin_name": "A4",
+      "pin_description": "A4"
+    }
+  ],
+  "NET_16098_connector8_MULTI": [
+    {
+      "instance_title": "Part2",
+      "model_index": 16098,
+      "connector_id": "connector8",
+      "pin_name": "LV",
+      "pin_description": "LV"
+    },
+    {
+      "instance_title": "SBUS Empf\u00e4nger",
+      "model_index": 34929,
+      "connector_id": "connector1",
+      "pin_name": "Vcc",
+      "pin_description": "Vcc"
+    },
+    {
+      "instance_title": "J1",
+      "model_index": 39454,
+      "connector_id": "connector1",
+      "pin_name": "Vcc",
+      "pin_description": "Vcc"
+    },
+    {
+      "instance_title": "J2",
+      "model_index": 39457,
+      "connector_id": "connector1",
+      "pin_name": "Vcc",
+      "pin_description": "Vcc"
+    },
+    {
+      "instance_title": "J3",
+      "model_index": 39460,
+      "connector_id": "connector1",
+      "pin_name": "Vcc",
+      "pin_description": "Vcc"
+    },
+    {
+      "instance_title": "J4",
+      "model_index": 39463,
+      "connector_id": "connector1",
+      "pin_name": "Vcc",
+      "pin_description": "Vcc"
+    },
+    {
+      "instance_title": "R1",
+      "model_index": 48482,
+      "connector_id": "connector1",
+      "pin_name": "Pin 1",
+      "pin_description": "Pin 1"
+    },
+    {
+      "instance_title": "R3",
+      "model_index": 48803,
+      "connector_id": "connector0",
+      "pin_name": "Pin 0",
+      "pin_description": "Pin0"
+    },
+    {
+      "instance_title": "R4",
+      "model_index": 48825,
+      "connector_id": "connector0",
+      "pin_name": "Pin 0",
+      "pin_description": "Pin0"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector19",
+      "pin_name": "pin 20",
+      "pin_description": "5V"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector34",
+      "pin_name": "5V",
+      "pin_description": "5V"
+    }
+  ],
+  "PPS": [
+    {
+      "instance_title": "GPS Modul",
+      "model_index": 17653,
+      "connector_id": "connector4",
+      "pin_name": "Pin 5",
+      "pin_description": "PPS"
+    }
+  ],
+  "NET_17653_connector2_MULTI": [
+    {
+      "instance_title": "GPS Modul",
+      "model_index": 17653,
+      "connector_id": "connector2",
+      "pin_name": "Pin 3",
+      "pin_description": "TX"
+    },
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector8",
+      "pin_name": "pin 9",
+      "pin_description": "GPIO39, MTCK"
+    }
+  ],
+  "RX": [
+    {
+      "instance_title": "GPS Modul",
+      "model_index": 17653,
+      "connector_id": "connector3",
+      "pin_name": "Pin 4",
+      "pin_description": "RX"
+    }
+  ],
+  "RDY": [
+    {
+      "instance_title": "Part4",
+      "model_index": 18269,
+      "connector_id": "connector18",
+      "pin_name": "RDY",
+      "pin_description": "RDY"
+    }
+  ],
+  "3.3V": [
+    {
+      "instance_title": "Part4",
+      "model_index": 18269,
+      "connector_id": "connector15",
+      "pin_name": "3.3V",
+      "pin_description": "3.3V"
+    }
+  ],
+  "NET_34929_connector2_MULTI": [
+    {
+      "instance_title": "SBUS Empf\u00e4nger",
+      "model_index": 34929,
+      "connector_id": "connector2",
+      "pin_name": "pulse",
+      "pin_description": "pulse"
+    },
+    {
+      "instance_title": "R2",
+      "model_index": 48416,
+      "connector_id": "connector0",
+      "pin_name": "Pin 0",
+      "pin_description": "Pin0"
+    }
+  ],
+  "XDA": [
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector4",
+      "pin_name": "XDA",
+      "pin_description": "XDA"
+    }
+  ],
+  "XCL": [
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector5",
+      "pin_name": "XCL",
+      "pin_description": "XCL"
+    }
+  ],
+  "INT": [
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector7",
+      "pin_name": "INT",
+      "pin_description": "INT"
+    }
+  ],
+  "AD0": [
+    {
+      "instance_title": "Part3",
+      "model_index": 18217,
+      "connector_id": "connector6",
+      "pin_name": "AD0",
+      "pin_description": "AD0"
+    }
+  ],
+  "NET_39454_connector2_MULTI": [
+    {
+      "instance_title": "J1",
+      "model_index": 39454,
+      "connector_id": "connector2",
+      "pin_name": "signal",
+      "pin_description": "signal"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector27",
+      "pin_name": "D9",
+      "pin_description": "D9"
+    }
+  ],
+  "NET_39457_connector2_MULTI": [
+    {
+      "instance_title": "J2",
+      "model_index": 39457,
+      "connector_id": "connector2",
+      "pin_name": "signal",
+      "pin_description": "signal"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector28",
+      "pin_name": "D10",
+      "pin_description": "D10"
+    }
+  ],
+  "NET_39460_connector2_MULTI": [
+    {
+      "instance_title": "J3",
+      "model_index": 39460,
+      "connector_id": "connector2",
+      "pin_name": "signal",
+      "pin_description": "signal"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector29",
+      "pin_name": "D11/MOSI",
+      "pin_description": "D11/MOSI"
+    }
+  ],
+  "NET_39463_connector2_MULTI": [
+    {
+      "instance_title": "J4",
+      "model_index": 39463,
+      "connector_id": "connector2",
+      "pin_name": "signal",
+      "pin_description": "signal"
+    },
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector30",
+      "pin_name": "D12/MISO",
+      "pin_description": "D12/MISO"
+    }
+  ],
+  "NET_41941_connector16_MULTI": [
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector16",
+      "pin_name": "A2",
+      "pin_description": "A2"
+    },
+    {
+      "instance_title": "Battery Balancer",
+      "model_index": 62558,
+      "connector_id": "connector0",
+      "pin_name": "1",
+      "pin_description": "1"
+    }
+  ],
+  "NET_41941_connector15_MULTI": [
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector15",
+      "pin_name": "A1",
+      "pin_description": "A1"
+    },
+    {
+      "instance_title": "Battery Balancer",
+      "model_index": 62558,
+      "connector_id": "connector1",
+      "pin_name": "2",
+      "pin_description": "2"
+    }
+  ],
+  "NET_41941_connector14_MULTI": [
+    {
+      "instance_title": "ADS1115",
+      "model_index": 41941,
+      "connector_id": "connector14",
+      "pin_name": "A0",
+      "pin_description": "A0"
+    },
+    {
+      "instance_title": "Battery Balancer",
+      "model_index": 62558,
+      "connector_id": "connector2",
+      "pin_name": "3",
+      "pin_description": "3"
+    }
+  ],
+  "U0TXD,_GPIO43,_CP2102_RX": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector23",
+      "pin_name": "pin 24",
+      "pin_description": "U0TXD, GPIO43, CP2102_RX"
+    }
+  ],
+  "GPIO20,_U1CTS,_ADC2_CH8,_CLK_OUT1,_USB_D+": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector34",
+      "pin_name": "pin 35",
+      "pin_description": "GPIO20, U1CTS, ADC2_CH8, CLK_OUT1, USB_D+"
+    }
+  ],
+  "GPIO3,_ADC1_CH2,_TOUCH3": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector4",
+      "pin_name": "pin 5",
+      "pin_description": "GPIO3, ADC1_CH2, Touch3"
+    }
+  ],
+  "RST,_RST_SW": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector24",
+      "pin_name": "pin 25",
+      "pin_description": "RST, RST_SW"
+    }
+  ],
+  "GPIO5,_ADC1_CH4,_TOUCH5": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector2",
+      "pin_name": "pin 3",
+      "pin_description": "GPIO5, ADC1_CH4, Touch5"
+    }
+  ],
+  "GPIO40,_MTDO": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector9",
+      "pin_name": "pin 10",
+      "pin_description": "GPIO40, MTDO"
+    }
+  ],
+  "GPIO19,_U1RST,_ADC2_CH9,_CLK_OUT2,_USB_D-": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector35",
+      "pin_name": "pin 36",
+      "pin_description": "GPIO19, U1RST, ADC2_CH9, CLK_OUT2, USB_D-"
+    }
+  ],
+  "GPIO21,_OLED_RST": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector33",
+      "pin_name": "pin 34",
+      "pin_description": "GPIO21, OLED_RST"
+    }
+  ],
+  "GPIO2,_ADC1_CH1,_TOUCH2": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector5",
+      "pin_name": "pin 6",
+      "pin_description": "GPIO2, ADC1_CH1, Touch2"
+    }
+  ],
+  "GPIO4,_ADC1_CH3,_TOUCH4": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector3",
+      "pin_name": "pin 4",
+      "pin_description": "GPIO4, ADC1_CH3, Touch4"
+    }
+  ],
+  "GPIO38,_FSPIWP,_SUBSPIWP": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector7",
+      "pin_name": "pin 8",
+      "pin_description": "GPIO38, FSPIWP, SUBSPIWP"
+    }
+  ],
+  "GPIO36,_SPII07,_FSPICLK,_SUBSPICLK,_VEXT_CTRL": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector26",
+      "pin_name": "pin 27",
+      "pin_description": "GPIO36, SPII07, FSPICLK, SUBSPICLK, Vext_Ctrl"
+    }
+  ],
+  "GPIO45": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector12",
+      "pin_name": "pin 13",
+      "pin_description": "GPIO45"
+    }
+  ],
+  "GPIO1,_ADC1_CH0,_VBAT_READ,_TOUCH1": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector6",
+      "pin_name": "pin 7",
+      "pin_description": "GPIO1, ADC1_CH0, Vbat_Read, Touch1"
+    }
+  ],
+  "GPIO46": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector13",
+      "pin_name": "pin 14",
+      "pin_description": "GPIO46"
+    }
+  ],
+  "GPIO7,_ADC1_CH6,_TOUCH7": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector0",
+      "pin_name": "pin 1",
+      "pin_description": "GPIO7, ADC1_CH6, Touch7"
+    }
+  ],
+  "3V3_0": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector16",
+      "pin_name": "pin 17",
+      "pin_description": "3V3"
+    }
+  ],
+  "3V3_1": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector44",
+      "pin_name": "3V3",
+      "pin_description": "3V3"
+    }
+  ],
+  "GPIO41,_MTDI": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector10",
+      "pin_name": "pin 11",
+      "pin_description": "GPIO41, MTDI"
+    }
+  ],
+  "GPIO34,_SPII05,_FSPICS0,_SUBSPICS0": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector28",
+      "pin_name": "pin 29",
+      "pin_description": "GPIO34, SPII05, FSPICS0, SUBSPICS0"
+    }
+  ],
+  "GPIO33,_SPII04,_FSPIHD,_SUBSPIHD": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector29",
+      "pin_name": "pin 30",
+      "pin_description": "GPIO33, SPII04, FSPIHD, SUBSPIHD"
+    }
+  ],
+  "GPIO6,_ADC1_CH5,_TOUCH6": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector1",
+      "pin_name": "pin 2",
+      "pin_description": "GPIO6, ADC1_CH5, Touch6"
+    }
+  ],
+  "VE,_VEXT_0": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector20",
+      "pin_name": "pin 21",
+      "pin_description": "Ve, Vext"
+    }
+  ],
+  "VE,_VEXT_1": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector21",
+      "pin_name": "pin 22",
+      "pin_description": "Ve, Vext"
+    }
+  ],
+  "U0RXD,_GPIO44,_CP2102_TX": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector22",
+      "pin_name": "pin 23",
+      "pin_description": "U0RXD, GPIO44, CP2102_TX"
+    }
+  ],
+  "GPIO35,_SPII06,_FSPID,_SUBSPID,_LED_WRITE": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector27",
+      "pin_name": "pin 28",
+      "pin_description": "GPIO35, SPII06, FSPID, SUBSPID, LED_Write"
+    }
+  ],
+  "GPIO0,_USER_SW": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector25",
+      "pin_name": "pin 26",
+      "pin_description": "GPIO0, USER_SW"
+    }
+  ],
+  "GPIO26,_SPICS1": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector32",
+      "pin_name": "pin 33",
+      "pin_description": "GPIO26, SPICS1"
+    }
+  ],
+  "GPIO42,_MTMS": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector11",
+      "pin_name": "pin 12",
+      "pin_description": "GPIO42, MTMS"
+    }
+  ],
+  "GPIO37,_SPIDQS,_FSPIQ,_SUBSPIQ,_ADC_CTRL": [
+    {
+      "instance_title": "Mod1",
+      "model_index": 51152,
+      "connector_id": "connector14",
+      "pin_name": "pin 15",
+      "pin_description": "GPIO37, SPIDQS, FSPIQ, SUBSPIQ, ADC_Ctrl"
+    }
+  ],
+  "D5": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector23",
+      "pin_name": "D5",
+      "pin_description": "D5"
+    }
+  ],
+  "D6": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector24",
+      "pin_name": "D6",
+      "pin_description": "D6"
+    }
+  ],
+  "A2": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector40",
+      "pin_name": "A2",
+      "pin_description": "A2"
+    }
+  ],
+  "A7": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector35",
+      "pin_name": "A7",
+      "pin_description": "A7"
+    }
+  ],
+  "A0": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector42",
+      "pin_name": "A0",
+      "pin_description": "A0"
+    }
+  ],
+  "RESET_0": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector33",
+      "pin_name": "RESET",
+      "pin_description": "RESET"
+    }
+  ],
+  "RESET_1": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector18",
+      "pin_name": "RESET",
+      "pin_description": "RESET"
+    }
+  ],
+  "D8": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector26",
+      "pin_name": "D8",
+      "pin_description": "D8"
+    }
+  ],
+  "AREF": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector43",
+      "pin_name": "AREF",
+      "pin_description": "AREF"
+    }
+  ],
+  "D1/TX": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector16",
+      "pin_name": "D1/TX",
+      "pin_description": "D1/TX"
+    }
+  ],
+  "VIN": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector31",
+      "pin_name": "VIN",
+      "pin_description": "VIN"
+    }
+  ],
+  "A1": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector41",
+      "pin_name": "A1",
+      "pin_description": "A1"
+    }
+  ],
+  "D13/SCK": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector45",
+      "pin_name": "D13/SCK",
+      "pin_description": "D13/SCK"
+    }
+  ],
+  "D2": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector20",
+      "pin_name": "D2",
+      "pin_description": "D2"
+    }
+  ],
+  "A3": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector39",
+      "pin_name": "A3",
+      "pin_description": "A3"
+    }
+  ],
+  "D4": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector22",
+      "pin_name": "D4",
+      "pin_description": "D4"
+    }
+  ],
+  "A6": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector36",
+      "pin_name": "A6",
+      "pin_description": "A6"
+    }
+  ],
+  "D7": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector25",
+      "pin_name": "D7",
+      "pin_description": "D7"
+    }
+  ],
+  "D3": [
+    {
+      "instance_title": "Arduino Nano",
+      "model_index": 13600,
+      "connector_id": "connector21",
+      "pin_name": "D3",
+      "pin_description": "D3"
+    }
+  ]
+}

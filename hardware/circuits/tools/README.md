@@ -110,6 +110,25 @@ kicad-cli pcb drc <project>.kicad_pcb --output drc_report.txt --severity-all
 - **`gen_pcb.py`**: Edge.Cuts from the Fritzing board's declared width/
   height (or larger — see below), footprints on a plain grid, pads wired to
   the same nets. No copper routing.
+- **`gen_3d_models.py`** (optional, needs CadQuery — run from a throwaway
+  venv, see its docstring): simplified STEP models for the I2C breakouts
+  (`GY-521_MPU6050`, `GY-271_Magnetometer`, `GY-BMP280_4pin`,
+  `ADS1115_Breakout`, `I2C_Level_Converter`), the `GT-U8_GPS` module and
+  the `Arduino_Nano` in
+  `../kicad_libs/auto_flight.3dshapes/`. Board outline, header row,
+  mounting holes and main chips only — approximations, not vendor CAD. Each
+  model has pin 1 at its origin and the board extending to +X; they're
+  attached per footprint instance in the `.kicad_pcb` files (not in
+  `gen_pcb.py`, since the layouts are hand-edited now) with `offset z 2.54`
+  so the module sits on its pin header's plastic spacer. Where the board has
+  to extend to -X (the magnetometer on the plane PCB) the entry uses
+  `rotate z 180` plus `offset y -(N-1)*2.54` to bring pin 1 back onto pad 1.
+  The level shifter's model is centered on its own footprint, which also
+  gets two `PinHeader_1x06` models (`rotate z -90`) for its two rows.
+  `Arduino_Nano.step` fits the `auto_flight:Arduino_Nano` footprint as-is
+  and brings its own male headers (spacer and pins below the board), so
+  it needs `offset z 2.54` soldered directly, or socket height + 2.54 in
+  female headers.
 
 ## Known limitations — check before treating this as finished
 
