@@ -4,6 +4,9 @@
 # CMakeLists in this exact order for cmake to work correctly
 cmake_minimum_required(VERSION 3.16)
 
+set(ENV{IDF_COMPONENT_SUPPRESS_UNKNOWN_FILE_WARNINGS} 1)
+set(ENV{KCONFIG_REPORT_VERBOSITY} quiet)
+
 set(EXTRA_COMPONENT_DIRS components shared_components)
 
 add_compile_definitions(FLIGHT_DEVICE_TYPE_BASE_STATION)

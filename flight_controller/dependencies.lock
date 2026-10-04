@@ -147,7 +147,7 @@ dependencies:
   idf:
     source:
       type: idf
-    version: 6.0.1
+    version: 6.1.0
   jgromes/radiolib:
     dependencies: []
     source:
@@ -179,7 +179,7 @@ dependencies:
       path: ../shared_components/magnetometer
       type: local
     version: '*'
-  motor_com:
+  motor_com_master:
     dependencies: []
     source:
       path: components/motor_com_master
@@ -213,8 +213,8 @@ direct_dependencies:
 - johboh/nlohmann-json
 - lvgl/lvgl
 - magnetometer
-- motor_com
+- motor_com_master
 - waveshare/esp_oled_ssd1315
-manifest_hash: 9e67b4564e92bb68bc6474423dcbb2fab50077006c460adca1ca4336335337bd
+manifest_hash: 5584d376feb4c161df94c5cbb04c17053910bd2f7a9b0d943770fe49f3c866e3
 target: esp32s3
 version: 3.0.0

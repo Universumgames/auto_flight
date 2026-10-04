@@ -7,7 +7,7 @@
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="$PROJECT_DIR$/../shared_components/esp32-lora-library" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -16,7 +16,7 @@
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="$PROJECT_DIR$/../shared_components/esp32-lora-library" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -25,7 +25,7 @@
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="$PROJECT_DIR$/../shared_components/esp32-lora-library" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -34,7 +34,7 @@
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="$PROJECT_DIR$/../shared_components/esp32-lora-library" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -43,7 +43,7 @@
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="$PROJECT_DIR$/../shared_components/esp32-lora-library" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -52,7 +52,7 @@
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="$PROJECT_DIR$/../shared_components/esp32-lora-library" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -61,7 +61,7 @@
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
             <mapping local="$PROJECT_DIR$/../shared_components/esp32-lora-library" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>

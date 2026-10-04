@@ -6,7 +6,7 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -14,7 +14,7 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -22,7 +22,7 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -30,7 +30,7 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -38,7 +38,7 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -46,7 +46,7 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
@@ -54,7 +54,7 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-            <mapping local="$USER_HOME$/.espressif/v6.0.1/esp-idf" web="/" />
+            <mapping local="$USER_HOME$/.espressif/v6.1/esp-idf" web="/" />
           </mappings>
         </serverdata>
       </paths>
