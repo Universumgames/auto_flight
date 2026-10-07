@@ -6,14 +6,23 @@
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include <hal/uart_types.h>
 
-#include "FlightStorage.hpp"
 #include "helper.hpp"
 
 #include <algorithm>
 #include <iterator>
 
+#include "Battery.hpp"
 #include "DeviceId.hpp"
+#include "GPS_Reader.hpp"
+#if FLIGHT_DEVICE_TYPE_PLANE
+#include "FlightStorage.hpp"
+#endif
+#if FLIGHT_DEVICE_TYPE_BASE_STATION
+#include "Cache.hpp"
+#endif
+
 
 static const char* TAG_OLED_DISPLAY = "OledDisplay";
 
@@ -244,11 +253,10 @@ void OledDisplayClass::statusTaskEntry(void* param) {
         lines[lineCount++] = std::string("Link: ") +
             (linkState == ConnectionState::CONNECTED ? "CONNECTED" : "CONNECTING");
 #else
-        const auto& knownPlanes = FlightStorage.getAllPlanes();
+        const auto& knownPlanes = Cache.getSourceLastUpdateTimes();
         const auto connectionCount = std::ranges::count_if(knownPlanes,
                                                            [](const auto& plane) {
-                                                               return plane.second.planeConnectionState ==
-                                                                   ConnectionState::CONNECTED;
+                                                               return plane.second > GPS_Reader.getGPSLatestTime() - 10000;
                                                            });
         lines[lineCount++] = std::string("Connection: ") + std::to_string(connectionCount) + "/" + std::to_string(
                 knownPlanes.size()) +
@@ -274,10 +282,11 @@ void OledDisplayClass::statusTaskEntry(void* param) {
             "Plane: " + connectionSummary(planeDevices, planeDeviceNames, std::size(planeDevices));
         lines[lineCount++] = "ID: " + std::to_string(DeviceId::get32());
 #else
+        auto components = Cache.getLatestComponentStatus(DeviceId::BASE_STATION);
         const ConnectionState baseDevices[] = {
-            FlightStorage.getBaseGPSConnectionState(),
-            FlightStorage.getBaseBarometerConnectionState(),
-            FlightStorage.getBaseBatteryConnectionState()
+            components.gps,
+            components.barometer,
+            components.battery,
         };
         static constexpr const char* baseDeviceNames[] = {
             "Base GPS", "Base Barometer", "Base Battery"

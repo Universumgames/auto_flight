@@ -8,6 +8,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
+#include "packets/component.hpp"
 
 class CacheClass {
 private:
@@ -26,6 +27,8 @@ private:
     };
 
     std::unordered_map<uint32_t, std::unordered_map<PacketType, PacketCacheEntry>> cache;
+
+    std::unordered_map<uint32_t, time_t> sourceLastUpdateTimes;
 
     std::vector<std::function<void(uint32_t, PacketType, RawSerializedPacket, size_t)>> packetCallbacks;
 
@@ -73,6 +76,14 @@ public:
     std::pair<RawSerializedPacket, size_t> getLatestPacket(uint32_t sourceId, PacketType type);
 
     void registerPacketCallback(const std::function<void(uint32_t, PacketType, RawSerializedPacket, size_t)>& callback);
+
+    std::vector<uint32_t> getSources();
+
+    std::unordered_map<uint32_t, time_t> getSourceLastUpdateTimes();
+
+    void updateSourceLastUpdateTime(uint32_t sourceId, time_t lastUpdateTime);
+
+    ComponentStatus getLatestComponentStatus(uint32_t sourceId);
 };
 
 extern CacheClass& Cache;

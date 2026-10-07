@@ -9,7 +9,8 @@ set(ENV{KCONFIG_REPORT_VERBOSITY} quiet)
 
 set(EXTRA_COMPONENT_DIRS components shared_components)
 
-add_compile_definitions(FLIGHT_DEVICE_TYPE_BASE_STATION)
+add_compile_definitions(FLIGHT_DEVICE_TYPE_BASE_STATION=1)
+set(FLIGHT_DEVICE_TYPE_BASE_STATION 1)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(base_station)

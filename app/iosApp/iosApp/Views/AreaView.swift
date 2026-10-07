@@ -3,16 +3,14 @@ import SwiftUI
 
 struct AreaView: View {
     let planeId: PlaneID
-    
+
     @Environment(ConnectionManager.self) private var connectionManager: ConnectionManager
     @Environment(AppState.self) private var appState
 
     @State private var polygon: [Coordinate] = []
-    @State private var routeSettings: wire.RouteSettings = .init(
-        routeAlgorithm: .BASIC,
-        overlapPercentage: 20
-    )
+    @State private var routeSettings: SwiftRouteSettings = .standard
     @State private var loading = false
+    @State private var settingsOpen = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -28,6 +26,68 @@ struct AreaView: View {
                 .disabled(polygon.isEmpty || loading)
                 .padding(.horizontal)
             }
+            .padding(.horizontal)
+
+            VStack(alignment: .leading, spacing: 12) {
+                Section(isExpanded: $settingsOpen) {
+                    VStack {
+                        LabeledContent {
+                            Picker(
+                                "area.settings.algorithm",
+                                selection: $routeSettings.routeAlgorithm
+                            ) {
+                                ForEach(wire.RouteAlgorithm.allCases, id: \.self) { algorithm in
+                                    Text(
+                                        algorithm.description
+                                            .lowercased().capitalized
+                                    )
+                                    .tag(algorithm)
+                                }
+                            }
+                        } label: {
+                            Text("area.settings.algorithm")
+                        }
+                        LabeledContent {
+                            HStack {
+                                Slider(
+                                    value: Binding(
+                                        get: { Double(routeSettings.overlapPercentage)
+                                        },
+                                        set: {
+                                            routeSettings.overlapPercentage = Int($0)
+                                        }
+                                    ),
+                                    in: 0 ... 100,
+                                    step: 1
+                                )
+                                Text("\(routeSettings.overlapPercentage)%")
+                                    .frame(width: 40, alignment: .leading)
+                            }
+                        } label: {
+                            Text("area.settings.overlap")
+                        }
+                    }
+                } header: {
+                    Button {
+                        withAnimation {
+                            settingsOpen.toggle()
+                        }
+                    } label: {
+                        HStack{
+                            Text("area.settings")
+                            Spacer()
+                            Image(systemName: settingsOpen ? "chevron.up" : "chevron.down")
+                                .foregroundStyle(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                    
+                }
+            }
+            .padding()
+            .background(Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
             .padding(.horizontal)
 
             ZStack {
@@ -65,18 +125,18 @@ struct AreaView: View {
             .submitArea(
                 planeId: planeId,
                 polygon: polygon,
-                routeSettings: routeSettings
+                routeSettings: routeSettings.toWire()
             ) { result in
-            loading = false
-            if result == .ACCEPTED {
-                appState
-                    .planes[planeId]?.area = AreaData(
-                        areaPoints: polygon,
-                        settings: routeSettings
-                    )
-                appState.planes[planeId]?.wizardStep.append(.ROUTE_APPROVAL)
+                loading = false
+                if result == .ACCEPTED {
+                    appState
+                        .planes[planeId]?.area = AreaData(
+                            areaPoints: polygon,
+                            settings: routeSettings.toWire()
+                        )
+                    appState.planes[planeId]?.wizardStep.append(.ROUTE_APPROVAL)
+                }
             }
-        }
     }
 }
 

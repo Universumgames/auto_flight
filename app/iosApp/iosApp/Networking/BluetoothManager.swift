@@ -15,6 +15,11 @@ enum BluetoothError: Error {
     case mtuTooSmall
 }
 
+/// How long a base station can go without a fresh `didDiscover` callback before it's
+/// dropped from `discoveredBaseStations` — a peripheral that's powered off or out of
+/// range simply stops advertising, CoreBluetooth never tells us it's gone.
+private let baseStationStaleTimeout: TimeInterval = 5
+
 extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
     // MARK: - Scanning
 
@@ -37,6 +42,8 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
         pendingStartScan = false
         isScanning = false
         centralManager?.stopScan()
+        staleBaseStationTimer?.invalidate()
+        staleBaseStationTimer = nil
     }
 
     // MARK: - Characteristic Operations
@@ -155,6 +162,8 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
             default:
                 self.isScanning = false
                 self.discoveredBaseStations = []
+                self.staleBaseStationTimer?.invalidate()
+                self.staleBaseStationTimer = nil
             }
         }
     }
@@ -174,9 +183,8 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
         Task { @MainActor [weak self] in
             guard let self else { return }
             if let index = self.discoveredBaseStations.firstIndex(where: { $0.peripheral.identifier == peripheral.identifier }) {
-                if let buildDate, self.discoveredBaseStations[index].buildDate == nil {
-                    self.discoveredBaseStations[index] = DiscoveredBaseStation(peripheral: peripheral, buildDate: buildDate)
-                }
+                let resolvedBuildDate = self.discoveredBaseStations[index].buildDate ?? buildDate
+                self.discoveredBaseStations[index] = DiscoveredBaseStation(peripheral: peripheral, buildDate: resolvedBuildDate)
                 return
             }
             self.discoveredBaseStations.append(DiscoveredBaseStation(peripheral: peripheral, buildDate: buildDate))
@@ -306,5 +314,19 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
             .scanForPeripherals(withServices: [ServiceUUID], options: [
                 CBCentralManagerScanOptionAllowDuplicatesKey: true,
             ])
+        staleBaseStationTimer?.invalidate()
+        staleBaseStationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.pruneStaleBaseStations()
+            }
+        }
+    }
+
+    /// Drops base stations whose last advertisement is older than `baseStationStaleTimeout`
+    /// — our signal that the device is no longer reachable, since CoreBluetooth has no
+    /// "peripheral went away" callback while scanning with duplicates allowed.
+    private func pruneStaleBaseStations() {
+        let cutoff = Date().addingTimeInterval(-baseStationStaleTimeout)
+        discoveredBaseStations.removeAll { $0.lastSeen < cutoff }
     }
 }

@@ -129,7 +129,9 @@ dependencies:
       type: local
     version: '*'
   gps:
-    dependencies: []
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
     source:
       path: ../shared_components/gps
       type: local
@@ -215,6 +217,6 @@ direct_dependencies:
 - magnetometer
 - motor_com_master
 - waveshare/esp_oled_ssd1315
-manifest_hash: 5584d376feb4c161df94c5cbb04c17053910bd2f7a9b0d943770fe49f3c866e3
+manifest_hash: 4510ef4d8505dae012913920aee5c2d90917d9dd5ec787eb5bb42f5b80a15843
 target: esp32s3
 version: 3.0.0

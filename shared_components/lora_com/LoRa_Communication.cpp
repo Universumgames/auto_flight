@@ -5,9 +5,14 @@
 #include <cstring>
 
 #include "DeviceId.hpp"
+#include "GPS_Reader.hpp"
 #include "driver/gpio.h"
 
+#if FLIGHT_DEVICE_TYPE_BASE_STATION
+#include "Cache.hpp"
+#else
 #include "FlightStorage.hpp"
+#endif
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "sdkconfig.h"
@@ -396,7 +401,9 @@ void LoRa_CommunicationClass::updateConnectionState(ConnectionState state) {
 
 #ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
 void LoRa_CommunicationClass::updateConnectionState(uint32_t planeId, ConnectionState state) {
-    FlightStorage.updatePlaneConnectionState(planeId, state);
+    if (state == ConnectionState::CONNECTED)
+        Cache.updateSourceLastUpdateTime(planeId, GPS_Reader.getGPSLatestTime());
+    else Cache.updateSourceLastUpdateTime(planeId, 0);
 }
 #endif
 

@@ -21,6 +21,7 @@ final class ConnectionManager: NSObject {
     var discoveredBaseStations: [DiscoveredBaseStation] = []
     var isScanning = false
     internal var pendingStartScan = false
+    internal var staleBaseStationTimer: Timer?
 
     // Bluetooth connection state — updated by BluetoothManager extension
     var connectedPeripheral: CBPeripheral?
@@ -70,7 +71,7 @@ final class ConnectionManager: NSObject {
         case .sensorUpdate:
             onFrameSensorUpdate(data: data)
         case .plannedArea:
-            // TODO: onAreaDefine Receive
+                onFrameAreaDefine(data: data)
             break
         case .plannedRoute:
             onFrameRoutePlanned(data: data)
@@ -81,11 +82,14 @@ final class ConnectionManager: NSObject {
         case .plannedRouteConfirmation:
             print("route confirm unhandled")
         }
-        guard let sourceId = wire.FrontendPackets.shared.decodeBase(
+        guard let base = wire.FrontendPackets.shared.decodeBase(
             hex: data.hexEncoded
-        )?.id else { return }
-        print("Received notification for topic \(topic) from source \(sourceId)")
-        let key = WaitRequestKey(characteristic: topic, sourceId: sourceId)
+        ) else { return }
+        print(
+            "Received notification for topic \(topic) from source \(base.id) with timestamp \(base.timestamp)"
+        )
+        print(data.hexEncoded)
+        let key = WaitRequestKey(characteristic: topic, sourceId: base.id)
         let callbacks = waitingRequests[key]
         waitingRequests[key] = []
         callbacks?.forEach { callback in
@@ -221,6 +225,9 @@ final class ConnectionManager: NSObject {
         return await withCheckedContinuation { continuation in
             waitingRequests[key, default: []].append { data in
                 continuation.resume(returning: data)
+            }
+            Task {
+                let _ = await requestUpdate(characteristic)
             }
         }
     }

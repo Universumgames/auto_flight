@@ -1,11 +1,12 @@
 #include "FrontendBl.hpp"
 #include "esp_log.h"
-#include "FlightStorage.hpp"
 #include "Barometer.hpp"
 
 #include <algorithm>
 
+#include "Battery.hpp"
 #include "Cache.hpp"
+#include "GPS_Reader.hpp"
 
 #define WITH_RECURSIVE_MUTEX(mutex) \
 for (bool _once = (xSemaphoreTakeRecursive((mutex), portMAX_DELAY) == pdTRUE); \
@@ -45,6 +46,10 @@ void FrontendHandlerBlClass::init() {
         });
     }
     bluetoothManager.init(characteristics);
+
+    for (const auto i : BLETopics::ALL_NOTIFICATIONS) {
+        topicUpdateIntervals[i] = 0;
+    }
 
     refreshRequestQueue = xQueueCreate(BLETopics::ALL_NOTIFICATIONS_SIZE, sizeof(BLETopics::NotifyByte));
 
@@ -100,18 +105,21 @@ void FrontendHandlerBlClass::registerReadTriggerCallback() {
 }
 
 void FrontendHandlerBlClass::sendAllSourcesData(const BLETopics::NotifyByte topic) {
-    for (const auto& planeId : FlightStorage.getAllPlanes() | std::views::keys) {
+    ESP_LOGI(TAG_FRONTEND_BL, "Sending data for topic=0x%02x from all planes", topic);
+    for (const auto& planeId : Cache.getSources()) {
+        ESP_LOGI(TAG_FRONTEND_BL, "Sending data for planeId=%" PRIu32 " and topic=0x%02x", planeId, topic);
         auto packetType = BLETopics::toPacketType(topic).value();
         auto [packet, len] = Cache.getLatestPacket(planeId, packetType);
         if (packet != nullptr) {
             sendRawData(packetType, packet, len);
         }
         else {
-            ESP_LOGD(TAG_FRONTEND_BL, "No cached packet found for planeId=%" PRIu32 " and topic=0x%02x", planeId,
+            ESP_LOGW(TAG_FRONTEND_BL, "No cached packet found for planeId=%" PRIu32 " and topic=0x%02x", planeId,
                      topic);
-            auto empty = BasePacket::nullPacket(planeId, packetType);
+            auto empty = BasePacket::nullPacket(planeId, packetType, GPS_Reader.getGPSLatestTime());
             auto serializedPacket = empty.serialize();
             sendRawData(packetType, serializedPacket.first.get(), serializedPacket.second);
+            serializedPacket.first.reset();
         }
     }
 }
@@ -121,30 +129,41 @@ void FrontendHandlerBlClass::requestOutOfCycleUpdate(const BLETopics::NotifyByte
     // Non-blocking: this runs on the NimBLE host task (see BluetoothManager::onSVCGattHandler),
     // which must return promptly. If the queue is ever full, the request is simply dropped -
     // the topic still gets its next periodic update within a second regardless.
-    xQueueSend(refreshRequestQueue, &topic, 0);
+    xQueueSend(refreshRequestQueue, &topic, pdMS_TO_TICKS(1));
+    ESP_LOGI(TAG_FRONTEND_BL, "Enqueued out-of-cycle update request for topic 0x%02x", topic);
 }
 
 void FrontendHandlerBlClass::sendUpdateQueueTaskEntry(void* param) {
-    auto* instance = instanceBL;
+    instanceBL->sendUpdateQueueTask();
+}
+
+void FrontendHandlerBlClass::sendUpdateQueueTask() {
     while (true) {
         BLETopics::NotifyByte requestedTopic;
-        if (xQueueReceive(instance->refreshRequestQueue, &requestedTopic, pdMS_TO_TICKS(2000))) {
-            instance->sendAllSourcesData(requestedTopic);
+        if (xQueueReceive(refreshRequestQueue, &requestedTopic, pdMS_TO_TICKS(2000))) {
+            sendAllSourcesData(requestedTopic);
         }
     }
 }
 
 void FrontendHandlerBlClass::triggerPeriodicUpdateTaskEntry(void* param) {
-    auto* instance = instanceBL;
+    instanceBL->triggerPeriodicUpdateTask();
+}
+
+void FrontendHandlerBlClass::triggerPeriodicUpdateTask() {
     while (true) {
         for (const auto topic : BLETopics::ALL_NOTIFICATIONS) {
-            instance->requestOutOfCycleUpdate(topic);
+            topicUpdateIntervals[topic]++;
+            if (topicUpdateIntervals[topic] >= getUpdateIntervalForTopic(topic)) {
+                //xQueueSend(refreshRequestQueue, &topic, pdMS_TO_TICKS(1));
+                topicUpdateIntervals[topic] = 0;
+            }
         }
         // Also publish the base station's own battery via the standard BLE Battery Service,
         // for generic BLE clients that don't know this project's custom topics.
-        const uint8_t baseBatteryPercentage = std::max(0, std::min(100, FlightStorage.getBaseBatteryPercentage()));
-        instance->bluetoothManager.notifyBatteryLevel(baseBatteryPercentage);
-        vTaskDelay(pdMS_TO_TICKS(4000));
+        const uint8_t baseBatteryPercentage = std::max((uint8_t)0, std::min((uint8_t)100, Battery.getLastMeasuredVoltagePercentage()));
+        bluetoothManager.notifyBatteryLevel(baseBatteryPercentage);
+        vTaskDelay(pdMS_TO_TICKS(2000));
     }
 }
 
@@ -157,4 +176,27 @@ void FrontendHandlerBlClass::sendRawData(PacketType type, const RawSerializedPac
     WITH_RECURSIVE_MUTEX(bluetoothMutex) {
         bluetoothManager.notify(static_cast<uint8_t>(type), const_cast<uint8_t*>(data), len);
     }
+}
+
+
+int FrontendHandlerBlClass::getUpdateIntervalForTopic(BLETopics::NotifyByte topic) {
+    switch (topic) {
+    case BLETopics::NotifyByte::BLE_SENSOR_UPDATE:
+        return 1;
+    case BLETopics::NotifyByte::BLE_POSITION:
+        return 1;
+    case BLETopics::NotifyByte::BLE_COMPONENT_STATUS:
+        return 2;
+    case BLETopics::NotifyByte::BLE_PLANNED_ROUTE:
+        return 50;
+    case BLETopics::NotifyByte::BLE_PLANNED_AREA:
+        return 50;
+    case BLETopics::NotifyByte::BLE_ROUTE_HISTORY:
+        return 50;
+    case BLETopics::NotifyByte::BLE_ROUTE_HISTORY_REQUEST:
+        return 500;
+    case BLETopics::NotifyByte::BLE_PLANNED_ROUTE_CONFIRMATION:
+        return 500;
+    }
+    return 0;
 }

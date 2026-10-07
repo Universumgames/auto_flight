@@ -5,7 +5,7 @@
 
 #include "DeviceId.hpp"
 #include "esp_log.h"
-#include "types.hpp"
+#include "../types.hpp"
 
 typedef const uint8_t* RawSerializedPacket;
 typedef std::pair<std::unique_ptr<uint8_t[]>, size_t> SerializedPacket;
@@ -72,13 +72,13 @@ struct BasePacket : public IBasePacket {
     }
 
     BasePacket(RawSerializedPacket packet, size_t len) : timestamp(), type(PacketType::COMPONENT_STATUS) {
-        printf("Deserializing packet of length %zu: ", len);
+        /*printf("Deserializing packet of length %zu: ", len);
         for (size_t i = 0; i < len; i++) {
             printf("%02x ", packet[i]);
         }
         printf("\n");
         printf("\n");
-        printf("\n");
+        printf("\n");*/
         DESERIALIZE_TO_THIS_PACKET(packet, len);
     }
 
@@ -94,7 +94,7 @@ struct BasePacket : public IBasePacket {
 private:
     BasePacket(time_t time, PacketType type, uint32_t id) : timestamp(time), type(type), id(id) {}
 public:
-    static BasePacket nullPacket(uint32_t id, PacketType type) {
-        return {0, type, id};
+    static BasePacket nullPacket(uint32_t id, PacketType type, time_t time = 0) {
+        return {time, type, id};
     }
 };

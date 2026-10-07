@@ -17,6 +17,9 @@ import CoreBluetooth
 struct DiscoveredBaseStation: Identifiable {
     let peripheral: CBPeripheral
     let buildDate: Date?
+    /// Updated on every `didDiscover` callback for this peripheral — used to drop it
+    /// from `discoveredBaseStations` once its advertisements stop arriving.
+    var lastSeen: Date = Date()
 
     var id: UUID { peripheral.identifier }
     var name: String { peripheral.name ?? "Unknown Device" }

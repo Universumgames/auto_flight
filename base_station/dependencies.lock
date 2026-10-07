@@ -129,7 +129,9 @@ dependencies:
       type: local
     version: '*'
   gps:
-    dependencies: []
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
     source:
       path: ../shared_components/gps
       type: local
@@ -188,6 +190,6 @@ direct_dependencies:
 - johboh/nlohmann-json
 - lvgl/lvgl
 - waveshare/esp_oled_ssd1315
-manifest_hash: 9aa930a01cf9409728b4015e46abb7590bd3501a398c26bc6be77b64bffbe469
+manifest_hash: 0054bc8eb03524dc7369104c07539b4d82c57b6ef5afd58c5a548dc7360d0f69
 target: esp32s3
 version: 3.0.0

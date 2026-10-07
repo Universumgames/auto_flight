@@ -35,7 +35,6 @@ void BaseControllerClass::init() {
     I2CManager::getBus(); // initialize I2C bus
 
     Cache.init();
-    FlightStorage.init();
 
     FrontendHandlerBl.init();
 
@@ -73,7 +72,7 @@ void BaseControllerClass::loopTaskEntry(void* param) {
             time,
             Barometer.getPressure(),
             0,
-            BatteryClass::voltageToPercentage(Battery.getVoltageMillivolts())
+            Battery.getVoltagePercentage()
         };
         Cache.savePacket(DeviceId::BASE_STATION, PacketType::SENSOR_UPDATE, sensor.serialize());
 
@@ -84,6 +83,7 @@ void BaseControllerClass::loopTaskEntry(void* param) {
             ConnectionState::CONNECTING,
             ConnectionState::CONNECTING,
             ConnectionState::CONNECTING,
+            Battery.isAvailable() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING,
             false,
             FlightState::PLANNING
         };

@@ -104,6 +104,7 @@ void Flight_Communication::sendComponentStatus() {
     status.motorControl = FlightStorage.getPlaneMotorControlConnectionState();
     status.magnetometer = FlightStorage.getPlaneMagnetometerConnectionState();
     status.accelerometer = FlightStorage.getPlaneAccelerometerConnectionState();
+    status.battery = FlightStorage.getPlaneBatteryConnectionState();
     status.manualOverride = FlightStorage.getPlaneManualOverride();
     status.flightState = FlightStorage.getFlightState();
 

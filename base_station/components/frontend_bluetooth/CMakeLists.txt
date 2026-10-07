@@ -3,7 +3,7 @@ FILE(GLOB frontend_bl_srcs "*.cpp")
 idf_component_register(
         SRCS ${frontend_bl_srcs}
         INCLUDE_DIRS "." "${CMAKE_CURRENT_BINARY_DIR}"
-        REQUIRES bt nvs_flash esp_driver_uart freertos barometer nlohmann-json proxy_cache device_id flight_com
+        REQUIRES bt nvs_flash esp_driver_uart freertos barometer nlohmann-json proxy_cache device_id flight_com battery
 )
 
 # Regenerates build_timestamp.h (BUILD_EPOCH_TIMESTAMP, see BluetoothManager::startAdvertising)

@@ -34,7 +34,12 @@ public:
     uint32_t getVoltageMillivolts();
 
     uint8_t getVoltagePercentage() {
-        return voltageToPercentage(getVoltageMillivolts());
+        lastMeasuredVoltagePercentage = voltageToPercentage(getVoltageMillivolts());
+        return lastMeasuredVoltagePercentage;
+    }
+
+    [[nodiscard]] uint8_t getLastMeasuredVoltagePercentage() const {
+        return lastMeasuredVoltagePercentage;
     }
 
     /// Convert a raw per-cell voltage reading to an estimated charge percentage (0-100).
@@ -63,6 +68,7 @@ private:
 
     ads111x_handle_t adsHandle = nullptr;
     uint8_t batteryCellCount = MAX_BATTERY_CELL_COUNT;
+    uint8_t lastMeasuredVoltagePercentage = 0;
 };
 
 extern BatteryClass& Battery;

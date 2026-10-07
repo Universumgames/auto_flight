@@ -6,7 +6,6 @@
 #include "freertos/queue.h"
 
 #include "BluetoothManager.hpp"
-#include "FlightStorage.hpp"
 #include "packets/base.hpp"
 
 class FrontendHandlerBlClass {
@@ -31,6 +30,8 @@ private:
     QueueHandle_t refreshRequestQueue = nullptr;
 
     SemaphoreHandle_t bluetoothMutex = nullptr;
+
+    std::unordered_map<BLETopics::NotifyByte, int> topicUpdateIntervals = {};
 public:
     void init();
 
@@ -59,11 +60,17 @@ private:
      */
     [[noreturn]] static void sendUpdateQueueTaskEntry(void* param);
 
+    [[noreturn]] void sendUpdateQueueTask();
+
     /**
      * Task entry point for sending automatic updates. It dispatches updates for all topics in a loop to update data even if it was not manually requested.
      * @param param
      */
     [[noreturn]] static void triggerPeriodicUpdateTaskEntry(void* param);
+
+    [[noreturn]] void triggerPeriodicUpdateTask();
+
+    static int getUpdateIntervalForTopic(BLETopics::NotifyByte topic);
 };
 
 extern FrontendHandlerBlClass& FrontendHandlerBl;

@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.16)
 set(ENV{IDF_COMPONENT_SUPPRESS_UNKNOWN_FILE_WARNINGS} 1)
 set(ENV{KCONFIG_REPORT_VERBOSITY} quiet)
 
-add_compile_definitions(FLIGHT_DEVICE_TYPE_PLANE)
+add_compile_definitions(FLIGHT_DEVICE_TYPE_PLANE=1)
 set(FLIGHT_DEVICE_TYPE_PLANE 1)
 
 # Force the native GoogleTest build even when an ESP-IDF env is active (e.g. CLion's test profile)

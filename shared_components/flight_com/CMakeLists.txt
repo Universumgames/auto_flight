@@ -5,7 +5,7 @@ if (NOT NATIVE_BUILD)
     idf_component_register(
             SRCS ${flight_com_srcs}
             INCLUDE_DIRS "."
-            REQUIRES  driver freertos esp_timer flight_data lora_com battery nlohmann-json
+            REQUIRES  driver freertos esp_timer lora_com battery nlohmann-json
             PRIV_REQUIRES gps barometer device_id
     )
 

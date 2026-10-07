@@ -1,6 +1,7 @@
 #include "Cache.hpp"
 
 #include "esp_log.h"
+#include "GPS_Reader.hpp"
 
 #define WITH_RECURSIVE_MUTEX(mutex) \
 for (bool _once = (xSemaphoreTakeRecursive((mutex), portMAX_DELAY) == pdTRUE); \
@@ -44,6 +45,7 @@ void CacheClass::savePacket(const uint32_t sourceId, const PacketType type, cons
             delete[] cache[sourceId][type].data;
         }
         cache[sourceId][type] = {.data = data, .len = len};
+        sourceLastUpdateTimes[sourceId] = GPS_Reader.getGPSLatestTime();
     }
     queuePacketCallback(sourceId, type);
 }
@@ -55,6 +57,7 @@ void CacheClass::savePacket(const uint32_t sourceId, const PacketType type, Seri
             delete[] cache[sourceId][type].data;
         }
         cache[sourceId][type] = {.data = data.first.release(), .len = data.second};
+        sourceLastUpdateTimes[sourceId] = GPS_Reader.getGPSLatestTime();
     }
     queuePacketCallback(sourceId, type);
 }
@@ -126,4 +129,35 @@ bool CacheClass::hasSource(uint32_t sourceId) {
         found = cache.find(sourceId) != cache.end();
     }
     return found;
+}
+
+std::vector<uint32_t> CacheClass::getSources() {
+    return cache | std::views::keys | std::ranges::to<std::vector<uint32_t>>();
+}
+
+std::unordered_map<uint32_t, time_t> CacheClass::getSourceLastUpdateTimes() {
+    std::unordered_map<uint32_t, time_t> result;
+    WITH_RECURSIVE_MUTEX(cacheMutex) {
+        result = sourceLastUpdateTimes;
+    }
+    return result;
+}
+
+void CacheClass::updateSourceLastUpdateTime(uint32_t sourceId, time_t lastUpdateTime) {
+    WITH_RECURSIVE_MUTEX(cacheMutex) {
+        sourceLastUpdateTimes[sourceId] = lastUpdateTime;
+    }
+}
+
+ComponentStatus CacheClass::getLatestComponentStatus(uint32_t sourceId) {
+    ComponentStatus status{};
+    WITH_RECURSIVE_MUTEX(cacheMutex) {
+        if (hasPacket(sourceId, PacketType::COMPONENT_STATUS)) {
+            auto [data, len] = getLatestPacket(sourceId, PacketType::COMPONENT_STATUS);
+            if (data != nullptr && len == sizeof(ComponentStatus)) {
+                std::memcpy(&status, data, sizeof(ComponentStatus));
+            }
+        }
+    }
+    return status;
 }
