@@ -58,6 +58,16 @@ menu "LoRa Communication Settings"
             - 8: Standard (recommended)
             - Higher values increase detection range but use more energy
 
+    config LORA_TCXO_VOLTAGE_MV
+        int "SX1262 TCXO supply voltage (mV)"
+        default 1800
+        range 0 3300
+        help
+            Voltage the SX1262 supplies to its TCXO via DIO3. Must match the module:
+            the Heltec WiFi LoRa 32 V3 uses 1800 mV. RadioLib's default of 1600 mV
+            under-powers that TCXO, which causes frequency drift and lost packets.
+            Set to 0 for modules with a plain crystal instead of a TCXO.
+
     config LORA_PING_INTERVAL
         int "LoRa Ping Interval (seconds)"
         default 30

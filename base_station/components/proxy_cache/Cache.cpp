@@ -1,6 +1,8 @@
 #include "Cache.hpp"
 
 #include "esp_log.h"
+#include <cstring>
+#include <memory>
 #include "GPS_Reader.hpp"
 
 #define WITH_RECURSIVE_MUTEX(mutex) \
@@ -83,14 +85,24 @@ bool CacheClass::hasPacket(uint32_t sourceId, PacketType type) {
 }
 
 void CacheClass::invokePacketCallback(uint32_t sourceId, PacketType type) {
-    // hold the lock during the callbacks, so the data can't be freed by a concurrent savePacket
+    // copy under the lock, so the data can't be freed by a concurrent savePacket, but run the callbacks without it:
+    // a callback may block for seconds (e.g. a LoRa send waiting for ACKs), and the LoRa receive task needs the
+    // lock for every received packet - holding it here deadlocks the ACK reception of that very send
+    std::unique_ptr<uint8_t[]> copy;
+    size_t len = 0;
     WITH_RECURSIVE_MUTEX(cacheMutex) {
-        auto [data, len] = getLatestPacket(sourceId, type);
+        auto [data, dataLen] = getLatestPacket(sourceId, type);
         if (data != nullptr) {
-            for (const auto& callback : packetCallbacks) {
-                callback(sourceId, type, data, len);
-            }
+            copy = std::make_unique<uint8_t[]>(dataLen);
+            std::memcpy(copy.get(), data, dataLen);
+            len = dataLen;
         }
+    }
+    if (copy == nullptr) {
+        return;
+    }
+    for (const auto& callback : packetCallbacks) {
+        callback(sourceId, type, copy.get(), len);
     }
 }
 
@@ -126,7 +138,7 @@ void CacheClass::registerPacketCallback(const std::function<void(uint32_t, Packe
 bool CacheClass::hasSource(uint32_t sourceId) {
     bool found = false;
     WITH_RECURSIVE_MUTEX(cacheMutex) {
-        found = cache.find(sourceId) != cache.end();
+        found = cache.contains(sourceId);
     }
     return found;
 }

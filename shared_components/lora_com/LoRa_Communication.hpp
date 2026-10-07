@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <array>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
@@ -96,13 +97,15 @@ private:
 
     static constexpr TickType_t LORA_RX_POLL_DELAY = pdMS_TO_TICKS(10);
     static constexpr TickType_t LORA_SEND_DELAY = pdMS_TO_TICKS(10);
-    /// ACK timeout in seconds
-    static constexpr time_t LORA_ACK_TIMEOUT = 2;
+    /// receive task re-checks the IRQ flags at least this often, in case a DIO1 edge was missed
+    static constexpr TickType_t LORA_RX_IRQ_FALLBACK_POLL = pdMS_TO_TICKS(100);
+    /// extra time on top of the airtime-based ACK timeout (processing, task scheduling)
+    static constexpr uint32_t LORA_ACK_MARGIN_MS = 100;
     static constexpr TickType_t LORA_PING_CHECK_INTERVAL = pdMS_TO_TICKS(1000); // Check every 1 second
     static constexpr int LORA_MAX_SEND_RETRIES = 3;
 
-    static constexpr size_t SENT_PACKET_HISTORY_MAX = 100;
-    // max number of sent packets to remember for isOwnPacket() detection
+    /// number of recently received (sender, message, fragment) ids remembered to detect retransmissions
+    static constexpr size_t RECENT_RX_HISTORY = 32;
 
 public:
     ~LoRa_CommunicationClass() = delete;
@@ -234,23 +237,38 @@ private:
 #endif
 
     /**
-     * Sends an ACK packet for a received message
-     * Does not have a mutex check for the lora module, caller must ensure thread safety
-     * @param messageId The ID of the message being acknowledged
+     * Sends an ACK for a received packet. The ACK echoes messageId and fragmentId and carries the
+     * original sender's id as payload, so only that device accepts it.
+     * Must only be called from the receive task.
+     * @param received The header of the packet being acknowledged
      */
-    void sendAckPacketInternal(uint8_t messageId);
+    void sendAckPacketInternal(const LoRa_Packet_Internal& received);
 
     /**
-     * Processes a received LoRa packet header
+     * Processes a received ACK or PING packet
      * @param receivedHeader The received packet header
+     * @param data Payload following the header
+     * @param size Size of the payload
      */
-    void processPacket(const LoRa_Packet_Internal& receivedHeader);
+    void processPacket(const LoRa_Packet_Internal& receivedHeader, const uint8_t* data, int size);
 
     void processDataPacket(const LoRa_Packet_Internal& header, const uint8_t* data, int size);
 
-    bool isOwnPacket(const LoRa_Packet_Internal& packet);
+    /**
+     * Transmits a buffer and puts the radio back into receive mode.
+     * TX and RX share the radio's FIFO and transmit() aborts an ongoing reception, so unless
+     * deferToReceiver is false this waits until no packet is being received or waiting to be read (bounded),
+     * the receive task has sent its ACK for the last received packet, and the peer has finished
+     * sending a fragmented message to us.
+     * @return true if the radio reported a successful transmission
+     */
+    bool transmitWhenChannelClear(const uint8_t* buf, size_t len, bool deferToReceiver);
 
-    void cleanupSendHistory();
+    /**
+     * Remembers a received data fragment and reports whether it was already received before
+     * (i.e. the sender retransmitted because our ACK got lost). Only called from the receive task.
+     */
+    bool isDuplicateFragment(const LoRa_Packet_Internal& header);
 
     std::vector<LoRa_Packet_Internal> splitData(size_t size);
 
@@ -268,14 +286,42 @@ private:
     SemaphoreHandle_t lastSendTimeMutex = nullptr;
     std::vector<ReceivedPacket> receivedPackets;
     std::unordered_map<uint8_t, ReceivedFragmentsCache> receivedFragments; // messageId -> received fragment data
-    std::vector<uint8_t> outstandingAcks;
+    struct OutstandingAck {
+        uint8_t messageId;
+        uint8_t fragmentId;
+
+        bool operator==(const OutstandingAck& b) const = default;
+    };
+    std::vector<OutstandingAck> outstandingAcks;
+    /// serializes ACK-requiring sends of this device: while waiting for an ACK no other local packet may be
+    /// transmitted, the radio is half-duplex and would miss the ACK
+    SemaphoreHandle_t sendMutex = nullptr;
+    /// set by the receive task from reading a packet until its ACK is sent, so other tasks can't take the radio first
+    std::atomic<bool> ackPending{false};
+    /// while a peer is sending us a fragmented message, other senders keep the channel free until this tick
+    std::atomic<TickType_t> channelReservedUntil{0};
     TickType_t lastSendTime = 0;
     std::atomic<uint8_t> nextMessageId{1};
+    /// how long to wait for an ACK, derived from the configured modulation in begin()
+    uint32_t ackTimeoutMs = 1000;
+    /// upper bound for waiting on an incoming packet before transmitting anyway; also the retry jitter range,
+    /// so two devices that collided don't retransmit into each other again
+    uint32_t maxPacketAirtimeMs = 1000;
+
+    struct RecentRx {
+        bool valid;
+        uint8_t senderId[4];
+        uint8_t messageId;
+        uint8_t fragmentId;
+
+        bool operator==(const RecentRx& b) const = default;
+    };
+    std::array<RecentRx, RECENT_RX_HISTORY> recentRx{};
+    size_t recentRxNext = 0;
     // Whether a DIO0 ISR has been installed for the radio (used by the receive task)
     bool dio0IsrInstalled = false;
 
     bool sending = false;
-    std::vector<LoRa_Packet_Internal> sentPackets;
 
     SX1262* loraRadio = nullptr;
 

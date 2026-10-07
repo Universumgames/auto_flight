@@ -7,6 +7,7 @@
 #include "DeviceId.hpp"
 #include "GPS_Reader.hpp"
 #include "driver/gpio.h"
+#include "esp_random.h"
 
 #if FLIGHT_DEVICE_TYPE_BASE_STATION
 #include "Cache.hpp"
@@ -62,14 +63,16 @@ void LoRa_CommunicationClass::begin() {
     if (lastSendTimeMutex == nullptr) {
         lastSendTimeMutex = xSemaphoreCreateMutex();
     }
+    if (sendMutex == nullptr) {
+        sendMutex = xSemaphoreCreateMutex();
+    }
     if (radioMutex == nullptr || receivedPacketsMutex == nullptr || lastSendTimeMutex == nullptr || ackMutex ==
-        nullptr) {
+        nullptr || sendMutex == nullptr) {
         ESP_LOGE(TAG_LORA, "Failed to create LoRa mutexes");
         return;
     }
 
     outstandingAcks.reserve(20);
-    sentPackets.reserve(SENT_PACKET_HISTORY_MAX + 1);
 
     ESP_LOGI(TAG_LORA, "initializing LoRa radio");
 
@@ -87,11 +90,22 @@ void LoRa_CommunicationClass::begin() {
         static_cast<uint8_t>(CONFIG_LORA_CODING_RATE_DENOMINATOR), // coding rate denom
         static_cast<uint8_t>(CONFIG_LORA_SYNC_WORD), // sync word
         static_cast<int8_t>(CONFIG_LORA_TX_POWER), // tx power dBm
-        static_cast<uint16_t>(CONFIG_LORA_PREAMBLE_LENGTH) // preamble length
+        static_cast<uint16_t>(CONFIG_LORA_PREAMBLE_LENGTH), // preamble length
+        static_cast<float>(CONFIG_LORA_TCXO_VOLTAGE_MV) / 1000.0f // TCXO voltage in V
     );
     if (initRes != RADIOLIB_ERR_NONE) {
         ESP_LOGE(TAG_LORA, "LoRa RadioLib initialization failed (err=%d); skipping task startup", initRes);
         return;
+    }
+
+    // RadioLib leaves the PA over-current protection at 60 mA, but the SX1262 draws ~90 mA at +17 dBm,
+    // so the PA gets clamped and the transmitted signal is distorted. 140 mA is the SX1262 maximum.
+    if (const int16_t res = this->loraRadio->setCurrentLimit(140.0f); res != RADIOLIB_ERR_NONE) {
+        ESP_LOGE(TAG_LORA, "Failed to set PA current limit (err=%d)", res);
+    }
+    // ~2 dB better sensitivity for ~0.5 mA more RX current
+    if (const int16_t res = this->loraRadio->setRxBoostedGainMode(true); res != RADIOLIB_ERR_NONE) {
+        ESP_LOGE(TAG_LORA, "Failed to enable RX boosted gain (err=%d)", res);
     }
 
     // Enable CRC (2 bytes) and explicit header mode
@@ -100,6 +114,12 @@ void LoRa_CommunicationClass::begin() {
 
     // Ensure the radio is in receive (interrupt) mode
     this->loraRadio->startReceive();
+
+    // the peer may be busy sending a full-size packet before it gets to transmit our ACK
+    maxPacketAirtimeMs = loraRadio->getTimeOnAir(LORA_MAX_PACKET_SIZE) / 1000;
+    const uint32_t ackAirtimeMs = loraRadio->getTimeOnAir(sizeof(LoRa_Packet_Internal) + sizeof(LoRa_Packet_Internal::senderId)) / 1000;
+    ackTimeoutMs = maxPacketAirtimeMs + ackAirtimeMs + LORA_ACK_MARGIN_MS;
+    ESP_LOGI(TAG_LORA, "Max packet airtime=%lu ms, ACK timeout=%lu ms", maxPacketAirtimeMs, ackTimeoutMs);
 
     ESP_LOGI(TAG_LORA, "LoRa configured: freq=%ld Hz, tx_power=%d, SF=%d, BW=%ld Hz, CR=4/%d, ping_interval=%d sec",
              CONFIG_LORA_FREQUENCY, CONFIG_LORA_TX_POWER, CONFIG_LORA_SPREADING_FACTOR,
@@ -214,18 +234,23 @@ bool LoRa_CommunicationClass::sendData(const uint8_t* data, const size_t size) {
         return false;
     }
 
-    auto fragments = splitData(size);
-    for (const auto& fragmentHeader : fragments) {
-        size_t offset = fragmentHeader.fragmentId * LORA_MAX_DATA_LENGTH;
-        ESP_LOGI(TAG_LORA, "Sending fragment %d/%d for messageId=%d with payload size %d",
-                 fragmentHeader.fragmentId + 1, fragmentHeader.totalFragments, fragmentHeader.messageId,
-                 fragmentHeader.payloadLength);
-        if (!sendRawPacket(fragmentHeader, data + offset, true)) {
-            return false;
+    bool success = true;
+    // hold the send lock for the whole message, so no other local packet gets in between the fragments
+    WITH_MUTEX(sendMutex) {
+        auto fragments = splitData(size);
+        for (const auto& fragmentHeader : fragments) {
+            size_t offset = fragmentHeader.fragmentId * LORA_MAX_DATA_LENGTH;
+            ESP_LOGI(TAG_LORA, "Sending fragment %d/%d for messageId=%d with payload size %d",
+                     fragmentHeader.fragmentId + 1, fragmentHeader.totalFragments, fragmentHeader.messageId,
+                     fragmentHeader.payloadLength);
+            if (!sendRawPacket(fragmentHeader, data + offset, true)) {
+                success = false;
+                break;
+            }
+            vTaskDelay(LORA_SEND_DELAY);
         }
-        vTaskDelay(pdMS_TO_TICKS(LORA_SEND_DELAY));
     }
-    return true;
+    return success;
 }
 
 std::vector<LoRa_CommunicationClass::LoRa_Packet_Internal> LoRa_CommunicationClass::splitData(const size_t size) {
@@ -301,14 +326,14 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
     std::memcpy(packet.senderId, deviceId.data(), sizeof(packet.senderId));
 
     // Helper: wait for ACK with timeout
-    auto waitForAckId = [&](uint8_t msgId, time_t timeout) -> bool {
-        vTaskDelay(pdMS_TO_TICKS(10)); // small initial
+    const OutstandingAck ackKey{packet.messageId, packet.fragmentId};
+    auto waitForAck = [&](uint32_t timeoutMs) -> bool {
         TickType_t start = xTaskGetTickCount();
-        while (pdTICKS_TO_MS(xTaskGetTickCount() - start) < timeout * 100) {
+        while (pdTICKS_TO_MS(xTaskGetTickCount() - start) < timeoutMs) {
             bool ackReceived = false;
             WITH_MUTEX(ackMutex) {
-                // ACK received when msgId is no longer in outstandingAcks
-                ackReceived = !std::ranges::contains(outstandingAcks, msgId);
+                // ACK received when the packet is no longer in outstandingAcks
+                ackReceived = !std::ranges::contains(outstandingAcks, ackKey);
             }
             if (ackReceived) {
                 return true;
@@ -329,21 +354,18 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
 
         ESP_LOGD(TAG_LORA, "Transmitting packet msgId=%d with size %u", msgId, len);
 
+        // the receive task sends ACKs right after reading a packet; it must not wait for itself to read the next one
+        const bool deferToReceiver = xTaskGetCurrentTaskHandle() != receiveTaskHandle;
+
         int attempts = 0;
         while (attempts <= LORA_MAX_SEND_RETRIES) {
-            WITH_MUTEX(radioMutex) {
-                sending = true;
-                // transmit is blocking; ignore return value here but could be checked for errors
-                loraRadio->transmit(buf.get(), len);
-                // re-enter receive mode after transmit
-                loraRadio->startReceive();
-                sending = false;
-            }
+            const bool transmitted = transmitWhenChannelClear(buf.get(), len, deferToReceiver);
 
-            if (!requireAck) return true;
-            if (waitForAckId(msgId, LORA_ACK_TIMEOUT * (attempts + 1))) return true;
+            if (!requireAck) return transmitted;
+            if (transmitted && waitForAck(ackTimeoutMs + esp_random() % maxPacketAirtimeMs)) return true;
 
-            ESP_LOGW(TAG_LORA, "No ACK for msgId=%d type=%d (attempt %d)", msgId, type, attempts);
+            ESP_LOGW(TAG_LORA, "No ACK for msgId=%d fragment=%d type=%d (attempt %d)", msgId, ackKey.fragmentId,
+                     type, attempts);
             attempts++;
         }
 
@@ -361,18 +383,17 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
     // Add message ID to outstanding ACKs if ACK is required
     if (requireAck) {
         WITH_MUTEX(ackMutex) {
-            outstandingAcks.push_back(packet.messageId);
+            outstandingAcks.push_back(ackKey);
         }
     }
 
     // Send header first
     ESP_LOGD(TAG_LORA, "Sending packet: %s", packet.toString().c_str());
-    sentPackets.push_back(packet);
     auto success = sendBufferWithRetries(sendBuffer, sendSize, packet.messageId, packet.type);
     if (!success) {
         // Remove from outstanding ACKs if send failed
         WITH_MUTEX(ackMutex) {
-            erase_if(outstandingAcks, [&packet](const uint8_t& id) { return id == packet.messageId; });
+            std::erase(outstandingAcks, ackKey);
         }
 
 
@@ -385,6 +406,43 @@ bool LoRa_CommunicationClass::sendRawPacket(LoRa_Packet_Internal packet, const u
     updateLastSendTime();
     ESP_LOGD(TAG_LORA, "Packet msgId=%d sent successfully", packet.messageId);
     return true;
+}
+
+bool LoRa_CommunicationClass::transmitWhenChannelClear(const uint8_t* buf, const size_t len,
+                                                       const bool deferToReceiver) {
+    const TickType_t start = xTaskGetTickCount();
+    while (true) {
+        bool done = false;
+        int16_t res = RADIOLIB_ERR_NONE;
+        WITH_MUTEX(radioMutex) {
+            const uint32_t irq = loraRadio->getIrqFlags();
+            // HEADER_VALID without a read yet: a packet is arriving right now; RX_DONE: one is waiting in the FIFO
+            const bool receiving = irq & (RADIOLIB_SX126X_IRQ_HEADER_VALID | RADIOLIB_SX126X_IRQ_RX_DONE);
+            const TickType_t now = xTaskGetTickCount();
+            const bool waitedTooLong = pdTICKS_TO_MS(now - start) > maxPacketAirtimeMs + LORA_ACK_MARGIN_MS;
+            // both are bounded by the receive task itself, so no waitedTooLong escape is needed
+            const bool reserved = ackPending
+                || static_cast<int32_t>(channelReservedUntil.load() - now) > 0;
+            if (!deferToReceiver || (!reserved && (!receiving || waitedTooLong))) {
+                if (receiving) {
+                    ESP_LOGW(TAG_LORA, "Transmitting while a packet is being received (irq=0x%04lx)", irq);
+                }
+                sending = true;
+                res = loraRadio->transmit(buf, len);
+                // re-enter receive mode after transmit
+                loraRadio->startReceive();
+                sending = false;
+                done = true;
+            }
+        }
+        if (done) {
+            if (res != RADIOLIB_ERR_NONE) {
+                ESP_LOGE(TAG_LORA, "Transmit failed (err=%d)", res);
+            }
+            return res == RADIOLIB_ERR_NONE;
+        }
+        vTaskDelay(LORA_RX_POLL_DELAY);
+    }
 }
 
 void LoRa_CommunicationClass::updateLastSendTime() {
@@ -431,16 +489,17 @@ void LoRa_CommunicationClass::registerReceivePacketCallback(std::function<void(c
     receivePacketCallbacks.push_back(std::move(callback));
 }
 
-bool LoRa_CommunicationClass::isOwnPacket(const LoRa_Packet_Internal& packet) {
-    // Check if the packet is one of our recently sent packets to avoid processing it as a received packet
-    return std::ranges::find(sentPackets, packet) != sentPackets.end();
-}
-
-void LoRa_CommunicationClass::cleanupSendHistory() {
-    if (sentPackets.size() <= SENT_PACKET_HISTORY_MAX) return;
-    const size_t excess = sentPackets.size() - SENT_PACKET_HISTORY_MAX;
-    ESP_LOGD(TAG_LORA, "Cleaning up sent packet history (currentCount=%zu, dropping oldest %zu)",
-             sentPackets.size(), excess);
-    // sentPackets is append-only (see sendRawPacket), so the oldest entries are at the front
-    sentPackets.erase(sentPackets.begin(), sentPackets.begin() + excess);
+bool LoRa_CommunicationClass::isDuplicateFragment(const LoRa_Packet_Internal& header) {
+    RecentRx entry{
+        .valid = true,
+        .senderId = {header.senderId[0], header.senderId[1], header.senderId[2], header.senderId[3]},
+        .messageId = header.messageId,
+        .fragmentId = header.fragmentId,
+    };
+    if (std::ranges::contains(recentRx, entry)) {
+        return true;
+    }
+    recentRx[recentRxNext] = entry;
+    recentRxNext = (recentRxNext + 1) % recentRx.size();
+    return false;
 }

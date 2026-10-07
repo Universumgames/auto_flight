@@ -35,7 +35,10 @@ void LoRa_CommunicationClass::pingTaskLoop() {
             };
 
             // Send ping
-            auto success = sendRawPacket(pingPacket, nullptr, true);
+            bool success = false;
+            WITH_MUTEX(sendMutex) {
+                success = sendRawPacket(pingPacket, nullptr, true);
+            }
             if (success) {
                 ESP_LOGI(TAG_LORA, "PING sent to maintain connection");
             }else {
@@ -43,8 +46,6 @@ void LoRa_CommunicationClass::pingTaskLoop() {
             }
             updateLastSendTime();
         }
-
-        cleanupSendHistory();
     }
 }
 
