@@ -51,6 +51,8 @@ private:
 
     void steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::GroundAngle angle, float compassHeading);
 
+    void updateConnectionStates();
+
 
 };
 

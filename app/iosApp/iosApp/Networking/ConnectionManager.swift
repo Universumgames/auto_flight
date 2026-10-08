@@ -35,6 +35,15 @@ final class ConnectionManager: NSObject {
     internal struct WaitRequestKey: Hashable {
         let characteristic: CharacteristicUUID
         let sourceId: PlaneID
+        
+        static func == (lhs: WaitRequestKey, rhs: WaitRequestKey) -> Bool {
+            return lhs.characteristic == rhs.characteristic && lhs.sourceId == rhs.sourceId
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(characteristic)
+            hasher.combine(sourceId)
+        }
     }
 
     internal var waitingRequests: [WaitRequestKey: [(Data?) -> Void]] = [:]
@@ -72,7 +81,6 @@ final class ConnectionManager: NSObject {
             onFrameSensorUpdate(data: data)
         case .plannedArea:
                 onFrameAreaDefine(data: data)
-            break
         case .plannedRoute:
             onFrameRoutePlanned(data: data)
         case .routeHistory:
@@ -92,6 +100,7 @@ final class ConnectionManager: NSObject {
         let key = WaitRequestKey(characteristic: topic, sourceId: base.id)
         let callbacks = waitingRequests[key]
         waitingRequests[key] = []
+        print("Calling \(callbacks?.count ?? 0) waiting callbacks for \(key)")
         callbacks?.forEach { callback in
             callback(data)
         }

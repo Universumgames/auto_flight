@@ -60,16 +60,18 @@ enum PacketParsing {
         _ current: AppState,
         _ packet: wire.ComponentStatus
     ) {
-        if packet.sourceId == SharedLogic.BASE_ID{
+        if packet.sourceId == SharedLogic.BASE_ID {
             current.gpsConnectionBase = toConnectionState(packet.gps)
             current.barometerConnectionBase = toConnectionState(packet.barometer)
-        }else {
+        } else {
             let plane = self.plane(current, id: packet.sourceId)
             plane.connectionState = .CONNECTED
             plane.gpsConnection = toConnectionState(packet.gps)
             plane.barometerConnection = toConnectionState(packet.barometer)
             plane.motorComConnection = toConnectionState(packet.motorControl)
+            plane.magnetometerConnection = toConnectionState(packet.magnetometer)
             plane.accelerometerConnection = toConnectionState(packet.accelerometer)
+            plane.batteryConnection = toConnectionState(packet.battery)
             plane.manualOverride = packet.manualOverride
             plane.flightState = toFlightState(packet.flightState)
         }
@@ -82,16 +84,16 @@ enum PacketParsing {
         if packet.sourceId == SharedLogic.BASE_ID {
             current.pressureBase = Double(packet.pressure)
             current.batteryPercentageBase = Int(packet.batteryPercent)
-        }else{
+        } else {
             let plane = self.plane(current, id: packet.sourceId)
             plane.pressure = Double(packet.pressure)
-            //plane.calculatedAltitude = Double(packet.altitude)
+            // plane.calculatedAltitude = Double(packet.altitude)
             plane.heading = Double(packet.heading)
             plane.batteryPercentage = Int(packet.batteryPercent)
         }
     }
-    
-    static func applyRoutePlannedPacket(_ current: AppState, _ packet: wire.PlannedRoutePacket){
+
+    static func applyRoutePlannedPacket(_ current: AppState, _ packet: wire.PlannedRoutePacket) {
         if packet.sourceId == SharedLogic.BASE_ID {
             return
         }
@@ -99,12 +101,12 @@ enum PacketParsing {
         plane.plannedRoute = packet.route
         plane.plannedRouteUpdateTime = -1 // TODO: update packet to include timestamp
     }
-    
+
     static func applyAreaDefinePacket(
         _ current: AppState,
         _ packet: wire.PlannedAreaPacket
-    ){
-        if packet.sourceId == SharedLogic.BASE_ID{
+    ) {
+        if packet.sourceId == SharedLogic.BASE_ID {
             return
         }
         let plane = self.plane(current, id: packet.sourceId)

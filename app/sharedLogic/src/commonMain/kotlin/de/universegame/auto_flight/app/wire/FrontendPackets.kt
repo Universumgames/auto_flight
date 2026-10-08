@@ -142,6 +142,7 @@ data class ComponentStatus(
     val motorControl: ConnectionState,
     val magnetometer: ConnectionState,
     val accelerometer: ConnectionState,
+    val battery: ConnectionState,
     val manualOverride: Boolean,
     val flightState: FlightState,
     override val timestamp: Long = currentTimestamp(),

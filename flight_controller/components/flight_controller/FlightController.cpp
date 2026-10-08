@@ -49,11 +49,12 @@ void FlightControllerClass::init() {
 
     LoRa_Communication.begin();
 
-    Gyroscope.begin();
-    Barometer.begin();
-    Magnetometer.begin();
     GPS_Reader.begin();
     MotorComMaster.init();
+    Magnetometer.begin();
+    Gyroscope.begin();
+    Barometer.begin();
+    Battery.begin();
     OledDisplay.begin();
 
     Flight_Communication::begin();
@@ -98,35 +99,41 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         auto planeAngle = Gyroscope.getGroundAngle();
         planeAngle.roll = rollAverage.push(planeAngle.roll);
         planeAngle.pitch = pitchAverage.push(planeAngle.pitch);
-        vTaskDelay(1);
         auto compassHeading = headingAverage.push(Magnetometer.getHeading());
-        vTaskDelay(1);
 
         //ESP_LOGI("GNDANG", "roll: %f, pitch: %f, yaw deg: %f", planeAngle.roll, planeAngle.pitch, planeAngle.yaw);
         //ESP_LOGI("MAGN", "x: %.1f mG, y: %.1f mG, z: %.1f mG, heading: %.1f deg, ready: %d, overflow: %d", magnetHeading.x, magnetHeading.y, magnetHeading.z, compassHeading, Magnetometer.isAvailable(), Magnetometer.isOverflow());
 
-        FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()
-                                                        ? ConnectionState::CONNECTED
-                                                        : ConnectionState::CONNECTING);
-        FlightStorage.updatePlaneBarometerConnectionState(Barometer.available()
-                                                              ? ConnectionState::CONNECTED
-                                                              : ConnectionState::CONNECTING);
-        FlightStorage.updatePlaneMotorControlConnectionState(
-            MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
-        FlightStorage.updatePlaneMagnetometerConnectionState(
-            Magnetometer.isAvailable() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
-        FlightStorage.updatePlaneAccelerometerConnectionState(
-            Gyroscope.initialized() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
-        FlightStorage.updatePlaneManualOverride(MotorComMaster.isManualOverride());
-        FlightStorage.updatePlaneMotorControlConnectionState(
-            MotorComMaster.isSlaveConnected() ? ConnectionState::CONNECTED : ConnectionState::CONNECTING);
+        updateConnectionStates();
 
         // advance waypoint index if close enough, then steer
         checkAndAdvanceWaypoint(position);
 
-            steerToWaypoint(getNextWaypoint(), currentAltitude, planeAngle, compassHeading);
+        steerToWaypoint(getNextWaypoint(), currentAltitude, planeAngle, compassHeading);
         vTaskDelay(pdMS_TO_TICKS(50));
     }
+}
+
+void FlightControllerClass::updateConnectionStates() {
+    FlightStorage.updatePlaneGPSConnectionState(GPS_Reader.hasValidPosition()
+                                                    ? ConnectionState::CONNECTED
+                                                    : ConnectionState::CONNECTING);
+    FlightStorage.updatePlaneMotorControlConnectionState(MotorComMaster.isSlaveConnected()
+                                                             ? ConnectionState::CONNECTED
+                                                             : ConnectionState::CONNECTING);
+    FlightStorage.updatePlaneManualOverride(MotorComMaster.isManualOverride());
+    FlightStorage.updatePlaneMagnetometerConnectionState(Magnetometer.isAvailable()
+                                                             ? ConnectionState::CONNECTED
+                                                             : ConnectionState::CONNECTING);
+    FlightStorage.updatePlaneAccelerometerConnectionState(Gyroscope.initialized()
+                                                              ? ConnectionState::CONNECTED
+                                                              : ConnectionState::CONNECTING);
+    FlightStorage.updatePlaneBarometerConnectionState(Barometer.available()
+                                                          ? ConnectionState::CONNECTED
+                                                          : ConnectionState::CONNECTING);
+    FlightStorage.updatePlaneBatteryConnectionState(Battery.isAvailable()
+                                                    ? ConnectionState::CONNECTED
+                                                    : ConnectionState::CONNECTING);
 }
 
 void FlightControllerClass::sendUpdateTaskEntry(void* param) {
@@ -179,7 +186,9 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
         ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area with %d points", plannedArea->shape.size());
         if (plannedArea->shape.size() == FlightStorage.getPlannedArea().areaPoints.size() && std::equal(
             plannedArea->shape.begin(), plannedArea->shape.end(), FlightStorage.getPlannedArea().areaPoints.begin(),
-            FlightStorage.getPlannedArea().areaPoints.end(), [](const Coordinate& a, const Coordinate& b) { return a == b; })) {
+            FlightStorage.getPlannedArea().areaPoints.end(), [](const Coordinate& a, const Coordinate& b) {
+                return a == b;
+            })) {
             ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area is the same as current, resending planned route");
             Flight_Communication::sendPlannedRoute();
             break;
@@ -210,7 +219,9 @@ void FlightControllerClass::recalculateRoute(const AreaData& newPlannedArea) {
         ESP_LOGE(TAG_FLIGHT_CONTROLLER, "Cannot recalculate route: planned area is empty");
         return;
     }
-    auto plannedRoute = RoutePlanner.planRoute(newPlannedArea.areaPoints, newPlannedArea.settings.routeAlgorithm, 60, metersToLatitudeDegree(40), (float)newPlannedArea.settings.overlapPercentage / 100.0f);
+    auto plannedRoute = RoutePlanner.planRoute(newPlannedArea.areaPoints, newPlannedArea.settings.routeAlgorithm, 60,
+                                               metersToLatitudeDegree(40),
+                                               (float)newPlannedArea.settings.overlapPercentage / 100.0f);
     FlightStorage.updatePlannedRoute(RouteData{plannedRoute, newPlannedArea.settings});
     nextWaypointIndex = 0;
     FlightStorage.updateFlightState(FlightState::FLYING);

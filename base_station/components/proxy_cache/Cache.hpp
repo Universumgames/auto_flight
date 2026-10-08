@@ -75,6 +75,13 @@ public:
 
     std::pair<RawSerializedPacket, size_t> getLatestPacket(uint32_t sourceId, PacketType type);
 
+    /**
+     * @brief Copy the latest packet under the cache lock, so it stays valid even if a concurrent savePacket
+     * replaces (and frees) the cached entry.
+     * @return The copied packet, or {nullptr, 0} if none is cached.
+     */
+    SerializedPacket copyLatestPacket(uint32_t sourceId, PacketType type);
+
     void registerPacketCallback(const std::function<void(uint32_t, PacketType, RawSerializedPacket, size_t)>& callback);
 
     std::vector<uint32_t> getSources();

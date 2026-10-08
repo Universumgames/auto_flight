@@ -261,11 +261,15 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
         didUpdateValueFor characteristic: CBCharacteristic,
         error: Error?
     ) {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            let uuid = characteristic.uuid
-
-            guard error == nil, let raw = characteristic.value else {
+        // Copy the value now: CoreBluetooth overwrites `characteristic.value` with every new
+        // notification, so reading it later (e.g. in a Task) can pick up a later fragment,
+        // duplicating it while losing others. The delegate queue is .main (see
+        // startBluetoothScan), so we can stay on the main actor synchronously, which also
+        // keeps fragments in arrival order.
+        let uuid = characteristic.uuid
+        let value = characteristic.value
+        MainActor.assumeIsolated {
+            guard error == nil, let raw = value else {
                 if let completion = self.readCompletions.removeValue(forKey: uuid) {
                     completion(nil)
                 }

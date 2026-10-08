@@ -5,9 +5,9 @@
 //  Created by Tom Arlt on 23.08.26.
 //
 
+import Foundation
 import Observation
 import SharedLogic
-import Foundation
 
 /// Native Swift counterpart to the shared Kotlin `PlaneInfo` (`sharedLogic/.../Models.kt`):
 /// everything a single connected plane reports. Held in `AppState.planes`, keyed by
@@ -29,6 +29,7 @@ final class PlaneInfo {
     var motorComConnection: ConnectionState = .CONNECTING
     var magnetometerConnection: ConnectionState = .CONNECTING
     var accelerometerConnection: ConnectionState = .CONNECTING
+    var batteryConnection: ConnectionState = .CONNECTING
     var manualOverride: Bool = false
     var flightState: FlightState = .PLANNING
     var pressure: Double = 0
@@ -83,6 +84,10 @@ final class PlaneInfo {
                 SubTask(label: magnetometerLabel, state: stateOf(magnetometerConnection == .CONNECTED)),
                 SubTask(label: String(localized: "connection.items.subtask.accelerometer"), state: stateOf(accelerometerConnection == .CONNECTED)),
                 SubTask(label: barometerLabel, state: stateOf(barometerConnection == .CONNECTED)),
+                SubTask(
+                    label: String(localized: "connection.item.subtask.battery"),
+                    state: stateOf(batteryConnection == .CONNECTED)
+                ),
             ]
         )
     }
@@ -97,7 +102,7 @@ final class PlaneInfo {
 final class AreaData {
     var areaPoints: [Coordinate]
     var settings: wire.RouteSettings
-    
+
     init(areaPoints: [Coordinate], settings: wire.RouteSettings) {
         self.areaPoints = areaPoints
         self.settings = settings

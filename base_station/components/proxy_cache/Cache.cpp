@@ -84,20 +84,24 @@ bool CacheClass::hasPacket(uint32_t sourceId, PacketType type) {
     return found;
 }
 
+SerializedPacket CacheClass::copyLatestPacket(uint32_t sourceId, PacketType type) {
+    SerializedPacket result = {nullptr, 0};
+    WITH_RECURSIVE_MUTEX(cacheMutex) {
+        auto [data, len] = getLatestPacket(sourceId, type);
+        if (data != nullptr) {
+            result.first = std::make_unique<uint8_t[]>(len);
+            std::memcpy(result.first.get(), data, len);
+            result.second = len;
+        }
+    }
+    return result;
+}
+
 void CacheClass::invokePacketCallback(uint32_t sourceId, PacketType type) {
     // copy under the lock, so the data can't be freed by a concurrent savePacket, but run the callbacks without it:
     // a callback may block for seconds (e.g. a LoRa send waiting for ACKs), and the LoRa receive task needs the
     // lock for every received packet - holding it here deadlocks the ACK reception of that very send
-    std::unique_ptr<uint8_t[]> copy;
-    size_t len = 0;
-    WITH_RECURSIVE_MUTEX(cacheMutex) {
-        auto [data, dataLen] = getLatestPacket(sourceId, type);
-        if (data != nullptr) {
-            copy = std::make_unique<uint8_t[]>(dataLen);
-            std::memcpy(copy.get(), data, dataLen);
-            len = dataLen;
-        }
-    }
+    auto [copy, len] = copyLatestPacket(sourceId, type);
     if (copy == nullptr) {
         return;
     }
@@ -144,7 +148,11 @@ bool CacheClass::hasSource(uint32_t sourceId) {
 }
 
 std::vector<uint32_t> CacheClass::getSources() {
-    return cache | std::views::keys | std::ranges::to<std::vector<uint32_t>>();
+    std::vector<uint32_t> result;
+    WITH_RECURSIVE_MUTEX(cacheMutex) {
+        result = cache | std::views::keys | std::ranges::to<std::vector<uint32_t>>();
+    }
+    return result;
 }
 
 std::unordered_map<uint32_t, time_t> CacheClass::getSourceLastUpdateTimes() {

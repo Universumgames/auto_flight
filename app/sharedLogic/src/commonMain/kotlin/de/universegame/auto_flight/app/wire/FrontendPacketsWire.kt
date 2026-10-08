@@ -161,6 +161,7 @@ internal data class ComponentStatusWire(
     val motorControl: ConnectionStateWire,
     val magnetometer: ConnectionStateWire,
     val accelerometer: ConnectionStateWire,
+    val battery: ConnectionStateWire,
     val manualOverride: Boolean,
     val flightState: FlightStateWire,
 )
@@ -174,6 +175,7 @@ internal fun ComponentStatus.toWire() = ComponentStatusWire(
     motorControl = motorControl.toWire(),
     magnetometer = magnetometer.toWire(),
     accelerometer = accelerometer.toWire(),
+    battery = battery.toWire(),
     manualOverride = manualOverride,
     flightState = flightState.toWire(),
 )
@@ -188,6 +190,7 @@ internal fun ComponentStatusWire.toPublic(): ComponentStatus {
         motorControl = motorControl.toPublic(),
         magnetometer = magnetometer.toPublic(),
         accelerometer = accelerometer.toPublic(),
+        battery = battery.toPublic(),
         manualOverride = manualOverride,
         flightState = flightState.toPublic(),
     )

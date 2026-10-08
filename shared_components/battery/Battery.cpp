@@ -65,7 +65,7 @@ uint32_t BatteryClass::readChannelMillivolts(const ads111x_mux_t mux) {
 }
 
 std::array<int, MAX_BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts() {
-    static constexpr ads111x_mux_t channelMux[MAX_BATTERY_CELL_COUNT] = {
+    static constexpr ads111x_mux_t channelMux[] = {
         ADS111X_MUX_0_GND, ADS111X_MUX_1_GND, ADS111X_MUX_2_GND, ADS111X_MUX_3_GND
     };
 

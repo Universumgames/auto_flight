@@ -109,9 +109,10 @@ void FrontendHandlerBlClass::sendAllSourcesData(const BLETopics::NotifyByte topi
     for (const auto& planeId : Cache.getSources()) {
         ESP_LOGI(TAG_FRONTEND_BL, "Sending data for planeId=%" PRIu32 " and topic=0x%02x", planeId, topic);
         auto packetType = BLETopics::toPacketType(topic).value();
-        auto [packet, len] = Cache.getLatestPacket(planeId, packetType);
+        // copy, as the cached buffer may be freed by a concurrent savePacket while it is being sent
+        auto [packet, len] = Cache.copyLatestPacket(planeId, packetType);
         if (packet != nullptr) {
-            sendRawData(packetType, packet, len);
+            sendRawData(packetType, packet.get(), len);
         }
         else {
             ESP_LOGW(TAG_FRONTEND_BL, "No cached packet found for planeId=%" PRIu32 " and topic=0x%02x", planeId,
@@ -163,7 +164,7 @@ void FrontendHandlerBlClass::triggerPeriodicUpdateTask() {
         // for generic BLE clients that don't know this project's custom topics.
         const uint8_t baseBatteryPercentage = std::max((uint8_t)0, std::min((uint8_t)100, Battery.getLastMeasuredVoltagePercentage()));
         bluetoothManager.notifyBatteryLevel(baseBatteryPercentage);
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(20000));
     }
 }
 
@@ -172,14 +173,18 @@ void FrontendHandlerBlClass::planeDataUpdateCallback(uint32_t sourceId, const Pa
     sendRawData(type, data, len);
 }
 
-void FrontendHandlerBlClass::sendRawData(PacketType type, const RawSerializedPacket data, const size_t len) {
+void FrontendHandlerBlClass::sendRawData(const PacketType type, const RawSerializedPacket data, const size_t len) {
     WITH_RECURSIVE_MUTEX(bluetoothMutex) {
-        bluetoothManager.notify(static_cast<uint8_t>(type), const_cast<uint8_t*>(data), len);
+        for (int i = 0; i < len; i++) {
+            printf("%02x ", data[i]);
+        }
+        printf("\n");
+        bluetoothManager.notify(BLETopics::toNotifyByte(type).value(), const_cast<uint8_t*>(data), len);
     }
 }
 
 
-int FrontendHandlerBlClass::getUpdateIntervalForTopic(BLETopics::NotifyByte topic) {
+int FrontendHandlerBlClass::getUpdateIntervalForTopic(const BLETopics::NotifyByte topic) {
     switch (topic) {
     case BLETopics::NotifyByte::BLE_SENSOR_UPDATE:
         return 1;
