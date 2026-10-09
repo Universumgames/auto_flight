@@ -170,10 +170,10 @@ public:
         dataReceivedCallbacks.push_back(callback);
     }
 
-    void addDataWriteCallback(const TopicType topic, const std::function<void(uint8_t*, size_t, TopicType)>& callback) {
+    void addDataWriteCallback(const TopicType topic, const std::function<void(uint8_t*, size_t)>& callback) {
         dataReceivedCallbacks.emplace_back([callback, topic](uint8_t* data, const size_t len, const TopicType receivedTopic) {
             if (receivedTopic == topic) {
-                callback(data, len, receivedTopic);
+                callback(data, len);
             }
         });
     }

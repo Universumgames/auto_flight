@@ -74,6 +74,15 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
         auto plannedRoute = new PlannedRoutePacket(data, len);
         return std::unique_ptr<BasePacket>(plannedRoute);
     }
+    case PacketType::PLANNED_ROUTE_CONFIRMATION: {
+        if (len < sizeof(PlannedRouteConfirmationPacket)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid PLANNED_ROUTE_CONFIRMATION packet size: %d, should be %d", len,
+                     static_cast<int>(sizeof(PlannedRouteConfirmationPacket)));
+            return nullptr; // invalid packet
+        }
+        auto confirmation = new PlannedRouteConfirmationPacket(data, len);
+        return std::unique_ptr<BasePacket>(confirmation);
+    }
     case PacketType::COMPONENT_STATUS: {
         if (len < sizeof(ComponentStatus)) {
             ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid COMPONENT_STATUS packet size: %d, should be %d", len,

@@ -7,6 +7,7 @@
 #include "Battery.hpp"
 #include "Cache.hpp"
 #include "GPS_Reader.hpp"
+#include "LoRa_Communication.hpp"
 
 #define WITH_RECURSIVE_MUTEX(mutex) \
 for (bool _once = (xSemaphoreTakeRecursive((mutex), portMAX_DELAY) == pdTRUE); \
@@ -78,21 +79,17 @@ void FrontendHandlerBlClass::init() {
 }
 
 void FrontendHandlerBlClass::registerReadTriggerCallback() {
-    bluetoothManager.addDataWriteCallback(BLETopics::NotifyByte::BLE_PLANNED_AREA,
-                                          [](const uint8_t* data, size_t len, BluetoothManager::TopicType topic) {
-                                              try {
-                                                  const auto basePacket = BasePacket(data, len);
-                                                  auto packet = std::make_unique<uint8_t[]>(len);
-                                                  std::memcpy(packet.get(), data, len);
-                                                  Cache.savePacket(basePacket.id, basePacket.type, {
-                                                                       std::move(packet), len
-                                                                   });
-                                              }
-                                              catch (const std::exception& e) {
-                                                  ESP_LOGE(TAG_FRONTEND_BL, "Failed to parse AreaDefinePacket CBOR: %s",
-                                                           e.what());
-                                              }
-                                          });
+    bluetoothManager.addDataWriteCallback([](const uint8_t* data, size_t len, const BluetoothManager::TopicType topic) {
+        const auto basePacket = BasePacket(data, len);
+        ESP_LOGI(TAG_FRONTEND_BL, "Received BLE write for topic=0x%02x for planeId=%" PRIu32 " with length %zu",
+                 static_cast<uint8_t>(topic), basePacket.id, len);
+        auto packet = std::make_unique<uint8_t[]>(len);
+        std::memcpy(packet.get(), data, len);
+        Cache.savePacket(basePacket.id, basePacket.type, {
+                             std::move(packet), len
+                         });
+        LoRa_Communication.sendData(data, len);
+    });
     ESP_LOGI(TAG_FRONTEND_BL, "Registered write callback for BLE_TOPIC_AREA_DEFINE");
 
     // Every topic is read-triggerable: a plain GATT read carries no data (see
@@ -162,7 +159,8 @@ void FrontendHandlerBlClass::triggerPeriodicUpdateTask() {
         }
         // Also publish the base station's own battery via the standard BLE Battery Service,
         // for generic BLE clients that don't know this project's custom topics.
-        const uint8_t baseBatteryPercentage = std::max((uint8_t)0, std::min((uint8_t)100, Battery.getLastMeasuredVoltagePercentage()));
+        const uint8_t baseBatteryPercentage = std::max(
+            (uint8_t)0, std::min((uint8_t)100, Battery.getLastMeasuredVoltagePercentage()));
         bluetoothManager.notifyBatteryLevel(baseBatteryPercentage);
         vTaskDelay(pdMS_TO_TICKS(20000));
     }
@@ -175,10 +173,10 @@ void FrontendHandlerBlClass::planeDataUpdateCallback(uint32_t sourceId, const Pa
 
 void FrontendHandlerBlClass::sendRawData(const PacketType type, const RawSerializedPacket data, const size_t len) {
     WITH_RECURSIVE_MUTEX(bluetoothMutex) {
-        for (int i = 0; i < len; i++) {
+        /*for (int i = 0; i < len; i++) {
             printf("%02x ", data[i]);
         }
-        printf("\n");
+        printf("\n");*/
         bluetoothManager.notify(BLETopics::toNotifyByte(type).value(), const_cast<uint8_t*>(data), len);
     }
 }

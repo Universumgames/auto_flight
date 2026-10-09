@@ -32,6 +32,7 @@ typealias PlannedRoute = Route
 
 /** Mirrors `ConnectionState` (shared_components/flight_data/types.hpp); wire values are the NLOHMANN_JSON_SERIALIZE_ENUM strings ("connecting", "connected"). */
 enum class ConnectionState {
+    DISCONNECTED,
     CONNECTING,
     CONNECTED,
 }
@@ -182,6 +183,8 @@ data class PlannedRoutePacket(
     override val timestamp: Long = currentTimestamp(),
 ) : FrontendPacket {
     override val type get() = PacketType.PLANNED_ROUTE
+
+    val routeHash: ULong get() = hash
 }
 
 /** Mirrors `PlannedRouteConfirmationPacket` (packets/route.hpp). */

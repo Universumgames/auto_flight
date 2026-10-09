@@ -14,10 +14,8 @@ struct AreaView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(String(localized: "area.instructions")).font(.subheadline).foregroundStyle(.secondary)
-                }
+            HStack{
+                WizardProgressBar(wizardStep: .AREA_SELECTION)
                 Spacer()
                 Button(String(localized: "area.btn.nextStep")) {
                     submit()
@@ -29,6 +27,7 @@ struct AreaView: View {
             .padding(.horizontal)
 
             VStack(alignment: .leading, spacing: 12) {
+                Text(String(localized: "area.instructions")).font(.subheadline).foregroundStyle(.secondary)
                 Section(isExpanded: $settingsOpen) {
                     VStack {
                         LabeledContent {
@@ -106,6 +105,7 @@ struct AreaView: View {
             .padding(.horizontal)
         }
         .navigationTitle(String(localized: "area.navTitle"))
+        .navigationBarTitleDisplayMode(.inline)
         .padding(.bottom)
         .connectedToolbar(planeId: planeId)
         .task {

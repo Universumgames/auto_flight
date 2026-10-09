@@ -50,13 +50,6 @@ void BaseControllerClass::init() {
     LoRa_Communication.registerReceivePacketCallback([this](const LoRaPacket packet) {
         communicationCallback(packet);
     });
-
-    Cache.registerPacketCallback([](uint32_t sourceId, PacketType type, RawSerializedPacket data, size_t len) {
-        if (type == PacketType::PLANNED_AREA) {
-            ESP_LOGI(TAG_BASE_CONTROLLER, "Received planned area update from plane %u", sourceId);
-            LoRa_Communication.sendData(data, len);
-        }
-    });
 }
 
 

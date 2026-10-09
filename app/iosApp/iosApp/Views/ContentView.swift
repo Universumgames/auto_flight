@@ -9,7 +9,7 @@ struct ContentView: View {
             if appState.connectionStateBaseStation == .DISCONNECTED || appState.connectionStateBaseStation == .CONNECTING {
                 BaseSelectionView()
             } else {
-                BaseConnectedView()
+                PlaneSelectionView()
                     .onAppear { appState.resetNavigation() }
             }
         }

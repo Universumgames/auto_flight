@@ -17,7 +17,6 @@ private extension ConfigurationState {
 
 struct WizardProgressBar: View {
     let wizardStep: ConfigurationState
-    @Environment(AppState.self) private var appState
 
     private var steps: [ConfigurationState] {
         ConfigurationState.allCases
@@ -91,5 +90,4 @@ struct WizardProgressBar: View {
 
 #Preview {
     WizardProgressBar(wizardStep: .CONNECTION)
-        .environment(AppState.shared)
 }

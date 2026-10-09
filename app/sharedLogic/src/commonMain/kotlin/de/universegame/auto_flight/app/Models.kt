@@ -8,24 +8,8 @@ typealias PlaneID = UInt
 const val DEFAULT_PLANE_ID: PlaneID = 0u
 const val BASE_ID: PlaneID = DEFAULT_PLANE_ID
 
-/**
- * Mirrors the connection lifecycle reported by the base station / plane links.
- */
-enum class ConnectionState {
-    DISCONNECTED,
-    CONNECTING,
-    CONNECTED,
-}
-
-/**
- * Overall flight lifecycle as reported by the base station.
- */
-enum class FlightState {
-    PLANNING,
-    PLANNED,
-    FLYING,
-    RETURNING,
-}
+typealias FlightState = de.universegame.auto_flight.app.wire.FlightState
+typealias ConnectionState = de.universegame.auto_flight.app.wire.ConnectionState
 
 /**
  * Steps of the on-device flight configuration wizard (connect -> plan -> fly).
@@ -61,6 +45,15 @@ enum class ConfigurationState {
                 4 -> FINISHING
                 5 -> CONNECTION
                 else -> CONNECTION
+            }
+        }
+
+        fun fromFlightState(flightState: FlightState): ConfigurationState {
+            return when (flightState) {
+                FlightState.PLANNING -> ConfigurationState.AREA_SELECTION
+                FlightState.PLANNED -> ConfigurationState.ROUTE_APPROVAL
+                FlightState.FLYING -> ConfigurationState.FLYING
+                FlightState.RETURNING -> ConfigurationState.FLYING
             }
         }
     }

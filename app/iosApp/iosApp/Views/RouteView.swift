@@ -9,10 +9,23 @@ struct RouteView: View {
     @Environment(AppState.self) private var appState
 
     @State private var plannedRoute: [Coordinate] = []
+    @State private var hash: UInt64 = 0
     @State private var pollTask: Task<Void, Never>?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            HStack{
+                WizardProgressBar(wizardStep: .ROUTE_APPROVAL)
+                Spacer()
+                Button(String(localized: "area.btn.nextStep")) {
+                    Task{
+                        await submit()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.horizontal)
+            }
+            .padding(.horizontal)
             ZStack {
                 RouteMapView(
                     plannedRoute: plannedRoute,
@@ -53,13 +66,21 @@ struct RouteView: View {
             var tries = 0
             while !Task.isCancelled && plannedRoute.isEmpty && tries < 50 {
                 let route = await connectionManager.queryRoute(planeId)
-                if let route, !route.isEmpty {
-                    plannedRoute = route
+                if let route, !route.route.isEmpty {
+                    plannedRoute = route.route
+                    hash = route.routeHash
                     return
                 }
                 tries += 1
                 try? await Task.sleep(nanoseconds: 1000000000)
             }
+        }
+    }
+    
+    private func submit() async {
+        let result = await connectionManager.confirmRoute(planeId: planeId, hash: hash)
+        if result == .ACCEPTED{
+            appState.planes[planeId]?.wizardStep.append(.FLYING)
         }
     }
 }

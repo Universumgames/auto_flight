@@ -46,6 +46,7 @@ void FlightControllerClass::init() {
     I2CManager::getBus(); // initialize I2C bus
 
     FlightStorage.init();
+    FlightStorage.updateFlightState(FlightState::PLANNING);
 
     LoRa_Communication.begin();
 
@@ -132,8 +133,8 @@ void FlightControllerClass::updateConnectionStates() {
                                                           ? ConnectionState::CONNECTED
                                                           : ConnectionState::CONNECTING);
     FlightStorage.updatePlaneBatteryConnectionState(Battery.isAvailable()
-                                                    ? ConnectionState::CONNECTED
-                                                    : ConnectionState::CONNECTING);
+                                                        ? ConnectionState::CONNECTED
+                                                        : ConnectionState::CONNECTING);
 }
 
 void FlightControllerClass::sendUpdateTaskEntry(void* param) {
@@ -189,16 +190,28 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
             FlightStorage.getPlannedArea().areaPoints.end(), [](const Coordinate& a, const Coordinate& b) {
                 return a == b;
             })) {
-            ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area is the same as current, resending planned route");
-            Flight_Communication::sendPlannedRoute();
+            ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned area is the same as current");
             break;
         }
         FlightStorage.updatePlannedArea(AreaData{plannedArea->shape, plannedArea->settings});
         plannedAreaChanged = true;
         break;
     }
+    case PacketType::PLANNED_ROUTE_CONFIRMATION: {
+        auto confirmation = reinterpret_cast<PlannedRouteConfirmationPacket*>(decodedPacket.get());
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received planned route confirmation with %d hash", confirmation->hash);
+        auto routeHash = FlightStorage.getPlannedRoute().getHash();
+        if (routeHash != confirmation->hash) {
+            ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Planned route hash mismatch: expected %d, got %d", routeHash,
+                     confirmation->hash);
+            return;
+        }
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Planned route confirmed, starting flight");
+        FlightStorage.updateFlightState(FlightState::FLYING);
+        break;
+    }
     default:
-        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unknown packet type: %xd", basePacket->type);
+        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unknown packet type: 0x%xd", basePacket->type);
         break;
     }
 }
@@ -224,12 +237,17 @@ void FlightControllerClass::recalculateRoute(const AreaData& newPlannedArea) {
                                                (float)newPlannedArea.settings.overlapPercentage / 100.0f);
     FlightStorage.updatePlannedRoute(RouteData{plannedRoute, newPlannedArea.settings});
     nextWaypointIndex = 0;
-    FlightStorage.updateFlightState(FlightState::FLYING);
+    FlightStorage.updateFlightState(FlightState::PLANNED);
 }
 
 
 void FlightControllerClass::checkAndAdvanceWaypoint(Coordinate currentPosition) {
     if (Coordinate::isInvalid(currentPosition)) return;
+
+    if (FlightStorage.getFlightState() != FlightState::FLYING && FlightStorage.getFlightState() !=
+        FlightState::RETURNING) {
+        return; // don't advance waypoints if not flying
+    }
 
     auto plannedRoute = FlightStorage.getPlannedRoute();
     if (nextWaypointIndex >= plannedRoute.getRoutePoints().size()) {

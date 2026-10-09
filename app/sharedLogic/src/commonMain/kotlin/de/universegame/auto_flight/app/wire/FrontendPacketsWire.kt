@@ -29,16 +29,19 @@ internal fun CoordinateWire.toPublic(): Coordinate {
 
 @Serializable
 internal enum class ConnectionStateWire {
+    @SerialName("disconnected") DISCONNECTED,
     @SerialName("connecting") CONNECTING,
     @SerialName("connected") CONNECTED,
 }
 
 internal fun ConnectionState.toWire() = when (this) {
+    ConnectionState.DISCONNECTED -> ConnectionStateWire.DISCONNECTED
     ConnectionState.CONNECTING -> ConnectionStateWire.CONNECTING
     ConnectionState.CONNECTED -> ConnectionStateWire.CONNECTED
 }
 
 internal fun ConnectionStateWire.toPublic() = when (this) {
+    ConnectionStateWire.DISCONNECTED -> ConnectionState.DISCONNECTED
     ConnectionStateWire.CONNECTING -> ConnectionState.CONNECTING
     ConnectionStateWire.CONNECTED -> ConnectionState.CONNECTED
 }

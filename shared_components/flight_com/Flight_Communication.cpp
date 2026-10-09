@@ -32,7 +32,7 @@ void Flight_Communication::sendSensorUpdate() {
     float pressure = Barometer.getPressure();
 #ifdef FLIGHT_DEVICE_TYPE_PLANE
     int heading = static_cast<int>(std::lround(Magnetometer.getHeading()));
-    float altitude = Barometer.calculateAltitude(FlightStorage.getBasePressure(), pressure);
+    float altitude = BarometerClass::calculateAltitude(FlightStorage.getBasePressure(), pressure);
 #else
     float altitude = 0.0;
     int heading = 0;
@@ -98,7 +98,6 @@ void Flight_Communication::sendComponentStatus() {
     ComponentStatus status = {
     };
     status.timestamp = GPS_Reader.getGPSLatestTime();
-    status.type = PacketType::COMPONENT_STATUS;
     status.gps = FlightStorage.getPlaneGPSConnectionState();
     status.barometer = FlightStorage.getPlaneBarometerConnectionState();
     status.motorControl = FlightStorage.getPlaneMotorControlConnectionState();

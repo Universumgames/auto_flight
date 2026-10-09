@@ -25,14 +25,17 @@ struct ConnectionStatusButton: View {
         .popover(isPresented: $showPopover) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    ConnectionItemList(item: appState.baseStationItem) {
+                    ConnectionItemList(
+                        item: appState.baseStationItem,
+                        collapsable: false
+                    ) { _ in
                         EmptyView()
                     }
 
                     if let planeId, let plane = appState
                         .planes[planeId] {
                         ConnectionItemList(
-                            item: plane.connectionItem) {
+                            item: plane.connectionItem, collapsable: false) { _ in
                                 EmptyView()
                             }
                     }

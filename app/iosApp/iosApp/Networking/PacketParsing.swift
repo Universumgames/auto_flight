@@ -30,19 +30,6 @@ enum PacketParsing {
         return coord
     }
 
-    private static func toConnectionState(_ state: wire.ConnectionState) -> ConnectionState {
-        state == .CONNECTED ? .CONNECTED : .CONNECTING
-    }
-
-    private static func toFlightState(_ state: wire.FlightState) -> FlightState {
-        switch state {
-        case .PLANNED: return .PLANNED
-        case .FLYING: return .FLYING
-        case .RETURNING: return .RETURNING
-        default: return .PLANNING
-        }
-    }
-
     static func applyPositionPacket(
         _ packet: wire.PositionUpdate
     ) {
@@ -61,19 +48,22 @@ enum PacketParsing {
         _ packet: wire.ComponentStatus
     ) {
         if packet.sourceId == SharedLogic.BASE_ID {
-            current.gpsConnectionBase = toConnectionState(packet.gps)
-            current.barometerConnectionBase = toConnectionState(packet.barometer)
+            current.gpsConnectionBase = packet.gps
+            current.barometerConnectionBase = packet.barometer
         } else {
             let plane = self.plane(current, id: packet.sourceId)
             plane.connectionState = .CONNECTED
-            plane.gpsConnection = toConnectionState(packet.gps)
-            plane.barometerConnection = toConnectionState(packet.barometer)
-            plane.motorComConnection = toConnectionState(packet.motorControl)
-            plane.magnetometerConnection = toConnectionState(packet.magnetometer)
-            plane.accelerometerConnection = toConnectionState(packet.accelerometer)
-            plane.batteryConnection = toConnectionState(packet.battery)
+            plane.gpsConnection = packet.gps
+            plane.barometerConnection = packet.barometer
+            plane.motorComConnection = packet.motorControl
+            plane.magnetometerConnection = packet.magnetometer
+            plane.accelerometerConnection = packet.accelerometer
+            plane.batteryConnection = packet.battery
             plane.manualOverride = packet.manualOverride
-            plane.flightState = toFlightState(packet.flightState)
+            plane.flightState = packet.flightState
+            if plane.wizardStep.isEmpty {
+                plane.wizardStep = [ConfigurationState.AREA_SELECTION]
+            }
         }
     }
 

@@ -35,11 +35,11 @@ final class ConnectionManager: NSObject {
     internal struct WaitRequestKey: Hashable {
         let characteristic: CharacteristicUUID
         let sourceId: PlaneID
-        
+
         static func == (lhs: WaitRequestKey, rhs: WaitRequestKey) -> Bool {
             return lhs.characteristic == rhs.characteristic && lhs.sourceId == rhs.sourceId
         }
-        
+
         func hash(into hasher: inout Hasher) {
             hasher.combine(characteristic)
             hasher.combine(sourceId)
@@ -80,7 +80,7 @@ final class ConnectionManager: NSObject {
         case .sensorUpdate:
             onFrameSensorUpdate(data: data)
         case .plannedArea:
-                onFrameAreaDefine(data: data)
+            onFrameAreaDefine(data: data)
         case .plannedRoute:
             onFrameRoutePlanned(data: data)
         case .routeHistory:
@@ -196,6 +196,30 @@ final class ConnectionManager: NSObject {
         }
     }
 
+    func confirmRoute(planeId: PlaneID, hash: UInt64) async -> AreaSubmitResult {
+        guard let data = Data(hexEncoded: wire.FrontendPackets.shared.encode(packet: wire.PlannedRouteConfirmationPacket(id: planeId, hash: hash, timestamp: Int64(Date().timeIntervalSince1970 * 1000)))) else {
+            return .FAILED
+        }
+        do {
+            let con1 = await queryConnection(planeId)
+            try await writeCharacteristic(.plannedRouteConfirmation, data: data)
+            var con2 = await queryConnection(planeId)
+            for _ in 0..<10 {
+                try await Task.sleep(nanoseconds: 500_000_000)
+                con2 = await queryConnection(planeId)
+                if con1?.flightState != con2?.flightState {
+                    break
+                }
+            }
+            if con2?.flightState == .FLYING {
+                return .ACCEPTED
+            }
+        } catch {
+            print("Failed to confirm route: \(error)")
+        }
+        return .FAILED
+    }
+
     func queryPositions() {
         Task {
             await requestUpdate(CharacteristicUUID.position)
@@ -268,12 +292,12 @@ final class ConnectionManager: NSObject {
             .decodePlannedArea(hex: data.hexEncoded)
     }
 
-    func queryRoute(_ sourceId: PlaneID) async -> [Coordinate]? {
+    func queryRoute(_ sourceId: PlaneID) async -> wire.PlannedRoutePacket? {
         guard let data = await querySingle(
             sourceId,
             CharacteristicUUID.plannedRoute
         ) else { return nil }
         return wire.FrontendPackets.shared
-            .decodePlannedRoute(hex: data.hexEncoded)?.route
+            .decodePlannedRoute(hex: data.hexEncoded)
     }
 }

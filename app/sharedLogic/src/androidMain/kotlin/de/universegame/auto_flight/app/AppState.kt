@@ -1,5 +1,8 @@
 package de.universegame.auto_flight.app
 
+import de.universegame.auto_flight.app.wire.ConnectionState
+import de.universegame.auto_flight.app.wire.FlightState
+
 /**
  * Snapshot of everything a single connected plane reports: connection health,
  * position, route and sensor readings. Held in [AppState.planes], keyed by
