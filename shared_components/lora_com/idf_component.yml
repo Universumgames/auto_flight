@@ -5,4 +5,6 @@ dependencies:
   device_id:
     path: ../device_id
     require: public
-  jgromes/radiolib: ^7.6.0
+  jgromes/radiolib:
+    version: ^7.6.0
+    path: ../jgromes__radiolib

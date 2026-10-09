@@ -10,8 +10,6 @@
 #endif
 #include <cmath>
 
-#include "Battery.hpp"
-
 void Flight_Communication::begin() {}
 
 bool Flight_Communication::sendPacket(const BasePacket& packet) {
