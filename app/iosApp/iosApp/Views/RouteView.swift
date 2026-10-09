@@ -4,21 +4,37 @@ import SwiftUI
 /// Mirrors `RoutePreviewView.vue`: poll for the planned route until the base
 /// station has one ready, then show it alongside the live flight history.
 struct RouteView: View {
+    let planeId: PlaneID
     @Environment(ConnectionManager.self) private var connectionManager: ConnectionManager
     @Environment(AppState.self) private var appState
 
     @State private var plannedRoute: [Coordinate] = []
+    @State private var hash: UInt64 = 0
     @State private var pollTask: Task<Void, Never>?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            HStack{
+                WizardProgressBar(wizardStep: .ROUTE_APPROVAL)
+                Spacer()
+                Button(String(localized: "area.btn.nextStep")) {
+                    Task{
+                        await submit()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.horizontal)
+            }
+            .padding(.horizontal)
             ZStack {
                 RouteMapView(
                     plannedRoute: plannedRoute,
-                    flightHistory: appState.planes[defaultPlaneID]?.flightRoute ?? [],
+                    flightHistory: appState.planes[planeId]?.flightRoute ?? [],
+                    areaPolygon: appState
+                        .planes[planeId]?.area?.areaPoints ?? [],
                     basePosition: appState.basePosition,
-                    planePosition: appState.planes[defaultPlaneID]?.position,
-                    planeHeading: appState.planes[defaultPlaneID]?.heading ?? 0
+                    planePosition: appState.planes[planeId]?.position,
+                    planeHeading: appState.planes[planeId]?.heading ?? 0
                 )
             }
             .frame(minHeight: 400, maxHeight: .infinity)
@@ -28,14 +44,14 @@ struct RouteView: View {
             if plannedRoute.isEmpty {
                 HStack {
                     ProgressView()
-                    Text("Waiting for the planned route…").foregroundStyle(.secondary)
+                    Text(String(localized: "route.waitingForRoute")).foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
             }
         }
-        .navigationTitle("Route Preview")
+        .navigationTitle(String(localized: "route.navTitle"))
         .padding(.bottom)
-        .connectedToolbar()
+        .connectedToolbar(planeId: planeId)
         .onAppear {
             startPolling()
         }
@@ -49,11 +65,10 @@ struct RouteView: View {
         pollTask = Task {
             var tries = 0
             while !Task.isCancelled && plannedRoute.isEmpty && tries < 50 {
-                let route = await withCheckedContinuation { continuation in
-                    connectionManager.fetchRoute { continuation.resume(returning: $0) }
-                }
-                if !route.isEmpty {
-                    plannedRoute = route
+                let route = await connectionManager.queryRoute(planeId)
+                if let route, !route.route.isEmpty {
+                    plannedRoute = route.route
+                    hash = route.routeHash
                     return
                 }
                 tries += 1
@@ -61,15 +76,22 @@ struct RouteView: View {
             }
         }
     }
+    
+    private func submit() async {
+        let result = await connectionManager.confirmRoute(planeId: planeId, hash: hash)
+        if result == .ACCEPTED{
+            appState.planes[planeId]?.wizardStep.append(.FLYING)
+        }
+    }
 }
 
 #Preview {
     VStack {
         NavigationStack {
-            RouteView()
+            RouteView(planeId: DEFAULT_PLANE_ID)
         }
 
-        WizardProgressBar()
+        WizardProgressBar(wizardStep: .ROUTE_APPROVAL)
     }
     .environment(ConnectionManager())
     .environment(AppState.shared)

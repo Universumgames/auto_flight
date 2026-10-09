@@ -68,7 +68,7 @@ motor_controller:
 flight_controller:
   stage: build
   needs: []
-  image: espressif/idf:v6.0.1
+  image: espressif/idf:v6.1
   script:
     - cd flight_controller
     - idf.py build
@@ -80,7 +80,7 @@ flight_controller:
 base_station:
   stage: build
   needs: []
-  image: espressif/idf:v6.0.1
+  image: espressif/idf:v6.1
   script:
     - cd base_station
     - idf.py build

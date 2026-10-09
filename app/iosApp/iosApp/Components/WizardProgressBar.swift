@@ -4,19 +4,19 @@ import SharedLogic
 private extension ConfigurationState {
     var displayLabel: String {
         switch self {
-        case .CONNECTION: return "Connect"
-        case .AREA_SELECTION: return "Area"
-        case .ROUTE_APPROVAL: return "Route"
-        case .STARTING: return "Starting"
-        case .FLYING: return "Flying"
-        case .FINISHING: return "Done"
+        case .CONNECTION: return String(localized: "wizard.progress.step.connect")
+        case .AREA_SELECTION: return String(localized: "wizard.progress.step.area")
+        case .ROUTE_APPROVAL: return String(localized: "wizard.progress.step.route")
+        case .STARTING: return String(localized: "wizard.progress.step.starting")
+        case .FLYING: return String(localized: "wizard.progress.step.flying")
+        case .FINISHING: return String(localized: "wizard.progress.step.done")
         default: return translationKey
         }
     }
 }
 
 struct WizardProgressBar: View {
-    @Environment(AppState.self) private var appState
+    let wizardStep: ConfigurationState
 
     private var steps: [ConfigurationState] {
         ConfigurationState.allCases
@@ -25,7 +25,7 @@ struct WizardProgressBar: View {
     }
 
     var body: some View {
-        let currentIdx = Int(appState.wizardStep.index)
+        let currentIdx = Int(wizardStep.index)
         HStack(alignment: .bottom, spacing: 0) {
             ForEach(Array(steps.enumerated()), id: \.offset) { i, step in
                 let idx = Int(step.index)
@@ -60,7 +60,7 @@ struct WizardProgressBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(.bar, ignoresSafeAreaEdges: .bottom)
+        //.background(.bar, ignoresSafeAreaEdges: .bottom)
     }
 
     @ViewBuilder
@@ -89,6 +89,5 @@ struct WizardProgressBar: View {
 }
 
 #Preview {
-    WizardProgressBar()
-        .environment(AppState.shared)
+    WizardProgressBar(wizardStep: .CONNECTION)
 }

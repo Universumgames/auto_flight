@@ -1,9 +1,7 @@
 #include "route_planner.hpp"
 
-#include <cmath>
-
+#include "BoustrophedonRoutePlanner.hpp"
 #include "esp_log.h"
-#include "../../shared_components/flight_data/geo_helper.hpp"
 #include "types.hpp"
 
 static RoutePlannerClass* route_planner;
@@ -21,202 +19,22 @@ RoutePlannerClass& RoutePlannerClass::getInstance() {
     return *getInstancePtr();
 }
 
+RoutePlannerClass::RoutePlannerClass() {
+    implementations = {
+        new BoustrophedonRoutePlanner()
+    };
+}
 
-RoutePlannerClass::RoutePlannerClass() = default;
-
-std::pair<Coordinate, Coordinate> RoutePlannerClass::getShapeIntersection(
-    const std::vector<Coordinate>& shape, const Coordinate& p1, const Coordinate& p2) {
-    std::vector<Point2d> shapePoints;
-    bool wrapsOverAntiMeridian = isCrossingAntiMeridian(shape);
-    std::ranges::transform(shape, std::back_inserter(shapePoints),
-                           [wrapsOverAntiMeridian](const Coordinate& coord) {
-                               if (wrapsOverAntiMeridian) {
-                                   return Point2d(coord.longitude < 0 ? coord.longitude + 360 : coord.longitude,
-                                                  coord.latitude);
-                               }
-                               return Point2d(coord.longitude, coord.latitude);
-                           });
-    CPolyline shapeLine(shapePoints);
-    auto intersects = shapeLine.intersects(Line2d(Point2d{p1.longitude, p1.latitude}, Point2d{p2.longitude, p2.latitude}));
-
-    if (intersects()) {
-        auto intersections = intersects.get();
-        // get most outer intersections to work for concave shapes
-        Point2d leftMost{500, NAN}, rightMost{-500, NAN};
-        for (const auto& point : intersections) {
-            if (point.getX() < leftMost.getX()) {
-                leftMost = point;
+std::vector<Coordinate> RoutePlannerClass::planRoute(const std::vector<Coordinate>& shape, RouteAlgorithm algorithm, float maxPointDistance, float maxSwathWidth, float overlapFactor) {
+    for (auto& impl : implementations) {
+        if (impl->supportsAlgorithm(algorithm)) {
+            auto rawPath = impl->planRoute(shape, overlapFactor);
+            if (rawPath.empty()) {
+                ESP_LOGW("RoutePlanner", "No raw path generated for the given shape, cannot plan route");
+                return {};
             }
-            if (point.getX() > rightMost.getX()) {
-                rightMost = point;
-            }
-        }
-        return {
-            {(float)leftMost.getX(), (float)leftMost.getY()},
-            {(float)rightMost.getX(), (float)rightMost.getY()}
-        };
-    }
-    return {{NAN, NAN}, {NAN, NAN}};
-}
-
-std::vector<std::pair<Coordinate, Coordinate>> RoutePlannerClass::generateSimpleSweepLines(
-    const std::vector<Coordinate>& shape, const float swathDistance) {
-    if (shape.size() < 3) {
-        std::cerr << "Shape must have at least 3 points to generate sweep lines" << std::endl;
-        return {};
-    }
-    Coordinate leftMost{}, rightMost{}, topMost{}, bottomMost{};
-    getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
-    Coordinate topLeft = {.longitude = leftMost.longitude, .latitude = topMost.latitude};
-    Coordinate bottomRight = {.longitude = rightMost.longitude, .latitude = bottomMost.latitude};
-
-    ESP_LOGI("RoutePlanner", "Shape bounds: leftMost=(%.6f, %.6f), rightMost=(%.6f, %.6f), topMost=(%.6f, %.6f), bottomMost=(%.6f, %.6f)",
-             leftMost.longitude, leftMost.latitude, rightMost.longitude, rightMost.latitude,
-             topMost.longitude, topMost.latitude, bottomMost.longitude, bottomMost.latitude);
-
-
-    const double latDiff = topMost.latitude - bottomMost.latitude - swathDistance * 0.9f;
-    const int lineCount = std::ceil(latDiff / swathDistance);
-    const double lineDistance = latDiff / (float)lineCount;
-
-    ESP_LOGI("RoutePlanner", "Generating %d sweep lines with distance %.6f degrees for shape with lat diff %.6f degrees, with swathDistance %.6f",
-             lineCount, lineDistance, latDiff, swathDistance);
-
-    std::vector<std::pair<Coordinate, Coordinate>> lines;
-    for (int i = 0; i < lineCount; i++) {
-        std::pair<Coordinate, Coordinate> line = {
-            {topLeft.longitude, topLeft.latitude - (float)(i * lineDistance) - 0.5f * swathDistance},
-            {bottomRight.longitude, topLeft.latitude - (float)(i * lineDistance) - 0.5f * swathDistance}
-        };
-        lines.push_back(line);
-    }
-    return lines;
-}
-
-std::vector<std::pair<Coordinate, Coordinate>> RoutePlannerClass::generateContainedSimpleSweepLines(const std::vector<Coordinate>& shape, float swathDistance) {
-    auto simpleLines = generateSimpleSweepLines(shape, swathDistance);
-    if (simpleLines.empty()) {
-        std::cerr << "No simple sweep lines generated for the given shape, cannot generate contained lines" << std::endl;
-        return {};
-    }
-    std::vector<std::pair<Coordinate, Coordinate>> lines;
-    for (const auto& line : simpleLines) {
-        auto intersections = getShapeIntersection(shape, line.first, line.second);
-        if (!std::isnan(intersections.first.latitude) && !std::isnan(intersections.first.longitude) &&
-            !std::isnan(intersections.second.latitude) && !std::isnan(intersections.second.longitude)) {
-            lines.push_back(intersections);
+            return IRoutePlanner::calculateIntermediatePoints(rawPath, maxPointDistance);
         }
     }
-    return lines;
-}
-
-Point2d RoutePlannerClass::intersection(const Point2d& a, const Point2d& b, const Point2d& c, const Point2d& d) {
-    auto intersect = Line2d(a, b).intersects(Line2d(c, d));
-    if (intersect()) {
-        return intersect.get();
-    }
-    return {NAN, NAN};
-}
-
-void RoutePlannerClass::getMostOuterPoints(const std::vector<Coordinate>& shape, Coordinate& leftMost,
-                                           Coordinate& rightMost, Coordinate& topMost, Coordinate& bottomMost) {
-    if (shape.empty()) {
-        leftMost = rightMost = topMost = bottomMost = {NAN, NAN};
-        return;
-    }
-
-    leftMost = rightMost = topMost = bottomMost = shape[0];
-
-    for (const auto& point : shape) {
-        if (point.longitude < leftMost.longitude) {
-            leftMost = point;
-        }
-        if (point.longitude > rightMost.longitude) {
-            rightMost = point;
-        }
-        if (point.latitude > topMost.latitude) {
-            topMost = point;
-        }
-        if (point.latitude < bottomMost.latitude) {
-            bottomMost = point;
-        }
-    }
-}
-
-bool RoutePlannerClass::isCrossingAntiMeridian(const std::vector<Coordinate>& shape) {
-    Coordinate lastPoint = shape.back(); // first check is comparing last point of polygon with first point
-    // check all points with the next one if they step over the antimeridian (aka from 179deg to -179 deg and vise versa)
-    for (const auto& point : shape) {
-        if (std::signbit(lastPoint.longitude) != std::signbit(point.longitude) && std::abs(lastPoint.longitude) > 100) {
-            return true;
-        }
-        lastPoint = point;
-    }
-    return false;
-}
-
-
-std::vector<Coordinate> RoutePlannerClass::generateSimpleSweepPath(const std::vector<Coordinate>& shape, float swathDistance) {
-    const auto lines = generateContainedSimpleSweepLines(shape, swathDistance);
-    if (lines.empty()) {
-        std::cerr << "No sweep lines generated for the given shape, cannot generate path" << std::endl;
-        return {};
-    }
-    std::vector<Coordinate> path;
-    Coordinate lastPoint = lines[0].first;
-    bool startLeft = true;
-    for (const auto& line : lines) {
-        auto nextPoint = startLeft? line.first : line.second;
-        auto nextNextPoint = startLeft? line.second : line.first;
-        const auto linesDist = lastPoint.latitude - nextPoint.latitude;
-        Coordinate intermediate = Coordinate{nextPoint.longitude + linesDist * (startLeft ? -1 : 1), nextPoint.latitude + 0.7f * linesDist};
-        Coordinate intermediate2 = {nextPoint.longitude + (intermediate.longitude - nextPoint.longitude) * 0.8f, nextPoint.latitude + 0.1f * linesDist};
-
-        path.push_back(intermediate);
-        path.push_back(intermediate2);
-        path.push_back(nextPoint);
-        path.push_back(nextNextPoint);
-        startLeft = !startLeft;
-        lastPoint = nextNextPoint;
-    }
-    return path;
-}
-
-
-std::vector<Coordinate> RoutePlannerClass::planRoute(const std::vector<Coordinate>& shape, float maxPointDistance, float maxSwathWidth, float overlapFactor) {
-    auto rawPath = generateSimpleSweepPath(shape, maxSwathWidth * (1.0f - overlapFactor));
-    if (rawPath.empty()) {
-        std::cerr << "No raw path generated for the given shape, cannot plan route" << std::endl;
-        return {};
-    }
-    ESP_LOGI("RoutePlanner", "Generated raw path with %d points, now interpolating to max point distance %.2f meters", rawPath.size(), maxPointDistance);
-    std::vector<Coordinate> path;
-
-    Coordinate lastPoint = rawPath.front();
-    for (const auto& point : rawPath) {
-        auto distMeters = distanceInMeters(lastPoint, point);
-        if (distMeters < maxPointDistance) {
-            path.push_back(point);
-            lastPoint = point;
-            continue;
-        }
-
-        auto interpolationPointCount = static_cast<int>(std::ceil(distMeters / maxPointDistance));
-        ESP_LOGI("RoutePlanner", "Interpolating %.2f meters between (%.6f, %.6f) and (%.6f, %.6f) with %d points",
-                 distMeters, lastPoint.latitude, lastPoint.longitude, point.latitude, point.longitude, interpolationPointCount);
-        for (int i = 1; i < interpolationPointCount; i++) {
-            float t = (float)i / (float)interpolationPointCount;
-            Coordinate interpolatedPoint = {
-                .longitude = lastPoint.longitude + t * (point.longitude - lastPoint.longitude),
-                .latitude = lastPoint.latitude + t * (point.latitude - lastPoint.latitude)
-            };
-            path.push_back(interpolatedPoint);
-        }
-        path.push_back(point);
-        lastPoint = point;
-    }
-
-    ESP_LOGI("RoutePlanner", "Generated final path with %d points after interpolation", path.size());
-
-    return path;
+    return {};
 }

@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-namespace {
+namespace{
     // Decodes whatever `packet.serialize()` produced, verifying the codec
     // round-trips through the exact byte buffer sendPacket() would emit.
     template <typename PacketT>
@@ -13,7 +13,7 @@ namespace {
 }
 
 TEST(PacketCodecTest, sensorUpdateRoundTrips) {
-    const SensorUpdate original(1234, 987.6f, 42);
+    const SensorUpdate original(1234, 987.6f, 120.5f, 42);
     const auto decoded = roundTrip(original);
     ASSERT_NE(decoded, nullptr);
     ASSERT_EQ(decoded->type, PacketType::SENSOR_UPDATE);
@@ -21,6 +21,7 @@ TEST(PacketCodecTest, sensorUpdateRoundTrips) {
     ASSERT_NE(sensorUpdate, nullptr);
     EXPECT_EQ(sensorUpdate->timestamp, 1234);
     EXPECT_FLOAT_EQ(sensorUpdate->pressure, 987.6f);
+    EXPECT_FLOAT_EQ(sensorUpdate->altitude, 120.5f);
     EXPECT_EQ(sensorUpdate->heading, 42);
 }
 
@@ -91,8 +92,8 @@ TEST(PacketCodecTest, plannedRouteRoundTrips) {
 
 TEST(PacketCodecTest, componentStatusRoundTrips) {
     const ComponentStatus original(555, ConnectionState::CONNECTED, ConnectionState::CONNECTING,
-                                    ConnectionState::CONNECTED, ConnectionState::CONNECTING,
-                                    ConnectionState::CONNECTED, true, FlightState::FLYING);
+                                   ConnectionState::CONNECTED, ConnectionState::CONNECTING,
+                                   ConnectionState::CONNECTED, ConnectionState::CONNECTED, true, FlightState::FLYING);
     const auto decoded = roundTrip(original);
     ASSERT_NE(decoded, nullptr);
     const auto* status = dynamic_cast<ComponentStatus*>(decoded.get());

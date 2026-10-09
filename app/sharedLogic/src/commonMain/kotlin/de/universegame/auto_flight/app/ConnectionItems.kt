@@ -1,5 +1,7 @@
 package de.universegame.auto_flight.app
 
+import de.universegame.auto_flight.app.wire.ConnectionState
+
 enum class SubTaskState {
     DONE, LOADING;
 

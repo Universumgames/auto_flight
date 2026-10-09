@@ -8,9 +8,29 @@ include(GoogleTest)
 
 find_package(GTest REQUIRED)
 
+enable_testing()
+
 include(../cmake/idf_compat.cmake)
 
-FILE(GLOB_RECURSE test_sources ${CMAKE_SOURCE_DIR}/test/*.*)
+# ---------------------------------------------------------
+# nlohmann-json (>= 3.12 needed for NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE)
+# Distro packages are often older, so fall back to fetching it
+# ---------------------------------------------------------
+
+find_package(nlohmann_json 3.12.0 QUIET)
+
+if(NOT nlohmann_json_FOUND)
+    message(STATUS "nlohmann_json >= 3.12.0 not found, fetching it")
+    include(FetchContent)
+    FetchContent_Declare(json
+        URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+    )
+    FetchContent_MakeAvailable(json)
+endif()
+
+# CONFIGURE_DEPENDS: new test files get picked up on the next build / CLion reload
+file(GLOB_RECURSE test_sources CONFIGURE_DEPENDS ${CMAKE_SOURCE_DIR}/test/*.cpp)
 
 file(GLOB COMPONENT_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/components/*
@@ -49,11 +69,10 @@ target_link_libraries(${PROJECT_NAME}
     idf_components
 )
 
-target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
+# test/test.cpp provides main(), so link plain gtest (not GTest::Main)
+target_link_libraries(${PROJECT_NAME} PRIVATE GTest::gtest)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE GTest::GTest GTest::Main)
-
-gtest_add_tests(TARGET ${PROJECT_NAME})
+gtest_discover_tests(${PROJECT_NAME})
 
 # ---------------------------------------------------------
 # Share all component includes globally
@@ -64,5 +83,8 @@ foreach(tgt ${IDF_COMPONENT_TARGETS})
     target_include_directories(${tgt} PUBLIC
         ${IDF_ALL_INCLUDE_DIRS}
     )
+
+    # Stand-in for the johboh/nlohmann-json IDF component
+    target_link_libraries(${tgt} PUBLIC nlohmann_json::nlohmann_json)
 
 endforeach()

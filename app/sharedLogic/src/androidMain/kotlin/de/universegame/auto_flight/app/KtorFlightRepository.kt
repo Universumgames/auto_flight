@@ -1,5 +1,6 @@
 package de.universegame.auto_flight.app
 
+import de.universegame.auto_flight.app.wire.ConnectionState
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets

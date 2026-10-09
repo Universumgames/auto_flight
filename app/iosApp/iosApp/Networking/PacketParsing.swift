@@ -4,10 +4,9 @@ import SharedLogic
 /// Key used for the single plane reported by the current base-station protocol,
 /// which doesn't yet tag packets with a plane id. Mirrors the Kotlin side's
 /// `DEFAULT_PLANE_ID` (`sharedLogic/.../Models.kt`).
-let defaultPlaneID: PlaneID = "default"
+let defaultPlaneID: PlaneID = SharedLogic.DEFAULT_PLANE_ID
 
 enum PacketParsing {
-
     /// Returns the plane's existing entry in `current.planes`, creating and inserting one if absent.
     static func plane(_ current: AppState, id: PlaneID = defaultPlaneID) -> PlaneInfo {
         if let existing = current.planes[id] { return existing }
@@ -31,63 +30,80 @@ enum PacketParsing {
         return coord
     }
 
-    private static func toConnectionState(_ state: wire.ConnectionState) -> ConnectionState {
-        state == .CONNECTED ? .CONNECTED : .CONNECTING
-    }
-
-    private static func toFlightState(_ state: wire.FlightState) -> FlightState {
-        switch state {
-        case .PLANNED: return .PLANNED
-        case .FLYING: return .FLYING
-        case .RETURNING: return .RETURNING
-        default: return .PLANNING
+    static func applyPositionPacket(
+        _ packet: wire.PositionUpdate
+    ) {
+        if packet.sourceId == SharedLogic.BASE_ID {
+            AppState.shared.basePosition = packet.position
+            AppState.shared.basePositionUpdateTime = packet.timestamp
+        } else {
+            let plane = self.plane(AppState.shared, id: packet.sourceId)
+            plane.position = packet.position
+            plane.positionUpdateTime = packet.timestamp
         }
     }
 
-    static func applyFlightPacket(_ current: AppState, _ packet: wire.FlightUpdatePacket) {
-        current.basePosition = toCoordinate(packet.basePosition) ?? current.basePosition
-        current.basePositionUpdateTime = packet.basePositionUpdateTime
-
-        let plane = self.plane(current)
-        plane.position = toCoordinate(packet.planePosition) ?? plane.position
-        plane.positionUpdateTime = packet.planePositionUpdateTime
-        plane.flightRoute = packet.flightRoute.isEmpty ? nil : packet.flightRoute
-        plane.flightRouteUpdateTime = packet.flightRouteUpdateTime
-        plane.plannedRoute = packet.plannedRoute.isEmpty ? nil : packet.plannedRoute
-        plane.plannedRouteUpdateTime = packet.plannedRouteUpdateTime
+    static func applyConnectionPacket(
+        _ current: AppState,
+        _ packet: wire.ComponentStatus
+    ) {
+        if packet.sourceId == SharedLogic.BASE_ID {
+            current.gpsConnectionBase = packet.gps
+            current.barometerConnectionBase = packet.barometer
+        } else {
+            let plane = self.plane(current, id: packet.sourceId)
+            plane.connectionState = .CONNECTED
+            plane.gpsConnection = packet.gps
+            plane.barometerConnection = packet.barometer
+            plane.motorComConnection = packet.motorControl
+            plane.magnetometerConnection = packet.magnetometer
+            plane.accelerometerConnection = packet.accelerometer
+            plane.batteryConnection = packet.battery
+            plane.manualOverride = packet.manualOverride
+            plane.flightState = packet.flightState
+            if plane.wizardStep.isEmpty {
+                plane.wizardStep = [ConfigurationState.AREA_SELECTION]
+            }
+        }
     }
 
-    static func applyConnectionPacket(_ current: AppState, _ packet: wire.ConnectionUpdatePacket) {
-        //current.connectionStateBaseStation = toConnectionState(packet.baseConnectionState)
-        current.lastContactBaseStationTimestamp = packet.lastContactBaseStationTimestamp
-        current.gpsConnectionBase = toConnectionState(packet.gpsConnectionBase)
-        current.barometerConnectionBase = toConnectionState(packet.barometerConnectionBase)
-
-        let plane = self.plane(current)
-        plane.connectionState = toConnectionState(packet.planeConnectionState)
-        plane.lastContactTimestamp = packet.lastContactPlaneTimestamp
-        plane.gpsConnection = toConnectionState(packet.gpsConnectionPlane)
-        plane.barometerConnection = toConnectionState(packet.barometerConnectionPlane)
-        plane.motorComConnection = toConnectionState(packet.motorComConnectionPlane)
-        plane.magnetometerConnection = toConnectionState(packet.magnetometerConnectionPlane)
-        plane.accelerometerConnection = toConnectionState(packet.accelerometerConnectionPlane)
-        plane.manualOverride = packet.manualOverridePlane
-        plane.flightState = toFlightState(packet.flightState)
+    static func applySensorPacket(
+        _ current: AppState,
+        _ packet: wire.SensorUpdate
+    ) {
+        if packet.sourceId == SharedLogic.BASE_ID {
+            current.pressureBase = Double(packet.pressure)
+            current.batteryPercentageBase = Int(packet.batteryPercent)
+        } else {
+            let plane = self.plane(current, id: packet.sourceId)
+            plane.pressure = Double(packet.pressure)
+            // plane.calculatedAltitude = Double(packet.altitude)
+            plane.heading = Double(packet.heading)
+            plane.batteryPercentage = Int(packet.batteryPercent)
+        }
     }
 
-    static func applySensorPacket(_ current: AppState, _ packet: wire.SensorPacket) {
-        if packet.barometerPressureBase != 0 { current.pressureBase = Double(packet.barometerPressureBase) }
-
-        let plane = self.plane(current)
-        if packet.barometerPressurePlane != 0 { plane.pressure = Double(packet.barometerPressurePlane) }
-        if packet.calculatedAltitude != 0 { plane.calculatedAltitude = Double(packet.calculatedAltitude) }
-        plane.heading = Double(packet.headingPlane)
+    static func applyRoutePlannedPacket(_ current: AppState, _ packet: wire.PlannedRoutePacket) {
+        if packet.sourceId == SharedLogic.BASE_ID {
+            return
+        }
+        let plane = self.plane(current, id: packet.sourceId)
+        plane.plannedRoute = packet.route
+        plane.plannedRouteUpdateTime = -1 // TODO: update packet to include timestamp
     }
 
-    static func applyBatteryStatusPacket(_ current: AppState, _ packet: wire.BatteryStatusPacket) {
-        current.batteryPercentageBase = Int(packet.baseBatteryPercentage)
-
-        let plane = self.plane(current)
-        plane.batteryPercentage = Int(packet.planeBatteryPercentage)
+    static func applyAreaDefinePacket(
+        _ current: AppState,
+        _ packet: wire.PlannedAreaPacket
+    ) {
+        if packet.sourceId == SharedLogic.BASE_ID {
+            return
+        }
+        let plane = self.plane(current, id: packet.sourceId)
+        plane.area = AreaData(
+            areaPoints: packet.shape,
+            settings: packet.settings
+        )
+        // TODO: implement area define, add to storage as well
     }
 }

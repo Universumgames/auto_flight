@@ -91,6 +91,13 @@ dependencies:
       registry_url: https://components.espressif.com
       type: service
     version: 0.5.3
+  espressif/gmf_core:
+    component_hash: 025de674bdfaec7b9d98019f904e91d59318a6ed4e47baef134c136b98a7a745
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.0.2
   espressif/i2c_bus:
     component_hash: 483112c1619c54c38d0b734fb25f1678733267858a77b7af2f48cc7db6dbbd84
     dependencies:
@@ -122,7 +129,9 @@ dependencies:
       type: local
     version: '*'
   gps:
-    dependencies: []
+    dependencies:
+    - name: idf
+      version: '>=4.1.0'
     source:
       path: ../shared_components/gps
       type: local
@@ -140,7 +149,7 @@ dependencies:
   idf:
     source:
       type: idf
-    version: 6.0.1
+    version: 6.1.0
   jgromes/radiolib:
     dependencies: []
     source:
@@ -172,7 +181,7 @@ dependencies:
       path: ../shared_components/magnetometer
       type: local
     version: '*'
-  motor_com:
+  motor_com_master:
     dependencies: []
     source:
       path: components/motor_com_master
@@ -195,6 +204,7 @@ direct_dependencies:
 - esp-idf-lib/esp_idf_lib_helpers
 - esp-idf-lib/i2cdev
 - espressif/bme280
+- espressif/gmf_core
 - espressif/i2c_bus
 - espressif/mpu6050
 - flight_data
@@ -205,8 +215,8 @@ direct_dependencies:
 - johboh/nlohmann-json
 - lvgl/lvgl
 - magnetometer
-- motor_com
+- motor_com_master
 - waveshare/esp_oled_ssd1315
-manifest_hash: 336fd79896da4c23c583e34ad2d74e61058c78c38a965b0c66d3c7660289d6cf
+manifest_hash: 6d1b7ca3116e0c2b8008a73a3e77a7950f90529901e8f61df12604faf22fdecd
 target: esp32s3
 version: 3.0.0

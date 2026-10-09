@@ -344,6 +344,17 @@
 				(xyz 0 0 0)
 			)
 		)
+		(model "${KIPRJMOD}/../kicad_libs/auto_flight.3dshapes/GY-BMP280_4pin.step"
+			(offset
+				(xyz 0 0 2.54)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "auto_flight:Heltec_WiFi_LoRa_32_V3.2"
 		(layer "F.Cu")

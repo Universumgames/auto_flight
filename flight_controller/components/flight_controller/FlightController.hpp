@@ -2,6 +2,7 @@
 #include "Gyroscope.hpp"
 #include "LoRa_Communication.hpp"
 #include "MovingAverage.hpp"
+#include "RouteData.hpp"
 #include "SteeringLaw.hpp"
 
 class FlightControllerClass {
@@ -44,11 +45,13 @@ private:
 
     [[noreturn]] void sendUpdateTask();
 
-    void recalculateRoute();
+    void recalculateRoute(const AreaData& newPlannedArea);
 
     void checkAndAdvanceWaypoint(Coordinate currentPosition);
 
     void steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::GroundAngle angle, float compassHeading);
+
+    void updateConnectionStates();
 
 
 };

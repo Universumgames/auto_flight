@@ -19,15 +19,15 @@ CUSTOM_LIB = "auto_flight"
 
 
 def _arduino_nano_footprint_pad(fritzing_name: str, _seen={}) -> str:
-    """Module:Arduino_Nano's real footprint pads are numbered to match the
-    *real* MCU_Module:Arduino_Nano_v2.x/v3.x symbol pin table -- unrelated to
-    our generated Arduino_Nano symbol's pin numbers (assigned by Fritzing
-    connectorId order). Bridges Fritzing pin name -> that real pad number."""
+    """Fritzing pin name -> pad number of auto_flight:Arduino_Nano. That
+    footprint is a copy of Module:Arduino_Nano with the second row renumbered
+    (pad 16 = VIN at the end away from USB, pad 30 = D13/SCK next to USB), so
+    its pads now match our generated Arduino_Nano symbol's pin numbers."""
     table = {
         "D1/TX": 1, "D0/RX": 2, "D2": 5, "D3": 6, "D4": 7, "D5": 8, "D6": 9,
         "D7": 10, "D8": 11, "D9": 12, "D10": 13, "D11/MOSI": 14, "D12/MISO": 15,
-        "D13/SCK": 16, "3V3": 17, "AREF": 18, "A0": 19, "A1": 20, "A2": 21,
-        "A3": 22, "A4": 23, "A5": 24, "A6": 25, "A7": 26, "5V": 27, "VIN": 30,
+        "D13/SCK": 30, "3V3": 29, "AREF": 28, "A0": 27, "A1": 26, "A2": 25,
+        "A3": 24, "A4": 23, "A5": 22, "A6": 21, "A7": 20, "5V": 19, "VIN": 16,
     }
     name = fritzing_name.strip()
     if name.upper() in ("GND", "RESET"):
@@ -35,8 +35,8 @@ def _arduino_nano_footprint_pad(fritzing_name: str, _seen={}) -> str:
         n = _seen.get(key, 0)
         _seen[key] = n + 1
         if name.upper() == "GND":
-            return str(4 if n == 0 else 29)
-        return str(3 if n == 0 else 28)
+            return str(4 if n == 0 else 17)
+        return str(3 if n == 0 else 18)
     return str(table[name])
 
 
@@ -63,10 +63,12 @@ CATALOG = {
         # A generated box symbol rather than MCU_Module:Arduino_Nano_v3.x:
         # that standard symbol "extends" a base unit (Arduino_Nano_v2.x),
         # which would need its own lib_symbols entry + renamed sub-units to
-        # embed correctly -- not worth the complexity here. The real,
-        # purpose-built "Module:Arduino_Nano" footprint is used regardless.
+        # embed correctly -- not worth the complexity here. The footprint is
+        # a copy of the real Module:Arduino_Nano in auto_flight.pretty, with
+        # the second row's pads renumbered and pin names added on F.SilkS
+        # (hand-maintained, not generated).
         "kind": "generated", "symbol": f"{CUSTOM_LIB}:Arduino_Nano", "ref": "A",
-        "footprint": "Module:Arduino_Nano",
+        "footprint": f"{CUSTOM_LIB}:Arduino_Nano",
         "footprint_pad_number": _arduino_nano_footprint_pad,
     },
     # Generic connectors: reinterpreted per the Phase-0 audit (see

@@ -1,4 +1,5 @@
-#include "route_planner.hpp"
+#include "BoustrophedonRoutePlanner.hpp"
+#include "geometry_helper.hpp"
 
 #include <gtest/gtest.h>
 
@@ -25,7 +26,7 @@ TEST(RoutePlannerTest, mostOuterPoints) {
         {20, 20}
     };
     Coordinate leftMost{}, rightMost{}, topMost{}, bottomMost{};
-    RoutePlannerClass::getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
+    GeometryHelper::getMostOuterPoints(shape, leftMost, rightMost, topMost, bottomMost);
 
     CoordinateEq(topMost, (Coordinate{0, 50}));
     CoordinateEq(bottomMost, (Coordinate{20, -50}));
@@ -38,7 +39,7 @@ TEST(RoutePlannerTest, intersection) {
     Coordinate p2 = {0,-5};
     const std::vector<Coordinate> shape = {p1, p2};
 
-    auto intersections = RoutePlannerClass::getShapeIntersection(
+    auto intersections = GeometryHelper::getShapeIntersection(
         shape,
         {-1,0},
         {1,0});
@@ -54,7 +55,7 @@ TEST(RoutePlannerTest, simpleSweepLines) {
         {10,0}
     };
     constexpr float swathDistance = 2;
-    auto simpleSweepLines = RoutePlannerClass::generateSimpleSweepLines(shape, swathDistance);
+    auto simpleSweepLines = BoustrophedonRoutePlanner::generateSimpleSweepLines(shape, swathDistance);
 
     EXPECT_EQ(simpleSweepLines.size(), 5);
     std::pair<Coordinate, Coordinate> lastLine = {{0, 10}, {10, 10}};
@@ -85,7 +86,7 @@ TEST(RoutePlannerTest, sweepPath) {
         {10,0}
     };
     constexpr float swathDistance = 2;
-    auto path = RoutePlannerClass::generateSimpleSweepPath(shape, swathDistance);
+    auto path = BoustrophedonRoutePlanner::generateSimpleSweepPath(shape, swathDistance);
 
     float lastLat = 300;
     for (const auto& waypoint : path) {

@@ -1,0 +1,8 @@
+menu "QMC5883P (esp-idf-lib style)"
+
+config QMC5883P_EIL_MEAS_TIMEOUT
+    int "Single measurement timeout, microseconds"
+    default 10000
+    range 500 20000
+
+endmenu

@@ -15,6 +15,11 @@ enum BluetoothError: Error {
     case mtuTooSmall
 }
 
+/// How long a base station can go without a fresh `didDiscover` callback before it's
+/// dropped from `discoveredBaseStations` — a peripheral that's powered off or out of
+/// range simply stops advertising, CoreBluetooth never tells us it's gone.
+private let baseStationStaleTimeout: TimeInterval = 5
+
 extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
     // MARK: - Scanning
 
@@ -37,22 +42,24 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
         pendingStartScan = false
         isScanning = false
         centralManager?.stopScan()
+        staleBaseStationTimer?.invalidate()
+        staleBaseStationTimer = nil
     }
 
     // MARK: - Characteristic Operations
 
-    /// One-shot read — returns the characteristic's current value, or nil on failure.
-    /// Only for characteristics the base station still serves as a plain (unfragmented)
-    /// GATT read, i.e. those under the 512-byte attribute limit — see `awaitNextUpdate`
-    /// in ConnectionManager for characteristics served over the fragmented notify path.
-    func readCharacteristic(_ char: CharacteristicUUID) async -> Data? {
-        guard let characteristic = discoveredCharacteristics[char.uuid],
-              let peripheral = connectedPeripheral else { return nil }
-        return await withCheckedContinuation { continuation in
-            pendingRawReads.insert(char.uuid)
-            readCompletions[char.uuid] = { continuation.resume(returning: $0) }
-            peripheral.readValue(for: characteristic)
-        }
+    /// Requests a fresh value for `char` and returns it once it arrives. Issues a plain
+    /// GATT read purely as a "refresh now" signal — on this protocol reads carry no
+    /// payload of their own anymore (see BluetoothManager::onSVCGattHandler /
+    /// requestOutOfCycleUpdate on the base station) — then waits for the next value
+    /// delivered on this characteristic via `awaitNextUpdate`. The read's own zero-length
+    /// ack response is silently dropped by `FragmentReassemblyBuffer` in
+    /// `didUpdateValueFor` below (too short to be a real fragment), so this resolves with
+    /// the notification the read triggered, not the ack.
+    func requestUpdate(_ char: CharacteristicUUID) async -> Data? {
+        guard let characteristic = discoveredCharacteristics[char.uuid] else { return nil }
+        connectedPeripheral?.readValue(for: characteristic)
+        return await awaitNextUpdate(char)
     }
 
     /// Write data to a characteristic, split into `BLEFragmentFraming`-framed chunks that
@@ -136,7 +143,6 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
 
     func clearSubscriptions() {
         notificationHandlers.removeAll()
-        pendingRawReads.removeAll()
         reassemblyBuffers.removeAll()
     }
 
@@ -156,6 +162,8 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
             default:
                 self.isScanning = false
                 self.discoveredBaseStations = []
+                self.staleBaseStationTimer?.invalidate()
+                self.staleBaseStationTimer = nil
             }
         }
     }
@@ -175,9 +183,8 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
         Task { @MainActor [weak self] in
             guard let self else { return }
             if let index = self.discoveredBaseStations.firstIndex(where: { $0.peripheral.identifier == peripheral.identifier }) {
-                if let buildDate, self.discoveredBaseStations[index].buildDate == nil {
-                    self.discoveredBaseStations[index] = DiscoveredBaseStation(peripheral: peripheral, buildDate: buildDate)
-                }
+                let resolvedBuildDate = self.discoveredBaseStations[index].buildDate ?? buildDate
+                self.discoveredBaseStations[index] = DiscoveredBaseStation(peripheral: peripheral, buildDate: resolvedBuildDate)
                 return
             }
             self.discoveredBaseStations.append(DiscoveredBaseStation(peripheral: peripheral, buildDate: buildDate))
@@ -254,34 +261,30 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
         didUpdateValueFor characteristic: CBCharacteristic,
         error: Error?
     ) {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            let uuid = characteristic.uuid
-
-            guard error == nil, let raw = characteristic.value else {
-                self.pendingRawReads.remove(uuid)
+        // Copy the value now: CoreBluetooth overwrites `characteristic.value` with every new
+        // notification, so reading it later (e.g. in a Task) can pick up a later fragment,
+        // duplicating it while losing others. The delegate queue is .main (see
+        // startBluetoothScan), so we can stay on the main actor synchronously, which also
+        // keeps fragments in arrival order.
+        let uuid = characteristic.uuid
+        let value = characteristic.value
+        MainActor.assumeIsolated {
+            guard error == nil, let raw = value else {
                 if let completion = self.readCompletions.removeValue(forKey: uuid) {
                     completion(nil)
                 }
                 return
             }
 
-            // A plain GATT read response is delivered through this same delegate method,
-            // unframed — route it straight to the pending continuation without treating
-            // it as a notification fragment (see readCharacteristic/pendingRawReads).
-            if self.pendingRawReads.remove(uuid) != nil {
-                if let completion = self.readCompletions.removeValue(forKey: uuid) {
-                    completion(raw)
-                }
-                return
-            }
-
+            // Plain GATT reads carry no data of their own on this protocol anymore (see
+            // BluetoothManager::onSVCGattHandler on the base station) - every delivery
+            // through this method, read response or notification, is a fragment.
             var buffer = self.reassemblyBuffers[uuid] ?? FragmentReassemblyBuffer()
             let complete = buffer.ingest(raw)
             self.reassemblyBuffers[uuid] = buffer
             guard let complete else { return }
 
-            print("Received notification from \(uuid)")
+            //print("Received notification from \(uuid)")
             // Satisfy a pending awaitNextUpdate(_:), if any.
             if let completion = self.readCompletions.removeValue(forKey: uuid) {
                 completion(complete)
@@ -315,5 +318,19 @@ extension ConnectionManager: CBCentralManagerDelegate, CBPeripheralDelegate {
             .scanForPeripherals(withServices: [ServiceUUID], options: [
                 CBCentralManagerScanOptionAllowDuplicatesKey: true,
             ])
+        staleBaseStationTimer?.invalidate()
+        staleBaseStationTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.pruneStaleBaseStations()
+            }
+        }
+    }
+
+    /// Drops base stations whose last advertisement is older than `baseStationStaleTimeout`
+    /// — our signal that the device is no longer reachable, since CoreBluetooth has no
+    /// "peripheral went away" callback while scanning with duplicates allowed.
+    private func pruneStaleBaseStations() {
+        let cutoff = Date().addingTimeInterval(-baseStationStaleTimeout)
+        discoveredBaseStations.removeAll { $0.lastSeen < cutoff }
     }
 }

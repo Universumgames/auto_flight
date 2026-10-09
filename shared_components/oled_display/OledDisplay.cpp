@@ -6,12 +6,23 @@
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include <hal/uart_types.h>
 
-#include "FlightStorage.hpp"
 #include "helper.hpp"
 
 #include <algorithm>
 #include <iterator>
+
+#include "Battery.hpp"
+#include "DeviceId.hpp"
+#include "GPS_Reader.hpp"
+#if FLIGHT_DEVICE_TYPE_PLANE
+#include "FlightStorage.hpp"
+#endif
+#if FLIGHT_DEVICE_TYPE_BASE_STATION
+#include "Cache.hpp"
+#endif
+
 
 static const char* TAG_OLED_DISPLAY = "OledDisplay";
 
@@ -41,6 +52,8 @@ void OledDisplayClass::begin() {
     // transaction to it blocks forever (the IDF I2C driver waits without a
     // timeout). Drive it LOW to switch the rail on.
     if (CONFIG_OLED_PIN_VEXT >= 0) {
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+
         const gpio_num_t vextPin = static_cast<gpio_num_t>(CONFIG_OLED_PIN_VEXT);
         gpio_config_t vextConfig = {
             .pin_bit_mask = 1ULL << vextPin,
@@ -82,8 +95,8 @@ void OledDisplayClass::begin() {
     esp_lcd_panel_dev_config_t panelConfig = {
         .bits_per_pixel = 1,
         .reset_gpio_num = CONFIG_OLED_PIN_RESET >= 0
-            ? static_cast<gpio_num_t>(CONFIG_OLED_PIN_RESET)
-            : GPIO_NUM_NC,
+                              ? static_cast<gpio_num_t>(CONFIG_OLED_PIN_RESET)
+                              : GPIO_NUM_NC,
         .vendor_config = &vendorConfig,
     };
     ESP_ERROR_CHECK(esp_lcd_new_panel_ssd1315(ioHandle, &panelConfig, &panelHandle));
@@ -105,9 +118,10 @@ void OledDisplayClass::begin() {
         static constexpr uint8_t SSD1315_CMD_SET_MEMORY_ADDR_MODE = 0x20;
         static constexpr uint8_t SSD1315_ADDR_MODE_VERTICAL = 0x01;
         ESP_ERROR_CHECK(esp_lcd_panel_io_tx_param(ioHandle, SSD1315_CMD_SET_MEMORY_ADDR_MODE,
-                                                   &SSD1315_ADDR_MODE_VERTICAL, 1));
+            &SSD1315_ADDR_MODE_VERTICAL, 1));
     }
     ESP_LOGI(TAG_OLED_DISPLAY, "OLED vertical addressing mode set");
+#pragma GCC diagnostic pop
 
     // Not inverted: our I1 framebuffer already uses bit=1 for lit (text)
     // pixels and bit=0 for the (mostly background) off pixels: inverting at
@@ -140,7 +154,7 @@ void OledDisplayClass::initLvgl() {
     lv_display_set_color_format(lvglDisplay, LV_COLOR_FORMAT_I1);
     lv_display_set_flush_cb(lvglDisplay, flushCallback);
     lv_display_set_buffers(lvglDisplay, lvglDrawBuffer, nullptr, sizeof(lvglDrawBuffer),
-                            LV_DISPLAY_RENDER_MODE_FULL);
+                           LV_DISPLAY_RENDER_MODE_FULL);
     // I1 buffers must be flushed in byte-aligned (8px) chunks; round every
     // invalidated area up so lv_draw_sw_i1_convert_to_vtiled's width/height
     // multiple-of-8 requirement always holds.
@@ -189,10 +203,10 @@ void OledDisplayClass::flushCallback(lv_display_t* disp, const lv_area_t* area, 
     pxMap += 8;
 
     lv_draw_sw_i1_convert_to_vtiled(pxMap, sizeof(instance->lvglDrawBuffer) - 8, OLED_WIDTH_PX, OLED_HEIGHT_PX,
-                                     instance->panelFrameBuffer, sizeof(instance->panelFrameBuffer), true);
+                                    instance->panelFrameBuffer, sizeof(instance->panelFrameBuffer), true);
 
     esp_lcd_panel_draw_bitmap(instance->panelHandle, 0, 0, OLED_WIDTH_PX, OLED_HEIGHT_PX,
-                               instance->panelFrameBuffer);
+                              instance->panelFrameBuffer);
 
     lv_display_flush_ready(disp);
 }
@@ -210,7 +224,7 @@ uint32_t OledDisplayClass::tickCallback() {
 }
 
 std::string OledDisplayClass::connectionSummary(const ConnectionState* states, const char* const* names,
-                                                 size_t count) {
+                                                size_t count) {
     const auto connected = std::count(states, states + count, ConnectionState::CONNECTED);
     /*for (size_t i = 0; i < count; i++) {
         if (states[i] != ConnectionState::CONNECTED) {
@@ -218,7 +232,7 @@ std::string OledDisplayClass::connectionSummary(const ConnectionState* states, c
         }
     }*/
     return std::to_string(connected) + "/" + std::to_string(count) +
-           (static_cast<size_t>(connected) == count ? " OK" : " !!");
+        (static_cast<size_t>(connected) == count ? " OK" : " !!");
 }
 
 void OledDisplayClass::statusTaskEntry(void* param) {
@@ -234,37 +248,52 @@ void OledDisplayClass::statusTaskEntry(void* param) {
         size_t lineCount = 0;
         lines[lineCount++] = std::string("Role: ") + (isPlane ? "PLANE" : "BASE");
 
-        const ConnectionState linkState = isPlane
-            ? FlightStorage.getBaseConnectionState()
-            : FlightStorage.getPlaneConnectionState();
+#ifdef FLIGHT_DEVICE_TYPE_PLANE
+        const ConnectionState linkState = FlightStorage.getBaseConnectionState();
         lines[lineCount++] = std::string("Link: ") +
-                              (linkState == ConnectionState::CONNECTED ? "CONNECTED" : "CONNECTING");
+            (linkState == ConnectionState::CONNECTED ? "CONNECTED" : "CONNECTING");
+#else
+        const auto& knownPlanes = Cache.getSourceLastUpdateTimes();
+        const auto connectionCount = std::ranges::count_if(knownPlanes,
+                                                           [](const auto& plane) {
+                                                               return plane.second > GPS_Reader.getGPSLatestTime() - 10000;
+                                                           });
+        lines[lineCount++] = std::string("Connection: ") + std::to_string(connectionCount) + "/" + std::to_string(
+                knownPlanes.size()) +
+            (connectionCount == knownPlanes.size() ? " OK" : " !!");
+#endif
 
+
+#ifdef FLIGHT_DEVICE_TYPE_PLANE
         const ConnectionState planeDevices[] = {
             FlightStorage.getPlaneGPSConnectionState(),
             FlightStorage.getPlaneBarometerConnectionState(),
             FlightStorage.getPlaneMotorControlConnectionState(),
             FlightStorage.getPlaneMagnetometerConnectionState(),
             FlightStorage.getPlaneAccelerometerConnectionState(),
+            FlightStorage.getPlaneBatteryConnectionState(),
         };
+
         static constexpr const char* planeDeviceNames[] = {
-            "Plane GPS", "Plane Barometer",
-            "Plane MotorControl", "Plane Magnetometer", "Plane Accelerometer",
+            "GPS", "Barometer",
+            "MotorControl", "Magnetometer", "Accelerometer", "Battery"
         };
         lines[lineCount++] =
             "Plane: " + connectionSummary(planeDevices, planeDeviceNames, std::size(planeDevices));
-
-        if (isDeviceBaseStation()) {
-            const ConnectionState baseDevices[] = {
-                FlightStorage.getBaseGPSConnectionState(),
-                FlightStorage.getBaseBarometerConnectionState(),
-            };
-            static constexpr const char* baseDeviceNames[] = {
-                "Base GPS", "Base Barometer",
-            };
-            lines[lineCount++] =
-                "Base: " + connectionSummary(baseDevices, baseDeviceNames, std::size(baseDevices));
-        }
+        lines[lineCount++] = "ID: " + std::to_string(DeviceId::get32());
+#else
+        auto components = Cache.getLatestComponentStatus(DeviceId::BASE_STATION);
+        const ConnectionState baseDevices[] = {
+            components.gps,
+            components.barometer,
+            components.battery,
+        };
+        static constexpr const char* baseDeviceNames[] = {
+            "Base GPS", "Base Barometer", "Base Battery"
+        };
+        lines[lineCount++] =
+            "Base: " + connectionSummary(baseDevices, baseDeviceNames, std::size(baseDevices));
+#endif
 
         setStatusLines(lines, lineCount);
 

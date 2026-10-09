@@ -1,5 +1,5 @@
 dependencies:
-  motor_com:
+  motor_com_master:
     require: public
     path: ../motor_com_master
   gyroscope:

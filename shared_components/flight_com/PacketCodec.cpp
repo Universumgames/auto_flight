@@ -12,21 +12,25 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const LoRaPacket&
     return decodePacket(packet.payload, packet.length);
 }
 
-std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* data, std::size_t len) {
+// Function-try-block: packets are CBOR encoded, so malformed or truncated
+// payloads make nlohmann throw - reject them instead of crashing.
+std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* data, std::size_t len) try {
     if (len < sizeof(BasePacket)) {
         ESP_LOGE(TAG_FLIGHT_COMMUNICATION, "Received packet too small: %d bytes, should be at least %d bytes", len,
                  static_cast<int>(sizeof(BasePacket)));
         return nullptr; // invalid packet
     }
 
-    switch (auto type = ((BasePacket*)data)->type) {
+    auto basePacket = BasePacket(data, len);
+
+    switch (auto type = basePacket.type) {
     case PacketType::SENSOR_UPDATE: {
         if (len < sizeof(SensorUpdate)) {
             ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid SENSOR_UPDATE packet size: %d, should be at least %d", len,
                      static_cast<int>(sizeof(SensorUpdate)));
             return nullptr; // invalid packet
         }
-        auto sensorUpdate = new SensorUpdate(data);
+        auto sensorUpdate = new SensorUpdate(data, len);
 
         return std::unique_ptr<BasePacket>(sensorUpdate);
     }
@@ -36,11 +40,11 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
                      static_cast<int>(sizeof(PositionUpdate)));
             return nullptr; // invalid packet
         }
-        auto positionUpdate = new PositionUpdate(data);
+        auto positionUpdate = new PositionUpdate(data, len);
         return std::unique_ptr<BasePacket>(positionUpdate);
     }
     case PacketType::ROUTE_HISTORY_REQUEST: {
-        auto routeHistoryRequest = new BasePacket(data);
+        auto routeHistoryRequest = new BasePacket(data, len);
         return std::unique_ptr<BasePacket>(routeHistoryRequest);
     }
     case PacketType::PLANNED_AREA: {
@@ -49,7 +53,7 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
                      static_cast<int>(sizeof(BasePacket) + sizeof(size_t)));
             return nullptr; // invalid packet
         }
-        auto plannedArea = new PlannedAreaPacket(data);
+        auto plannedArea = new PlannedAreaPacket(data, len);
         return std::unique_ptr<BasePacket>(plannedArea);
     }
     case PacketType::ROUTE_HISTORY: {
@@ -58,7 +62,7 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
                      static_cast<int>(sizeof(BasePacket) + sizeof(size_t)));
             return nullptr;
         }
-        auto flightHistory = new FlightHistoryPacket(data);
+        auto flightHistory = new FlightHistoryPacket(data, len);
         return std::unique_ptr<BasePacket>(flightHistory);
     }
     case PacketType::PLANNED_ROUTE: {
@@ -67,8 +71,17 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
                      static_cast<int>(sizeof(BasePacket) + sizeof(size_t)));
             return nullptr;
         }
-        auto plannedRoute = new PlannedRoutePacket(data);
+        auto plannedRoute = new PlannedRoutePacket(data, len);
         return std::unique_ptr<BasePacket>(plannedRoute);
+    }
+    case PacketType::PLANNED_ROUTE_CONFIRMATION: {
+        if (len < sizeof(PlannedRouteConfirmationPacket)) {
+            ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Invalid PLANNED_ROUTE_CONFIRMATION packet size: %d, should be %d", len,
+                     static_cast<int>(sizeof(PlannedRouteConfirmationPacket)));
+            return nullptr; // invalid packet
+        }
+        auto confirmation = new PlannedRouteConfirmationPacket(data, len);
+        return std::unique_ptr<BasePacket>(confirmation);
     }
     case PacketType::COMPONENT_STATUS: {
         if (len < sizeof(ComponentStatus)) {
@@ -76,7 +89,7 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
                      static_cast<int>(sizeof(ComponentStatus)));
             return nullptr; // invalid packet
         }
-        auto status = new ComponentStatus(data);
+        auto status = new ComponentStatus(data, len);
         return std::unique_ptr<BasePacket>(status);
     }
     default:
@@ -87,4 +100,7 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
         std::cout << std::dec << std::endl;
         return nullptr;
     }
+} catch (const nlohmann::json::exception& e) {
+    ESP_LOGW(TAG_FLIGHT_COMMUNICATION, "Failed to decode packet of %d bytes: %s", static_cast<int>(len), e.what());
+    return nullptr;
 }

@@ -1,5 +1,7 @@
 package de.universegame.auto_flight.app
 
+import de.universegame.auto_flight.app.wire.ConnectionState
+import de.universegame.auto_flight.app.wire.FlightState
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement

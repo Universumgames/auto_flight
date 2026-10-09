@@ -1,5 +1,5 @@
 #pragma once
-#include "types.hpp"
+#include "../flight_com/types.hpp"
 
 float latitudeDiffToMeters(float latitudeDiff);
 float longitudeDiffToMeters(float longitudeDiff, float atLatitude);

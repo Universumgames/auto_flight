@@ -50,13 +50,13 @@ struct MarkerBadge: View {
 /// Shared label/color presets so marker styling isn't repeated at each call site.
 extension MarkerBadge {
     enum Preset {
-        static let baseStationText = "BS"
+        static let baseStationText = String(localized: "map.badge.baseStation")
         static let baseStationColor = Color.blue
-        static let planeText = "PL"
+        static let planeText = String(localized: "map.badge.plane")
         static let planeColor = Color.orange
-        static let routeStartText = "S"
+        static let routeStartText = String(localized: "map.badge.routeStart")
         static let routeStartColor = Color.green
-        static let routeEndText = "E"
+        static let routeEndText = String(localized: "map.badge.routeEnd")
         static let routeEndColor = Color.red
     }
 

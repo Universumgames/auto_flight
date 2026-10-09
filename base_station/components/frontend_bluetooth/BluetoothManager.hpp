@@ -7,8 +7,7 @@
 #include "host/ble_gatt.h"
 #include "host/ble_uuid.h"
 
-#include "BLETopics.hpp"
-#include "FrontendPackets.hpp"
+#include "BLETopics.generated.hpp"
 
 extern "C" void ble_store_config_init(void);
 
@@ -39,12 +38,12 @@ private:
 
     /* Advertised in the scan response's manufacturer-specific data (AD type 0xFF) so the
      * phone can see which firmware build a base station is running before connecting:
-     * bytes [0:2) are the company ID (0xFFFF, the Bluetooth SIG's reserved "for testing"
-     * value — this project has no assigned company ID), bytes [2:6) are
-     * BUILD_EPOCH_TIMESTAMP (Unix seconds, from the generated build_timestamp.h — see
-     * CMakeLists.txt/generate_build_timestamp.cmake — freshly stamped on every build) as
-     * a little-endian uint32. The iOS app must mirror this exact layout when parsing. */
-    static constexpr uint8_t BUILD_VERSION_MFG_DATA_LEN = 6;
+     * bytes [0:2) are the company ID, bytes [2:6) are BUILD_EPOCH_TIMESTAMP (Unix seconds,
+     * from the generated build_timestamp.h — see CMakeLists.txt/generate_build_timestamp.cmake
+     * — freshly stamped on every build) as a little-endian uint32. Layout (company ID, field
+     * sizes) comes from ble_protocol.json / BLETopics.generated.hpp — the same source of truth
+     * clients (iOS today) generate their mirror of this from. */
+    static constexpr uint8_t BUILD_VERSION_MFG_DATA_LEN = BLEProtocol::MFG_DATA_LEN;
     uint8_t buildVersionMfgData[BUILD_VERSION_MFG_DATA_LEN]{};
     void populateBuildVersionMfgData();
 
@@ -85,8 +84,8 @@ private:
     int onSVCGattHandler(uint16_t conn_handle, uint16_t attr_handle, ble_gatt_access_ctxt *ctxt, void *arg);
     int onBatterySvcGattHandler(uint16_t conn_handle, uint16_t attr_handle, ble_gatt_access_ctxt *ctxt, void *arg) const;
 
-    std::vector<std::function<void(uint8_t*, int, TopicType)>> dataReceivedCallbacks;
-    void callDataReceivedCallbacks(uint8_t* data, int len, uint16_t attr_handle) const {
+    std::vector<std::function<void(uint8_t*, size_t, TopicType)>> dataReceivedCallbacks;
+    void callDataReceivedCallbacks(uint8_t* data, size_t len, uint16_t attr_handle) const {
         for (const auto& callback : dataReceivedCallbacks) {
             callback(data, len, characteristicsByHandle.at(attr_handle)->topicID);
         }
@@ -95,12 +94,13 @@ private:
     /* --- Application-level fragmentation ---
      * A single BLE notification/write is capped at (negotiated ATT MTU - 3).
      * To carry payloads larger than that (e.g. routes with many coordinates),
-     * every notify/write is split into fragments, each prefixed with a 4-byte
-     * little-endian header: [0:2) totalLength, [2:4) offset. The receiver
-     * accumulates fragments per (conn_handle, attr_handle) until `offset +
-     * chunkLen == totalLength`, then delivers the reassembled buffer.
-     * The iOS app must mirror this exact framing on both directions. */
-    static constexpr uint16_t FRAGMENT_HEADER_SIZE = 4;
+     * every notify/write is split into fragments, each prefixed with a
+     * little-endian header: [0:2) totalLength, [2:4) offset (size given by
+     * BLEProtocol::FRAGMENT_HEADER_SIZE, generated from ble_protocol.json). The
+     * receiver accumulates fragments per (conn_handle, attr_handle) until `offset +
+     * chunkLen == totalLength`, then delivers the reassembled buffer. Clients (iOS
+     * today) generate their mirror of this framing from the same schema. */
+    static constexpr uint16_t FRAGMENT_HEADER_SIZE = BLEProtocol::FRAGMENT_HEADER_SIZE;
     /* Fixed by the BLE ATT protocol: 1-byte opcode + 2-byte attribute handle. */
     static constexpr uint16_t ATT_PDU_OVERHEAD = 3;
 
@@ -119,22 +119,27 @@ private:
     void clearReassemblyBuffers(uint16_t conn_handle);
     void sendFragmented(uint16_t conn_handle, uint16_t val_handle, const uint8_t* data, uint16_t totalLength) const;
 
-    std::vector<std::function<uint8_t*(int*, TopicType)>> dataReadCallbacks;
-
-    /**
-     * Write the first available read callback's data into the GATT access
-     * context's mbuf, to be returned as the response to a read request.
-     * @param ctxt The GATT access context of the read request.
-     * @param attr_handle The attribute handle of the characteristic being read.
-     * @return 0 on success, or a BLE_ATT_ERR_* code on failure.
-     */
-    int writeReadResponse(const ble_gatt_access_ctxt* ctxt, uint16_t attr_handle) const;
+    /* A plain GATT read no longer carries a value: instead of trying to squeeze the
+     * (possibly-fragmented-sized) current packet into a single ATT response, a read
+     * is treated purely as a "send me a fresh notification now" trigger - the read
+     * response itself is a zero-length ack, and the real data follows shortly after
+     * over the same fragmented notify path every topic already uses. This removes the
+     * BLE_ATT_ATTR_MAX_LEN (512-byte) ceiling reads used to silently hit, and collapses
+     * "periodic push" and "client asked for a refresh" onto one delivery mechanism. */
+    std::vector<std::function<void(TopicType)>> readTriggerCallbacks;
+    void callReadTriggerCallbacks(const TopicType topic) const {
+        for (const auto& callback : readTriggerCallbacks) {
+            callback(topic);
+        }
+    }
 
     void populateGattCharacteristics(const std::vector<Characteristic>& characteristics);
     void populateBatteryService();
 
     std::unordered_map<uint16_t, Characteristic*> characteristicsByHandle;
     std::unordered_map<TopicType, Characteristic*> characteristicsByTopic;
+
+    //std::vector<std::function<void()>> onConnectCallbacks;
 
 public:
 
@@ -148,7 +153,7 @@ public:
      * @param data Pointer to the data to be sent.
      * @param len Length of the data to be sent.
      */
-    void notify(TopicType topic, uint8_t * data, int len);
+    void notify(TopicType topic, uint8_t * data, size_t len);
 
     /**
      * Update and notify connected clients of the base station's own battery level via
@@ -165,39 +170,43 @@ public:
         dataReceivedCallbacks.push_back(callback);
     }
 
-    void addDataWriteCallback(const TopicType topic, const std::function<void(uint8_t*, int, TopicType)>& callback) {
-        dataReceivedCallbacks.emplace_back([callback, topic](uint8_t* data, int len, const TopicType receivedTopic) {
+    void addDataWriteCallback(const TopicType topic, const std::function<void(uint8_t*, size_t)>& callback) {
+        dataReceivedCallbacks.emplace_back([callback, topic](uint8_t* data, const size_t len, const TopicType receivedTopic) {
             if (receivedTopic == topic) {
-                callback(data, len, receivedTopic);
+                callback(data, len);
             }
         });
     }
 
     /**
-     * Add a callback function that will be called when data is read from the Bluetooth SPP service.
-     * @param callback A function that takes a pointer to an int (to store the length of the data) and
-     *  returns a pointer to a uint8_t array containing the data to be sent.
-     *  The caller is responsible for freeing the returned data after use.
-     *  The first callback that returns non-null data will be used, and the rest will be ignored.
+     * Add a callback invoked when a client issues a plain GATT read against any topic
+     * characteristic. The read itself returns no data (see readTriggerCallbacks above) -
+     * this is the hook for reacting to it, e.g. by pushing a fresh out-of-cycle notification.
+     * @param callback A function that receives the topic that was read.
      */
-    void addDataReadCallback(const std::function<uint8_t*(int*, TopicType)>& callback) {
-        dataReadCallbacks.push_back(callback);
+    void addReadTriggerCallback(const std::function<void(TopicType)>& callback) {
+        readTriggerCallbacks.push_back(callback);
     }
 
     /**
-     * Add a callback function that will be called when data is read from the Bluetooth SPP service for a specific topic.
+     * Add a read-trigger callback scoped to a single topic.
      * @param topic The topic for which the callback should be invoked.
-     * @param callback A function that takes a pointer to an int (to store the length of the data) and
-     *  returns a pointer to a uint8_t array containing the data to be sent.
-     *  The caller is responsible for freeing the returned data after use.
-     *  The first callback that returns non-null data will be used, and the rest will be ignored.
+     * @param callback A function that receives the topic that was read.
      */
-    void addDataReadCallback(const TopicType topic, const std::function<uint8_t*(int*, TopicType)>& callback) {
-        dataReadCallbacks.emplace_back([callback, topic](int* len, const TopicType requestedTopic) -> uint8_t* {
+    void addReadTriggerCallback(const TopicType topic, const std::function<void(TopicType)>& callback) {
+        readTriggerCallbacks.emplace_back([callback, topic](const TopicType requestedTopic) {
             if (requestedTopic == topic) {
-                return callback(len, requestedTopic);
+                callback(requestedTopic);
             }
-            return nullptr;
         });
     }
+
+    /**
+     * Add a callback invoked when a client connects to the Bluetooth SPP service.
+     * @param callback A function that takes no arguments and returns void.
+     */
+    /*void addOnConnectCallback(const std::function<void()>& callback) {
+        onConnectCallbacks.push_back(callback);
+    }
+    */
 };

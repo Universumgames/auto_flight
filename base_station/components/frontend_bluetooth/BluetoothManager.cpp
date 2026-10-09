@@ -15,6 +15,9 @@
 #include <cstring>
 #include <cstdio>
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+
 const char* BluetoothManager::TAG_BLUETOOTH_MANAGER = "BluetoothManager";
 
 static BluetoothManager* instanceBT = nullptr;
@@ -25,9 +28,9 @@ BluetoothManager::BluetoothManager() {
 }
 
 void BluetoothManager::populateBuildVersionMfgData() {
-    // Company ID 0xFFFF, little-endian (both bytes equal, so byte order is moot here).
-    buildVersionMfgData[0] = 0xFF;
-    buildVersionMfgData[1] = 0xFF;
+    // Company ID, little-endian (see BLEProtocol::MFG_COMPANY_ID / ble_protocol.json).
+    buildVersionMfgData[0] = static_cast<uint8_t>(BLEProtocol::MFG_COMPANY_ID & 0xFF);
+    buildVersionMfgData[1] = static_cast<uint8_t>((BLEProtocol::MFG_COMPANY_ID >> 8) & 0xFF);
 
     const auto epoch = static_cast<uint32_t>(BUILD_EPOCH_TIMESTAMP);
     buildVersionMfgData[2] = static_cast<uint8_t>(epoch & 0xFF);
@@ -248,6 +251,9 @@ int BluetoothManager::onSPPGapEvent(ble_gap_event* event, void* arg) {
                  event->subscribe.cur_indicate);
         if (event->subscribe.conn_handle <= CONFIG_BT_NIMBLE_MAX_CONNECTIONS) {
             conn_handle_subs[event->subscribe.conn_handle] = true;
+            /*for (const auto & on_connect_callback : onConnectCallbacks) {
+                on_connect_callback();
+            }*/
         }
         return 0;
 
@@ -346,8 +352,13 @@ int BluetoothManager::onSVCGattHandler(uint16_t conn_handle, uint16_t attr_handl
                                        void* arg) {
     switch (ctxt->op) {
     case BLE_GATT_ACCESS_OP_READ_CHR:
-        ESP_LOGD(TAG_BLUETOOTH_MANAGER, "Callback for read");
-        return writeReadResponse(ctxt, attr_handle);
+        /* Reads carry no data of their own - they're just a "send me a fresh
+         * notification now" trigger. ctxt->om is left empty, so this is a
+         * zero-length ack; the real value follows shortly via a notification
+         * on this same characteristic, same as the periodic 1s broadcast. */
+        ESP_LOGD(TAG_BLUETOOTH_MANAGER, "read request; requesting out-of-cycle notify");
+        callReadTriggerCallbacks(characteristicsByHandle.at(attr_handle)->topicID);
+        return 0;
 
     case BLE_GATT_ACCESS_OP_WRITE_CHR: {
         uint16_t om_len = OS_MBUF_PKTLEN(ctxt->om);
@@ -504,7 +515,7 @@ void BluetoothManager::init(const std::vector<Characteristic>& characteristics) 
     nimble_port_freertos_init(ble_spp_server_host_task);
 }
 
-void BluetoothManager::notify(TopicType topic, uint8_t* data, int len) {
+void BluetoothManager::notify(TopicType topic, uint8_t* data, size_t len) {
     const auto it = characteristicsByTopic.find(topic);
     if (it == characteristicsByTopic.end()) {
         ESP_LOGE(TAG_BLUETOOTH_MANAGER, "notify: unknown topic %d", topic);
@@ -582,6 +593,7 @@ void BluetoothManager::sendFragmented(const uint16_t conn_handle, const uint16_t
             return;
         }
         const int rc = ble_gatts_notify_custom(conn_handle, val_handle, txom);
+        frame.resize(0);
         if (rc != 0) {
             ESP_LOGE(TAG_BLUETOOTH_MANAGER, "notify: error sending fragment rc=%d (offset=%u len=%u)", rc, offset,
                      thisChunkLen);
@@ -655,18 +667,6 @@ void BluetoothManager::clearReassemblyBuffers(const uint16_t conn_handle) {
     }
 }
 
-int BluetoothManager::writeReadResponse(const ble_gatt_access_ctxt* ctxt, uint16_t attr_handle) const {
-    for (const auto& callback : dataReadCallbacks) {
-        int len = 0;
-        uint8_t* data = callback(&len, characteristicsByHandle.at(attr_handle)->topicID);
-        if (data == nullptr || len == 0) continue;
-        const int rc = os_mbuf_append(ctxt->om, data, len);
-        delete data; // Free the allocated memory after use
-        return rc == 0 ? 0 : BLE_ATT_ERR_INSUFFICIENT_RES;
-    }
-    return 0;
-}
-
 void BluetoothManager::populateGattCharacteristics(const std::vector<Characteristic>& characteristics) {
     //new_ble_svc_gatt_chrs = (ble_gatt_chr_def*)calloc(BLETopics::ALL_NOTIFICATIONS_SIZE + 1, sizeof(ble_gatt_chr_def));
     for (int i = 0; i < characteristics.size(); i++) {
@@ -710,3 +710,5 @@ void BluetoothManager::populateBatteryService() {
         .characteristics = battery_svc_gatt_chrs
     };
 }
+
+#pragma GCC diagnostic pop

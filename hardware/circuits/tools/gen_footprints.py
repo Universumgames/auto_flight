@@ -38,7 +38,7 @@ def pad(number, x, y):
 
 
 def dual_row_header(name, pins_per_row, row_spacing, descr, tags, board_w=None, board_h=None,
-                     model_block="", row0_reversed=False):
+                     model_block="", row0_reversed=False, pin_labels=None):
     """A 2-row THT header footprint: pins 1..pins_per_row along the first
     (negative-Y) row left-to-right, pins_per_row+1..2*pins_per_row along the
     second (positive-Y) row left-to-right -- i.e. pin N+1 sits directly
@@ -47,7 +47,10 @@ def dual_row_header(name, pins_per_row, row_spacing, descr, tags, board_w=None, 
 
     row0_reversed=True numbers the first row right-to-left instead (pin 1 at
     the +X end), for boards whose header runs the opposite direction from
-    this default -- see the Heltec call below."""
+    this default.
+
+    pin_labels, if given, puts each pin's name on F.SilkS just inside its
+    pad, rotated 90 degrees so it fits the 2.54mm pitch."""
     x0 = -(pins_per_row - 1) * PITCH / 2
     y0 = -row_spacing / 2
     y1 = row_spacing / 2
@@ -68,14 +71,22 @@ def dual_row_header(name, pins_per_row, row_spacing, descr, tags, board_w=None, 
         parts.append(f'\t(fp_rect (start {-hw} {-hh}) (end {hw} {hh})\n'
                       f'\t\t(stroke (width 0.15) (type solid)) (fill none) (layer "F.SilkS")\n\t)\n')
 
-    pin = 1
+    positions = []
     for i in range(pins_per_row):
         x = x0 + (pins_per_row - 1 - i) * PITCH if row0_reversed else x0 + i * PITCH
-        parts.append(pad(pin, x, y0))
-        pin += 1
+        positions.append((x, y0))
     for i in range(pins_per_row):
-        parts.append(pad(pin, x0 + i * PITCH, y1))
-        pin += 1
+        positions.append((x0 + i * PITCH, y1))
+
+    if pin_labels:
+        for (x, y), label in zip(positions, pin_labels):
+            # Text runs from the pad toward the board's center.
+            ty, just = (y + 1.3, "right") if y < 0 else (y - 1.3, "left")
+            parts.append(f'\t(fp_text user "{label}" (at {x:g} {ty:g} 90) (layer "F.SilkS")'
+                          f' (effects (font (size 0.8 0.8) (thickness 0.12)) (justify {just})))\n')
+
+    for pin, (x, y) in enumerate(positions, start=1):
+        parts.append(pad(pin, x, y))
 
     parts.append(model_block)
     parts.append(')\n')
@@ -107,9 +118,14 @@ def main():
               "row spacing ESTIMATED at 20.32mm -- verify before fab, see tools/README.md",
         tags="heltec esp32 lora devboard",
         board_w=50.2, board_h=25.5, model_block=heltec_model,
-        # Row 1 (pins 1-18, incl. the two 3V3 pins) runs right-to-left on the
-        # real board, opposite of this generator's default -- see auto_flight.kicad_sym.
-        row0_reversed=True,
+        # Default left-to-right numbering: pin 1 (GND, then the two 3V3 pins)
+        # sits at the same end as pin 19 (GND) -- see auto_flight.kicad_sym.
+        pin_labels=[
+            "GND", "3V3", "3V3", "GPIO37", "GPIO46", "GPIO45", "GPIO42", "GPIO41", "GPIO40",
+            "GPIO39", "GPIO38", "GPIO1", "GPIO2", "GPIO3", "GPIO4", "GPIO5", "GPIO6", "GPIO7",
+            "GND", "5V", "Ve", "Ve", "U0RXD", "U0TXD", "RST", "GPIO0", "GPIO36", "GPIO35",
+            "GPIO34", "GPIO33", "GPIO47", "GPIO48", "GPIO26", "GPIO21", "GPIO20", "GPIO19",
+        ],
     )
 
     level_converter = dual_row_header(

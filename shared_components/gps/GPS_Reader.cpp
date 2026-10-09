@@ -30,8 +30,7 @@ GPS_ReaderClass& GPS_ReaderClass::getInstance() {
 }
 
 
-[[noreturn]] static void gps_readerTask(void* parameters) {
-    auto* gps_reader = (GPS_ReaderClass*)parameters;
+void GPS_ReaderClass::gps_readerTask(void* parameters) {
 
     uart_event_t event;
     uint8_t data[128];
@@ -124,7 +123,7 @@ void GPS_ReaderClass::begin() {
     // Set UART pins(TX: IO4, RX: IO5, RTS: UNUSED, CTS: UNUSED)
     ESP_ERROR_CHECK(uart_set_pin(uartNum, txPin, rxPin, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 
-    xTaskCreate(gps_readerTask, "gps_readerTask", 4096, this, 10, nullptr);
+    xTaskCreate(gps_readerTask, "gps_readerTask", 4096, nullptr, 10, nullptr);
     ESP_LOGI(TAG_GPS_READER, "GPS Reader started on UART%d (RX: GPIO%d, TX: GPIO%d)", uartNum, rxPin, txPin);
     initialized = true;
 }

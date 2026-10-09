@@ -526,7 +526,7 @@
       "netlist": "",
       "plot": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "../plane_pcb.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
@@ -661,7 +661,7 @@
         "uuid": "29bba210-234b-4ec4-8132-8ca35576c137"
       }
     ],
-    "used_designators": "J5,imu1,#FLG6b8d4e4a1,#FLG5e71eb63-64,#FLGbad8c76e1,lora1,Power1,GPS_Modul1,Battery_Balancer1,I2C_Bus1,#FLGb95d2c1f1,Arduino_Nano1,#FLG0e31a19c1,magnetometer1,LevelShifter1,U1-2,SBUS_Empfänger1-2,C1-4,R1-2,R7-21,#FLG694fb428-429,#FLGbc868d3f1",
+    "used_designators": "imu1,#FLG6b8d4e4a1,#FLGbad8c76e1,#FLG5e71eb63-64,J5,GPS_Modul1,lora1,Power1,Battery_Balancer1,I2C_Bus1,#FLGb95d2c1f1,Arduino_Nano1,#FLG0e31a19c1,magnetometer1,LevelShifter1,U1-2,SBUS_Empfänger1-2,C1-4,R1-2,R7-21,#FLG694fb428-429,#FLGbc868d3f1",
     "variants": []
   },
   "sheets": [

@@ -1,0 +1,19 @@
+{
+  "//": "Single source of truth for the BLE wire contract between the base station (C++/NimBLE) and its clients. Edit this file, then regenerate: python3 gen_ble_protocol.py",
+  "serviceUUID": "ABF0",
+  "//serviceUUID": "Compiled-in default for clients that can't read Kconfig. The firmware itself advertises CONFIG_BLUETOOTH_SERVICE_UUID (base_station/components/frontend_bluetooth/Kconfig, same 0xABF0 default) — if that Kconfig value is ever changed for a deployment, update this field too.",
+  "topics": {
+    "sourceHeader": "../../shared_components/flight_com/packets/base.hpp",
+    "enum": "PacketType",
+    "cppInclude": "packets/base.hpp",
+    "uuidPrefix": "AB"
+  },
+  "//topics": "Topics are not listed here: they mirror every entry of `enum class <enum>` in <sourceHeader> (path relative to this file). Each entry NAME = value becomes topic BLE_NAME with the same value, characteristic UUID <uuidPrefix><value as 2 hex digits> (e.g. SENSOR_UPDATE = 0x10 -> BLE_SENSOR_UPDATE, AB10) and Swift/Kotlin case name camelCase(NAME) (sensorUpdate). cppInclude is how the generated C++ header includes sourceHeader, for the PacketType <-> NotifyByte conversions.",
+  "fragmentHeaderSize": 4,
+  "//fragmentHeaderSize": "Every fragmented notify/write is prefixed with this many bytes: [0:2) totalLength, [2:4) offset, both little-endian uint16. See BluetoothManager::sendFragmented / handleFragmentedWrite.",
+  "manufacturerData": {
+    "companyID": "0xFFFF",
+    "buildEpochFieldSize": 4,
+    "//": "Scan-response manufacturer data layout: companyID (2 bytes LE) + build epoch (buildEpochFieldSize bytes LE, unix seconds). See BluetoothManager::populateBuildVersionMfgData."
+  }
+}

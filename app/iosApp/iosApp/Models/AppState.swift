@@ -20,8 +20,7 @@ import SharedLogic
 final class AppState {
     public static let shared = AppState()
 
-    var navigationPath: [ConfigurationState] = []
-    var wizardStep: ConfigurationState { navigationPath.last ?? .CONNECTION }
+    var navigationPath: [PlaneID] = []
 
     func resetNavigation() { navigationPath = [] }
 
@@ -44,30 +43,29 @@ final class AppState {
 /// take `ConnectionState`.
 extension AppState {
     var baseStationItem: ConnectionItem {
-        ConnectionItem(
-            label: "Base Station",
+        let gpsLabel = basePosition.map {
+            basePosition in String(localized: "connection.items.subtask.gpsPositionWithCoords \(String(format: "%.6f", basePosition.latitude)), \(String(format: "%.6f", basePosition.longitude))")
+        } ?? String(localized: "connection.items.subtask.gpsPosition")
+        let barometerLabel = pressureBase != 0
+            ? String(localized: "connection.items.subtask.barometerWithPressure \(String(format: "%.2f", pressureBase))")
+            : String(localized: "connection.items.subtask.barometer")
+
+        return ConnectionItem(
+            label: String(localized: "connection.items.baseStation.label"),
             connectionItemType: .BASE_STATION,
             status: connectionStateBaseStation,
             batteryPercent: Int32(batteryPercentageBase),
             subTasks: [
-                SubTask(label: "Connection", state: stateOf(connectionStateBaseStation == .CONNECTED)),
-                SubTask(
-                    label: "GPS Position" + (basePosition.map {
-                        " (\(formatCoordinate($0.latitude)), \(formatCoordinate($0.longitude)))"
-                    } ?? ""),
-                    state: stateOf(gpsConnectionBase == .CONNECTED)
-                ),
-                SubTask(
-                    label: "Barometer" + (pressureBase != 0 ? " (\(formatPressure(pressureBase))hPa)" : ""),
-                    state: stateOf(barometerConnectionBase == .CONNECTED)
-                ),
+                SubTask(label: String(localized: "connection.items.subtask.connection"), state: stateOf(connectionStateBaseStation == .CONNECTED)),
+                SubTask(label: gpsLabel, state: stateOf(gpsConnectionBase == .CONNECTED)),
+                SubTask(label: barometerLabel, state: stateOf(barometerConnectionBase == .CONNECTED)),
             ]
         )
     }
 
     /// One `ConnectionItem` per connected plane, keyed by `planes`.
     var planeItems: [ConnectionItem] {
-        let planes = planes.isEmpty ? [PlaneInfo(id: defaultPlaneID)] : Array(planes.values)
+        let planes = planes.isEmpty ? [] : Array(planes.values)
         return planes.map { $0.connectionItem }
     }
 
@@ -88,6 +86,18 @@ extension AppState {
     /// True when a plane is connected but no GPS position is available for it.
     var gpsPlaneUnavailableError: Bool {
         planes.values.contains { $0.connectionState == .CONNECTED && $0.gpsConnection != .CONNECTED }
+    }
+    
+    func clearData(){
+        navigationPath = []
+        basePosition = nil
+        planes = [:]
+    }
+    
+    static var preview: AppState {
+        let state = AppState()
+        state.planes[DEFAULT_PLANE_ID] = PlaneInfo.defaultPlane
+        return state
     }
 }
 

@@ -16,13 +16,15 @@ struct BaseSelectionView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Available Base Stations")
+                        Text(String(localized: "setup.baseScan.title"))
                             .font(.headline)
                         Spacer()
                         if connectionManager.isScanning {
                             ProgressView().scaleEffect(0.8)
                         }
-                        Button(connectionManager.isScanning ? "Stop" : "Scan") {
+                        Button(connectionManager.isScanning
+                               ? String(localized: "setup.baseScan.btn.stop")
+                               : String(localized: "setup.baseScan.btn.scan")) {
                             if connectionManager.isScanning {
                                 connectionManager.stopBluetoothScan()
                             } else {
@@ -33,11 +35,13 @@ struct BaseSelectionView: View {
                     }
 
                     if connectionManager.bluetoothState == .poweredOff {
-                        Text("Bluetooth is off — enable it in Settings.")
+                        Text(String(localized: "setup.baseScan.bluetoothOff"))
                             .font(.caption)
                             .foregroundStyle(.red)
                     } else if connectionManager.discoveredBaseStations.isEmpty {
-                        Text(connectionManager.isScanning ? "Searching…" : "Tap Scan to find nearby devices.")
+                        Text(connectionManager.isScanning
+                             ? String(localized: "setup.baseScan.searching")
+                             : String(localized: "setup.baseScan.tapToScan"))
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
@@ -46,15 +50,16 @@ struct BaseSelectionView: View {
                                 Image(systemName: "antenna.radiowaves.left.and.right")
                                 VStack(alignment: .leading) {
                                     Text(station.name)
-                                    Text("Build \(station.buildDate?.formatted(date: .abbreviated, time: .shortened) ?? "Unkown")")
+                                    Text(String(localized: "setup.baseScan.buildDate  \(station.buildDate?.formatted(date: .abbreviated, time: .shortened) ?? "Unkown")"))
                                         .font(.caption2)
                                         .foregroundStyle(.secondary)
                                 }
                                 Spacer()
                                 Button {
+                                    appState.clearData()
                                     connectionManager.tryConnectToPeripheral(station.peripheral)
                                 } label: {
-                                    Text("Connect")
+                                    Text(String(localized: "setup.baseScan.btn.connect"))
                                 }
                                 .disabled(
                                     appState.connectionStateBaseStation == .CONNECTING
@@ -69,7 +74,7 @@ struct BaseSelectionView: View {
                 .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 10))
             }
-            .navigationTitle("Connect to a Base Station")
+            .navigationTitle(String(localized: "setup.baseScan.navTitle"))
             .padding()
         }
         .onAppear {

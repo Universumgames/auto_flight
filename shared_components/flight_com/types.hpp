@@ -50,3 +50,13 @@ NLOHMANN_JSON_SERIALIZE_ENUM(FlightState, {
                              {FlightState::FLYING, "flying"},
                              {FlightState::RETURNING, "returning"},
                              })
+
+enum class RouteAlgorithm : uint8_t {
+    BASIC = 0x01,
+    BOUSTROPHEDON = 0x02 // is the basic algorithm meant by "BASIC"
+};
+
+NLOHMANN_JSON_SERIALIZE_ENUM(RouteAlgorithm, {
+                             {RouteAlgorithm::BASIC, "basic"},
+                             {RouteAlgorithm::BOUSTROPHEDON, "boustrophedon"}
+                             })

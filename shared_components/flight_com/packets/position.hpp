@@ -14,16 +14,15 @@ struct PositionUpdate : public BasePacket {
         this->position = packet.position;
     }
 
-    PositionUpdate(RawSerializedPacket packet) : BasePacket(packet) {
-        auto positionUpdate = (PositionUpdate*)packet;
-        this->position = positionUpdate->position;
+    PositionUpdate(RawSerializedPacket packet, size_t len) : BasePacket() {
+        DESERIALIZE_TO_THIS_PACKET(packet, len);
     }
 
     PositionUpdate(time_t time = 0, Coordinate position = COORDINATE_INIT_INVALID()) : BasePacket(time, PacketType::POSITION), position(position) {}
 
-    std::pair<std::unique_ptr<uint8_t[]>, size_t> serialize() const override {
-        auto packet = std::make_unique<uint8_t[]>(sizeof(PositionUpdate));
-        std::memcpy(packet.get(), this, sizeof(PositionUpdate));
-        return {std::move(packet), sizeof(PositionUpdate)};
+    [[nodiscard]] SerializedPacket serialize() const override {
+        SERIALIZE_THIS_PACKET();
     }
+
+    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(PositionUpdate, BasePacket, position)
 };

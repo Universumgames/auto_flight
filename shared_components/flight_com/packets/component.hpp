@@ -8,7 +8,8 @@ struct ComponentStatus : public BasePacket {
     ConnectionState motorControl;
     ConnectionState magnetometer;
     ConnectionState accelerometer;
-    bool manualOverride;
+    ConnectionState battery;
+    bool manualOverride{};
     FlightState flightState;
 
     std::string toString() override {
@@ -18,6 +19,7 @@ struct ComponentStatus : public BasePacket {
             ", motorControl=" + (motorControl == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", magnetometer=" + (magnetometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", accelerometer=" + (accelerometer == ConnectionState::CONNECTED ? "connected" : "connecting") +
+            ", battery=" + (battery == ConnectionState::CONNECTED ? "connected" : "connecting") +
             ", manualOverride=" + (manualOverride ? "true" : "false") +
             ", flightState=" + std::to_string(static_cast<int>(flightState)) + "}";
     }
@@ -28,31 +30,25 @@ struct ComponentStatus : public BasePacket {
         this->motorControl = packet.motorControl;
         this->magnetometer = packet.magnetometer;
         this->accelerometer = packet.accelerometer;
+        this->battery = packet.battery;
         this->manualOverride = packet.manualOverride;
         this->flightState = packet.flightState;
     }
 
-    ComponentStatus(RawSerializedPacket packet) : BasePacket(packet) {
-        auto gpsPacket = (ComponentStatus*)packet;
-        this->gps = gpsPacket->gps;
-        this->barometer = gpsPacket->barometer;
-        this->motorControl = gpsPacket->motorControl;
-        this->magnetometer = gpsPacket->magnetometer;
-        this->accelerometer = gpsPacket->accelerometer;
-        this->manualOverride = gpsPacket->manualOverride;
-        this->flightState = gpsPacket->flightState;
+    ComponentStatus(RawSerializedPacket packet, size_t len) : BasePacket(), gps(), barometer(), motorControl(), magnetometer(), accelerometer(), battery(), manualOverride(), flightState() {
+        DESERIALIZE_TO_THIS_PACKET(packet, len);
     }
 
     ComponentStatus(time_t time = 0, ConnectionState gps = ConnectionState::CONNECTING, ConnectionState barometer = ConnectionState::CONNECTING,
                     ConnectionState motorControl = ConnectionState::CONNECTING, ConnectionState magnetometer = ConnectionState::CONNECTING, ConnectionState accelerometer = ConnectionState::CONNECTING,
-                    bool manualOverride = false, FlightState flightState = FlightState::PLANNING) :
+                    ConnectionState battery = ConnectionState::CONNECTING, bool manualOverride = false, FlightState flightState = FlightState::PLANNING) :
         BasePacket(time, PacketType::COMPONENT_STATUS), gps(gps), barometer(barometer),
-        motorControl(motorControl), magnetometer(magnetometer), accelerometer(accelerometer), manualOverride(manualOverride),
+        motorControl(motorControl), magnetometer(magnetometer), accelerometer(accelerometer), battery(battery), manualOverride(manualOverride),
         flightState(flightState) {}
 
-    std::pair<std::unique_ptr<uint8_t[]>, size_t> serialize() const override {
-        auto packet = std::make_unique<uint8_t[]>(sizeof(ComponentStatus));
-        std::memcpy(packet.get(), this, sizeof(ComponentStatus));
-        return {std::move(packet), sizeof(ComponentStatus)};
+    NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE(ComponentStatus, BasePacket, gps, barometer, motorControl, magnetometer, accelerometer, battery, manualOverride, flightState)
+
+    [[nodiscard]] SerializedPacket serialize() const override {
+        SERIALIZE_THIS_PACKET();
     }
 };

@@ -5,13 +5,15 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.cbor.Cbor
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
+import kotlin.time.Clock
 
 /**
- * Mirrors of the base-station <-> frontend wire protocol defined in
- * `base_station/components/frontend/FrontendPackets.hpp` and the shared types it builds on in
- * `shared_components/flight_data/types.hpp`. Field names/enum wire values follow the C++ structs
- * exactly; JSON keys are name-based (not positional), so the domain [Coordinate]'s field order
- * and `Double` precision are interchangeable with the wire's `float longitude; float latitude;`.
+ * Mirrors of the flight communication packets defined in
+ * `shared_components/flight_com/packets/` and the shared types they build on in
+ * `shared_components/flight_data/types.hpp` / `RouteData.hpp`. Field names/enum wire values follow
+ * the C++ structs exactly; JSON keys are name-based (not positional), so the domain [Coordinate]'s
+ * field order and `Double` precision are interchangeable with the wire's
+ * `float longitude; float latitude;`.
  *
  * These public types are plain data holders, not `@Serializable` themselves - the actual CBOR
  * codec lives in [FrontendPackets] below, backed by `internal` mirror types in
@@ -30,6 +32,7 @@ typealias PlannedRoute = Route
 
 /** Mirrors `ConnectionState` (shared_components/flight_data/types.hpp); wire values are the NLOHMANN_JSON_SERIALIZE_ENUM strings ("connecting", "connected"). */
 enum class ConnectionState {
+    DISCONNECTED,
     CONNECTING,
     CONNECTED,
 }
@@ -42,84 +45,162 @@ enum class FlightState {
     RETURNING,
 }
 
-/**
- * Common supertype of the `type`-tagged packets in FrontendPackets.hpp, matching the C++ structs'
- * `static constexpr const char* type` member.
- */
-sealed interface FrontendPacket {
-    val type: String
+/** Mirrors `RouteAlgorithm` (shared_components/flight_data/types.hpp); wire values are the NLOHMANN_JSON_SERIALIZE_ENUM strings ("basic", "boustrophedon"). */
+enum class RouteAlgorithm {
+    BASIC,
+    BOUSTROPHEDON
 }
 
-/** Mirrors `BaseUpdatePacket`. */
-data class BaseUpdatePacket(
-    override val type: String = "base",
-) : FrontendPacket
-
-/** Mirrors `FlightUpdatePacket`. */
-data class FlightUpdatePacket(
-    override val type: String = "flight",
-    val basePosition: Coordinate,
-    val basePositionUpdateTime: Long,
-    val planePosition: Coordinate,
-    val planePositionUpdateTime: Long,
-    val flightRoute: FlightRoute,
-    val flightRouteUpdateTime: Long,
-    val plannedRoute: PlannedRoute,
-    val plannedRouteUpdateTime: Long,
-) : FrontendPacket
-
-/** Mirrors `ConnectionUpdatePacket`. */
-data class ConnectionUpdatePacket(
-    override val type: String = "connection",
-    val baseConnectionState: ConnectionState,
-    val lastContactBaseStationTimestamp: Long,
-    val planeConnectionState: ConnectionState,
-    val lastContactPlaneTimestamp: Long,
-    val gpsConnectionBase: ConnectionState,
-    val gpsConnectionPlane: ConnectionState,
-    val barometerConnectionBase: ConnectionState,
-    val barometerConnectionPlane: ConnectionState,
-    val motorComConnectionPlane: ConnectionState,
-    val magnetometerConnectionPlane: ConnectionState,
-    val accelerometerConnectionPlane: ConnectionState,
-    val manualOverridePlane: Boolean,
-    val flightState: FlightState,
-) : FrontendPacket
-
-/** Mirrors `AreaDefinePacket`. Unlike the others it carries no `type` tag on the wire. */
-data class AreaDefinePacket(
-    override val type: String = "area",
-    val shape: List<Coordinate>,
-) : FrontendPacket
-
-/** Mirrors `SensorPacket`. */
-data class SensorPacket(
-    override val type: String = "sensor",
-    val barometerPressureBase: Float,
-    val barometerPressurePlane: Float,
-    val calculatedAltitude: Float,
-    val headingPlane: Int,
-) : FrontendPacket
-
-/** Mirrors `BatteryStatusPacket`. */
-data class BatteryStatusPacket(
-    override val type: String = "battery",
-    val baseBatteryPercentage: Int,
-    val planeBatteryPercentage: Int,
-) : FrontendPacket
-
-/** Mirrors `PlannedRoutePacket`. */
-data class PlannedRoutePacket(
-    override val type: String = "plannedRoute",
-    val route: List<Coordinate>,
-) : FrontendPacket
+/** Mirrors `RouteSettings` (shared_components/flight_data/RouteData.hpp). */
+data class RouteSettings(
+    val routeAlgorithm: RouteAlgorithm,
+    val overlapPercentage: Int
+)
 
 /**
- * The shared CBOR codec for the wire types above. Each packet type maps to its own dedicated
- * Bluetooth GATT characteristic (see `iosApp/Networking/ConnectionManager.swift`), so there's no
- * generic type-tagged stream to demultiplex - callers already know which concrete type a given
- * characteristic's payload decodes to, hence one `decodeX` function per type rather than a single
- * polymorphic `decode(ByteArray): FrontendPacket?`.
+ * Mirrors `PacketType` (flight_com/packets/base.hpp). It has no NLOHMANN_JSON_SERIALIZE_ENUM, so
+ * on the wire it's the plain underlying `uint8_t` [wireValue].
+ */
+enum class PacketType(val wireValue: Int) {
+    // sensors
+    SENSOR_UPDATE(0x10),
+    POSITION(0x11),
+    COMPONENT_STATUS(0x12),
+
+    // flight data
+    /** the planned route by the plane to cover a specified area */
+    PLANNED_ROUTE(0x30),
+    /** the area the plane has to cover */
+    PLANNED_AREA(0x31),
+    /** the complete history of the plane's route since takeoff */
+    ROUTE_HISTORY(0x32),
+    /** requesting the complete history of the planes route since takeoff, use with caution */
+    ROUTE_HISTORY_REQUEST(0x33),
+    /** confirmation of the planned route by the base station */
+    PLANNED_ROUTE_CONFIRMATION(0x34);
+
+    companion object {
+        fun fromWireValue(value: Int): PacketType? = entries.firstOrNull { it.wireValue == value }
+    }
+}
+
+/**
+ * Common supertype of all packets, mirroring the fields every C++ packet inherits from
+ * `BasePacket`: the send [timestamp] (`time_t`, seconds), the packet [type] and the sender's
+ * device [id]. Every constructor takes `timestamp` last and defaults it to [currentTimestamp].
+ */
+sealed interface FrontendPacket {
+    val timestamp: Long
+    val type: PacketType
+    val id: UInt
+
+    /** Alias for [id]: the device id of the packet's sender. */
+    val sourceId: UInt get() = id
+}
+
+/** Current time as `time_t`-compatible epoch seconds, the default [FrontendPacket.timestamp]. */
+fun currentTimestamp(): Long = Clock.System.now().epochSeconds
+
+/**
+ * Mirrors a bare `BasePacket` - a packet without payload, e.g. [PacketType.ROUTE_HISTORY_REQUEST].
+ * Unlike the other packets its [type] isn't fixed.
+ */
+data class BasePacket(
+    override val type: PacketType,
+    override val id: UInt,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket
+
+/** Mirrors `SensorUpdate` (packets/sensor.hpp). */
+data class SensorUpdate(
+    override val id: UInt,
+    /** Pressure in hPa */
+    val pressure: Float,
+    /** Compass heading in degrees [0, 360), rounded to the nearest int, 0 = magnetic north */
+    val heading: Int,
+    /** Battery percentage (0-100) */
+    val batteryPercent: Int,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.SENSOR_UPDATE
+}
+
+/** Mirrors `PositionUpdate` (packets/position.hpp). */
+data class PositionUpdate(
+    override val id: UInt,
+    /** GPS position */
+    val position: Coordinate,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.POSITION
+}
+
+/** Mirrors `ComponentStatus` (packets/component.hpp). */
+data class ComponentStatus(
+    override val id: UInt,
+    val gps: ConnectionState,
+    val barometer: ConnectionState,
+    val motorControl: ConnectionState,
+    val magnetometer: ConnectionState,
+    val accelerometer: ConnectionState,
+    val battery: ConnectionState,
+    val manualOverride: Boolean,
+    val flightState: FlightState,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.COMPONENT_STATUS
+}
+
+/** Mirrors `PlannedAreaPacket` (packets/area.hpp). */
+data class PlannedAreaPacket(
+    override val id: UInt,
+    val shape: List<Coordinate>,
+    val settings: RouteSettings,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.PLANNED_AREA
+}
+
+/** Mirrors `FlightHistoryPacket` (packets/history.hpp). */
+data class FlightHistoryPacket(
+    override val id: UInt,
+    val history: FlightRoute,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.ROUTE_HISTORY
+}
+
+/**
+ * Mirrors `PlannedRoutePacket` (packets/route.hpp). Note the C++ struct has a `hash` member but
+ * leaves it out of its NLOHMANN_DEFINE_DERIVED_TYPE_INTRUSIVE field list, so it's currently never
+ * on the wire and decodes as `0`.
+ */
+data class PlannedRoutePacket(
+    override val id: UInt,
+    val route: PlannedRoute,
+    val settings: RouteSettings,
+    val hash: ULong = 0u,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.PLANNED_ROUTE
+
+    val routeHash: ULong get() = hash
+}
+
+/** Mirrors `PlannedRouteConfirmationPacket` (packets/route.hpp). */
+data class PlannedRouteConfirmationPacket(
+    override val id: UInt,
+    val hash: ULong,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.PLANNED_ROUTE_CONFIRMATION
+}
+
+/**
+ * The shared CBOR codec for the wire types above. Callers that already know which concrete type
+ * a payload decodes to (e.g. one Bluetooth GATT characteristic per packet type, see
+ * `iosApp/Networking/ConnectionManager.swift`) can use the typed `decodeX` functions; since every
+ * packet carries its `type` on the wire, [decode] can also demultiplex an arbitrary payload.
  *
  * Bytes cross the Kotlin/Swift boundary as hex strings, not `ByteArray`: Swift Export (Alpha) has
  * no bridge for *constructing* a Kotlin `ByteArray` from Swift (only reading an existing one), so
@@ -130,35 +211,54 @@ data class PlannedRoutePacket(
 object FrontendPackets {
     private val cbor = Cbor { ignoreUnknownKeys = true }
 
-    fun decodeBaseUpdate(hex: String): BaseUpdatePacket? =
-        runCatching { cbor.decodeFromByteArray<BaseUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+    /** Decodes any packet, dispatching on its wire `type`; `null` if malformed or of unknown type. */
+    fun decode(hex: String): FrontendPacket? {
+        val base = decodeBase(hex) ?: return null
+        return when (base.type) {
+            PacketType.SENSOR_UPDATE -> decodeSensorUpdate(hex)
+            PacketType.POSITION -> decodePositionUpdate(hex)
+            PacketType.COMPONENT_STATUS -> decodeComponentStatus(hex)
+            PacketType.PLANNED_ROUTE -> decodePlannedRoute(hex)
+            PacketType.PLANNED_AREA -> decodePlannedArea(hex)
+            PacketType.ROUTE_HISTORY -> decodeFlightHistory(hex)
+            PacketType.ROUTE_HISTORY_REQUEST -> base
+            PacketType.PLANNED_ROUTE_CONFIRMATION -> decodePlannedRouteConfirmation(hex)
+        }
+    }
 
-    fun decodeFlightUpdate(hex: String): FlightUpdatePacket? =
-        runCatching { cbor.decodeFromByteArray<FlightUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+    fun decodeBase(hex: String): BasePacket? =
+        runCatching { cbor.decodeFromByteArray<BasePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
-    fun decodeConnectionUpdate(hex: String): ConnectionUpdatePacket? =
-        runCatching { cbor.decodeFromByteArray<ConnectionUpdatePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+    fun decodeSensorUpdate(hex: String): SensorUpdate? =
+        runCatching { cbor.decodeFromByteArray<SensorUpdateWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
-    fun decodeAreaDefine(hex: String): AreaDefinePacket? =
-        runCatching { cbor.decodeFromByteArray<AreaDefinePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+    fun decodePositionUpdate(hex: String): PositionUpdate? =
+        runCatching { cbor.decodeFromByteArray<PositionUpdateWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
-    fun decodeSensor(hex: String): SensorPacket? =
-        runCatching { cbor.decodeFromByteArray<SensorPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+    fun decodeComponentStatus(hex: String): ComponentStatus? =
+        runCatching { cbor.decodeFromByteArray<ComponentStatusWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
-    fun decodeBatteryStatus(hex: String): BatteryStatusPacket? =
-        runCatching { cbor.decodeFromByteArray<BatteryStatusPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+    fun decodePlannedArea(hex: String): PlannedAreaPacket? =
+        runCatching { cbor.decodeFromByteArray<PlannedAreaPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
+    fun decodeFlightHistory(hex: String): FlightHistoryPacket? =
+        runCatching { cbor.decodeFromByteArray<FlightHistoryPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
     fun decodePlannedRoute(hex: String): PlannedRoutePacket? =
         runCatching { cbor.decodeFromByteArray<PlannedRoutePacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
+    fun decodePlannedRouteConfirmation(hex: String): PlannedRouteConfirmationPacket? =
+        runCatching { cbor.decodeFromByteArray<PlannedRouteConfirmationPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
     /** Encodes any [FrontendPacket] to its CBOR wire form, hex-encoded. */
     fun encode(packet: FrontendPacket): String = when (packet) {
-        is BaseUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
-        is FlightUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
-        is ConnectionUpdatePacket -> cbor.encodeToByteArray(packet.toWire())
-        is AreaDefinePacket -> cbor.encodeToByteArray(packet.toWire())
-        is SensorPacket -> cbor.encodeToByteArray(packet.toWire())
-        is BatteryStatusPacket -> cbor.encodeToByteArray(packet.toWire())
+        is BasePacket -> cbor.encodeToByteArray(packet.toWire())
+        is SensorUpdate -> cbor.encodeToByteArray(packet.toWire())
+        is PositionUpdate -> cbor.encodeToByteArray(packet.toWire())
+        is ComponentStatus -> cbor.encodeToByteArray(packet.toWire())
+        is PlannedAreaPacket -> cbor.encodeToByteArray(packet.toWire())
+        is FlightHistoryPacket -> cbor.encodeToByteArray(packet.toWire())
         is PlannedRoutePacket -> cbor.encodeToByteArray(packet.toWire())
+        is PlannedRouteConfirmationPacket -> cbor.encodeToByteArray(packet.toWire())
     }.toHexString()
 }
