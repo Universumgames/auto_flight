@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-namespace {
+namespace{
     // Decodes whatever `packet.serialize()` produced, verifying the codec
     // round-trips through the exact byte buffer sendPacket() would emit.
     template <typename PacketT>
@@ -92,8 +92,8 @@ TEST(PacketCodecTest, plannedRouteRoundTrips) {
 
 TEST(PacketCodecTest, componentStatusRoundTrips) {
     const ComponentStatus original(555, ConnectionState::CONNECTED, ConnectionState::CONNECTING,
-                                    ConnectionState::CONNECTED, ConnectionState::CONNECTING,
-                                    ConnectionState::CONNECTED, true, FlightState::FLYING);
+                                   ConnectionState::CONNECTED, ConnectionState::CONNECTING,
+                                   ConnectionState::CONNECTED, ConnectionState::CONNECTED, true, FlightState::FLYING);
     const auto decoded = roundTrip(original);
     ASSERT_NE(decoded, nullptr);
     const auto* status = dynamic_cast<ComponentStatus*>(decoded.get());
