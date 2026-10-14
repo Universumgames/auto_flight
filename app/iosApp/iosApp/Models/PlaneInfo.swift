@@ -21,8 +21,15 @@ import SharedLogic
 final class PlaneInfo {
     let id: PlaneID
     var connectionState: ConnectionState = .CONNECTING
-    var position: Coordinate?
+    var position: Coordinate? {
+        didSet { recordPosition(position) }
+    }
     var positionUpdateTime: Int64?
+    /// Every distinct position received for this plane, recorded locally
+    /// regardless of which screen is visible. Capped at `maxPositionHistory`,
+    /// dropping the oldest entries first.
+    var positionHistory: [Coordinate] = []
+    static let maxPositionHistory = 5000
     var lastContactTimestamp: Int64?
     var gpsConnection: ConnectionState = .CONNECTING
     var barometerConnection: ConnectionState = .CONNECTING
@@ -48,6 +55,21 @@ final class PlaneInfo {
 
     init(id: PlaneID) {
         self.id = id
+    }
+
+    /// Appends `position` to `positionHistory`, skipping unknown positions and
+    /// repeats of the last recorded one.
+    private func recordPosition(_ position: Coordinate?) {
+        guard let position else { return }
+        if let last = positionHistory.last,
+           last.latitude == position.latitude,
+           last.longitude == position.longitude {
+            return
+        }
+        positionHistory.append(position)
+        if positionHistory.count > Self.maxPositionHistory {
+            positionHistory.removeFirst(positionHistory.count - Self.maxPositionHistory)
+        }
     }
 
     var connectionItem: ConnectionItem {
