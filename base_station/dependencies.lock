@@ -190,6 +190,6 @@ direct_dependencies:
 - johboh/nlohmann-json
 - lvgl/lvgl
 - waveshare/esp_oled_ssd1315
-manifest_hash: 1b408a24a6d4d00166c3bded206d9f0d16fad007f8b618ca5d0395a1f9d64c11
+manifest_hash: e205d4f5255866eafc5f60fb2009a5989121c77e32dab634e9f64881b96050da
 target: esp32s3
 version: 3.0.0

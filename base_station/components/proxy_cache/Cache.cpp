@@ -174,8 +174,8 @@ ComponentStatus CacheClass::getLatestComponentStatus(uint32_t sourceId) {
     WITH_RECURSIVE_MUTEX(cacheMutex) {
         if (hasPacket(sourceId, PacketType::COMPONENT_STATUS)) {
             auto [data, len] = getLatestPacket(sourceId, PacketType::COMPONENT_STATUS);
-            if (data != nullptr && len == sizeof(ComponentStatus)) {
-                std::memcpy(&status, data, sizeof(ComponentStatus));
+            if (data != nullptr) {
+                status = ComponentStatus(data, len);
             }
         }
     }
