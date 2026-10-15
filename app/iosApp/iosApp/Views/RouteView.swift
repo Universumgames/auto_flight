@@ -23,7 +23,6 @@ struct RouteView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .padding(.horizontal)
             }
             .padding(.horizontal)
             ZStack {

@@ -83,6 +83,8 @@ final class ConnectionManager: NSObject {
             onFrameAreaDefine(data: data)
         case .plannedRoute:
             onFrameRoutePlanned(data: data)
+        case .flightData:
+            onFrameFlightData(data: data)
         case .routeHistory:
             print("route history unhandles")
         case .routeHistoryRequest:
@@ -96,7 +98,7 @@ final class ConnectionManager: NSObject {
         print(
             "Received notification for topic \(topic) from source \(base.id) with timestamp \(base.timestamp)"
         )
-        print(data.hexEncoded)
+        //print(data.hexEncoded)
         let key = WaitRequestKey(characteristic: topic, sourceId: base.id)
         let callbacks = waitingRequests[key]
         waitingRequests[key] = []
@@ -170,6 +172,13 @@ final class ConnectionManager: NSObject {
         print("Area define update received: \(packet)")
     }
 
+    private func onFrameFlightData(data: Data) {
+        guard let packet = wire.FrontendPackets.shared.decodeFlightPacket(
+            hex: data.hexEncoded
+        ) else { return }
+        // TODO: do something with the flight data
+    }
+
     // MARK: - Manual fetching
 
     /// Waits for the next already-subscribed notification on `char` — every topic is
@@ -204,8 +213,8 @@ final class ConnectionManager: NSObject {
             let con1 = await queryConnection(planeId)
             try await writeCharacteristic(.plannedRouteConfirmation, data: data)
             var con2 = await queryConnection(planeId)
-            for _ in 0..<10 {
-                try await Task.sleep(nanoseconds: 500_000_000)
+            for _ in 0 ..< 10 {
+                try await Task.sleep(nanoseconds: 500000000)
                 con2 = await queryConnection(planeId)
                 if con1?.flightState != con2?.flightState {
                     break

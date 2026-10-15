@@ -211,7 +211,7 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
         break;
     }
     default:
-        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unknown packet type: 0x%xd", basePacket->type);
+        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unhandled packet type: 0x%xd", basePacket->type);
         break;
     }
 }

@@ -272,3 +272,36 @@ internal fun PlannedRouteConfirmationPacketWire.toPublic(): PlannedRouteConfirma
     type.requireType(PacketType.PLANNED_ROUTE_CONFIRMATION)
     return PlannedRouteConfirmationPacket(id = id, hash = hash, timestamp = timestamp)
 }
+
+@Serializable
+internal data class FlightPacketWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
+    val state: FlightStateWire,
+    val nextWaypointIndex: ULong,
+    val nextWaypoint: CoordinateWire,
+    val targetAltitude: Float,
+)
+
+internal fun FlightPacket.toWire() = FlightPacketWire(
+    timestamp = timestamp,
+    type = type.wireValue,
+    id = id,
+    state = state.toWire(),
+    nextWaypointIndex = nextWaypointIndex,
+    nextWaypoint = nextWaypoint.toWire(),
+    targetAltitude = targetAltitude,
+)
+
+internal fun FlightPacketWire.toPublic(): FlightPacket {
+    type.requireType(PacketType.FLIGHT_DATA)
+    return FlightPacket(
+        timestamp = timestamp,
+        id = id,
+        state = state.toPublic(),
+        nextWaypointIndex = nextWaypointIndex,
+        nextWaypoint = nextWaypoint.toPublic(),
+        targetAltitude = targetAltitude,
+    )
+}

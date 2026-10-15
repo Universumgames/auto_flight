@@ -1,10 +1,10 @@
 //
 // GENERATED FILE - DO NOT EDIT BY HAND.
-// Source of truth: base_station/components/frontend_bluetooth/ble_protocol.json
-// (topics mirror enum PacketType in base_station/shared_components/flight_com/packets/base.hpp)
-// Regenerate with base_station/components/frontend_bluetooth/gen_ble_protocol.py
+// Source of truth: shared_components/flight_com/ble_protocol.json
+// (topics mirror enum PacketType in shared_components/flight_com/packets/base.hpp)
+// Regenerate with shared_components/flight_com/gen_ble_protocol.py
 //
-// Mirrors base_station/components/frontend_bluetooth/BLETopics.generated.hpp.
+// Mirrors BLETopics.generated.hpp (generated into flight_com's build dir).
 //
 
 import CoreBluetooth
@@ -30,6 +30,8 @@ enum NotifyByte: UInt8, CaseIterable, Identifiable {
     case BLE_ROUTE_HISTORY_REQUEST = 0x33
     /// confirmation of the planned route by the base station
     case BLE_PLANNED_ROUTE_CONFIRMATION = 0x34
+    /// current information about the route the plane is flying
+    case BLE_FLIGHT_DATA = 0x40
 
     var id: UInt8 { rawValue }
 
@@ -43,6 +45,7 @@ enum NotifyByte: UInt8, CaseIterable, Identifiable {
             case .BLE_ROUTE_HISTORY: return .routeHistory
             case .BLE_ROUTE_HISTORY_REQUEST: return .routeHistoryRequest
             case .BLE_PLANNED_ROUTE_CONFIRMATION: return .plannedRouteConfirmation
+            case .BLE_FLIGHT_DATA: return .flightData
         }
     }
 }
@@ -61,6 +64,8 @@ enum CharacteristicUUID: String, CaseIterable, Identifiable {
     case routeHistoryRequest = "AB33"
     /// confirmation of the planned route by the base station
     case plannedRouteConfirmation = "AB34"
+    /// current information about the route the plane is flying
+    case flightData = "AB40"
 }
 
 extension CharacteristicUUID {

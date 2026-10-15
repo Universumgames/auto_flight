@@ -77,7 +77,9 @@ enum class PacketType(val wireValue: Int) {
     /** requesting the complete history of the planes route since takeoff, use with caution */
     ROUTE_HISTORY_REQUEST(0x33),
     /** confirmation of the planned route by the base station */
-    PLANNED_ROUTE_CONFIRMATION(0x34);
+    PLANNED_ROUTE_CONFIRMATION(0x34),
+    /** current information about the route the plane is flying */
+    FLIGHT_DATA(0x40);
 
     companion object {
         fun fromWireValue(value: Int): PacketType? = entries.firstOrNull { it.wireValue == value }
@@ -196,6 +198,19 @@ data class PlannedRouteConfirmationPacket(
     override val type get() = PacketType.PLANNED_ROUTE_CONFIRMATION
 }
 
+/** Mirrors `FlightPacket` (packets/flight.hpp). */
+data class FlightPacket(
+    override val id: UInt,
+    val state: FlightState,
+    /** Index of [nextWaypoint] within the planned route (`size_t`) */
+    val nextWaypointIndex: ULong,
+    val nextWaypoint: Coordinate,
+    val targetAltitude: Float,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.FLIGHT_DATA
+}
+
 /**
  * The shared CBOR codec for the wire types above. Callers that already know which concrete type
  * a payload decodes to (e.g. one Bluetooth GATT characteristic per packet type, see
@@ -223,6 +238,7 @@ object FrontendPackets {
             PacketType.ROUTE_HISTORY -> decodeFlightHistory(hex)
             PacketType.ROUTE_HISTORY_REQUEST -> base
             PacketType.PLANNED_ROUTE_CONFIRMATION -> decodePlannedRouteConfirmation(hex)
+            PacketType.FLIGHT_DATA -> decodeFlightPacket(hex)
         }
     }
 
@@ -250,6 +266,9 @@ object FrontendPackets {
     fun decodePlannedRouteConfirmation(hex: String): PlannedRouteConfirmationPacket? =
         runCatching { cbor.decodeFromByteArray<PlannedRouteConfirmationPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
+    fun decodeFlightPacket(hex: String): FlightPacket? =
+        runCatching { cbor.decodeFromByteArray<FlightPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
     /** Encodes any [FrontendPacket] to its CBOR wire form, hex-encoded. */
     fun encode(packet: FrontendPacket): String = when (packet) {
         is BasePacket -> cbor.encodeToByteArray(packet.toWire())
@@ -260,5 +279,6 @@ object FrontendPackets {
         is FlightHistoryPacket -> cbor.encodeToByteArray(packet.toWire())
         is PlannedRoutePacket -> cbor.encodeToByteArray(packet.toWire())
         is PlannedRouteConfirmationPacket -> cbor.encodeToByteArray(packet.toWire())
+        is FlightPacket -> cbor.encodeToByteArray(packet.toWire())
     }.toHexString()
 }

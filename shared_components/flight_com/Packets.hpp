@@ -6,3 +6,4 @@
 #include "packets/history.hpp"
 #include "packets/route.hpp"
 #include "packets/component.hpp"
+#include "packets/flight.hpp"
