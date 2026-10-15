@@ -107,4 +107,15 @@ void Flight_Communication::sendComponentStatus() {
 
     sendPacket(status);
 }
+
+void Flight_Communication::sendFlightData(FlightState state, size_t nextWaypointIndex, Coordinate nextWaypoint, float targetAltitude) {
+    const FlightPacket packet = {
+        GPS_Reader.getGPSLatestTime(),
+        state,
+        nextWaypointIndex,
+        nextWaypoint,
+        targetAltitude
+    };
+    sendPacket(packet);
+}
 #endif
