@@ -3,7 +3,7 @@
   "serviceUUID": "ABF0",
   "//serviceUUID": "Compiled-in default for clients that can't read Kconfig. The firmware itself advertises CONFIG_BLUETOOTH_SERVICE_UUID (base_station/components/frontend_bluetooth/Kconfig, same 0xABF0 default) — if that Kconfig value is ever changed for a deployment, update this field too.",
   "topics": {
-    "sourceHeader": "../../shared_components/flight_com/packets/base.hpp",
+    "sourceHeader": "packets/base.hpp",
     "enum": "PacketType",
     "cppInclude": "packets/base.hpp",
     "uuidPrefix": "AB"

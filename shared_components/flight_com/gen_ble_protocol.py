@@ -2,7 +2,7 @@
 """Generates the BLE wire-contract sources from ble_protocol.json.
 
 The topic table itself is not listed in the JSON: it mirrors enum PacketType from
-base_station/shared_components/flight_com/packets/base.hpp (see the schema's
+packets/base.hpp next to this script (see the schema's
 "topics" entry), so adding a packet type automatically adds a BLE topic.
 
 This is the single source of truth for the BLE topic table (byte value ->
@@ -13,14 +13,16 @@ Android/KMP once it grows a BLE transport). Nothing here should be hand-edited
 in the generated output files - edit ble_protocol.json and regenerate.
 
 Usage:
-    # Regenerate the C++ header (normally done automatically by CMake at build time):
-    python3 gen_ble_protocol.py --out-cpp BLETopics.generated.hpp
+    # Regenerate the C++ header (normally done automatically by CMake at build time,
+    # see CMakeLists.txt next to this script):
+    python3 gen_ble_protocol.py --out-cpp <path>/BLETopics.generated.hpp
 
     # Regenerate the iOS Swift file (wired into an Xcode Run Script build phase):
-    python3 gen_ble_protocol.py --out-swift ../../../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift
+    python3 gen_ble_protocol.py --out-swift ../../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift
 
-    # Regenerate the Android/KMP Kotlin stub (currently manual - see that file's header):
-    python3 gen_ble_protocol.py --out-kotlin ../../../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/BleProtocol.generated.kt
+    # Regenerate the Android/KMP Kotlin file (normally done automatically by the
+    # :sharedLogic:generateBleProtocol Gradle task into sharedLogic/build/generated/bleProtocol):
+    python3 gen_ble_protocol.py --out-kotlin <path>/BleProtocol.generated.kt
 
     # Check committed output is up to date with the schema (exits 1 on drift):
     python3 gen_ble_protocol.py --check --out-swift <path> --out-kotlin <path>
@@ -36,9 +38,9 @@ DEFAULT_SCHEMA = SCRIPT_DIR / "ble_protocol.json"
 
 GENERATED_NOTICE = (
     "GENERATED FILE - DO NOT EDIT BY HAND.\n"
-    "Source of truth: base_station/components/frontend_bluetooth/ble_protocol.json\n"
-    "(topics mirror enum PacketType in base_station/shared_components/flight_com/packets/base.hpp)\n"
-    "Regenerate with base_station/components/frontend_bluetooth/gen_ble_protocol.py"
+    "Source of truth: shared_components/flight_com/ble_protocol.json\n"
+    "(topics mirror enum PacketType in shared_components/flight_com/packets/base.hpp)\n"
+    "Regenerate with shared_components/flight_com/gen_ble_protocol.py"
 )
 
 
@@ -246,7 +248,7 @@ def render_swift(schema: dict) -> str:
     return f"""//
 {notice}
 //
-// Mirrors base_station/components/frontend_bluetooth/BLETopics.generated.hpp.
+// Mirrors BLETopics.generated.hpp (generated into flight_com's build dir).
 //
 
 import CoreBluetooth
@@ -303,8 +305,8 @@ def render_kotlin(schema: dict) -> str:
 // base station over a websocket (see KtorFlightRepository.kt), not Bluetooth.
 // This exists so the day Android/KMP grows a BLE transport, the wire contract is
 // already generated from the same source of truth as the C++ and Swift sides
-// instead of being hand-copied a third time. Regenerate with
-// base_station/components/frontend_bluetooth/gen_ble_protocol.py --out-kotlin <path>
+// instead of being hand-copied a third time. Generated at build time by the
+// :sharedLogic:generateBleProtocol Gradle task.
 package de.universegame.auto_flight.app.wire
 
 object BleProtocol {{
