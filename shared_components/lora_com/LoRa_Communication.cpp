@@ -496,7 +496,19 @@ bool LoRa_CommunicationClass::isDuplicateFragment(const LoRa_Packet_Internal& he
         .messageId = header.messageId,
         .fragmentId = header.fragmentId,
     };
-    if (std::ranges::contains(recentRx, entry)) {
+    // most recently stored entry from this sender, searching backwards from the newest slot
+    const RecentRx* latest = nullptr;
+    for (size_t i = 1; i <= recentRx.size(); ++i) {
+        const auto& candidate = recentRx[(recentRxNext + recentRx.size() - i) % recentRx.size()];
+        if (candidate.valid && std::ranges::equal(candidate.senderId, entry.senderId)) {
+            latest = &candidate;
+            break;
+        }
+    }
+    // signed distance handles the 8-bit wraparound; only ids shortly behind the newest one can be retransmissions
+    const auto lag = latest ? static_cast<int8_t>(latest->messageId - entry.messageId) : 0;
+    const bool plausibleRetransmission = lag >= 0 && lag <= RECENT_RX_MAX_MESSAGE_ID_LAG;
+    if (plausibleRetransmission && std::ranges::contains(recentRx, entry)) {
         return true;
     }
     recentRx[recentRxNext] = entry;
