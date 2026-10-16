@@ -41,7 +41,7 @@ void BaseControllerClass::init() {
     LoRa_Communication.begin();
 
     Barometer.begin();
-    Battery.begin();
+    //Battery.begin();
     GPS_Reader.begin();
     OledDisplay.begin();
 
@@ -65,7 +65,7 @@ void BaseControllerClass::loopTaskEntry(void* param) {
             time,
             Barometer.getPressure(),
             0,
-            Battery.getVoltagePercentage()
+            -1// Battery.getVoltagePercentage()
         };
         Cache.savePacket(DeviceId::BASE_STATION, PacketType::SENSOR_UPDATE, sensor.serialize());
 
