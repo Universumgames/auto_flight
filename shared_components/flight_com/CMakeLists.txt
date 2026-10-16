@@ -21,10 +21,14 @@ if (NOT NATIVE_BUILD)
     # so the base station's frontend_bluetooth (the only user; the header needs NimBLE's
     # host/ble_uuid.h) can include it.
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    set(BLE_PROTOCOL_GEN_CMD ${Python3_EXECUTABLE} "${CMAKE_CURRENT_LIST_DIR}/gen_ble_protocol.py"
+            --schema "${CMAKE_CURRENT_LIST_DIR}/ble_protocol.json"
+            --out-cpp "${CMAKE_CURRENT_BINARY_DIR}/BLETopics.generated.hpp")
+    # Also generate once at configure time, so the header exists as soon as the project is
+    # loaded (IDEs like CLion resolve includes after a CMake reload, before any build).
+    execute_process(COMMAND ${BLE_PROTOCOL_GEN_CMD} OUTPUT_QUIET COMMAND_ERROR_IS_FATAL ANY)
     add_custom_target(flight_com_ble_protocol
-            COMMAND ${Python3_EXECUTABLE} "${CMAKE_CURRENT_LIST_DIR}/gen_ble_protocol.py"
-                    --schema "${CMAKE_CURRENT_LIST_DIR}/ble_protocol.json"
-                    --out-cpp "${CMAKE_CURRENT_BINARY_DIR}/BLETopics.generated.hpp"
+            COMMAND ${BLE_PROTOCOL_GEN_CMD}
             BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/BLETopics.generated.hpp"
             DEPENDS "${CMAKE_CURRENT_LIST_DIR}/ble_protocol.json" "${CMAKE_CURRENT_LIST_DIR}/gen_ble_protocol.py"
                     "${CMAKE_CURRENT_LIST_DIR}/packets/base.hpp"

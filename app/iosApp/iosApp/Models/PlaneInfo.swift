@@ -50,6 +50,7 @@ final class PlaneInfo {
     /// The area polygon submitted in `AreaView`, kept around so `RouteView` can
     /// center its map on it while waiting for the base station's planned route.
     var area: AreaData?
+    var nextRouteWaypoint: Coordinate?
 
     var wizardStep: [ConfigurationState] = []
 

@@ -79,7 +79,9 @@ enum class PacketType(val wireValue: Int) {
     /** confirmation of the planned route by the base station */
     PLANNED_ROUTE_CONFIRMATION(0x34),
     /** current information about the route the plane is flying */
-    FLIGHT_DATA(0x40);
+    FLIGHT_DATA(0x40),
+
+    DATA_REQUEST(0xFF);
 
     companion object {
         fun fromWireValue(value: Int): PacketType? = entries.firstOrNull { it.wireValue == value }
@@ -211,6 +213,15 @@ data class FlightPacket(
     override val type get() = PacketType.FLIGHT_DATA
 }
 
+/** Mirrors `DataRequest` (packets/dataRequest.hpp): asks the receiver to send a packet of [requestedType]. */
+data class DataRequestPacket(
+    override val id: UInt,
+    val requestedType: PacketType,
+    override val timestamp: Long = currentTimestamp(),
+) : FrontendPacket {
+    override val type get() = PacketType.DATA_REQUEST
+}
+
 /**
  * The shared CBOR codec for the wire types above. Callers that already know which concrete type
  * a payload decodes to (e.g. one Bluetooth GATT characteristic per packet type, see
@@ -239,6 +250,7 @@ object FrontendPackets {
             PacketType.ROUTE_HISTORY_REQUEST -> base
             PacketType.PLANNED_ROUTE_CONFIRMATION -> decodePlannedRouteConfirmation(hex)
             PacketType.FLIGHT_DATA -> decodeFlightPacket(hex)
+            PacketType.DATA_REQUEST -> decodeDataRequest(hex)
         }
     }
 
@@ -269,6 +281,9 @@ object FrontendPackets {
     fun decodeFlightPacket(hex: String): FlightPacket? =
         runCatching { cbor.decodeFromByteArray<FlightPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
 
+    fun decodeDataRequest(hex: String): DataRequestPacket? =
+        runCatching { cbor.decodeFromByteArray<DataRequestPacketWire>(hex.hexToByteArray()).toPublic() }.getOrNull()
+
     /** Encodes any [FrontendPacket] to its CBOR wire form, hex-encoded. */
     fun encode(packet: FrontendPacket): String = when (packet) {
         is BasePacket -> cbor.encodeToByteArray(packet.toWire())
@@ -280,5 +295,6 @@ object FrontendPackets {
         is PlannedRoutePacket -> cbor.encodeToByteArray(packet.toWire())
         is PlannedRouteConfirmationPacket -> cbor.encodeToByteArray(packet.toWire())
         is FlightPacket -> cbor.encodeToByteArray(packet.toWire())
+        is DataRequestPacket -> cbor.encodeToByteArray(packet.toWire())
     }.toHexString()
 }

@@ -29,7 +29,8 @@ struct FlightView: View {
                         .planes[planeId]?.area?.areaPoints ?? [],
                     basePosition: appState.basePosition,
                     planePosition: appState.planes[planeId]?.position,
-                    planeHeading: appState.planes[planeId]?.heading ?? 0
+                    planeHeading: appState.planes[planeId]?.heading ?? 0,
+                    nextWaypoint: appState.planes[planeId]?.nextRouteWaypoint
                 )
             }
             .frame(minHeight: 400, maxHeight: .infinity)

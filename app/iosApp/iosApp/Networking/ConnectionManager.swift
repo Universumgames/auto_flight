@@ -91,6 +91,8 @@ final class ConnectionManager: NSObject {
             print("route request unhandled")
         case .plannedRouteConfirmation:
             print("route confirm unhandled")
+        case .dataRequest:
+            print("data request unhandled")
         }
         guard let base = wire.FrontendPackets.shared.decodeBase(
             hex: data.hexEncoded
@@ -270,6 +272,21 @@ final class ConnectionManager: NSObject {
             }
             Task {
                 let _ = await requestUpdate(characteristic)
+            }
+        }
+    }
+    
+    private func querySingleDeep(_ sourceId: PlaneID, _ data: wire.PacketType) async -> Data? {
+        let key = WaitRequestKey(
+            characteristic: data.characteristic,
+            sourceId: sourceId
+        )
+        return await withCheckedContinuation { continuation in
+            waitingRequests[key, default: []].append { data in
+                continuation.resume(returning: data)
+            }
+            Task {
+                let _ = await requestUpdate(data.characteristic)
             }
         }
     }

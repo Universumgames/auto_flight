@@ -4,7 +4,8 @@ import SharedLogic
 
 /// Live flight visualization, variant of `RouteMapView`: draws the plane's
 /// recorded position history (red) on top of the planned route (blue) and the
-/// area boundary (dashed gray).
+/// area boundary (dashed gray), plus a thin line from the plane to the waypoint
+/// it is currently targeting.
 struct FlightMapView: View {
     let plannedRoute: [Coordinate]
     /// The plane's recorded positions (`PlaneInfo.positionHistory`).
@@ -14,6 +15,8 @@ struct FlightMapView: View {
     let basePosition: Coordinate?
     let planePosition: Coordinate?
     let planeHeading: Double?
+    /// The waypoint the plane is currently flying towards (`PlaneInfo.nextRouteWaypoint`).
+    let nextWaypoint: Coordinate?
 
     @State private var cameraPosition: MapCameraPosition = .region(
         MKCoordinateRegion(
@@ -40,6 +43,10 @@ struct FlightMapView: View {
             }
             if positionHistory.count > 1 {
                 MapPolyline(coordinates: positionHistory.map(\.clCoordinate)).stroke(Color.red, lineWidth: 4)
+            }
+            if let plane = planePosition, let waypoint = nextWaypoint {
+                MapPolyline(coordinates: [plane.clCoordinate, waypoint.clCoordinate])
+                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
             }
             if let start = plannedRoute.first {
                 Annotation(String(localized: "map.annotation.routeStart"), coordinate: start.clCoordinate) { MarkerBadge.routeStart() }
@@ -129,6 +136,7 @@ struct FlightMapView: View {
         basePosition: Coordinate.Companion.shared.defaultLocation,
         planePosition: Coordinate.Companion.shared.defaultLocation,
         planeHeading: 45,
+        nextWaypoint: nil,
     )
     .environment(AppState.shared)
     .environment(ConnectionManager())

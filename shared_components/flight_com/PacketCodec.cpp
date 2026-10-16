@@ -98,6 +98,10 @@ std::unique_ptr<BasePacket> Flight_Communication::decodePacket(const uint8_t* da
             auto flightPacket = new FlightPacket(data, len);
             return std::unique_ptr<FlightPacket>(flightPacket);
         }
+        case PacketType::DATA_REQUEST: {
+            auto dataRequest = new DataRequest(data, len);
+            return std::unique_ptr<DataRequest>(dataRequest);
+        }
         }
     }
     catch (const nlohmann::json::exception& e) {

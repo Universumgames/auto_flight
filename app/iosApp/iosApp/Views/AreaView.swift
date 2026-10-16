@@ -21,7 +21,7 @@ struct AreaView: View {
                     submit()
                 }
                 .buttonStyle(.borderedProminent)
-                .disabled(polygon.isEmpty || loading)
+                .disabled(polygon.count < 3 || loading)
             }
             .padding(.horizontal)
 

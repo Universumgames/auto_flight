@@ -48,7 +48,10 @@ enum class PacketType: uint8_t {
     /// confirmation of the planned route by the base station
     PLANNED_ROUTE_CONFIRMATION = 0x34,
     /// current information about the route the plane is flying
-    FLIGHT_DATA = 0x40
+    FLIGHT_DATA = 0x40,
+
+    /// requesting a specific type of data from the plane, use with caution to avoid flooding the plane with requests
+    DATA_REQUEST = 0xFF,
 };
 
 struct IBasePacket {

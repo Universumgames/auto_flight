@@ -51,6 +51,8 @@ def load_schema(path: Path) -> dict:
     schema = {k: v for k, v in raw.items() if not k.startswith("//")}
     schema["topicEnum"] = schema["topics"]["enum"]
     schema["topicEnumInclude"] = schema["topics"]["cppInclude"]
+    schema["topicEnumSwiftModule"] = schema["topics"]["swiftModule"]
+    schema["topicEnumSwiftType"] = schema["topics"]["swiftType"]
     schema["topics"] = resolve_topics(schema["topics"], path.parent)
     return schema
 
@@ -244,6 +246,10 @@ def render_swift(schema: dict) -> str:
     case_entries = "\n".join(f"{_doc(t, '    ')}    case {t['name']} = {t['value']}" for t in topics)
     characteristic_cases = "\n".join(f"            case .{t['name']}: return .{t['caseName']}" for t in topics)
     uuid_cases = "\n".join(f'{_doc(t, "    ")}    case {t["caseName"]} = "{t["uuid"]}"' for t in topics)
+    packet_type = schema["topicEnumSwiftType"]
+    to_notify_cases = "\n".join(f"            case .{t['sourceName']}: return .{t['name']}" for t in topics)
+    to_packet_cases = "\n".join(f"            case .{t['name']}: return .{t['sourceName']}" for t in topics)
+    uuid_to_notify_cases = "\n".join(f"            case .{t['caseName']}: return .{t['name']}" for t in topics)
 
     return f"""//
 {notice}
@@ -252,6 +258,7 @@ def render_swift(schema: dict) -> str:
 //
 
 import CoreBluetooth
+import {schema['topicEnumSwiftModule']}
 
 let ServiceUUID = CBUUID(string: "{schema['serviceUUID']}")
 
@@ -283,6 +290,43 @@ extension CharacteristicUUID {{
 
     var id: CBUUID {{
         uuid
+    }}
+
+    /// The `{packet_type}` carried by this characteristic.
+    var packetType: {packet_type} {{
+        notifyByte.packetType
+    }}
+
+    /// The topic byte this characteristic belongs to.
+    var notifyByte: NotifyByte {{
+        switch self {{
+{uuid_to_notify_cases}
+        }}
+    }}
+}}
+
+extension NotifyByte {{
+    /// The `{packet_type}` carried by this topic.
+    var packetType: {packet_type} {{
+        switch self {{
+{to_packet_cases}
+        }}
+    }}
+}}
+
+/// Exhaustive on purpose: if the KMP {packet_type} (FrontendPackets.kt) drifts from the
+/// C++ enum, these stop compiling.
+extension {packet_type} {{
+    /// The topic carrying this packet type.
+    var notifyByte: NotifyByte {{
+        switch self {{
+{to_notify_cases}
+        }}
+    }}
+
+    /// The characteristic carrying this packet type.
+    var characteristic: CharacteristicUUID {{
+        notifyByte.characteristic
     }}
 }}
 """

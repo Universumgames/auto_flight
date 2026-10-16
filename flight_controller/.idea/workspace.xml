@@ -202,6 +202,7 @@
       <config projectName="flight_controller_test" targetName="app-flash" />
       <config projectName="flight_controller_test" targetName="__idf_wear_levelling" />
       <config projectName="flight_controller_test" targetName="__idf_freertos" />
+      <config projectName="flight_controller_test" targetName="flight_com_ble_protocol" />
       <config projectName="flight_controller_test" targetName="__idf_spi_flash" />
       <config projectName="flight_controller_test" targetName="memory_ld_in_preprocess" />
       <config projectName="flight_controller_test" targetName="__idf_esp_hal_mcpwm" />
@@ -238,19 +239,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix display bug on base station">
+      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/FlightMapView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Components/Maps/FlightMapView.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/PlaneInfo.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/PlaneInfo.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/ConnectionManager.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/ConnectionManager.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/PacketParsing.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Networking/PacketParsing.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/AreaView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/AreaView.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/RouteView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/RouteView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/FlightView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/FlightView.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/PlaneSelectionView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Views/PlaneSelectionView.swift" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPackets.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPackets.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPacketsWire.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPacketsWire.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBL.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/plane_pcb/.history" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/battery/Battery.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/PacketCodec.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/PacketCodec.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Packets.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Packets.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/ble_protocol.json" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/ble_protocol.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/gen_ble_protocol.py" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/gen_ble_protocol.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../test/lib" beforeDir="false" afterPath="$PROJECT_DIR$/../test/lib" afterDir="false" />
     </list>
@@ -416,61 +428,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.4824521156738797" />
-      <entry key="MS500" value="4.66315379339485" />
-      <entry key="S2" value="7.4709830762037255" />
-      <entry key="S5" value="8.338763326162981" />
-      <entry key="S10" value="8.66061084152841" />
-      <entry key="S30" value="8.968001837199079" />
-      <entry key="S60" value="9.61610471631283" />
-      <entry key="M2" value="11.512275474648856" />
-      <entry key="M5" value="15.431742228966348" />
-      <entry key="M10" value="21.255610512511325" />
-      <entry key="M15" value="29.425895258415412" />
-      <entry key="M30" value="54.63188641309374" />
-      <entry key="H1" value="86.33046358063233" />
-      <entry key="H2" value="113.31976721970369" />
-      <entry key="H4" value="132.40613111579967" />
-      <entry key="D1" value="208.7880235959895" />
-      <entry key="W1" value="1131.1238938705628" />
+      <entry key="MS100" value="2.3075396821665837E-59" />
+      <entry key="MS500" value="5.752645446552501E-12" />
+      <entry key="S2" value="0.005068793597151155" />
+      <entry key="S5" value="0.3261193061679881" />
+      <entry key="S10" value="1.4053476881427838" />
+      <entry key="S30" value="4.4044215943314065" />
+      <entry key="S60" value="6.383866495163874" />
+      <entry key="M2" value="7.898244081542329" />
+      <entry key="M5" value="9.11052857980556" />
+      <entry key="M10" value="9.716261281313441" />
+      <entry key="M15" value="10.01411655933922" />
+      <entry key="M30" value="10.417550440680527" />
+      <entry key="H1" value="10.680102887827067" />
+      <entry key="H2" value="10.859373238600133" />
+      <entry key="H4" value="12.443690207264854" />
+      <entry key="D1" value="110.76045816089946" />
+      <entry key="W1" value="1027.4835225265106" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="5.179019611868858E-74" />
-      <entry key="S2" value="4.770477907139569E-19" />
-      <entry key="S5" value="4.692789393551529E-8" />
-      <entry key="S10" value="2.1787127656437257E-4" />
-      <entry key="S30" value="0.08524115784910312" />
-      <entry key="S60" value="0.6184274033494921" />
-      <entry key="M2" value="2.1159030219610377" />
-      <entry key="M5" value="4.910255101516536" />
-      <entry key="M10" value="6.703307788824394" />
-      <entry key="M15" value="7.575640390257466" />
-      <entry key="M30" value="8.877001501324704" />
-      <entry key="H1" value="9.982915794532758" />
-      <entry key="H2" value="10.956389257593035" />
-      <entry key="H4" value="12.067912451154546" />
-      <entry key="D1" value="29.336838090404623" />
-      <entry key="W1" value="301.70170601695344" />
+      <entry key="MS100" value="1.0000000004225966" />
+      <entry key="MS500" value="1.0133409017873631" />
+      <entry key="S2" value="1.3399197840155694" />
+      <entry key="S5" value="1.6869185808787661" />
+      <entry key="S10" value="2.1367394091368057" />
+      <entry key="S30" value="3.364735627030698" />
+      <entry key="S60" value="4.038073746112179" />
+      <entry key="M2" value="4.476632311496797" />
+      <entry key="M5" value="4.898565402492206" />
+      <entry key="M10" value="5.6381930999347825" />
+      <entry key="M15" value="6.3279648834004645" />
+      <entry key="M30" value="7.602755143382134" />
+      <entry key="H1" value="8.611854562966453" />
+      <entry key="H2" value="9.25536417870767" />
+      <entry key="H4" value="9.894005449558898" />
+      <entry key="D1" value="26.32532419852029" />
+      <entry key="W1" value="276.24665324784473" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.3839351559142605" />
-      <entry key="MS500" value="4.542596287817141" />
-      <entry key="S2" value="7.423773288176515" />
-      <entry key="S5" value="8.317981509144955" />
-      <entry key="S10" value="8.65006446851569" />
-      <entry key="S30" value="9.045131122415963" />
-      <entry key="S60" value="10.214455445399716" />
-      <entry key="M2" value="13.59321249616891" />
-      <entry key="M5" value="20.308241197259292" />
-      <entry key="M10" value="27.93503841570402" />
-      <entry key="M15" value="36.98285419826423" />
-      <entry key="M30" value="63.4970831477344" />
-      <entry key="H1" value="96.30637976598906" />
-      <entry key="H2" value="124.27223588868509" />
-      <entry key="H4" value="144.4718936510422" />
-      <entry key="D1" value="238.12405720257826" />
-      <entry key="W1" value="1432.8241997257849" />
+      <entry key="MS100" value="4.1688240257647095E-5" />
+      <entry key="MS500" value="0.13380401778642403" />
+      <entry key="S2" value="0.7746323491596323" />
+      <entry key="S5" value="1.649816423740072" />
+      <entry key="S10" value="3.2739341074234076" />
+      <entry key="S30" value="7.598854166233485" />
+      <entry key="S60" value="10.310300421461209" />
+      <entry key="M2" value="12.309203362024002" />
+      <entry key="M5" value="13.979310045894122" />
+      <entry key="M10" value="15.33771249162744" />
+      <entry key="M15" value="16.329936903580734" />
+      <entry key="M30" value="18.013378176392777" />
+      <entry key="H1" value="19.288166780167245" />
+      <entry key="H2" value="20.11273861941919" />
+      <entry key="H4" value="22.336625734461055" />
+      <entry key="D1" value="137.08518708013918" />
+      <entry key="W1" value="1303.7289334294185" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -1407,6 +1419,11 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="flight_com_ble_protocol" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="flight_com_ble_protocol" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="flight_controller.elf" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="flight_controller.elf" CONFIG_NAME="Debug-ESP-IDF" RUN_TARGET_PROJECT_NAME="flight_controller_test" RUN_TARGET_NAME="flight_controller.elf">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1723,6 +1740,7 @@
       <item itemvalue="CMake Application.__idf_espressif__mpu6050" />
       <item itemvalue="CMake Application.__idf_fatfs" />
       <item itemvalue="CMake Application.__idf_flight_com" />
+      <item itemvalue="CMake Application.flight_com_ble_protocol" />
       <item itemvalue="CMake Application.__idf_flight_controller" />
       <item itemvalue="CMake Application.__idf_flight_data" />
       <item itemvalue="CMake Application.__idf_freertos" />

@@ -305,3 +305,27 @@ internal fun FlightPacketWire.toPublic(): FlightPacket {
         targetAltitude = targetAltitude,
     )
 }
+
+@Serializable
+internal data class DataRequestPacketWire(
+    val timestamp: Long,
+    val type: Int,
+    val id: UInt,
+    val requestedType: Int,
+)
+
+internal fun DataRequestPacket.toWire() = DataRequestPacketWire(
+    timestamp = timestamp,
+    type = type.wireValue,
+    id = id,
+    requestedType = requestedType.wireValue,
+)
+
+internal fun DataRequestPacketWire.toPublic(): DataRequestPacket {
+    type.requireType(PacketType.DATA_REQUEST)
+    return DataRequestPacket(
+        timestamp = timestamp,
+        id = id,
+        requestedType = packetTypeOf(requestedType),
+    )
+}

@@ -111,6 +111,8 @@ struct PlaneSelectionView: View {
                         RouteView(planeId: planeID)
                     case .FLYING:
                         FlightView(planeId: planeID)
+                    case .FINISHING:
+                        FlightView(planeId: planeID)
                     default:
                         EmptyView()
                     }
