@@ -31,9 +31,14 @@ Anmeldungsrelevant:
   - Peter Davids
 - Titel Ideen
   - Wahrnehmungsbasierte und dynamikgerechte Flächenabdeckung mit einem Starrflügel-UAV
+  - Ressourcenbeschränktes Avioniksystem für autonome Flächenabdeckungsflüge mit Starrflügel-UAVs
+  - Autonomes Avioniksystem für energie- und wahrnehmungsbewusste Flächenabdeckung mit einem Starrflügel-UAV
+  - Autonomes Avioniksystem für energiebewusste und wahrnehmungsbasierte Flächenabdeckung mit einem Starrflügel-UAV
+
+
+
 - Titel Ideen der KI
   - Entwurf und Umsetzung eines autonomen Starrflügel-UAV-Systems für flächendeckende Überwachungsflüge
-  - Ein ressourcenbeschränktes Avioniksystem für autonome Flächenabdeckungsflüge mit Starrflügel-UAVs
   - Sicherheitskritische Architektur für ein autonomes Segelflugzeug mit manueller Übersteuerungsebene
   - Evaluation von Coverage-Path-Planning-Algorithmen für energiebeschränkte Starrflügel-UAVs
   - Von der Fläche zur Flugroute: Streifenmuster-Routenplanung unter Berücksichtigung von Akku- und Kameraparametern
@@ -74,3 +79,10 @@ Anmeldungsrelevant:
   - Edge AI im Sinkflug: Evaluation eingebetteter neuronaler Netze zur Branderkennung auf einem autonomen UAV
   - TinyML in der Luft: Entwicklung und Bewertung eines CNN-basierten Branderkennungssystems für Mikrocontroller
   - Neuronale Netze am Limit: Branderkennung mit TinyML auf einem autonomen Kleinflugzeug
+  - Energiebewusste Pfadplanung und Flächenabdeckung mit einem autonomen Starrflügel-UAV
+  - Wahrnehmungs- und energiebewusste Missionsplanung für ein autonomes Starrflügel-UAV
+  - Ressourcenbewusste Avionik und Bildverarbeitung für ein autonomes Flächenüberwachungs-UAV
+  - Dynamikgerechte Bahnplanung und eingebettete Branderkennung mit einem Starrflügel-UAV
+  - Dynamik- und ressourcenbewusste Flächenabdeckungsplanung für ein autonomes Starrflügel-UAV
+  - Eingebettete Wahrnehmung und ressourcenbeschränkte Bahnplanung für ein autonomes Starrflügel-UAV
+  - Energie- und dynamikgerechte Flugführung eines ressourcenbeschränkten Starrflügel-UAV
