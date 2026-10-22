@@ -67,7 +67,7 @@ struct RouteView: View {
                 let route = await connectionManager.queryRoute(planeId)
                 if let route, !route.route.isEmpty {
                     plannedRoute = route.route
-                    hash = route.metadata.hash
+                    hash = route.routeHash
                     return
                 }
                 tries += 1
