@@ -218,7 +218,8 @@
       },
       "metadata": {
         "extends": "BasePacket",
-        "kotlinDecoder": "decodePlannedRoute"
+        "kotlinDecoder": "decodePlannedRoute",
+        "kotlinAliases": { "routeHash": "metadata.hash" }
       }
     },
     "PlannedRouteConfirmationPacket": {
