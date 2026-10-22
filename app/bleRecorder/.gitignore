@@ -1,4 +1,6 @@
-.build/
-.swiftpm/
+.venv/
+build/
+dist/
+__pycache__/
+*.spec
 *.json
-!Package.resolved

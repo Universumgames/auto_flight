@@ -1,61 +1,86 @@
-# Build and run ble-recorder.
+# Build and run ble-recorder (Python + bleak; macOS, Linux and Windows).
 #
-#   make                      release build
-#   make run                  build and record to recording-<timestamp>.json
+#   make                      standalone executable in dist/ (sets up .venv on first run)
+#   make run                  run from source, record to recording-<timestamp>.json
 #   make run OUT=flight.json NAME=base RAW=1 DURATION=60
 #   make run TCP=7878 SOCKET=/tmp/ble-recorder.sock NOFILE=1
-#   make debug / run-debug    same with a debug build
-#   make install              copy the binary to $(PREFIX)/bin
+#   make run-dist             same, but with the standalone executable
+#   make test                 unit tests
+#   make install              copy the executable to $(PREFIX)/bin
+#   make clean / distclean    remove build output / also the virtualenv
 
-SWIFT     ?= swift
-PRODUCT   := ble-recorder
-CONFIG    ?= release
-PREFIX    ?= /usr/local
+PYTHON  ?= python3
+PRODUCT := ble-recorder
+PREFIX  ?= /usr/local
+VENV    := .venv
 
 # Optional recorder arguments, see `ble-recorder --help`.
-OUT  ?=
-NAME ?=
-RAW  ?=
+OUT      ?=
+NAME     ?=
+RAW      ?=
 DURATION ?=
 TCP      ?=
 SOCKET   ?=
 NOFILE   ?=
 
-BIN_DIR := $(shell $(SWIFT) build -c $(CONFIG) --show-bin-path 2>/dev/null)
-BINARY  := $(BIN_DIR)/$(PRODUCT)
-SOURCES := Package.swift $(wildcard Sources/BLERecorder/*.swift) Sources/BLERecorder/Info.plist
+ifeq ($(OS),Windows_NT)
+    VENV_BIN := $(VENV)/Scripts
+    EXE      := .exe
+else
+    VENV_BIN := $(VENV)/bin
+    EXE      :=
+endif
+VENV_PYTHON := $(VENV_BIN)/python$(EXE)
+VENV_STAMP  := $(VENV)/.installed
+DIST        := dist/$(PRODUCT)$(EXE)
+SOURCES     := main.py $(wildcard ble_recorder/*.py)
 
 RUN_ARGS := $(if $(OUT),-o $(OUT)) $(if $(NAME),-n $(NAME)) $(if $(DURATION),-t $(DURATION)) $(if $(RAW),--raw) \
             $(if $(TCP),--tcp $(TCP)) $(if $(SOCKET),--socket $(SOCKET)) $(if $(NOFILE),--no-file) $(ARGS)
 
-.PHONY: all build debug run run-debug install uninstall clean help
+.PHONY: all dist venv run run-dist test install uninstall clean distclean help
 
-all: build
+all: dist
 
-build: $(BINARY)
+venv: $(VENV_STAMP)
 
-$(BINARY): $(SOURCES)
-	$(SWIFT) build -c $(CONFIG) --product $(PRODUCT)
+# Recreated whenever a requirements file changes.
+$(VENV_STAMP): requirements.txt requirements-build.txt
+	$(PYTHON) -m venv $(VENV)
+	$(VENV_PYTHON) -m pip install --quiet --upgrade pip
+	$(VENV_PYTHON) -m pip install --quiet -r requirements-build.txt
+	@echo > $@
 
-debug:
-	$(MAKE) build CONFIG=debug
+dist: $(DIST)
 
-run: build
-	$(BINARY) $(RUN_ARGS)
+$(DIST): $(VENV_STAMP) $(SOURCES)
+	$(VENV_PYTHON) -m PyInstaller --onefile --clean --noconfirm --log-level WARN \
+		--name $(PRODUCT) --paths . \
+		--distpath dist --workpath build/pyinstaller --specpath build \
+		main.py
+	@echo "Built $(DIST)"
 
-run-debug:
-	$(MAKE) run CONFIG=debug
+run: $(VENV_STAMP)
+	$(VENV_PYTHON) -m ble_recorder $(RUN_ARGS)
 
-install: build
+run-dist: $(DIST)
+	$(DIST) $(RUN_ARGS)
+
+test: $(VENV_STAMP)
+	$(VENV_PYTHON) -m unittest discover -s tests -t . -v
+
+install: $(DIST)
 	install -d $(PREFIX)/bin
-	install -m 755 $(BINARY) $(PREFIX)/bin/$(PRODUCT)
+	install -m 755 $(DIST) $(PREFIX)/bin/$(PRODUCT)$(EXE)
 
 uninstall:
-	rm -f $(PREFIX)/bin/$(PRODUCT)
+	rm -f $(PREFIX)/bin/$(PRODUCT)$(EXE)
 
 clean:
-	$(SWIFT) package clean
-	rm -rf .build
+	rm -rf build dist
+
+distclean: clean
+	rm -rf $(VENV)
 
 help:
-	@sed -n '2,9p' Makefile | sed 's/^# \{0,1\}//'
+	@sed -n '2,10p' Makefile | sed 's/^# \{0,1\}//'

@@ -50,6 +50,25 @@ ios_app:
       - app/build/ios/Build/Products
     expire_in: 1 week
 
+ble_recorder:
+  stage: build
+  needs: []
+  # bookworm (glibc 2.36) rather than the newest base, so the executable runs on older distros too.
+  image: python:3.12-slim-bookworm
+  before_script:
+    - apt-get update -qq
+    # binutils: PyInstaller needs objdump to collect shared libraries on Linux.
+    - apt-get install -y --no-install-recommends -qq make binutils
+  script:
+    - cd app/bleRecorder
+    - make test
+    - make
+    - ./dist/ble-recorder --help
+  artifacts:
+    paths:
+      - app/bleRecorder/dist/ble-recorder
+    expire_in: 1 week
+
 motor_controller:
   stage: build
   needs: []
