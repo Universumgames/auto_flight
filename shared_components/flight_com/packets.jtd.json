@@ -1,0 +1,253 @@
+{
+  "metadata": {
+    "description": "Single source of truth for the flight_com application-level packets (plane <-> base station <-> app), encoded as CBOR maps via nlohmann::json::to_cbor. RFC 8927 JSON Type Definition, with one extension: a definition with metadata.extends inherits that definition's properties (JTD itself has no inheritance), so packets only list their own fields. `python3 gen_packets.py --out-jtd <file>` writes a flattened copy that is plain JTD for standard validators. Everything else code generation needs lives in `metadata` (see gen_packets.py for the full list of keys). Edit this file, then regenerate: python3 gen_packets.py --out-cpp <dir> --out-kotlin <dir>",
+    "cpp": {
+      "packetIncludes": ["\"DeviceId.hpp\"", "\"esp_log.h\""]
+    },
+    "kotlin": {
+      "package": "de.universegame.auto_flight.app.wire",
+      "imports": ["de.universegame.auto_flight.app.Coordinate"],
+      "prelude": [
+        "typealias Route = List<Coordinate>",
+        "typealias FlightRoute = Route",
+        "typealias PlannedRoute = Route"
+      ]
+    },
+    "constants": {
+      "COORDINATE_INVALID_VALUE": {
+        "type": "float32",
+        "value": -400,
+        "description": "Longitude/latitude value marking a Coordinate as not (yet) known, see Coordinate::isInvalid"
+      },
+      "DEFAULT_OVERLAP_PERCENTAGE": {
+        "type": "uint8",
+        "value": 20,
+        "description": "Default overlap between neighbouring sweep lines of a planned route, in percent"
+      }
+    },
+    "packetTypes": {
+      "//": "Wire values of the uint8 `type` field every packet carries (enum class PacketType). `packet` is the definition sent with that type; omitted = bare BasePacket without payload.",
+      "SENSOR_UPDATE": { "value": "0x10", "packet": "SensorUpdate", "group": "sensors" },
+      "POSITION": { "value": "0x11", "packet": "PositionUpdate" },
+      "COMPONENT_STATUS": { "value": "0x12", "packet": "ComponentStatus" },
+      "PLANNED_ROUTE": { "value": "0x30", "packet": "PlannedRoutePacket", "group": "flight data", "description": "the planned route by the plane to cover a specified area" },
+      "PLANNED_AREA": { "value": "0x31", "packet": "PlannedAreaPacket", "description": "the area the plane has to cover" },
+      "ROUTE_HISTORY": { "value": "0x32", "packet": "FlightHistoryPacket", "description": "the complete history of the plane's route since takeoff" },
+      "ROUTE_HISTORY_REQUEST": { "value": "0x33", "description": "requesting the complete history of the planes route since takeoff, use with caution" },
+      "PLANNED_ROUTE_CONFIRMATION": { "value": "0x34", "packet": "PlannedRouteConfirmationPacket", "description": "confirmation of the planned route by the base station" },
+      "FLIGHT_DATA": { "value": "0x40", "packet": "FlightPacket", "description": "current information about the route the plane is flying" },
+      "DATA_REQUEST": { "value": "0xFF", "packet": "DataRequest", "description": "requesting a specific type of data from the plane, use with caution to avoid flooding the plane with requests" }
+    }
+  },
+  "definitions": {
+    "Timestamp": {
+      "type": "int32",
+      "metadata": {
+        "description": "Unix time in seconds (time_t). JTD has no 64-bit integers, so validation stops at 2038; generated code uses the native 64-bit types.",
+        "cppType": "time_t",
+        "kotlinType": "Long"
+      }
+    },
+    "PacketTypeValue": {
+      "type": "uint8",
+      "metadata": {
+        "description": "One of the values in metadata.packetTypes. Sent as plain integer (no NLOHMANN_JSON_SERIALIZE_ENUM).",
+        "enum": "PacketType"
+      }
+    },
+    "DeviceIdValue": {
+      "type": "uint32",
+      "metadata": { "description": "Device id of the packet's sender (DeviceId::get32())" }
+    },
+    "Size": {
+      "type": "uint32",
+      "metadata": {
+        "description": "size_t - 32 bit on the ESP32, which is what goes over the air",
+        "cppType": "size_t",
+        "kotlinType": "ULong"
+      }
+    },
+    "Duration": {
+      "type": "uint64",
+      "metadata": {
+        "description": "Duration in seconds",
+        "cppType": "uint64_t",
+        "kotlinType": "Long"
+      }
+    },
+
+    "ConnectionState": {
+      "enum": ["connecting", "connected"],
+      "metadata": {
+        "values": { "connecting": "0", "connected": "1" },
+        "kotlinExtraValues": ["disconnected"],
+        "//kotlinExtraValues": "app-only state (no link to the base station at all), never sent by the firmware"
+      }
+    },
+    "FlightState": {
+      "enum": ["planning", "planned", "flying", "returning"],
+      "metadata": {
+        "values": { "planning": "0x22", "planned": "0x33", "flying": "0x44", "returning": "0x55" }
+      }
+    },
+    "RouteAlgorithm": {
+      "enum": ["basic", "boustrophedon"],
+      "metadata": {
+        "values": { "basic": "0x01", "boustrophedon": "0x02" },
+        "descriptions": { "boustrophedon": "is the basic algorithm meant by \"BASIC\"" }
+      }
+    },
+
+    "Coordinate": {
+      "properties": {
+        "longitude": { "type": "float32", "metadata": { "kotlinType": "Double" } },
+        "latitude": { "type": "float32", "metadata": { "kotlinType": "Double" } }
+      },
+      "metadata": {
+        "kotlinExternal": "Coordinate",
+        "kotlinRejectNaN": true,
+        "cppBody": [
+          "static bool isInvalid(Coordinate coord) {",
+          "    return coord.latitude < -91 || coord.latitude > 91 || coord.longitude < -181 || coord.longitude > 181;",
+          "}"
+        ]
+      }
+    },
+    "RouteSettings": {
+      "properties": {
+        "routeAlgorithm": { "ref": "RouteAlgorithm" },
+        "overlapPercentage": { "type": "int32", "metadata": { "default": 20 } }
+      },
+      "metadata": {
+        "cppBody": [
+          "size_t hash() const {",
+          "    size_t h1 = std::hash<int>()(static_cast<int>(routeAlgorithm));",
+          "    size_t h2 = std::hash<int>()(overlapPercentage);",
+          "    return h1 ^ (h2 << 1); // Combine the two hashes",
+          "}"
+        ]
+      }
+    },
+    "RouteType": {
+      "enum": ["entire", "summarized"],
+        "metadata": {
+            "values": { "entire": "0", "summarized": "1" },
+            "descriptions": { "entire": "the entire route is sent, the base station can store it as the new planned route", "summarized": "only a part of the route is sent, the base station should append it to the existing planned route" }
+        }
+    },
+    "RouteMetaData": {
+      "properties": {
+        "settings": { "ref": "RouteSettings" },
+        "hash": { "ref": "Size", "metadata": { "default": 0, "description": "RouteData hash the base station echoes back in PlannedRouteConfirmationPacket" } },
+        "routeType": { "ref": "RouteType" },
+        "entireSize": { "ref": "Size", "metadata": { "default": 0, "description": "The complete Route size, the planes uses" } },
+        "length": { "type": "float32", "metadata": { "default": 0, "description": "The length of the route in meters" } },
+        "estimatedTime": { "ref": "Duration", "metadata": { "default": 0, "description": "Estimated time to complete the route in seconds, rounded to the nearest second" } }
+      }
+    },
+    "CoveredQuadrilateral": {
+      "properties": {
+        "areaPoints": { "elements": { "ref": "Coordinate" } }
+      },
+      "metadata": {
+        "description": "The area the plane covered on a single check"
+      }
+    },
+
+    "BasePacket": {
+      "properties": {
+        "timestamp": { "ref": "Timestamp" },
+        "type": { "ref": "PacketTypeValue", "metadata": { "default": "COMPONENT_STATUS" } },
+        "id": { "ref": "DeviceIdValue", "metadata": { "cppDefault": "DeviceId::get32()" } }
+      },
+      "metadata": {
+        "basePacket": true,
+        "description": "Header every packet starts with. Sent on its own for packet types without payload (e.g. ROUTE_HISTORY_REQUEST)."
+      }
+    },
+
+    "SensorUpdate": {
+      "properties": {
+        "pressure": { "type": "float32", "metadata": { "description": "Pressure in hPa" } },
+        "altitude": { "type": "float32", "metadata": { "description": "Altitude in meters, calculated from pressure" } },
+        "heading": { "type": "int32", "metadata": { "description": "Compass heading in degrees [0, 360), rounded to the nearest int, 0 = magnetic north" } },
+        "batteryPercent": { "type": "int32", "metadata": { "description": "Battery percentage (0-100)" } }
+      },
+      "metadata": { "extends": "BasePacket", "kotlinDecoder": "decodeSensorUpdate" }
+    },
+    "PositionUpdate": {
+      "properties": {
+        "position": {
+          "ref": "Coordinate",
+          "metadata": { "description": "GPS position", "default": { "longitude": -400, "latitude": -400 } }
+        }
+      },
+      "metadata": { "extends": "BasePacket", "kotlinDecoder": "decodePositionUpdate" }
+    },
+    "ComponentStatus": {
+      "properties": {
+        "gps": { "ref": "ConnectionState" },
+        "barometer": { "ref": "ConnectionState" },
+        "motorControl": { "ref": "ConnectionState" },
+        "magnetometer": { "ref": "ConnectionState" },
+        "accelerometer": { "ref": "ConnectionState" },
+        "battery": { "ref": "ConnectionState" },
+        "manualOverride": { "type": "boolean" },
+        "flightState": { "ref": "FlightState" }
+      },
+      "metadata": { "extends": "BasePacket", "kotlinDecoder": "decodeComponentStatus" }
+    },
+    "PlannedAreaPacket": {
+      "properties": {
+        "shape": { "elements": { "ref": "Coordinate" } },
+        "settings": { "ref": "RouteSettings" }
+      },
+      "metadata": { "extends": "BasePacket", "kotlinDecoder": "decodePlannedArea" }
+    },
+    "FlightHistoryPacket": {
+      "properties": {
+        "history": { "elements": { "ref": "Coordinate" } }
+      },
+      "metadata": { "extends": "BasePacket", "kotlinDecoder": "decodeFlightHistory" }
+    },
+    "PlannedRoutePacket": {
+      "properties": {
+        "route": { "elements": { "ref": "Coordinate" } },
+        "settings": { "ref": "RouteSettings" },
+        "metadata": { "ref": "RouteMetaData" }
+      },
+      "metadata": {
+        "extends": "BasePacket",
+        "kotlinDecoder": "decodePlannedRoute",
+        "kotlinAliases": { "routeHash": "metadata.hash" }
+      }
+    },
+    "PlannedRouteConfirmationPacket": {
+      "properties": {
+        "hash": { "ref": "Size" }
+      },
+      "metadata": { "extends": "BasePacket", "kotlinDecoder": "decodePlannedRouteConfirmation" }
+    },
+    "FlightPacket": {
+      "properties": {
+        "state": { "ref": "FlightState" },
+        "nextWaypointIndex": { "ref": "Size", "metadata": { "description": "Index of nextWaypoint within the planned route" } },
+        "nextWaypoint": { "ref": "Coordinate" },
+        "targetAltitude": { "type": "float32" },
+        "lastCheckedArea": { "ref": "CoveredQuadrilateral" }
+      },
+      "metadata": { "extends": "BasePacket", "kotlinDecoder": "decodeFlightPacket" }
+    },
+    "DataRequest": {
+      "properties": {
+        "requestedType": { "ref": "PacketTypeValue", "metadata": { "default": "SENSOR_UPDATE" } }
+      },
+      "metadata": {
+        "extends": "BasePacket",
+        "description": "asks the receiver to send a packet of requestedType",
+        "kotlinName": "DataRequestPacket",
+        "kotlinDecoder": "decodeDataRequest"
+      }
+    }
+  }
+}

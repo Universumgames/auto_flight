@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generates the BLE wire-contract sources from ble_protocol.json.
 
-The topic table itself is not listed in the JSON: it mirrors enum PacketType from
-packets/base.hpp next to this script (see the schema's
+The topic table itself is not listed in the JSON: it mirrors the packet types
+(enum PacketType) declared in packets.jtd.json next to this script (see the schema's
 "topics" entry), so adding a packet type automatically adds a BLE topic.
 
 This is the single source of truth for the BLE topic table (byte value ->
@@ -39,7 +39,7 @@ DEFAULT_SCHEMA = SCRIPT_DIR / "ble_protocol.json"
 GENERATED_NOTICE = (
     "GENERATED FILE - DO NOT EDIT BY HAND.\n"
     "Source of truth: shared_components/flight_com/ble_protocol.json\n"
-    "(topics mirror enum PacketType in shared_components/flight_com/packets/base.hpp)\n"
+    "(topics mirror metadata.packetTypes in shared_components/flight_com/packets.jtd.json)\n"
     "Regenerate with shared_components/flight_com/gen_ble_protocol.py"
 )
 
@@ -63,49 +63,27 @@ def snake_to_camel(name: str) -> str:
     return first + "".join(part.capitalize() for part in rest)
 
 
-def parse_cpp_enum(header: Path, enum_name: str) -> list[tuple[str, int, list[str]]]:
-    """Returns (name, value, doc lines) for every entry of `enum class <enum_name>` in `header`.
-
-    Only handles what an enum body can reasonably contain here: `NAME = <int literal>`,
-    implicit `NAME` (previous value + 1), `///` doc comments and `//` / `/* */` comments.
-    """
-    text = header.read_text(encoding="utf-8")
-    match = re.search(rf"enum\s+class\s+{re.escape(enum_name)}\b[^{{;]*\{{(.*?)\}}", text, re.DOTALL)
-    if not match:
-        raise SystemExit(f"error: enum class {enum_name} not found in {header}")
-    body = re.sub(r"/\*.*?\*/", "", match.group(1), flags=re.DOTALL)
-
-    entries = []
-    doc: list[str] = []
-    next_value = 0
-    for line in body.splitlines():
-        line = line.strip()
-        if line.startswith("///"):
-            doc.append(line[3:].strip())
-            continue
-        line = line.split("//", 1)[0].strip().rstrip(",").strip()
-        if not line:
-            doc = []  # a blank / plain-comment line detaches any preceding doc comment
-            continue
-        entry = re.fullmatch(r"(\w+)\s*(?:=\s*(\w+))?", line)
-        if not entry:
-            raise SystemExit(f"error: can't parse {enum_name} entry {line!r} in {header}")
-        value = int(entry.group(2), 0) if entry.group(2) else next_value
-        entries.append((entry.group(1), value, doc))
-        next_value = value + 1
-        doc = []
-    return entries
+def read_packet_types(schema_path: Path) -> list[tuple[str, int, list[str]]]:
+    """Returns (name, value, doc lines) for every entry of metadata.packetTypes in the packet
+    schema (packets.jtd.json, see gen_packets.py), in declaration order."""
+    with open(schema_path, "r", encoding="utf-8") as f:
+        packet_types = json.load(f)["metadata"]["packetTypes"]
+    return [
+        (name, int(entry["value"], 0) if isinstance(entry["value"], str) else entry["value"],
+         entry["description"].splitlines() if entry.get("description") else [])
+        for name, entry in packet_types.items() if not name.startswith("//")
+    ]
 
 
 def resolve_topics(spec: dict, schema_dir: Path) -> list[dict]:
     """Expands the schema's `topics` reference into one topic per entry of the referenced enum."""
-    header = (schema_dir / spec["sourceHeader"]).resolve()
+    packet_schema = (schema_dir / spec["sourceSchema"]).resolve()
     prefix = spec["uuidPrefix"].removeprefix("0x").removeprefix("0X").upper()
     if not re.fullmatch(r"[0-9A-F]{2}", prefix):
         raise SystemExit(f"error: uuidPrefix must be a single hex byte, got {spec['uuidPrefix']!r}")
 
     topics = []
-    for name, value, doc in parse_cpp_enum(header, spec["enum"]):
+    for name, value, doc in read_packet_types(packet_schema):
         if not 0 <= value <= 0xFF:
             raise SystemExit(f"error: {spec['enum']}::{name} = {value} does not fit in one byte")
         topics.append({

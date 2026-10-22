@@ -22,6 +22,7 @@
 #include "MotorComMaster.hpp"
 #include "Magnetometer.hpp"
 #include "OledDisplay.hpp"
+#include "types.hpp"
 
 static FlightControllerClass* flight_controller = nullptr;
 
@@ -150,7 +151,7 @@ void FlightControllerClass::sendUpdateTaskEntry(void* param) {
         Flight_Communication::sendSensorUpdate();
         Flight_Communication::sendComponentStatus();
         Flight_Communication::sendFlightData(FlightStorage.getFlightState(), nextWaypointIndex, getNextWaypoint(),
-                                             targetAltitude);
+                                             targetAltitude, {});
         vTaskDelay(pdMS_TO_TICKS(CONFIG_SEND_UPDATE_INTERVAL_MS));
     }
 }
@@ -262,8 +263,8 @@ void FlightControllerClass::recalculateRoute(const AreaData& newPlannedArea) {
     }
     auto plannedRoute = RoutePlanner.planRoute(newPlannedArea.areaPoints, newPlannedArea.settings.routeAlgorithm, 60,
                                                metersToLatitudeDegree(40),
-                                               1 - std::clamp((float)newPlannedArea.settings.overlapPercentage / 100.0f, 0.0f, 1.0f));
-    FlightStorage.updatePlannedRoute(RouteData{plannedRoute, newPlannedArea.settings});
+                                               newPlannedArea.settings.overlapPercentage);
+    FlightStorage.updatePlannedRoute(plannedRoute);
     nextWaypointIndex = 0;
     FlightStorage.updateFlightState(FlightState::PLANNED);
 }

@@ -24,7 +24,8 @@ public:
     static void sendFlightData(FlightState state,
                                size_t nextWaypointIndex,
                                Coordinate nextWaypoint,
-                               float targetAltitude);
+                               float targetAltitude,
+                               const CoveredQuadrilateral& lastCheckedArea);
 #endif
 
 #ifdef FLIGHT_DEVICE_TYPE_BASE_STATION

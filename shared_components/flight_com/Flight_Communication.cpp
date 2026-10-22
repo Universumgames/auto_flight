@@ -82,11 +82,20 @@ void Flight_Communication::sendRouteHistory() {
 
 void Flight_Communication::sendPlannedRoute() {
     const auto plannedRoute = FlightStorage.getPlannedRoute();
+    const RouteType routeTypeToSend = plannedRoute.getRoutePoints().size() > 50 ? RouteType::SUMMARIZED : RouteType::ENTIRE;
+    const RouteMetaData meta_data = {
+        .settings = plannedRoute.getSettings(),
+        .hash = plannedRoute.getHash(),
+        .routeType = RouteType::ENTIRE,
+        .entireSize = plannedRoute.getRoutePoints().size(),
+        .length = plannedRoute.getRouteLength(),
+        .estimatedTime = 0 // TODO: calculate estimated time to complete route
+    };
     const PlannedRoutePacket packet = {
         GPS_Reader.getGPSLatestTime(),
         plannedRoute.getRoutePoints(),
         plannedRoute.getSettings(),
-        plannedRoute.getHash()
+        meta_data
     };
     bool ret = sendPacket(packet);
     if (!ret) {
@@ -110,13 +119,14 @@ void Flight_Communication::sendComponentStatus() {
     sendPacket(status);
 }
 
-void Flight_Communication::sendFlightData(FlightState state, size_t nextWaypointIndex, Coordinate nextWaypoint, float targetAltitude) {
+void Flight_Communication::sendFlightData(FlightState state, size_t nextWaypointIndex, Coordinate nextWaypoint, float targetAltitude, const CoveredQuadrilateral& lastCheckedArea) {
     const FlightPacket packet = {
         GPS_Reader.getGPSLatestTime(),
         state,
         nextWaypointIndex,
         nextWaypoint,
-        targetAltitude
+        targetAltitude,
+        lastCheckedArea
     };
     sendPacket(packet);
 }
