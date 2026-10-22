@@ -3,8 +3,10 @@
 #include <optional>
 #include <FlightTypes.generated.hpp>
 
+#ifndef NATIVE_BUILD
 #include "i2c_bus.h"
 #include "driver/i2c_slave.h"
+#endif
 
 #define CAMERA_CONTROLLER_I2C_ADDR 0x44
 
@@ -28,6 +30,7 @@ namespace CameraCommunication{
 
     // Master side
 
+#ifndef NATIVE_BUILD
     /**
      * Send a scan request to the slave, written as [SCAN_REQUEST][ScanRequest]
      * @param request the request to send
@@ -64,4 +67,5 @@ namespace CameraCommunication{
      * @return true if the full result was written, false otherwise
      */
     bool sendScanResult(const ScanResult& result, i2c_slave_dev_handle_t slaveHandle, int timeoutMs = 100);
+#endif
 }

@@ -41,10 +41,12 @@
       <config projectName="flight_controller_test" targetName="efuse-common-table" />
       <config projectName="flight_controller_test" targetName="idf_component_flight_data" />
       <config projectName="flight_controller_test" targetName="idf_component_homog2d" />
+      <config projectName="flight_controller_test" targetName="idf_component_camera_com_master" />
       <config projectName="flight_controller_test" targetName="encrypted-partition-table-flash" />
       <config projectName="flight_controller_test" targetName="__idf_nvs_flash" />
       <config projectName="flight_controller_test" targetName="partition_table-flash" />
       <config projectName="flight_controller_test" targetName="__idf_device_id" />
+      <config projectName="flight_controller_test" targetName="__idf_camera_com_master" />
       <config projectName="flight_controller_test" targetName="partition-table" />
       <config projectName="flight_controller_test" targetName="app" />
       <config projectName="flight_controller_test" targetName="encrypted-app-flash" />
@@ -80,6 +82,7 @@
       <config projectName="flight_controller_test" targetName="builtin" />
       <config projectName="flight_controller_test" targetName="__idf_efuse" />
       <config projectName="flight_controller_test" targetName="__idf_esp_libc" />
+      <config projectName="flight_controller_test" targetName="__idf_cam_com" />
       <config projectName="flight_controller_test" targetName="__idf_spiffs" />
       <config projectName="flight_controller_test" targetName="__idf_esp_eth" />
       <config projectName="flight_controller_test" targetName="__idf_mbedtls" />
@@ -89,6 +92,7 @@
       <config projectName="flight_controller_test" targetName="menuconfig" />
       <config projectName="flight_controller_test" targetName="__idf_esp_security" />
       <config projectName="flight_controller_test" targetName="__idf_esp_netif" />
+      <config projectName="flight_controller_test" targetName="idf_component_cam_com" />
       <config projectName="flight_controller_test" targetName="size" />
       <config projectName="flight_controller_test" targetName="__idf_sdmmc" />
       <config projectName="flight_controller_test" targetName="__idf_route_planner" />
@@ -239,24 +243,16 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix ci/cd">
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CNN.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CNN.hpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/ScannerController.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/ScannerController.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/main/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig" afterDir="false" />
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix compile">
+      <change afterPath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster_esp.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster_native.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/cam_com/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication_native.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication_native.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -384,9 +380,9 @@
     <option name="debugProfileId" value="d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="10018" />
+    <option name="cachedIndexableFilesCount" value="11322" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-ESP-IDF" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-Native-Tests" />
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
@@ -397,33 +393,24 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="flight_communication_cleanup" />
+        <entry key="$PROJECT_DIR$/.." value="main_master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
     <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/components/camera_com_master/CameraComMaster.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/components/camera_com_master/CameraComMaster.hpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/components/flight_controller/FlightController.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/components/motor_com_master/MotorComMaster_esp.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/components/route_planner/route_planner.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/shared_components/cam_com/CameraCommunication.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/shared_components/cam_com/CameraCommunication.hpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/shared_components/gyroscope/Gyroscope.hpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.hpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/qmc5883p.c" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/base_station/components/base_controller/BaseController.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/base_station/components/frontend_bluetooth/FrontendBl.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/base_station/components/proxy_cache/Cache.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/flight_controller/FlightController.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/flight_controller/FlightController.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/route_planner/route_planner.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/route_planner/route_planner.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/test/route_planner/route_planner_test.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/Flight_Communication.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/Flight_Communication.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/Packets.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/types.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_data/RouteData.hpp" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -431,61 +418,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0006987750072442" />
-      <entry key="MS500" value="1.3143884992272132" />
-      <entry key="S2" value="2.511777171010467" />
-      <entry key="S5" value="5.131819299240734" />
-      <entry key="S10" value="8.508872417506911" />
-      <entry key="S30" value="13.223239938323337" />
-      <entry key="S60" value="14.955973428612092" />
-      <entry key="M2" value="15.93550483329632" />
-      <entry key="M5" value="16.563509387192507" />
-      <entry key="M10" value="16.780762674634026" />
-      <entry key="M15" value="16.90769593886599" />
-      <entry key="M30" value="20.792917487096727" />
-      <entry key="H1" value="52.793686392305766" />
-      <entry key="H2" value="133.0740763692304" />
-      <entry key="H4" value="231.68053384166285" />
-      <entry key="D1" value="463.9244012230164" />
-      <entry key="W1" value="1407.0157264000281" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0000000004442415" />
+      <entry key="S5" value="1.000212637784067" />
+      <entry key="S10" value="1.0217583168077344" />
+      <entry key="S30" value="1.7464160510798643" />
+      <entry key="S60" value="3.4610565338811408" />
+      <entry key="M2" value="6.393005528323032" />
+      <entry key="M5" value="14.022321170008647" />
+      <entry key="M10" value="32.9111595844674" />
+      <entry key="M15" value="55.72808558817781" />
+      <entry key="M30" value="110.3219822665056" />
+      <entry key="H1" value="167.9491292986139" />
+      <entry key="H2" value="239.19409187762108" />
+      <entry key="H4" value="347.4314848379913" />
+      <entry key="D1" value="664.716406700799" />
+      <entry key="W1" value="1637.7908053579708" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="1.02985425E-316" />
-      <entry key="S30" value="1.0855565063193328E-105" />
-      <entry key="S60" value="6.86642123264104E-53" />
-      <entry key="M2" value="1.999783788639303E-26" />
-      <entry key="M5" value="1.916082287288249E-10" />
-      <entry key="M10" value="4.5370808797414636E-5" />
-      <entry key="M15" value="0.003034457773282757" />
-      <entry key="M30" value="0.26091777869432586" />
-      <entry key="H1" value="3.1337191152190833" />
-      <entry key="H2" value="12.166415601504978" />
-      <entry key="H4" value="24.937002951398515" />
-      <entry key="D1" value="59.81969276364826" />
-      <entry key="W1" value="311.2185789095336" />
+      <entry key="MS500" value="1.0793077601713853E-169" />
+      <entry key="S2" value="7.767357031222382E-43" />
+      <entry key="S5" value="2.1088391796684602E-17" />
+      <entry key="S10" value="6.461119328166079E-9" />
+      <entry key="S30" value="0.0029561615576805876" />
+      <entry key="S60" value="0.08110539956222851" />
+      <entry key="M2" value="0.6129205136885902" />
+      <entry key="M5" value="3.9056057909784663" />
+      <entry key="M10" value="10.427088191990823" />
+      <entry key="M15" value="16.54638661649206" />
+      <entry key="M30" value="29.368392035090544" />
+      <entry key="H1" value="41.41147164437731" />
+      <entry key="H2" value="52.7863170196031" />
+      <entry key="H4" value="67.4482599426181" />
+      <entry key="D1" value="112.71324952577146" />
+      <entry key="W1" value="366.31127803950034" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9733252572042161" />
-      <entry key="MS500" value="1.3062545654222952" />
-      <entry key="S2" value="2.507348849220388" />
-      <entry key="S5" value="5.12786070386766" />
-      <entry key="S10" value="8.50529712188033" />
-      <entry key="S30" value="13.221249583802331" />
-      <entry key="S60" value="14.954826474028264" />
-      <entry key="M2" value="15.934888005560655" />
-      <entry key="M5" value="16.563251477445906" />
-      <entry key="M10" value="16.780677009475372" />
-      <entry key="M15" value="16.910636040576115" />
-      <entry key="M30" value="21.053511680720316" />
-      <entry key="H1" value="55.92575541365429" />
-      <entry key="H2" value="145.23738731555318" />
-      <entry key="H4" value="256.61439757836223" />
-      <entry key="D1" value="523.7427869420899" />
-      <entry key="W1" value="1718.2329653178845" />
+      <entry key="MS100" value="0.9201876506248751" />
+      <entry key="MS500" value="0.9835020740262483" />
+      <entry key="S2" value="0.9958497533995945" />
+      <entry key="S5" value="0.9985206883044431" />
+      <entry key="S10" value="1.0193104311423051" />
+      <entry key="S30" value="1.730183647863528" />
+      <entry key="S60" value="3.5090597134189547" />
+      <entry key="M2" value="6.961655274284138" />
+      <entry key="M5" value="17.86835059753717" />
+      <entry key="M10" value="43.27435970763524" />
+      <entry key="M15" value="72.21258740425499" />
+      <entry key="M30" value="139.64042812414453" />
+      <entry key="H1" value="209.32712702882054" />
+      <entry key="H2" value="291.9600141450961" />
+      <entry key="H4" value="414.8674830318714" />
+      <entry key="D1" value="777.4265823873742" />
+      <entry key="W1" value="2004.1004890232525" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -554,12 +541,14 @@
     "codeWithMe.voiceChat.enabledByDefault": "false",
     "copilot.chat.legacySessionMetadata.migrated": "true",
     "ctest.advertisement.all.test.configuration.is.created": "true",
-    "git-widget-placeholder": "finish__flight__management",
+    "git-widget-placeholder": "cnn",
     "git.auto.fetch.suggestion.counter": "1",
-    "last_opened_file_path": "/Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller",
+    "last_opened_file_path": "/Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/shared_components/cam_com",
     "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.jshint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.jshint": "",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
@@ -569,11 +558,11 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/shared_components/cam_com" />
+      <recent name="$PROJECT_DIR$/components/camera_com_master" />
+      <recent name="$PROJECT_DIR$/components/cam_com_master" />
+      <recent name="$PROJECT_DIR$/components/cam_com" />
       <recent name="$PROJECT_DIR$/main" />
-      <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/shared_components" />
-      <recent name="$PROJECT_DIR$/components/flight_controller" />
-      <recent name="$PROJECT_DIR$/components/motor_com_master" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/shared_components" />
@@ -582,7 +571,12 @@
       <recent name="$PROJECT_DIR$/components" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.Upload &amp; Monitor">
+  <component name="RunManager" selected="Google Test.flight_controller_test">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="flight_controller_test" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="flight_controller_test" CONFIG_NAME="Debug-Native-Tests" RUN_TARGET_PROJECT_NAME="flight_controller_test" RUN_TARGET_NAME="flight_controller_test" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -613,6 +607,16 @@
       </method>
     </configuration>
     <configuration name="__idf_bootloader_support" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="__idf_bootloader_support" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_cam_com" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="__idf_cam_com" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="__idf_camera_com_master" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="__idf_camera_com_master" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1297,11 +1301,6 @@
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="app-flash" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="app-flash" CONFIG_NAME="Debug-ESP-IDF">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -1438,6 +1437,21 @@
       </method>
     </configuration>
     <configuration name="gen_project_binary" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="gen_project_binary" CONFIG_NAME="Debug-ESP-IDF">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_cam_com" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="idf_component_cam_com" CONFIG_NAME="Debug-Native-Tests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_cam_com_master" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="idf_component_cam_com_master" CONFIG_NAME="Debug-Native-Tests">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="idf_component_camera_com_master" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="flight_controller_test" TARGET_NAME="idf_component_camera_com_master" CONFIG_NAME="Debug-Native-Tests">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -1685,6 +1699,7 @@
       <item itemvalue="CMake Application.size-files" />
       <item itemvalue="CMake Application.uf2" />
       <item itemvalue="CMake Application.uf2-app" />
+      <item itemvalue="CMake Application.idf_component_cam_com_master" />
       <item itemvalue="CMake Application.__idf_flight_controller" />
       <item itemvalue="CMake Application.idf_component_homog2d" />
       <item itemvalue="CMake Application.__idf_motor_com" />
@@ -1704,6 +1719,8 @@
       <item itemvalue="CMake Application.__idf_waveshare__esp_oled_ssd1315" />
       <item itemvalue="CMake Application.__idf_barometer" />
       <item itemvalue="CMake Application.__idf_battery" />
+      <item itemvalue="CMake Application.__idf_cam_com" />
+      <item itemvalue="CMake Application.idf_component_cam_com" />
       <item itemvalue="CMake Application.__idf_device_id" />
       <item itemvalue="CMake Application.__idf_duruofu__qmc5883p" />
       <item itemvalue="CMake Application.__idf_esp-idf-lib__hmc5883l" />
@@ -1716,6 +1733,7 @@
       <item itemvalue="CMake Application.monitor" />
       <item itemvalue="CMake Application.refresh-config" />
       <item itemvalue="CMake Application.save-defconfig" />
+      <item itemvalue="CMake Application.__idf_camera_com_master" />
       <item itemvalue="CMake Application.__idf_esp_common" />
       <item itemvalue="CMake Application.__idf_esp_driver_cam" />
       <item itemvalue="CMake Application.__idf_esp_driver_sdmmc" />
@@ -1727,6 +1745,7 @@
       <item itemvalue="CMake Application.__idf_esp_security" />
       <item itemvalue="CMake Application.__idf_pthread" />
       <item itemvalue="CMake Application.__idf_wear_levelling" />
+      <item itemvalue="CMake Application.idf_component_camera_com_master" />
       <item itemvalue="CMake Application.__idf_app_update" />
       <item itemvalue="CMake Application.bootloader-flash" />
       <item itemvalue="CMake Application.encrypted-bootloader-flash" />
@@ -1864,8 +1883,23 @@
     </list>
   </component>
   <component name="SelectedDebugProfileService"><![CDATA[{
-  "profileIdByStamp": [],
-  "modificationCount": 37
+  "profileIdByStamp": [
+    {
+      "first": {
+        "##RUN_CONFIGURATION##": "CMake Application.Upload & Monitor",
+        "cmake": "CMakeBuildProfile:Debug-ESP-IDF"
+      },
+      "second": "d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4"
+    },
+    {
+      "first": {
+        "##RUN_CONFIGURATION##": "Google Test.flight_controller_test",
+        "cmake": "CMakeBuildProfile:Debug-Native-Tests"
+      },
+      "second": "d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4"
+    }
+  ],
+  "modificationCount": 42
 }]]></component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -2047,8 +2081,6 @@
       <path value="$USER_HOME$/.espressif/v6.1/esp-idf/components/spiffs/spiffs" />
       <path value="$USER_HOME$/.espressif/v6.1/esp-idf/components/unity/unity" />
     </ignored-roots>
-    <MESSAGE value="cleanup bugfixes, motor communication/servo fixes, integration fixes" />
-    <MESSAGE value="get magnetometer working" />
     <MESSAGE value="get magnetometer and i2c working again" />
     <MESSAGE value="add localization to app" />
     <MESSAGE value="refactor packet de-/serialisation and prepare for alternative route algorithms" />
@@ -2072,7 +2104,9 @@
     <MESSAGE value="update route metadata and update android placeholder to use cbor" />
     <MESSAGE value="remote kotlin alias from generation" />
     <MESSAGE value="fix ci/cd" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix ci/cd" />
+    <MESSAGE value="prep cnn and camera recording" />
+    <MESSAGE value="fix compile" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix compile" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

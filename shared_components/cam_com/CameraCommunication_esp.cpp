@@ -1,11 +1,8 @@
-//
-// Created by Tom Arlt on 22.10.26.
-//
-
 #include "CameraCommunication.hpp"
 
 #include <cstring>
 
+#ifndef NATIVE_BUILD
 #include "esp_attr.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
@@ -109,3 +106,4 @@ namespace CameraCommunication{
         return err == ESP_OK && written == sizeof(ScanResult);
     }
 }
+#endif
