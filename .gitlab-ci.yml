@@ -1,3 +1,9 @@
+# Jobs only run when files they depend on change (compared to the previous push, or to the
+# target branch in merge request pipelines). Pipelines started from the web UI or a schedule
+# run every job.
+.run_always: &run_always
+  if: $CI_PIPELINE_SOURCE == "web" || $CI_PIPELINE_SOURCE == "schedule"
+
 stages:
   - test
   - build
@@ -6,6 +12,13 @@ stages:
 flight_controller_test:
   stage: test
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "flight_controller/**/*"
+        - "shared_components/**/*"
+        - "Makefile"
+        - ".gitlab-ci.yml"
   image: debian:bookworm-slim
   before_script:
     - apt-get update -qq
@@ -23,6 +36,16 @@ flight_controller_test:
 readme_pdf:
   stage: doc
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "README.md"
+        - "README_de.md"
+        - "assets/**/*"
+        - "resources/**/*"
+        - "hardware/**/*.svg"
+        - "Makefile"
+        - ".gitlab-ci.yml"
   image: debian:bookworm-slim
   before_script:
     - apt-get update -qq
@@ -37,6 +60,12 @@ readme_pdf:
 ios_app:
   stage: build
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "app/**/*"
+        - "shared_components/flight_com/**/*"
+        - ".gitlab-ci.yml"
   tags:
     - private
     - macos
@@ -57,6 +86,11 @@ ios_app:
 ble_flight_bridge:
   stage: build
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "app/bleFlightBridge/**/*"
+        - ".gitlab-ci.yml"
   # bookworm (glibc 2.36) rather than the newest base, so the executable runs on older distros too.
   image: python:3.12-slim-bookworm
   before_script:
@@ -76,6 +110,12 @@ ble_flight_bridge:
 motor_controller:
   stage: build
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "motor_controller/**/*"
+        - "shared_components/**/*"
+        - ".gitlab-ci.yml"
   image: python:3.12-slim
   before_script:
     - apt-get update -qq && apt-get install -y --no-install-recommends -qq git
@@ -91,6 +131,12 @@ motor_controller:
 flight_controller:
   stage: build
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "flight_controller/**/*"
+        - "shared_components/**/*"
+        - ".gitlab-ci.yml"
   image: espressif/idf:v6.1
   script:
     - cd flight_controller
@@ -103,6 +149,12 @@ flight_controller:
 base_station:
   stage: build
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "base_station/**/*"
+        - "shared_components/**/*"
+        - ".gitlab-ci.yml"
   image: espressif/idf:v6.1
   script:
     - cd base_station
@@ -115,6 +167,12 @@ base_station:
 3d_models:
   stage: build
   needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "3d_models/**/*"
+        - "Makefile"
+        - ".gitlab-ci.yml"
   image: debian:bookworm-slim
   before_script:
     - apt-get update -qq
