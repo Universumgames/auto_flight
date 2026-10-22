@@ -10,6 +10,7 @@ FLIGHT_VAR_PLANE(planePressure,                     PlanePressure,              
 FLIGHT_VAR_PLANE(planeHeading,                      PlaneHeading,                      int,              0,                           SENSOR,     {})
 FLIGHT_VAR_PLANE(planeBarometerConnectionState,     PlaneBarometerConnectionState,     ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(planeMotorControlConnectionState,  PlaneMotorControlConnectionState,  ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
+FLIGHT_VAR_PLANE(planeCameraControlConnectionState, PlaneCameraControlConnectionState, ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(planeGPSConnectionState,           PlaneGPSConnectionState,           ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(planeMagnetometerConnectionState,  PlaneMagnetometerConnectionState,  ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})
 FLIGHT_VAR_PLANE(planeAccelerometerConnectionState, PlaneAccelerometerConnectionState, ConnectionState,  ConnectionState::CONNECTING, CONNECTION, {})

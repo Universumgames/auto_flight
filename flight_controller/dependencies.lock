@@ -9,6 +9,12 @@ dependencies:
       path: ../shared_components/barometer
       type: local
     version: '*'
+  camera_com_master:
+    dependencies: []
+    source:
+      path: components/camera_com_master
+      type: local
+    version: '*'
   device_id:
     dependencies:
     - name: idf
@@ -200,6 +206,7 @@ dependencies:
     version: 2.0.0
 direct_dependencies:
 - barometer
+- camera_com_master
 - device_id
 - esp-idf-lib/ads111x
 - esp-idf-lib/esp_idf_lib_helpers
@@ -218,6 +225,6 @@ direct_dependencies:
 - magnetometer
 - motor_com_master
 - waveshare/esp_oled_ssd1315
-manifest_hash: d291011d417edd552e7a4bb4bf31f144c837f83e40ea7749ab6152197d4dfca5
+manifest_hash: b221d01f7fa1abd77251c613b2d86a600223ef480c8decc980a167605e628917
 target: esp32s3
 version: 3.0.0

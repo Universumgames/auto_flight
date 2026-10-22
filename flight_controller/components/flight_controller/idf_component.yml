@@ -14,3 +14,6 @@ dependencies:
   magnetometer:
     require: public
     path: ../../shared_components/magnetometer
+  camera_com_master:
+    require: public
+    path: ../camera_com_master

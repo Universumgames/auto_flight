@@ -8,7 +8,7 @@
 // and read, CRC checks, etc -- read_register() below is the generic
 // "write register address, then read N bytes" shape most simple sensors
 // use, e.g. BME280-style).
-#include "i2c_task.hpp"
+#include "../i2c_task.hpp"
 
 #include "driver/i2c_master.h"
 #include "esp_log.h"

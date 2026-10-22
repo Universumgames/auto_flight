@@ -115,6 +115,6 @@ enum PacketParsing {
             return
         }
         let plane = self.plane(current, id: packet.sourceId)
-        plane.nextRouteWaypoint = packet.nextWaypoint
+        plane.nextRouteWaypoint = toCoordinate(packet.nextWaypoint)
     }
 }

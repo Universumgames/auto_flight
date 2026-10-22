@@ -1,7 +1,9 @@
+FILE(GLOB main_srcs "*.cpp")
+
 idf_component_register(
-    SRCS "main.cpp" "inference.cpp" "image_provider.cpp" "model_data.cpp" "i2c_task.cpp"
+    SRCS ${main_srcs}
     INCLUDE_DIRS "."
-    PRIV_REQUIRES "esp-tflite-micro" "driver" "esp_common"
+    PRIV_REQUIRES camera cnn scanner_controller freertos
 )
 
 # TFLM headers require C++17.

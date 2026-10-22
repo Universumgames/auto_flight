@@ -178,7 +178,8 @@ final class ConnectionManager: NSObject {
         guard let packet = wire.FrontendPackets.shared.decodeFlightPacket(
             hex: data.hexEncoded
         ) else { return }
-        // TODO: do something with the flight data
+        PacketParsing.applyFlightDataPacket(state, packet)
+        print("Flight data received: \(packet)")
     }
 
     // MARK: - Manual fetching

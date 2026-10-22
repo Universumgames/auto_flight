@@ -1,9 +1,9 @@
-#include "inference.hpp"
+#include "../inference.hpp"
 
 #include <cmath>
 
 #include "esp_log.h"
-#include "model_data.hpp"
+#include "../model_data.hpp"
 
 #include "tensorflow/lite/micro/micro_interpreter.h"
 #include "tensorflow/lite/micro/micro_mutable_op_resolver.h"

@@ -23,6 +23,7 @@
 #include "Magnetometer.hpp"
 #include "OledDisplay.hpp"
 #include "types.hpp"
+#include "CameraComMaster.hpp"
 
 static FlightControllerClass* flight_controller = nullptr;
 
@@ -141,6 +142,9 @@ void FlightControllerClass::updateConnectionStates() {
     FlightStorage.updatePlaneBatteryConnectionState(Battery.isAvailable()
                                                         ? ConnectionState::CONNECTED
                                                         : ConnectionState::CONNECTING);
+    FlightStorage.updatePlaneCameraControlConnectionState(CameraComMaster.isAvailable()
+                                                                ? ConnectionState::CONNECTED
+                                                                : ConnectionState::CONNECTING);
 }
 
 void FlightControllerClass::sendUpdateTaskEntry(void* param) {

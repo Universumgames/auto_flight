@@ -1,4 +1,4 @@
-#include "image_provider.hpp"
+#include "../image_provider.hpp"
 
 namespace {
 uint32_t g_frame_counter = 0;
