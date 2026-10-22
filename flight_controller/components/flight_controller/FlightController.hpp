@@ -18,7 +18,7 @@ public:
 
     void init();
 
-    Coordinate getNextWaypoint() const;
+    [[nodiscard]] Coordinate getNextWaypoint() const;
 
 private:
 
@@ -35,6 +35,8 @@ private:
     AltitudeHoldController altitudeHold;
     AttitudeController attitude;
 
+    CoveredQuadrilateral lastCheckedArea;
+
     void communicationCallback(LoRaPacket packet);
 
     static void flightTaskEntry(void* param);
@@ -49,7 +51,9 @@ private:
 
     void checkAndAdvanceWaypoint(Coordinate currentPosition);
 
-    void steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::GroundAngle angle, float compassHeading);
+    void steerToWaypoint(Coordinate waypoint, float height, GyroscopeClass::GroundAngle angle, float compassHeading);
+
+    std::optional<CoveredQuadrilateral> checkArea(float height, Coordinate currentPosition);
 
     void updateConnectionStates();
 

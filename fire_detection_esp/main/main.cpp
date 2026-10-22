@@ -69,5 +69,5 @@ extern "C" void app_main() {
     // app's local buffers add up; 8192 is a safe starting point -- if it
     // crashes with a stack-overflow watchdog, bump it further.
     xTaskCreatePinnedToCore(inference_task_main, "inference_task", 8192, nullptr,
-                             /*priority=*/5, nullptr, /*core=*/1);
+                             /*uxPriority=*/5, nullptr, /*core=*/1);
 }

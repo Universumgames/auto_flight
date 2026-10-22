@@ -239,40 +239,24 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="update lora coms &quot;isDuplicateFragment&quot; to account for device restarts and messageId resets">
-      <change beforePath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPackets.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/FrontendPacketsWire.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../app/sharedLogic/src/commonTest/kotlin/de/universegame/auto_flight/app/wire/FrontendPacketsTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/sharedLogic/src/commonTest/kotlin/de/universegame/auto_flight/app/wire/FrontendPacketsTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/base_controller/BaseController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBl.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/frontend_bluetooth/FrontendBl.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../base_station/components/proxy_cache/Cache.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix ci/cd">
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CNN.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CNN.hpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/ScannerController.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/ScannerController.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/main/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/route_planner.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/route_planner/route_planner.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/route_planner/route_planner.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/route_planner/route_planner_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/test/route_planner/route_planner_test.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/flight_controller/FlightController.hpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Flight_Communication.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/Packets.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/Packets.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/ble_protocol.json" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/ble_protocol.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/gen_ble_protocol.py" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/gen_ble_protocol.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/area.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/base.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/component.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/dataRequest.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/flight.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/history.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/position.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/route.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/packets/sensor.hpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_com/types.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_com/types.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/flight_data/RouteData.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/flight_data/RouteData.hpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -427,13 +411,19 @@
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/shared_components/magnetometer/Magnetometer.hpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../shared_components/duruofu__qmc5883p/qmc5883p.c" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/base_controller/BaseController.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/frontend_bluetooth/FrontendBL.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/base_station/components/proxy_cache/Cache.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/battery/Battery.cpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/battery/Battery.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/flight_com/packets/base.hpp" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight_kmp/shared_components/oled_display/OledDisplay.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/base_station/components/base_controller/BaseController.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/base_station/components/frontend_bluetooth/FrontendBl.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/base_station/components/proxy_cache/Cache.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/flight_controller/FlightController.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/flight_controller/FlightController.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/route_planner/route_planner.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/components/route_planner/route_planner.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller/test/route_planner/route_planner_test.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/Flight_Communication.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/Flight_Communication.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/Packets.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_com/types.hpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Users/universum/Developer/Studium/master_thesis/auto_flight/shared_components/flight_data/RouteData.hpp" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="McpProjectServerCommands">
     <commands />
@@ -441,61 +431,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="6.9795650730176196E-12" />
-      <entry key="MS500" value="0.005871724523693602" />
-      <entry key="S2" value="0.27681614612107125" />
-      <entry key="S5" value="0.5982415470287695" />
-      <entry key="S10" value="0.7736076869910417" />
-      <entry key="S30" value="1.1045946406234857" />
-      <entry key="S60" value="2.156677803013038" />
-      <entry key="M2" value="4.059624945184956" />
-      <entry key="M5" value="6.49614535072394" />
-      <entry key="M10" value="9.475823448226615" />
-      <entry key="M15" value="14.897097470385372" />
-      <entry key="M30" value="37.56965136015813" />
-      <entry key="H1" value="75.81537083743969" />
-      <entry key="H2" value="115.33044738638912" />
-      <entry key="H4" value="145.78085256408372" />
-      <entry key="D1" value="269.47722074787606" />
-      <entry key="W1" value="1188.9910845877487" />
+      <entry key="MS100" value="1.0006987750072442" />
+      <entry key="MS500" value="1.3143884992272132" />
+      <entry key="S2" value="2.511777171010467" />
+      <entry key="S5" value="5.131819299240734" />
+      <entry key="S10" value="8.508872417506911" />
+      <entry key="S30" value="13.223239938323337" />
+      <entry key="S60" value="14.955973428612092" />
+      <entry key="M2" value="15.93550483329632" />
+      <entry key="M5" value="16.563509387192507" />
+      <entry key="M10" value="16.780762674634026" />
+      <entry key="M15" value="16.90769593886599" />
+      <entry key="M30" value="20.792917487096727" />
+      <entry key="H1" value="52.793686392305766" />
+      <entry key="H2" value="133.0740763692304" />
+      <entry key="H4" value="231.68053384166285" />
+      <entry key="D1" value="463.9244012230164" />
+      <entry key="W1" value="1407.0157264000281" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0" />
-      <entry key="S60" value="1.000000000000025" />
-      <entry key="M2" value="1.0000003281864622" />
-      <entry key="M5" value="1.0100637604926832" />
-      <entry key="M10" value="1.4149229816166844" />
-      <entry key="M15" value="2.5682327420534774" />
-      <entry key="M30" value="7.702320218970431" />
-      <entry key="H1" value="16.374384261768792" />
-      <entry key="H2" value="25.494393761691125" />
-      <entry key="H4" value="32.65066566836808" />
-      <entry key="D1" value="55.441301316158885" />
-      <entry key="W1" value="305.2617102440832" />
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="1.02985425E-316" />
+      <entry key="S30" value="1.0855565063193328E-105" />
+      <entry key="S60" value="6.86642123264104E-53" />
+      <entry key="M2" value="1.999783788639303E-26" />
+      <entry key="M5" value="1.916082287288249E-10" />
+      <entry key="M10" value="4.5370808797414636E-5" />
+      <entry key="M15" value="0.003034457773282757" />
+      <entry key="M30" value="0.26091777869432586" />
+      <entry key="H1" value="3.1337191152190833" />
+      <entry key="H2" value="12.166415601504978" />
+      <entry key="H4" value="24.937002951398515" />
+      <entry key="D1" value="59.81969276364826" />
+      <entry key="W1" value="311.2185789095336" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.592803801432715E-6" />
-      <entry key="MS500" value="0.06975682190574144" />
-      <entry key="S2" value="0.6628815618924593" />
-      <entry key="S5" value="1.2337440822086105" />
-      <entry key="S10" value="1.5593315193414001" />
-      <entry key="S30" value="2.024256081919859" />
-      <entry key="S60" value="3.1151735757367636" />
-      <entry key="M2" value="5.038461918782342" />
-      <entry key="M5" value="7.497558526424254" />
-      <entry key="M10" value="10.88522284503865" />
-      <entry key="M15" value="17.459410697349988" />
-      <entry key="M30" value="45.26401018947406" />
-      <entry key="H1" value="92.18157481701981" />
-      <entry key="H2" value="140.81857520672835" />
-      <entry key="H4" value="178.4275368133533" />
-      <entry key="D1" value="324.9173225592089" />
-      <entry key="W1" value="1494.2514703212926" />
+      <entry key="MS100" value="0.9733252572042161" />
+      <entry key="MS500" value="1.3062545654222952" />
+      <entry key="S2" value="2.507348849220388" />
+      <entry key="S5" value="5.12786070386766" />
+      <entry key="S10" value="8.50529712188033" />
+      <entry key="S30" value="13.221249583802331" />
+      <entry key="S60" value="14.954826474028264" />
+      <entry key="M2" value="15.934888005560655" />
+      <entry key="M5" value="16.563251477445906" />
+      <entry key="M10" value="16.780677009475372" />
+      <entry key="M15" value="16.910636040576115" />
+      <entry key="M30" value="21.053511680720316" />
+      <entry key="H1" value="55.92575541365429" />
+      <entry key="H2" value="145.23738731555318" />
+      <entry key="H4" value="256.61439757836223" />
+      <entry key="D1" value="523.7427869420899" />
+      <entry key="W1" value="1718.2329653178845" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -2057,10 +2047,6 @@
       <path value="$USER_HOME$/.espressif/v6.1/esp-idf/components/spiffs/spiffs" />
       <path value="$USER_HOME$/.espressif/v6.1/esp-idf/components/unity/unity" />
     </ignored-roots>
-    <MESSAGE value="fix lora communication bugs" />
-    <MESSAGE value="add sdk config" />
-    <MESSAGE value="fix serialization" />
-    <MESSAGE value="cleanup" />
     <MESSAGE value="cleanup bugfixes, motor communication/servo fixes, integration fixes" />
     <MESSAGE value="get magnetometer working" />
     <MESSAGE value="get magnetometer and i2c working again" />
@@ -2082,7 +2068,11 @@
     <MESSAGE value="fix battery percentage measurement" />
     <MESSAGE value="add a data request packet" />
     <MESSAGE value="update lora coms &quot;isDuplicateFragment&quot; to account for device restarts and messageId resets" />
-    <option name="LAST_COMMIT_MESSAGE" value="update lora coms &quot;isDuplicateFragment&quot; to account for device restarts and messageId resets" />
+    <MESSAGE value="generate packets for communication from jtd" />
+    <MESSAGE value="update route metadata and update android placeholder to use cbor" />
+    <MESSAGE value="remote kotlin alias from generation" />
+    <MESSAGE value="fix ci/cd" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix ci/cd" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

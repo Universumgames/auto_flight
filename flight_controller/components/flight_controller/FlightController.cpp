@@ -113,6 +113,10 @@ void FlightControllerClass::flightTaskEntry(void* param) {
         checkAndAdvanceWaypoint(position);
 
         steerToWaypoint(getNextWaypoint(), currentAltitude, planeAngle, compassHeading);
+        auto checkedArea = checkArea(currentAltitude, position);
+        if (checkedArea.has_value()) {
+            lastCheckedArea = checkedArea.value();
+        }
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
@@ -151,7 +155,7 @@ void FlightControllerClass::sendUpdateTaskEntry(void* param) {
         Flight_Communication::sendSensorUpdate();
         Flight_Communication::sendComponentStatus();
         Flight_Communication::sendFlightData(FlightStorage.getFlightState(), nextWaypointIndex, getNextWaypoint(),
-                                             targetAltitude, {});
+                                             targetAltitude, lastCheckedArea);
         vTaskDelay(pdMS_TO_TICKS(CONFIG_SEND_UPDATE_INTERVAL_MS));
     }
 }
@@ -292,7 +296,7 @@ void FlightControllerClass::checkAndAdvanceWaypoint(Coordinate currentPosition) 
     }
 }
 
-void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, GyroscopeClass::GroundAngle angle,
+void FlightControllerClass::steerToWaypoint(Coordinate waypoint, float height, GyroscopeClass::GroundAngle angle,
                                             float compassHeading) {
     ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Steering to waypoint: %s", waypoint.toString().c_str());
     // --- Rudder: steer toward waypoint ---
@@ -323,4 +327,12 @@ void FlightControllerClass::steerToWaypoint(Coordinate waypoint, int height, Gyr
              angle.pitch, targetPitch, pitchError, pitch);
 
     MotorComMaster.sendFullControlPacket(aileron, pitch, thrust, rudder);
+}
+
+std::optional<CoveredQuadrilateral> FlightControllerClass::checkArea(float height, Coordinate currentPosition) {
+    // TODO implement camera-based area check
+    // I2C communication with checker
+    // give position and altitude and get back a quadrilateral of the area that was checked
+    // check takes long time, so we will send a request and check for a response in the next loop iterations
+    return std::nullopt;
 }
