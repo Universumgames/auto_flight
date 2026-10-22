@@ -5,21 +5,6 @@
 #include "i2c_bus.h"
 #include "i2c_manager.hpp"
 
-static CameraComMasterClass *cameraComMasterClass = nullptr;
-
-CameraComMasterClass& CameraComMaster = CameraComMasterClass::getInstance();
-
-CameraComMasterClass* CameraComMasterClass::getInstancePtr() {
-    if (!cameraComMasterClass) {
-        cameraComMasterClass = new CameraComMasterClass();
-    }
-    return cameraComMasterClass;
-}
-
-CameraComMasterClass& CameraComMasterClass::getInstance() {
-    return *getInstancePtr();
-}
-
 void CameraComMasterClass::init() {
     devHandle = i2c_bus_device_create(I2CManager::getBus(), CAMERA_CONTROLLER_I2C_ADDR, i2c_bus_get_current_clk_speed(I2CManager::getBus()));
 }
