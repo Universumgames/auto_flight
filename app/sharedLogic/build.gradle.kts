@@ -11,6 +11,12 @@ plugins {
 // shared_components/flight_com (same generator CMake uses for the C++ header and Xcode for the Swift file).
 // Hooked into commonMain below via srcDir(task), so every Kotlin compilation depends on it.
 val flightComDir = layout.projectDirectory.dir("../../shared_components/flight_com")
+// The Gradle daemon (and CI runners / Xcode build phases) may not inherit the login shell's PATH,
+// so a bare "python3" isn't always found. $PYTHON3 overrides; otherwise try the usual install locations.
+val python3: String = System.getenv("PYTHON3")
+    ?: listOf("/opt/homebrew/bin/python3", "/usr/local/bin/python3", "/usr/bin/python3")
+        .firstOrNull { file(it).canExecute() }
+    ?: "python3"
 val generatedBleProtocolDir = layout.buildDirectory.dir("generated/bleProtocol/kotlin")
 val generateBleProtocol = tasks.register<Exec>("generateBleProtocol") {
     group = "build"
@@ -26,7 +32,7 @@ val generateBleProtocol = tasks.register<Exec>("generateBleProtocol") {
     val outFile = outDir.resolve("de/universegame/auto_flight/app/wire/BleProtocol.generated.kt")
     doFirst { outDir.deleteRecursively() } // drop stale output, e.g. after a package move
     commandLine(
-        "python3", script.asFile.absolutePath,
+        python3, script.asFile.absolutePath,
         "--schema", schema.asFile.absolutePath,
         "--out-kotlin", outFile.absolutePath,
     )
@@ -48,7 +54,7 @@ val generatePackets = tasks.register<Exec>("generatePackets") {
     val outDir = generatedPacketsDir.get().asFile
     doFirst { outDir.deleteRecursively() } // drop stale output, e.g. after a package move
     commandLine(
-        "python3", script.asFile.absolutePath,
+        python3, script.asFile.absolutePath,
         "--schema", schema.asFile.absolutePath,
         "--out-kotlin", outDir.resolve("de/universegame/auto_flight/app/wire").absolutePath,
     )
