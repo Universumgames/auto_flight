@@ -1,7 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <optional>
-#include <FlightTypes.generated.hpp>
+
+#include "FlightTypes.generated.hpp"
 
 #ifndef NATIVE_BUILD
 #include "i2c_bus.h"
