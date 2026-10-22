@@ -1,6 +1,7 @@
 #pragma once
 #include "homog2d.hpp"
 #include "IRoutePlanner.hpp"
+#include "RouteData.hpp"
 #include "types.hpp"
 
 using namespace h2d;
@@ -21,10 +22,10 @@ public:
      * @param algorithm the route algorithm to use
      * @param maxPointDistance maximum distance between points on calculated path (in m)
      * @param maxSwathWidth the maximum distance between two paths (in degree)
-     * @param overlapFactor the percentage of overlap between two paths (0.0 - 0.9)
+     * @param overlapPercent the percentage of overlap between two paths (0 - 99)
      * @return list of points to cover the given shape
      */
-    std::vector<Coordinate> planRoute(const std::vector<Coordinate>& shape, RouteAlgorithm algorithm, float maxPointDistance, float maxSwathWidth, float overlapFactor);
+    RouteData planRoute(const std::vector<Coordinate>& shape, RouteAlgorithm algorithm, float maxPointDistance, float maxSwathWidth, int overlapPercent);
 
 private:
     std::vector<IRoutePlanner*> implementations;

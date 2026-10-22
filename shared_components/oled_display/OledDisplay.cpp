@@ -256,7 +256,7 @@ void OledDisplayClass::statusTaskEntry(void* param) {
         const auto& knownPlanes = Cache.getSourceLastUpdateTimes();
         const auto connectionCount = std::ranges::count_if(knownPlanes,
                                                            [](const auto& plane) {
-                                                               return plane.second > GPS_Reader.getGPSLatestTime() - 10000;
+                                                               return plane.second > GPS_Reader.getGPSLatestTime() - 10000 && plane.first != DeviceId::BASE_STATION;
                                                            });
         lines[lineCount++] = std::string("Connection: ") + std::to_string(connectionCount) + "/" + std::to_string(
                 knownPlanes.size()) +

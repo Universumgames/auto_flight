@@ -106,6 +106,9 @@ private:
 
     /// number of recently received (sender, message, fragment) ids remembered to detect retransmissions
     static constexpr size_t RECENT_RX_HISTORY = 32;
+    /// a messageId this far behind the sender's most recent one is a new message (sender restarted or the
+    /// 8-bit id wrapped), not a retransmission
+    static constexpr uint8_t RECENT_RX_MAX_MESSAGE_ID_LAG = 16;
 
 public:
     ~LoRa_CommunicationClass() = delete;

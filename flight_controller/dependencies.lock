@@ -141,6 +141,7 @@ dependencies:
     - name: idf
       version: '>=4.1.0'
     - name: espressif/mpu6050
+      path: ../espressif__mpu6050
       version: ^1.1.1
     source:
       path: ../shared_components/gyroscope
@@ -217,6 +218,6 @@ direct_dependencies:
 - magnetometer
 - motor_com_master
 - waveshare/esp_oled_ssd1315
-manifest_hash: 6d1b7ca3116e0c2b8008a73a3e77a7950f90529901e8f61df12604faf22fdecd
+manifest_hash: d291011d417edd552e7a4bb4bf31f144c837f83e40ea7749ab6152197d4dfca5
 target: esp32s3
 version: 3.0.0

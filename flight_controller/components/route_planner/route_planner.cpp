@@ -25,15 +25,21 @@ RoutePlannerClass::RoutePlannerClass() {
     };
 }
 
-std::vector<Coordinate> RoutePlannerClass::planRoute(const std::vector<Coordinate>& shape, RouteAlgorithm algorithm, float maxPointDistance, float maxSwathWidth, float overlapFactor) {
+RouteData RoutePlannerClass::planRoute(const std::vector<Coordinate>& shape, RouteAlgorithm algorithm, float maxPointDistance, float maxSwathWidth, int overlapPercent) {
     for (auto& impl : implementations) {
         if (impl->supportsAlgorithm(algorithm)) {
-            auto rawPath = impl->planRoute(shape, overlapFactor);
+            auto rawPath = impl->planRoute(shape, (float)overlapPercent / 100.0f);
             if (rawPath.empty()) {
                 ESP_LOGW("RoutePlanner", "No raw path generated for the given shape, cannot plan route");
                 return {};
             }
-            return IRoutePlanner::calculateIntermediatePoints(rawPath, maxPointDistance);
+            auto interpolatedPath = IRoutePlanner::calculateIntermediatePoints(rawPath, maxPointDistance);
+            return {
+                interpolatedPath,
+                rawPath,
+                algorithm,
+                overlapPercent
+            };
         }
     }
     return {};

@@ -6,7 +6,7 @@
 #include "freertos/queue.h"
 
 #include "BluetoothManager.hpp"
-#include "packets/base.hpp"
+#include "Packets.hpp"
 
 class FrontendHandlerBlClass {
 private:

@@ -31,16 +31,18 @@ void Flight_Communication::sendSensorUpdate() {
 #ifdef FLIGHT_DEVICE_TYPE_PLANE
     int heading = static_cast<int>(std::lround(Magnetometer.getHeading()));
     float altitude = BarometerClass::calculateAltitude(FlightStorage.getBasePressure(), pressure);
+    int batteryPercent = FlightStorage.getPlaneBatteryPercentage();
 #else
     float altitude = 0.0;
     int heading = 0;
+    int batteryPercent = -1;
 #endif
     const SensorUpdate packet = {
         GPS_Reader.getGPSLatestTime(),
         pressure,
         altitude,
         heading,
-        FlightStorage.getBaseBatteryPercentage()
+        batteryPercent
     };
 
     sendPacket(packet);
@@ -80,11 +82,20 @@ void Flight_Communication::sendRouteHistory() {
 
 void Flight_Communication::sendPlannedRoute() {
     const auto plannedRoute = FlightStorage.getPlannedRoute();
+    const RouteType routeTypeToSend = plannedRoute.getRoutePoints().size() > 50 ? RouteType::SUMMARIZED : RouteType::ENTIRE;
+    const RouteMetaData meta_data = {
+        .settings = plannedRoute.getSettings(),
+        .hash = plannedRoute.getHash(),
+        .routeType = RouteType::ENTIRE,
+        .entireSize = plannedRoute.getRoutePoints().size(),
+        .length = plannedRoute.getRouteLength(),
+        .estimatedTime = 0 // TODO: calculate estimated time to complete route
+    };
     const PlannedRoutePacket packet = {
         GPS_Reader.getGPSLatestTime(),
         plannedRoute.getRoutePoints(),
         plannedRoute.getSettings(),
-        plannedRoute.getHash()
+        meta_data
     };
     bool ret = sendPacket(packet);
     if (!ret) {
@@ -106,5 +117,17 @@ void Flight_Communication::sendComponentStatus() {
     status.flightState = FlightStorage.getFlightState();
 
     sendPacket(status);
+}
+
+void Flight_Communication::sendFlightData(FlightState state, size_t nextWaypointIndex, Coordinate nextWaypoint, float targetAltitude, const CoveredQuadrilateral& lastCheckedArea) {
+    const FlightPacket packet = {
+        GPS_Reader.getGPSLatestTime(),
+        state,
+        nextWaypointIndex,
+        nextWaypoint,
+        targetAltitude,
+        lastCheckedArea
+    };
+    sendPacket(packet);
 }
 #endif

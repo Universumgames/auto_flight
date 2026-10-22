@@ -1,62 +1,13 @@
 #pragma once
-#include <nlohmann/json.hpp>
+#include <vector>
 
-struct Coordinate {
-    float longitude;
-    float latitude;
+// Coordinate, ConnectionState, FlightState, RouteAlgorithm, RouteSettings, PacketType and the
+// protocol constants are generated from packets.jtd.json, see gen_packets.py.
+#include "FlightTypes.generated.hpp"
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Coordinate, longitude, latitude);
-
-    static bool isInvalid(Coordinate coord) {
-        return coord.latitude < -91 || coord.latitude > 91 || coord.longitude < -181 || coord.longitude > 181;
-    }
-
-    std::string toString() const {
-        return "Coordinate{latitude=" + std::to_string(latitude) + ", longitude=" + std::to_string(longitude) + "}";
-    }
-
-    bool operator==(const Coordinate& b) const {
-        return longitude == b.longitude && latitude == b.latitude;
-    }
-};
-
-#define COORDINATE_INIT_INVALID() (Coordinate{-400, -400})
+#define COORDINATE_INIT_INVALID() (Coordinate{COORDINATE_INVALID_VALUE, COORDINATE_INVALID_VALUE})
 
 typedef std::vector<Coordinate> Route;
 
 typedef Route PlannedRoute;
 typedef Route FlightRoute;
-
-enum class ConnectionState: uint8_t {
-    CONNECTING = 0,
-    CONNECTED = 1,
-};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(ConnectionState, {
-                             {ConnectionState::CONNECTING, "connecting"},
-                             {ConnectionState::CONNECTED, "connected"},
-                             })
-
-enum class FlightState: uint8_t {
-    PLANNING = 0x22,
-    PLANNED = 0x33,
-    FLYING = 0x44,
-    RETURNING = 0x55
-};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(FlightState, {
-                             {FlightState::PLANNING, "planning"},
-                             {FlightState::PLANNED, "planned"},
-                             {FlightState::FLYING, "flying"},
-                             {FlightState::RETURNING, "returning"},
-                             })
-
-enum class RouteAlgorithm : uint8_t {
-    BASIC = 0x01,
-    BOUSTROPHEDON = 0x02 // is the basic algorithm meant by "BASIC"
-};
-
-NLOHMANN_JSON_SERIALIZE_ENUM(RouteAlgorithm, {
-                             {RouteAlgorithm::BASIC, "basic"},
-                             {RouteAlgorithm::BOUSTROPHEDON, "boustrophedon"}
-                             })

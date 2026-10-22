@@ -16,8 +16,21 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "BF50A4F3BFBA03A25739F346"
                BuildableName = "Auto Flight.app"
-               BlueprintName = "iosApp"
-               ReferencedContainer = "container:iosApp.xcodeproj">
+               BlueprintName = "FlightPlanner"
+               ReferencedContainer = "container:FlightPlanner.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BF50A4F3BFBA03A25739F346"
+               BuildableName = "Auto Flight.app"
+               ReferencedContainer = "container:FlightPlanner.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,8 +58,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "BF50A4F3BFBA03A25739F346"
             BuildableName = "Auto Flight.app"
-            BlueprintName = "iosApp"
-            ReferencedContainer = "container:iosApp.xcodeproj">
+            BlueprintName = "FlightPlanner"
+            ReferencedContainer = "container:FlightPlanner.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <LocationScenarioReference
@@ -60,6 +73,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BF50A4F3BFBA03A25739F346"
+            BuildableName = "Auto Flight.app"
+            BlueprintName = "FlightPlanner"
+            ReferencedContainer = "container:FlightPlanner.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

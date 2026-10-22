@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "freertos/FreeRTOS.h"
 #include "host/ble_gatt.h"
 #include "host/ble_uuid.h"
 
@@ -103,6 +104,9 @@ private:
     static constexpr uint16_t FRAGMENT_HEADER_SIZE = BLEProtocol::FRAGMENT_HEADER_SIZE;
     /* Fixed by the BLE ATT protocol: 1-byte opcode + 2-byte attribute handle. */
     static constexpr uint16_t ATT_PDU_OVERHEAD = 3;
+    /* Upper bound on how long sendFragmented waits for the mbuf pool to drain per
+     * fragment before giving up on the rest of the message (see sendFragmented). */
+    static constexpr TickType_t NOTIFY_ENOMEM_MAX_WAIT_TICKS = pdMS_TO_TICKS(1000);
 
     struct ReassemblyBuffer {
         std::vector<uint8_t> data;

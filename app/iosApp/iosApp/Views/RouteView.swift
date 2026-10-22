@@ -23,7 +23,6 @@ struct RouteView: View {
                     }
                 }
                 .buttonStyle(.borderedProminent)
-                .padding(.horizontal)
             }
             .padding(.horizontal)
             ZStack {
@@ -80,6 +79,8 @@ struct RouteView: View {
     private func submit() async {
         let result = await connectionManager.confirmRoute(planeId: planeId, hash: hash)
         if result == .ACCEPTED{
+            // Keep the confirmed route on the plane so `FlightView` can show it.
+            appState.planes[planeId]?.plannedRoute = plannedRoute
             appState.planes[planeId]?.wizardStep.append(.FLYING)
         }
     }

@@ -22,6 +22,7 @@
 #include "MotorComMaster.hpp"
 #include "Magnetometer.hpp"
 #include "OledDisplay.hpp"
+#include "types.hpp"
 
 static FlightControllerClass* flight_controller = nullptr;
 
@@ -90,6 +91,7 @@ void FlightControllerClass::flightTaskEntry(void* param) {
 
         auto currentTime = GPS_Reader.getGPSLatestTime();
         auto batteryPercentage = Battery.getVoltagePercentage();
+        ESP_LOGD(TAG_FLIGHT_CONTROLLER, "Battery percentage: %d%%", batteryPercentage);
         FlightStorage.updatePlaneBatteryPercentage(batteryPercentage, currentTime);
         //auto planeAngle = Gyroscope.getAngle();
         auto position = FlightStorage.updatePlanePosition(GPS_Reader.getCurrentPosition(), currentTime);
@@ -148,6 +150,8 @@ void FlightControllerClass::sendUpdateTaskEntry(void* param) {
         Flight_Communication::sendPosition();
         Flight_Communication::sendSensorUpdate();
         Flight_Communication::sendComponentStatus();
+        Flight_Communication::sendFlightData(FlightStorage.getFlightState(), nextWaypointIndex, getNextWaypoint(),
+                                             targetAltitude, {});
         vTaskDelay(pdMS_TO_TICKS(CONFIG_SEND_UPDATE_INTERVAL_MS));
     }
 }
@@ -210,8 +214,33 @@ void FlightControllerClass::communicationCallback(LoRaPacket packet) {
         FlightStorage.updateFlightState(FlightState::FLYING);
         break;
     }
+    case PacketType::DATA_REQUEST: {
+        auto request = reinterpret_cast<DataRequest*>(decodedPacket.get());
+        ESP_LOGI(TAG_FLIGHT_CONTROLLER, "Received data request for type 0x%02x", request->requestedType);
+        switch (request->requestedType) {
+        case PacketType::SENSOR_UPDATE:
+            Flight_Communication::sendSensorUpdate();
+            break;
+        case PacketType::POSITION:
+            Flight_Communication::sendPosition();
+            break;
+        case PacketType::COMPONENT_STATUS:
+            Flight_Communication::sendComponentStatus();
+            break;
+        case PacketType::PLANNED_ROUTE:
+            Flight_Communication::sendPlannedRoute();
+            break;
+        case PacketType::ROUTE_HISTORY:
+            Flight_Communication::sendRouteHistory();
+            break;
+        default:
+            ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unhandled requested type: 0x%02x", request->requestedType);
+            break;
+        }
+        break;
+    }
     default:
-        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unknown packet type: 0x%xd", basePacket->type);
+        ESP_LOGW(TAG_FLIGHT_CONTROLLER, "Unhandled packet type: 0x%xd", basePacket->type);
         break;
     }
 }
@@ -234,8 +263,8 @@ void FlightControllerClass::recalculateRoute(const AreaData& newPlannedArea) {
     }
     auto plannedRoute = RoutePlanner.planRoute(newPlannedArea.areaPoints, newPlannedArea.settings.routeAlgorithm, 60,
                                                metersToLatitudeDegree(40),
-                                               (float)newPlannedArea.settings.overlapPercentage / 100.0f);
-    FlightStorage.updatePlannedRoute(RouteData{plannedRoute, newPlannedArea.settings});
+                                               newPlannedArea.settings.overlapPercentage);
+    FlightStorage.updatePlannedRoute(plannedRoute);
     nextWaypointIndex = 0;
     FlightStorage.updateFlightState(FlightState::PLANNED);
 }

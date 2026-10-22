@@ -22,7 +22,7 @@ Use the run configurations provided by the run widget in your IDE's toolbar. You
 options:
 
 - Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+- iOS app: open [FlightPlanner.xcodeproj](./iosApp/FlightPlanner.xcodeproj) in Xcode and run it from there.
 
 ### Running tests
 

@@ -7,6 +7,53 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
+// BleProtocol.generated.kt is generated at build time from the BLE wire contract in
+// shared_components/flight_com (same generator CMake uses for the C++ header and Xcode for the Swift file).
+// Hooked into commonMain below via srcDir(task), so every Kotlin compilation depends on it.
+val flightComDir = layout.projectDirectory.dir("../../shared_components/flight_com")
+val generatedBleProtocolDir = layout.buildDirectory.dir("generated/bleProtocol/kotlin")
+val generateBleProtocol = tasks.register<Exec>("generateBleProtocol") {
+    group = "build"
+    description = "Generates BleProtocol.generated.kt from ble_protocol.json"
+    val script = flightComDir.file("gen_ble_protocol.py")
+    val schema = flightComDir.file("ble_protocol.json")
+    inputs.file(script)
+    inputs.file(schema)
+    // ble_protocol.json mirrors the packet types declared in this schema (its "sourceSchema").
+    inputs.file(flightComDir.file("packets.jtd.json"))
+    outputs.dir(generatedBleProtocolDir)
+    val outDir = generatedBleProtocolDir.get().asFile
+    val outFile = outDir.resolve("de/universegame/auto_flight/app/wire/BleProtocol.generated.kt")
+    doFirst { outDir.deleteRecursively() } // drop stale output, e.g. after a package move
+    commandLine(
+        "python3", script.asFile.absolutePath,
+        "--schema", schema.asFile.absolutePath,
+        "--out-kotlin", outFile.absolutePath,
+    )
+}
+
+// FrontendPackets.generated.kt (public packet types + CBOR codec, the API Swift and Android
+// use) and FrontendPacketsWire.generated.kt (their internal @Serializable wire twins) are
+// generated from shared_components/flight_com/packets.jtd.json - the same schema CMake
+// generates the C++ packet headers from. Hooked into commonMain below like generateBleProtocol.
+val generatedPacketsDir = layout.buildDirectory.dir("generated/packets/kotlin")
+val generatePackets = tasks.register<Exec>("generatePackets") {
+    group = "build"
+    description = "Generates FrontendPackets*.generated.kt from packets.jtd.json"
+    val script = flightComDir.file("gen_packets.py")
+    val schema = flightComDir.file("packets.jtd.json")
+    inputs.file(script)
+    inputs.file(schema)
+    outputs.dir(generatedPacketsDir)
+    val outDir = generatedPacketsDir.get().asFile
+    doFirst { outDir.deleteRecursively() } // drop stale output, e.g. after a package move
+    commandLine(
+        "python3", script.asFile.absolutePath,
+        "--schema", schema.asFile.absolutePath,
+        "--out-kotlin", outDir.resolve("de/universegame/auto_flight/app/wire").absolutePath,
+    )
+}
+
 kotlin {
     //listOf(
         iosArm64()//,
@@ -66,9 +113,14 @@ kotlin {
         // overload that's a hard compile error in that same range). The iOS app therefore
         // implements FlightRepository natively in Swift (URLSession) against these shared
         // types instead. Revisit this split whenever the Swift Export toolchain matures.
+        commonMain {
+            kotlin.srcDir(generateBleProtocol)
+            kotlin.srcDir(generatePackets)
+        }
         commonMain.dependencies {
-            // Only referenced by FrontendPackets.kt's `private` wire-mirror types (see the
-            // comment there on why the public wire types themselves stay unannotated).
+            // Only referenced by the `internal` wire-mirror types in the generated
+            // FrontendPacketsWire.generated.kt (see the comment in FrontendPackets.generated.kt
+            // on why the public packet types themselves stay unannotated).
             implementation(libs.kotlinx.serialization.cbor)
         }
         commonTest.dependencies {
@@ -82,7 +134,7 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             // Only used for manual JsonObject/JsonArray building in KtorFlightRepository - kept
             // out of commonMain so kotlinx-serialization-core never enters the iOS/Swift Export
-            // dependency graph (see the wire-types comment in FrontendPackets.kt).
+            // dependency graph (see the wire-types comment in FrontendPackets.generated.kt).
             implementation(libs.kotlinx.serialization.json)
         }
         iosMain.dependencies {

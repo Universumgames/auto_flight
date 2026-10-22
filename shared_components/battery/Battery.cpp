@@ -71,7 +71,8 @@ std::array<int, MAX_BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts(
 
     std::array<int, MAX_BATTERY_CELL_COUNT> cumulativeMillivolts{};
     for (int i = 0; i < batteryCellCount; i++) {
-        //cumulativeMillivolts[i] = readChannelMillivolts(channelMux[i]);
+        cumulativeMillivolts[i] = readChannelMillivolts(channelMux[i]);
+        ESP_LOGD(TAG_BATTERY, "Read cumulative voltage for cell %d: %d mV", i + 1, cumulativeMillivolts[i]);
     }
 
     std::array<int, MAX_BATTERY_CELL_COUNT> cellVoltages{};
@@ -79,6 +80,9 @@ std::array<int, MAX_BATTERY_CELL_COUNT> BatteryClass::getCellVoltagesMillivolts(
     for (int i = 0; i < batteryCellCount; i++) {
         cellVoltages[i] = cumulativeMillivolts[i] - previous;
         previous = cumulativeMillivolts[i];
+    }
+    for (int i = 0; i < batteryCellCount; i++) {
+        ESP_LOGD(TAG_BATTERY, "Calculated voltage for cell %d: %d mV", i + 1, cellVoltages[i]);
     }
     return cellVoltages;
 }
@@ -93,6 +97,6 @@ uint32_t BatteryClass::getVoltageMillivolts() {
 }
 
 uint8_t BatteryClass::voltageToPercentage(const uint32_t millivolts) {
-    const auto clamped = std::max(emptyVoltageMillivolts, std::min(fullVoltageMillivolts, millivolts));
+    const auto clamped = std::clamp(millivolts, emptyVoltageMillivolts, fullVoltageMillivolts);
     return (clamped - emptyVoltageMillivolts) * 100 / (fullVoltageMillivolts - emptyVoltageMillivolts);
 }

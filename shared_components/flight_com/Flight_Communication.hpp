@@ -20,6 +20,12 @@ public:
     static void sendRouteHistory();
 
     static void sendComponentStatus();
+
+    static void sendFlightData(FlightState state,
+                               size_t nextWaypointIndex,
+                               Coordinate nextWaypoint,
+                               float targetAltitude,
+                               const CoveredQuadrilateral& lastCheckedArea);
 #endif
 
 #ifdef FLIGHT_DEVICE_TYPE_BASE_STATION
@@ -31,12 +37,11 @@ public:
     static std::unique_ptr<BasePacket> decodePacket(const uint8_t* data, std::size_t len);
     static std::unique_ptr<BasePacket> decodePacket(const LoRaPacket& packet);
 
-//private:
+    //private:
     /**
      * @brief Send a packet over LoRa communication.
      * @param packet The packet to send.
      * @return true if the packet was sent successfully, false otherwise.
      */
     static bool sendPacket(const BasePacket& packet);
-
 };

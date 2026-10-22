@@ -8,13 +8,13 @@ let defaultPlaneID: PlaneID = SharedLogic.DEFAULT_PLANE_ID
 
 enum PacketParsing {
     /// Returns the plane's existing entry in `current.planes`, creating and inserting one if absent.
-    static func plane(_ current: AppState, id: PlaneID = defaultPlaneID) -> PlaneInfo {
+    static func plane(_ current: AppState, id: PlaneID) -> PlaneInfo {
         if let existing = current.planes[id] { return existing }
         let created = PlaneInfo(id: id)
         current.planes[id] = created
         return created
     }
-
+    
     /// Strips a leading BOM and any NUL characters, then trims whitespace.
     static func normalize(_ raw: String) -> String {
         var s = raw
@@ -22,14 +22,14 @@ enum PacketParsing {
         s = s.replacingOccurrences(of: "\u{0000}", with: "")
         return s.trimmingCharacters(in: .whitespacesAndNewlines)
     }
-
+    
     /// Returns nil for the (0,0) sentinel and coordinates below -200.
     private static func toCoordinate(_ coord: Coordinate) -> Coordinate? {
         if coord.latitude == 0 && coord.longitude == 0 { return nil }
         if coord.latitude < -200 || coord.longitude < -200 { return nil }
         return coord
     }
-
+    
     static func applyPositionPacket(
         _ packet: wire.PositionUpdate
     ) {
@@ -42,7 +42,7 @@ enum PacketParsing {
             plane.positionUpdateTime = packet.timestamp
         }
     }
-
+    
     static func applyConnectionPacket(
         _ current: AppState,
         _ packet: wire.ComponentStatus
@@ -66,7 +66,7 @@ enum PacketParsing {
             }
         }
     }
-
+    
     static func applySensorPacket(
         _ current: AppState,
         _ packet: wire.SensorUpdate
@@ -82,7 +82,7 @@ enum PacketParsing {
             plane.batteryPercentage = Int(packet.batteryPercent)
         }
     }
-
+    
     static func applyRoutePlannedPacket(_ current: AppState, _ packet: wire.PlannedRoutePacket) {
         if packet.sourceId == SharedLogic.BASE_ID {
             return
@@ -91,7 +91,7 @@ enum PacketParsing {
         plane.plannedRoute = packet.route
         plane.plannedRouteUpdateTime = -1 // TODO: update packet to include timestamp
     }
-
+    
     static func applyAreaDefinePacket(
         _ current: AppState,
         _ packet: wire.PlannedAreaPacket
@@ -105,5 +105,16 @@ enum PacketParsing {
             settings: packet.settings
         )
         // TODO: implement area define, add to storage as well
+    }
+    
+    static func applyFlightDataPacket(
+        _ current: AppState,
+        _ packet: wire.FlightPacket
+    ){
+        if packet.sourceId == SharedLogic.BASE_ID {
+            return
+        }
+        let plane = self.plane(current, id: packet.sourceId)
+        plane.nextRouteWaypoint = packet.nextWaypoint
     }
 }

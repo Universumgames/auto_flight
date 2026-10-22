@@ -46,14 +46,16 @@ public:
     static uint8_t voltageToPercentage(uint32_t millivolts);
 
 private:
-    // TODO: calibrate for the actual battery chemistry/cell count once known.
-    static constexpr uint32_t emptyVoltageMillivolts = 3600;
-    static constexpr uint32_t fullVoltageMillivolts = 4400;
+    // Per-cell thresholds for the 3S 1600mAh 11.1V (3.7V nominal) LiPo pack.
+    // Full is the standard 4.2V charge cutoff; empty is 3.5V rather than the
+    // 3.0V absolute minimum, so 0% leaves margin to land before the cells
+    // take damage (voltage also sags under load, reading lower than resting).
+    static constexpr uint32_t emptyVoltageMillivolts = 3500;
+    static constexpr uint32_t fullVoltageMillivolts = 4200;
 
-    // TODO: measure the real sense-board resistor-divider ratio; this assumes
-    // every AINx-to-GND channel is scaled down by the same ratio before reaching
-    // the ADS111x, and un-scales the reading back up to the real tap voltage.
-    static constexpr float voltageDividerRatio = 3.3f;
+    // Each AINx-to-GND channel goes through a 47k (top) / 10k (bottom) divider,
+    // so V_adc = V_tap * 10k / (47k + 10k); un-scale by (47k + 10k) / 10k.
+    static constexpr float voltageDividerRatio = (47.0f + 10.0f) / 10.0f;
 
     // Conversions can take a few ms; bound the busy-poll so a stuck/disconnected
     // ADC can't hang whoever is reading the battery state.

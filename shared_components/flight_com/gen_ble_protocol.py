@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Generates the BLE wire-contract sources from ble_protocol.json.
 
-The topic table itself is not listed in the JSON: it mirrors enum PacketType from
-base_station/shared_components/flight_com/packets/base.hpp (see the schema's
+The topic table itself is not listed in the JSON: it mirrors the packet types
+(enum PacketType) declared in packets.jtd.json next to this script (see the schema's
 "topics" entry), so adding a packet type automatically adds a BLE topic.
 
 This is the single source of truth for the BLE topic table (byte value ->
@@ -13,14 +13,16 @@ Android/KMP once it grows a BLE transport). Nothing here should be hand-edited
 in the generated output files - edit ble_protocol.json and regenerate.
 
 Usage:
-    # Regenerate the C++ header (normally done automatically by CMake at build time):
-    python3 gen_ble_protocol.py --out-cpp BLETopics.generated.hpp
+    # Regenerate the C++ header (normally done automatically by CMake at build time,
+    # see CMakeLists.txt next to this script):
+    python3 gen_ble_protocol.py --out-cpp <path>/BLETopics.generated.hpp
 
     # Regenerate the iOS Swift file (wired into an Xcode Run Script build phase):
-    python3 gen_ble_protocol.py --out-swift ../../../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift
+    python3 gen_ble_protocol.py --out-swift ../../app/iosApp/iosApp/Models/BluetoothUUIDs.generated.swift
 
-    # Regenerate the Android/KMP Kotlin stub (currently manual - see that file's header):
-    python3 gen_ble_protocol.py --out-kotlin ../../../app/sharedLogic/src/commonMain/kotlin/de/universegame/auto_flight/app/wire/BleProtocol.generated.kt
+    # Regenerate the Android/KMP Kotlin file (normally done automatically by the
+    # :sharedLogic:generateBleProtocol Gradle task into sharedLogic/build/generated/bleProtocol):
+    python3 gen_ble_protocol.py --out-kotlin <path>/BleProtocol.generated.kt
 
     # Check committed output is up to date with the schema (exits 1 on drift):
     python3 gen_ble_protocol.py --check --out-swift <path> --out-kotlin <path>
@@ -36,9 +38,9 @@ DEFAULT_SCHEMA = SCRIPT_DIR / "ble_protocol.json"
 
 GENERATED_NOTICE = (
     "GENERATED FILE - DO NOT EDIT BY HAND.\n"
-    "Source of truth: base_station/components/frontend_bluetooth/ble_protocol.json\n"
-    "(topics mirror enum PacketType in base_station/shared_components/flight_com/packets/base.hpp)\n"
-    "Regenerate with base_station/components/frontend_bluetooth/gen_ble_protocol.py"
+    "Source of truth: shared_components/flight_com/ble_protocol.json\n"
+    "(topics mirror metadata.packetTypes in shared_components/flight_com/packets.jtd.json)\n"
+    "Regenerate with shared_components/flight_com/gen_ble_protocol.py"
 )
 
 
@@ -49,6 +51,8 @@ def load_schema(path: Path) -> dict:
     schema = {k: v for k, v in raw.items() if not k.startswith("//")}
     schema["topicEnum"] = schema["topics"]["enum"]
     schema["topicEnumInclude"] = schema["topics"]["cppInclude"]
+    schema["topicEnumSwiftModule"] = schema["topics"]["swiftModule"]
+    schema["topicEnumSwiftType"] = schema["topics"]["swiftType"]
     schema["topics"] = resolve_topics(schema["topics"], path.parent)
     return schema
 
@@ -59,49 +63,27 @@ def snake_to_camel(name: str) -> str:
     return first + "".join(part.capitalize() for part in rest)
 
 
-def parse_cpp_enum(header: Path, enum_name: str) -> list[tuple[str, int, list[str]]]:
-    """Returns (name, value, doc lines) for every entry of `enum class <enum_name>` in `header`.
-
-    Only handles what an enum body can reasonably contain here: `NAME = <int literal>`,
-    implicit `NAME` (previous value + 1), `///` doc comments and `//` / `/* */` comments.
-    """
-    text = header.read_text(encoding="utf-8")
-    match = re.search(rf"enum\s+class\s+{re.escape(enum_name)}\b[^{{;]*\{{(.*?)\}}", text, re.DOTALL)
-    if not match:
-        raise SystemExit(f"error: enum class {enum_name} not found in {header}")
-    body = re.sub(r"/\*.*?\*/", "", match.group(1), flags=re.DOTALL)
-
-    entries = []
-    doc: list[str] = []
-    next_value = 0
-    for line in body.splitlines():
-        line = line.strip()
-        if line.startswith("///"):
-            doc.append(line[3:].strip())
-            continue
-        line = line.split("//", 1)[0].strip().rstrip(",").strip()
-        if not line:
-            doc = []  # a blank / plain-comment line detaches any preceding doc comment
-            continue
-        entry = re.fullmatch(r"(\w+)\s*(?:=\s*(\w+))?", line)
-        if not entry:
-            raise SystemExit(f"error: can't parse {enum_name} entry {line!r} in {header}")
-        value = int(entry.group(2), 0) if entry.group(2) else next_value
-        entries.append((entry.group(1), value, doc))
-        next_value = value + 1
-        doc = []
-    return entries
+def read_packet_types(schema_path: Path) -> list[tuple[str, int, list[str]]]:
+    """Returns (name, value, doc lines) for every entry of metadata.packetTypes in the packet
+    schema (packets.jtd.json, see gen_packets.py), in declaration order."""
+    with open(schema_path, "r", encoding="utf-8") as f:
+        packet_types = json.load(f)["metadata"]["packetTypes"]
+    return [
+        (name, int(entry["value"], 0) if isinstance(entry["value"], str) else entry["value"],
+         entry["description"].splitlines() if entry.get("description") else [])
+        for name, entry in packet_types.items() if not name.startswith("//")
+    ]
 
 
 def resolve_topics(spec: dict, schema_dir: Path) -> list[dict]:
     """Expands the schema's `topics` reference into one topic per entry of the referenced enum."""
-    header = (schema_dir / spec["sourceHeader"]).resolve()
+    packet_schema = (schema_dir / spec["sourceSchema"]).resolve()
     prefix = spec["uuidPrefix"].removeprefix("0x").removeprefix("0X").upper()
     if not re.fullmatch(r"[0-9A-F]{2}", prefix):
         raise SystemExit(f"error: uuidPrefix must be a single hex byte, got {spec['uuidPrefix']!r}")
 
     topics = []
-    for name, value, doc in parse_cpp_enum(header, spec["enum"]):
+    for name, value, doc in read_packet_types(packet_schema):
         if not 0 <= value <= 0xFF:
             raise SystemExit(f"error: {spec['enum']}::{name} = {value} does not fit in one byte")
         topics.append({
@@ -242,14 +224,19 @@ def render_swift(schema: dict) -> str:
     case_entries = "\n".join(f"{_doc(t, '    ')}    case {t['name']} = {t['value']}" for t in topics)
     characteristic_cases = "\n".join(f"            case .{t['name']}: return .{t['caseName']}" for t in topics)
     uuid_cases = "\n".join(f'{_doc(t, "    ")}    case {t["caseName"]} = "{t["uuid"]}"' for t in topics)
+    packet_type = schema["topicEnumSwiftType"]
+    to_notify_cases = "\n".join(f"            case .{t['sourceName']}: return .{t['name']}" for t in topics)
+    to_packet_cases = "\n".join(f"            case .{t['name']}: return .{t['sourceName']}" for t in topics)
+    uuid_to_notify_cases = "\n".join(f"            case .{t['caseName']}: return .{t['name']}" for t in topics)
 
     return f"""//
 {notice}
 //
-// Mirrors base_station/components/frontend_bluetooth/BLETopics.generated.hpp.
+// Mirrors BLETopics.generated.hpp (generated into flight_com's build dir).
 //
 
 import CoreBluetooth
+import {schema['topicEnumSwiftModule']}
 
 let ServiceUUID = CBUUID(string: "{schema['serviceUUID']}")
 
@@ -282,6 +269,43 @@ extension CharacteristicUUID {{
     var id: CBUUID {{
         uuid
     }}
+
+    /// The `{packet_type}` carried by this characteristic.
+    var packetType: {packet_type} {{
+        notifyByte.packetType
+    }}
+
+    /// The topic byte this characteristic belongs to.
+    var notifyByte: NotifyByte {{
+        switch self {{
+{uuid_to_notify_cases}
+        }}
+    }}
+}}
+
+extension NotifyByte {{
+    /// The `{packet_type}` carried by this topic.
+    var packetType: {packet_type} {{
+        switch self {{
+{to_packet_cases}
+        }}
+    }}
+}}
+
+/// Exhaustive on purpose: if the KMP {packet_type} (FrontendPackets.kt) drifts from the
+/// C++ enum, these stop compiling.
+extension {packet_type} {{
+    /// The topic carrying this packet type.
+    var notifyByte: NotifyByte {{
+        switch self {{
+{to_notify_cases}
+        }}
+    }}
+
+    /// The characteristic carrying this packet type.
+    var characteristic: CharacteristicUUID {{
+        notifyByte.characteristic
+    }}
 }}
 """
 
@@ -303,8 +327,8 @@ def render_kotlin(schema: dict) -> str:
 // base station over a websocket (see KtorFlightRepository.kt), not Bluetooth.
 // This exists so the day Android/KMP grows a BLE transport, the wire contract is
 // already generated from the same source of truth as the C++ and Swift sides
-// instead of being hand-copied a third time. Regenerate with
-// base_station/components/frontend_bluetooth/gen_ble_protocol.py --out-kotlin <path>
+// instead of being hand-copied a third time. Generated at build time by the
+// :sharedLogic:generateBleProtocol Gradle task.
 package de.universegame.auto_flight.app.wire
 
 object BleProtocol {{

@@ -1,193 +1,174 @@
 package de.universegame.auto_flight.app
 
-import de.universegame.auto_flight.app.wire.ConnectionState
-import de.universegame.auto_flight.app.wire.FlightState
+import de.universegame.auto_flight.app.wire.ComponentStatus
+import de.universegame.auto_flight.app.wire.FlightPacket
+import de.universegame.auto_flight.app.wire.FrontendPacket
+import de.universegame.auto_flight.app.wire.FrontendPackets
+import de.universegame.auto_flight.app.wire.PlannedAreaPacket
+import de.universegame.auto_flight.app.wire.PlannedRoutePacket
+import de.universegame.auto_flight.app.wire.PositionUpdate
+import de.universegame.auto_flight.app.wire.SensorUpdate
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.longOrNull
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
 
 /**
- * Result of interpreting a single websocket text frame.
+ * Result of interpreting a single websocket frame.
  */
 sealed interface WebSocketEvent {
     /** Heartbeat reply - proof the base station link is alive. */
     data object Pong : WebSocketEvent
 
-    /** A `connection` / `flight` / `sensor` packet was applied, yielding [state]. */
+    /** A packet was applied, yielding [state]. */
     data class StateUpdate(val state: AppState) : WebSocketEvent
 }
 
-/**
- * Pure functions that turn base-station websocket frames into [AppState] updates.
- *
- * Field shapes are intentionally treated as loosely typed JSON (like the original
- * web client did) because the firmware has historically sent coordinates as either
- * `[lat, lon]` arrays or `{lat, lon}` / `{latitude, longitude}` objects, and
- * timestamps as either epoch seconds/millis or ISO-8601 strings.
- */
+/** Only used for the JSON bodies of the HTTP `/api/area` and `/api/route` endpoints. */
 internal val appJson = Json { ignoreUnknownKeys = true }
 
+/**
+ * Turns base-station frames into [AppState] updates. Mirrors the iOS app's
+ * `PacketParsing.swift`: frames are the CBOR packets generated from `packets.jtd.json`,
+ * decoded with [FrontendPackets], and each packet updates either the base station or
+ * the plane its [FrontendPacket.sourceId] names.
+ */
+@OptIn(ExperimentalStdlibApi::class)
 object PacketParser {
-
-    private val json = appJson
 
     /** Strips BOM/NUL characters and surrounding whitespace from websocket payloads. */
     fun normalize(raw: String): String =
-        raw.trimStart('\uFEFF').filterNot { it == '\u0000' }.trim()
+        raw.trimStart('﻿').filterNot { it == '\u0000' }.trim()
 
     /**
-     * Parses one websocket text frame. Returns `null` if the frame is empty or not
-     * a recognizable packet (unknown/missing `type` field, malformed JSON, ...).
+     * Parses one text frame: either the heartbeat `pong` or a hex-encoded CBOR packet.
+     * Returns `null` if the frame is empty or not a recognizable packet.
      */
     fun parse(raw: String, current: AppState): WebSocketEvent? {
         val normalized = normalize(raw)
         if (normalized.isEmpty()) return null
         if (normalized == "pong") return WebSocketEvent.Pong
-
-        val element = try {
-            json.parseToJsonElement(normalized)
-        } catch (_: Exception) {
-            return null
-        }
-        val obj = element as? JsonObject ?: return null
-
-        return when (obj["type"]?.jsonPrimitive?.contentOrNull) {
-            "flight" -> WebSocketEvent.StateUpdate(applyFlightPacket(current, obj))
-            "connection" -> WebSocketEvent.StateUpdate(applyConnectionPacket(current, obj))
-            "sensor" -> WebSocketEvent.StateUpdate(applySensorPacket(current, obj))
-            else -> null
-        }
+        val packet = FrontendPackets.decode(normalized) ?: return null
+        return apply(current, packet)?.let { WebSocketEvent.StateUpdate(it) }
     }
 
-    fun applyFlightPacket(current: AppState, packet: JsonObject): AppState {
-        val basePos = toCoordinate(packet["basePosition"])
-        val planePos = toCoordinate(packet["planePosition"])
+    /** Parses one binary frame holding a raw CBOR packet. */
+    fun parse(bytes: ByteArray, current: AppState): WebSocketEvent? {
+        if (bytes.isEmpty()) return null
+        val packet = FrontendPackets.decode(bytes.toHexString()) ?: return null
+        return apply(current, packet)?.let { WebSocketEvent.StateUpdate(it) }
+    }
 
-        current.basePosition = basePos ?: current.basePosition
-        current.basePositionUpdateTime = toTimeT(packet["basePositionUpdateTime"])
+    /** Applies [packet] to [current]; `null` for packet types that don't affect the app state. */
+    fun apply(current: AppState, packet: FrontendPacket): AppState? = when (packet) {
+        is PositionUpdate -> applyPositionPacket(current, packet)
+        is ComponentStatus -> applyConnectionPacket(current, packet)
+        is SensorUpdate -> applySensorPacket(current, packet)
+        is PlannedRoutePacket -> applyRoutePlannedPacket(current, packet)
+        is PlannedAreaPacket -> applyAreaDefinePacket(current, packet)
+        is FlightPacket -> applyFlightDataPacket(current, packet)
+        else -> null
+    }
 
-        val plane = current.planes.getOrPut(DEFAULT_PLANE_ID) { PlaneInfo(id = DEFAULT_PLANE_ID) }
-        plane.position = planePos ?: plane.position
-        plane.positionUpdateTime = toTimeT(packet["planePositionUpdateTime"])
-        plane.flightRoute = toRoute(packet["flightRoute"])
-        plane.flightRouteUpdateTime = toTimeT(packet["flightRouteUpdateTime"])
-        plane.plannedRoute = toRoute(packet["plannedRoute"])
-        plane.plannedRouteUpdateTime = toTimeT(packet["plannedRouteUpdateTime"])
+    /** Returns the plane's existing entry in [AppState.planes], creating and inserting one if absent. */
+    fun plane(current: AppState, id: PlaneID): PlaneInfo =
+        current.planes.getOrPut(id) { PlaneInfo(id = id) }
 
+    fun applyPositionPacket(current: AppState, packet: PositionUpdate): AppState {
+        val position = validCoordinate(packet.position)
+        if (packet.sourceId == BASE_ID) {
+            current.basePosition = position ?: current.basePosition
+            current.basePositionUpdateTime = packet.timestamp
+        } else {
+            val plane = plane(current, packet.sourceId)
+            plane.position = position ?: plane.position
+            plane.positionUpdateTime = packet.timestamp
+        }
         return current
     }
 
-    fun applyConnectionPacket(current: AppState, packet: JsonObject): AppState {
-        parseConnectionState(packet["baseConnectionState"])?.let { current.connectionStateBaseStation = it }
-        current.lastContactBaseStationTimestamp = toTimeT(packet["lastContactBaseStationTimestamp"])
-        parseConnectionState(packet["gpsConnectionBase"])?.let { current.gpsConnectionBase = it }
-        parseConnectionState(packet["barometerConnectionBase"])?.let { current.barometerConnectionBase = it }
-
-        val plane = current.planes.getOrPut(DEFAULT_PLANE_ID) { PlaneInfo(id = DEFAULT_PLANE_ID) }
-        parseConnectionState(packet["planeConnectionState"])?.let { plane.connectionState = it }
-        plane.lastContactTimestamp = toTimeT(packet["lastContactPlaneTimestamp"])
-        parseConnectionState(packet["gpsConnectionPlane"])?.let { plane.gpsConnection = it }
-        parseConnectionState(packet["barometerConnectionPlane"])?.let { plane.barometerConnection = it }
-        parseConnectionState(packet["motorComConnectionPlane"])?.let { plane.motorComConnection = it }
-        parseConnectionState(packet["magnetometerConnectionPlane"])?.let { plane.magnetometerConnection = it }
-        parseConnectionState(packet["accelerometerConnectionPlane"])?.let { plane.accelerometerConnection = it }
-        toBoolean(packet["manualOverridePlane"])?.let { plane.manualOverride = it }
-        parseFlightState(packet["flightState"])?.let { plane.flightState = it }
-
+    fun applyConnectionPacket(current: AppState, packet: ComponentStatus): AppState {
+        if (packet.sourceId == BASE_ID) {
+            current.gpsConnectionBase = packet.gps
+            current.barometerConnectionBase = packet.barometer
+        } else {
+            val plane = plane(current, packet.sourceId)
+            plane.connectionState = ConnectionState.CONNECTED
+            plane.gpsConnection = packet.gps
+            plane.barometerConnection = packet.barometer
+            plane.motorComConnection = packet.motorControl
+            plane.magnetometerConnection = packet.magnetometer
+            plane.accelerometerConnection = packet.accelerometer
+            plane.batteryConnection = packet.battery
+            plane.manualOverride = packet.manualOverride
+            plane.flightState = packet.flightState
+        }
         return current
     }
 
-    fun applySensorPacket(current: AppState, packet: JsonObject): AppState {
-        val pressureBase = (packet["barometerPressureBase"] as? JsonPrimitive)?.doubleOrNull
-        val pressurePlane = (packet["barometerPressurePlane"] as? JsonPrimitive)?.doubleOrNull
-        val calculatedAltitude = (packet["calculatedAltitude"] as? JsonPrimitive)?.doubleOrNull
-        val headingPlane = (packet["headingPlane"] as? JsonPrimitive)?.doubleOrNull
-
-        current.pressureBase = pressureBase?.takeIf { it != 0.0 } ?: current.pressureBase
-
-        val plane = current.planes.getOrPut(DEFAULT_PLANE_ID) { PlaneInfo(id = DEFAULT_PLANE_ID) }
-        plane.pressure = pressurePlane?.takeIf { it != 0.0 } ?: plane.pressure
-        plane.calculatedAltitude = calculatedAltitude?.takeIf { it != 0.0 } ?: plane.calculatedAltitude
-        plane.heading = headingPlane ?: plane.heading
-
+    fun applySensorPacket(current: AppState, packet: SensorUpdate): AppState {
+        if (packet.sourceId == BASE_ID) {
+            current.pressureBase = packet.pressure.toDouble()
+            current.batteryPercentageBase = packet.batteryPercent
+        } else {
+            val plane = plane(current, packet.sourceId)
+            plane.pressure = packet.pressure.toDouble()
+            plane.heading = packet.heading.toDouble()
+            plane.batteryPercentage = packet.batteryPercent
+        }
         return current
     }
 
-    /** Normalizes Unix timestamps (seconds or millis) or ISO date strings into seconds since epoch. */
-    @OptIn(ExperimentalTime::class)
-    fun toTimeT(element: JsonElement?): Long? {
-        val primitive = element as? JsonPrimitive ?: return null
-        primitive.longOrNull?.let { return if (it > 1_000_000_000_000L) it / 1000 else it }
-        primitive.doubleOrNull?.let { return (if (it > 1e12) it / 1000 else it).toLong() }
-        val content = primitive.contentOrNull ?: return null
-        return try {
-            Instant.parse(content).epochSeconds
-        } catch (_: Exception) {
-            null
-        }
+    fun applyRoutePlannedPacket(current: AppState, packet: PlannedRoutePacket): AppState {
+        if (packet.sourceId == BASE_ID) return current
+        val plane = plane(current, packet.sourceId)
+        plane.plannedRoute = packet.route
+        plane.plannedRouteUpdateTime = packet.timestamp
+        return current
     }
 
-    /** Converts common coordinate payload shapes into a normalized [Coordinate], or `null` if invalid/sentinel. */
-    fun toCoordinate(element: JsonElement?): Coordinate? {
-        if (element == null) return null
+    fun applyAreaDefinePacket(current: AppState, packet: PlannedAreaPacket): AppState {
+        if (packet.sourceId == BASE_ID) return current
+        plane(current, packet.sourceId).area = AreaData(areaPoints = packet.shape, settings = packet.settings)
+        return current
+    }
 
-        var coord: Coordinate? = null
+    fun applyFlightDataPacket(current: AppState, packet: FlightPacket): AppState {
+        if (packet.sourceId == BASE_ID) return current
+        plane(current, packet.sourceId).nextRouteWaypoint = validCoordinate(packet.nextWaypoint)
+        return current
+    }
 
-        val array = element as? JsonArray
-        if (array != null && array.size >= 2) {
-            val lat = array[0].jsonPrimitive.doubleOrNull
-            val lon = array[1].jsonPrimitive.doubleOrNull
-            if (lat != null && lon != null) coord = Coordinate(latitude = lat, longitude = lon)
-        }
-
-        val obj = element as? JsonObject
-        if (obj != null) {
-            val lat = (obj["lat"] as? JsonPrimitive)?.doubleOrNull
-            val lon = (obj["lon"] as? JsonPrimitive)?.doubleOrNull
-            if (lat != null && lon != null) coord = Coordinate(latitude = lat, longitude = lon)
-
-            val latitude = (obj["latitude"] as? JsonPrimitive)?.doubleOrNull
-            val longitude = (obj["longitude"] as? JsonPrimitive)?.doubleOrNull
-            if (latitude != null && longitude != null) coord = Coordinate(latitude = latitude, longitude = longitude)
-        }
-
-        if (coord != null && coord.latitude == 0.0 && coord.longitude == 0.0) coord = null
-        if (coord != null && (coord.latitude < -200 || coord.longitude < -200)) coord = null
-
+    /** Returns `null` for the (0,0) sentinel and coordinates below -200 (e.g. COORDINATE_INVALID_VALUE). */
+    private fun validCoordinate(coord: Coordinate): Coordinate? {
+        if (coord.latitude == 0.0 && coord.longitude == 0.0) return null
+        if (coord.latitude < -200 || coord.longitude < -200) return null
         return coord
     }
 
-    private fun toRoute(element: JsonElement?): List<Coordinate>? {
-        val array = element as? JsonArray ?: return null
-        return array.mapNotNull { toCoordinate(it) }
-    }
-
-    private fun toBoolean(element: JsonElement?): Boolean? {
-        val primitive = element as? JsonPrimitive ?: return null
-        return when (primitive.contentOrNull) {
-            "true" -> true
-            "false" -> false
+    /**
+     * Converts the coordinate shapes of the HTTP endpoints' JSON bodies (`[lat, lon]`,
+     * `{lat, lon}` or `{latitude, longitude}`) into a [Coordinate], or `null` if invalid/sentinel.
+     */
+    fun toCoordinate(element: JsonElement?): Coordinate? {
+        val coord = when (element) {
+            is JsonArray -> if (element.size >= 2) {
+                val lat = element[0].jsonPrimitive.doubleOrNull
+                val lon = element[1].jsonPrimitive.doubleOrNull
+                if (lat != null && lon != null) Coordinate(latitude = lat, longitude = lon) else null
+            } else null
+            is JsonObject -> {
+                val lat = (element["latitude"] ?: element["lat"]) as? JsonPrimitive
+                val lon = (element["longitude"] ?: element["lon"]) as? JsonPrimitive
+                val latitude = lat?.doubleOrNull
+                val longitude = lon?.doubleOrNull
+                if (latitude != null && longitude != null) Coordinate(latitude, longitude) else null
+            }
             else -> null
-        }
-    }
-
-    /** Parses connection state values from either enum names or case-insensitive strings. */
-    fun parseConnectionState(element: JsonElement?): ConnectionState? {
-        val content = (element as? JsonPrimitive)?.contentOrNull ?: return null
-        return ConnectionState.entries.firstOrNull { it.name.equals(content, ignoreCase = true) }
-    }
-
-    /** Parses flight state values from either enum names or case-insensitive strings. */
-    fun parseFlightState(element: JsonElement?): FlightState? {
-        val content = (element as? JsonPrimitive)?.contentOrNull ?: return null
-        return FlightState.entries.firstOrNull { it.name.equals(content, ignoreCase = true) }
+        } ?: return null
+        return validCoordinate(coord)
     }
 }

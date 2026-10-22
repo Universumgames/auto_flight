@@ -109,6 +109,10 @@ struct PlaneSelectionView: View {
                         AreaView(planeId: planeID)
                     case .ROUTE_APPROVAL:
                         RouteView(planeId: planeID)
+                    case .FLYING:
+                        FlightView(planeId: planeID)
+                    case .FINISHING:
+                        FlightView(planeId: planeID)
                     default:
                         EmptyView()
                     }

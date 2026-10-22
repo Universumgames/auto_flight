@@ -16,12 +16,12 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		0518A740379188ABF3109DDF /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		0518A740379188ABF3109DDF /* Exceptions for "iosApp" folder in "FlightPlanner" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = BF50A4F3BFBA03A25739F346 /* iosApp */;
+			target = BF50A4F3BFBA03A25739F346 /* FlightPlanner */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -29,21 +29,13 @@
 		2AB048961519C7B4C6AAA89B /* iosApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				0518A740379188ABF3109DDF /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
+				0518A740379188ABF3109DDF /* Exceptions for "iosApp" folder in "FlightPlanner" target */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
 		};
 		992FC46D3D538FECDA41E6E6 /* Configuration */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = Configuration;
 			sourceTree = "<group>";
 		};
@@ -81,9 +73,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BF50A4F3BFBA03A25739F346 /* iosApp */ = {
+		BF50A4F3BFBA03A25739F346 /* FlightPlanner */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6326576033C4ABF998E3F38E /* Build configuration list for PBXNativeTarget "iosApp" */;
+			buildConfigurationList = 6326576033C4ABF998E3F38E /* Build configuration list for PBXNativeTarget "FlightPlanner" */;
 			buildPhases = (
 				55EED6B330385AD50011FC8A /* Compile Kotlin Framework */,
 				E72A2BF2FAAAB6F366DCE034 /* Compile Kotlin Framework */,
@@ -99,7 +91,7 @@
 			fileSystemSynchronizedGroups = (
 				2AB048961519C7B4C6AAA89B /* iosApp */,
 			);
-			name = iosApp;
+			name = FlightPlanner;
 			packageProductDependencies = (
 			);
 			productName = iosApp;
@@ -121,7 +113,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3F69F630C83EE9BF57D17713 /* Build configuration list for PBXProject "iosApp" */;
+			buildConfigurationList = 3F69F630C83EE9BF57D17713 /* Build configuration list for PBXProject "FlightPlanner" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -136,7 +128,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BF50A4F3BFBA03A25739F346 /* iosApp */,
+				BF50A4F3BFBA03A25739F346 /* FlightPlanner */,
 			);
 		};
 /* End PBXProject section */
@@ -161,7 +153,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/../../base_station/components/frontend_bluetooth/ble_protocol.json",
+				"$(SRCROOT)/../../shared_components/flight_com/ble_protocol.json",
 			);
 			outputFileListPaths = (
 			);
@@ -170,7 +162,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n  /usr/bin/env python3 \"$SRCROOT/../../base_station/components/frontend_bluetooth/gen_ble_protocol.py\" \\\n      --schema \"$SRCROOT/../../base_station/components/frontend_bluetooth/ble_protocol.json\" \\\n      --out-swift \"$SRCROOT/iosApp/Models/BluetoothUUIDs.generated.swift\"\n";
+			shellScript = "set -e\n  /usr/bin/env python3 \"$SRCROOT/../../shared_components/flight_com/gen_ble_protocol.py\" \\\n      --schema \"$SRCROOT/../../shared_components/flight_com/ble_protocol.json\" \\\n      --out-swift \"$SRCROOT/iosApp/Models/BluetoothUUIDs.generated.swift\"\n";
 		};
 		55EED6B330385AD50011FC8A /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -189,7 +181,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT/..\"\n./gradlew :sharedLogic:embedSwiftExportForXcode\n";
+			shellScript = "# Swift Export builds its Swift wrapper package with `xcodebuild -destination id=$TARGET_DEVICE_IDENTIFIER`.\n# For \"My Mac (Designed for iPad)\" that id is the Mac itself, which yields macOS objects that fail to link\n# into the iOS app. Without it the Kotlin plugin uses the generic iOS / iOS Simulator destination instead.\nunset TARGET_DEVICE_IDENTIFIER\ncd \"$SRCROOT/..\"\n./gradlew :sharedLogic:embedSwiftExportForXcode\n";
 		};
 		E72A2BF2FAAAB6F366DCE034 /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -295,6 +287,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FlightPlanner;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "To connect with Base Station and define flight plan";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To locate user on map when selecting the area to fly over";
@@ -394,6 +387,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = FlightPlanner;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "To connect with Base Station and define flight plan";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To locate user on map when selecting the area to fly over";
@@ -417,7 +411,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3F69F630C83EE9BF57D17713 /* Build configuration list for PBXProject "iosApp" */ = {
+		3F69F630C83EE9BF57D17713 /* Build configuration list for PBXProject "FlightPlanner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				47FB595ADB9E9C6F8360BB7C /* Debug */,
@@ -426,7 +420,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		6326576033C4ABF998E3F38E /* Build configuration list for PBXNativeTarget "iosApp" */ = {
+		6326576033C4ABF998E3F38E /* Build configuration list for PBXNativeTarget "FlightPlanner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				559CB57BA53A3B29E433906E /* Debug */,

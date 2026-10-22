@@ -586,14 +586,29 @@ void BluetoothManager::sendFragmented(const uint16_t conn_handle, const uint16_t
             memcpy(frame.data() + FRAGMENT_HEADER_SIZE, data + offset, thisChunkLen);
         }
 
-        os_mbuf* txom = ble_hs_mbuf_from_flat(frame.data(), static_cast<uint16_t>(frame.size()));
-        if (txom == nullptr) {
-            ESP_LOGE(TAG_BLUETOOTH_MANAGER, "notify: failed to allocate mbuf for fragment (offset=%u len=%u)",
-                     offset, thisChunkLen);
-            return;
+        /* Flow control: notifications are fire-and-forget, so each call only queues the
+         * fragment in the host's mbuf pool; those blocks are released once the controller
+         * has actually sent the packet over the air. Bursting a large message drains the
+         * pool faster than the link empties it, which surfaces as BLE_HS_ENOMEM (either
+         * from the allocation here or from the header prepends inside the notify). On
+         * ENOMEM, sleep a tick to let the controller drain and retry the same fragment.
+         * (BLE_GAP_EVENT_NOTIFY_TX can't be used for this: NimBLE emits it synchronously
+         * from within ble_gatts_notify_custom, before anything has been transmitted.)
+         * Must not run on the NimBLE host task, which is what frees the buffers. */
+        int rc;
+        TickType_t waited = 0;
+        while (true) {
+            os_mbuf* txom = ble_hs_mbuf_from_flat(frame.data(), static_cast<uint16_t>(frame.size()));
+            /* ble_gatts_notify_custom consumes txom on success and on failure. */
+            rc = txom == nullptr ? BLE_HS_ENOMEM : ble_gatts_notify_custom(conn_handle, val_handle, txom);
+            if (rc != BLE_HS_ENOMEM || waited >= NOTIFY_ENOMEM_MAX_WAIT_TICKS) break;
+            vTaskDelay(1);
+            waited++;
         }
-        const int rc = ble_gatts_notify_custom(conn_handle, val_handle, txom);
-        frame.resize(0);
+        if (waited > 0) {
+            ESP_LOGD(TAG_BLUETOOTH_MANAGER, "notify: waited %lu ticks for mbufs (offset=%u)",
+                     static_cast<unsigned long>(waited), offset);
+        }
         if (rc != 0) {
             ESP_LOGE(TAG_BLUETOOTH_MANAGER, "notify: error sending fragment rc=%d (offset=%u len=%u)", rc, offset,
                      thisChunkLen);

@@ -200,6 +200,13 @@ int FrontendHandlerBlClass::getUpdateIntervalForTopic(const BLETopics::NotifyByt
         return 500;
     case BLETopics::NotifyByte::BLE_PLANNED_ROUTE_CONFIRMATION:
         return 500;
+    case BLETopics::NotifyByte::BLE_FLIGHT_DATA:
+        return 1;
+    case BLETopics::NotifyByte::BLE_DATA_REQUEST:
+        return 1;
+    default:
+        ESP_LOGW(TAG_FRONTEND_BL, "Unknown topic 0x%02x, defaulting to 1/1 update interval", topic);
+        return 1;
     }
     return 0;
 }
