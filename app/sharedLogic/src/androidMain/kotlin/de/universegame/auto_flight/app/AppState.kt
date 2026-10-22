@@ -2,6 +2,13 @@ package de.universegame.auto_flight.app
 
 import de.universegame.auto_flight.app.wire.ConnectionState
 import de.universegame.auto_flight.app.wire.FlightState
+import de.universegame.auto_flight.app.wire.RouteSettings
+
+/** The area polygon a plane has to cover, together with the settings its route is planned with. */
+data class AreaData(
+    val areaPoints: List<Coordinate>,
+    val settings: RouteSettings,
+)
 
 /**
  * Snapshot of everything a single connected plane reports: connection health,
@@ -23,15 +30,19 @@ data class PlaneInfo(
     var motorComConnection: ConnectionState = ConnectionState.CONNECTING,
     var magnetometerConnection: ConnectionState = ConnectionState.CONNECTING,
     var accelerometerConnection: ConnectionState = ConnectionState.CONNECTING,
+    var batteryConnection: ConnectionState = ConnectionState.CONNECTING,
     var manualOverride: Boolean = false,
     var flightState: FlightState = FlightState.PLANNING,
     var pressure: Double = 0.0,
+    var batteryPercentage: Int = -1,
     var calculatedAltitude: Double = 0.0,
     var heading: Double = 0.0,
     var flightRoute: List<Coordinate>? = null,
     var flightRouteUpdateTime: Long? = null,
     var plannedRoute: List<Coordinate>? = null,
     var plannedRouteUpdateTime: Long? = null,
+    var area: AreaData? = null,
+    var nextRouteWaypoint: Coordinate? = null,
 )
 
 /**
@@ -52,6 +63,7 @@ class AppState(
     var gpsConnectionBase: ConnectionState = ConnectionState.CONNECTING,
     var barometerConnectionBase: ConnectionState = ConnectionState.CONNECTING,
     var pressureBase: Double = 0.0,
+    var batteryPercentageBase: Int = -1,
 ) {
     val planes: MutableMap<PlaneID, PlaneInfo> = mutableMapOf()
 }

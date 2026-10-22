@@ -9,8 +9,7 @@
 #include "OledDisplay.hpp"
 #include "Cache.hpp"
 #include "Flight_Communication.hpp"
-#include "packets/component.hpp"
-#include "packets/sensor.hpp"
+#include "Packets.hpp"
 #include <cinttypes>
 
 BaseControllerClass* instance = nullptr;

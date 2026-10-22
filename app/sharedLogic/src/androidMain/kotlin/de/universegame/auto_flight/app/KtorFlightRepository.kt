@@ -15,6 +15,7 @@ import io.ktor.http.isSuccess
 import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
+import io.ktor.websocket.readBytes
 import io.ktor.websocket.readText
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
@@ -87,7 +88,11 @@ class KtorFlightRepository(
                         val heartbeat = launch { runHeartbeat(this@webSocket) }
                         try {
                             for (frame in incoming) {
-                                if (frame is Frame.Text) handleFrame(frame.readText())
+                                when (frame) {
+                                    is Frame.Text -> handleEvent(PacketParser.parse(frame.readText(), state))
+                                    is Frame.Binary -> handleEvent(PacketParser.parse(frame.readBytes(), state))
+                                    else -> Unit
+                                }
                             }
                         } finally {
                             heartbeat.cancel()
@@ -204,8 +209,8 @@ class KtorFlightRepository(
         }
     }
 
-    private fun handleFrame(raw: String) {
-        when (val event = PacketParser.parse(raw, state)) {
+    private fun handleEvent(event: WebSocketEvent?) {
+        when (event) {
             is WebSocketEvent.Pong -> {
                 lastPongReceivedAtMs = nowMs()
                 state.connectionStateBaseStation = ConnectionState.CONNECTED

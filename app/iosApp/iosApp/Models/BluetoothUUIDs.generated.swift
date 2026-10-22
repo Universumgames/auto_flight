@@ -1,7 +1,7 @@
 //
 // GENERATED FILE - DO NOT EDIT BY HAND.
 // Source of truth: shared_components/flight_com/ble_protocol.json
-// (topics mirror enum PacketType in shared_components/flight_com/packets/base.hpp)
+// (topics mirror metadata.packetTypes in shared_components/flight_com/packets.jtd.json)
 // Regenerate with shared_components/flight_com/gen_ble_protocol.py
 //
 // Mirrors BLETopics.generated.hpp (generated into flight_com's build dir).
