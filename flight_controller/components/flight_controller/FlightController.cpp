@@ -142,7 +142,7 @@ void FlightControllerClass::updateConnectionStates() {
     FlightStorage.updatePlaneBatteryConnectionState(Battery.isAvailable()
                                                         ? ConnectionState::CONNECTED
                                                         : ConnectionState::CONNECTING);
-    FlightStorage.updatePlaneCameraControlConnectionState(CameraComMaster.isAvailable()
+    FlightStorage.updatePlaneCameraControlConnectionState(CameraComMaster.isSlaveConnected()
                                                                 ? ConnectionState::CONNECTED
                                                                 : ConnectionState::CONNECTING);
 }

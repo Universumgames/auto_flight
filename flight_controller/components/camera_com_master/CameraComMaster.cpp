@@ -24,6 +24,9 @@ void CameraComMasterClass::init() {
 }
 
 bool CameraComMasterClass::isSlaveConnected() {
+    if (!devHandle) {
+        return false;
+    }
     uint8_t resultReady;
     errorCode = i2c_bus_read_byte(devHandle, CameraCommunication::ScanI2CCommand::EMPTY, &resultReady);
     return errorCode == ESP_OK && resultReady == 1;
