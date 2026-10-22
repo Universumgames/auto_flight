@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>de.universegame.auto-flight.ble-recorder</string>
+    <key>CFBundleName</key>
+    <string>ble-recorder</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>Connects to the auto_flight base station to record its telemetry.</string>
+</dict>
+</plist>
