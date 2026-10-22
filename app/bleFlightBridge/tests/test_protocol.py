@@ -4,11 +4,11 @@ import os
 import tempfile
 import unittest
 
-from ble_recorder import cbor
-from ble_recorder.cli import build_parser, parse_endpoint
-from ble_recorder.jsonfile import JSONArrayFile
-from ble_recorder.protocol import FragmentReassemblyBuffer, full_uuid, short_uuid, split_into_frames
-from ble_recorder.server import SocketServer
+from ble_flight_bridge import cbor
+from ble_flight_bridge.cli import build_parser, parse_endpoint
+from ble_flight_bridge.jsonfile import JSONArrayFile
+from ble_flight_bridge.protocol import FragmentReassemblyBuffer, full_uuid, short_uuid, split_into_frames
+from ble_flight_bridge.server import SocketServer
 
 
 class CBORTest(unittest.TestCase):

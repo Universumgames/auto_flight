@@ -13,7 +13,7 @@ from bleak.exc import BleakBluetoothNotAvailableError
 
 from .jsonfile import JSONArrayFile
 from .protocol import log
-from .recorder import Recorder
+from .bridge import FlightBridge
 from .server import SocketServer
 
 DESCRIPTION = """\
@@ -51,7 +51,7 @@ def positive_seconds(value: str) -> float:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="ble-recorder", description=DESCRIPTION,
+    p = argparse.ArgumentParser(prog="ble-flight-bridge", description=DESCRIPTION,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("-o", "--output", metavar="FILE", help="output file (default: recording-<timestamp>.json)")
     p.add_argument("-n", "--name", help="only connect to a device whose name contains NAME")
@@ -102,10 +102,10 @@ async def run(args: argparse.Namespace) -> int:
             await server.close()
             return 1
 
-    recorder = Recorder(output, server, args.name, args.raw)
-    task = asyncio.create_task(recorder.run())
+    bridge = FlightBridge(output, server, args.name, args.raw)
+    task = asyncio.create_task(bridge.run())
 
-    # Ctrl-C / kill cancel the recorder; the file is valid JSON at every point anyway.
+    # Ctrl-C / kill cancel the bridge; the file is valid JSON at every point anyway.
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
         try:

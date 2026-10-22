@@ -50,7 +50,7 @@ def _is_notification(value: bytes) -> bool:
     return len(value) >= FRAGMENT_HEADER_SIZE
 
 
-class Recorder:
+class FlightBridge:
     def __init__(
         self,
         output: JSONArrayFile | None,

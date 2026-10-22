@@ -1,20 +1,20 @@
-# Build and run ble-recorder (Python + bleak; macOS, Linux and Windows).
+# Build and run ble-flight-bridge (Python + bleak; macOS, Linux and Windows).
 #
 #   make                      standalone executable in dist/ (sets up .venv on first run)
 #   make run                  run from source, record to recording-<timestamp>.json
 #   make run OUT=flight.json NAME=base RAW=1 DURATION=60
-#   make run TCP=7878 SOCKET=/tmp/ble-recorder.sock NOFILE=1
+#   make run TCP=7878 SOCKET=/tmp/ble-flight-bridge.sock NOFILE=1
 #   make run-dist             same, but with the standalone executable
 #   make test                 unit tests
 #   make install              copy the executable to $(PREFIX)/bin
 #   make clean / distclean    remove build output / also the virtualenv
 
 PYTHON  ?= python3
-PRODUCT := ble-recorder
+PRODUCT := ble-flight-bridge
 PREFIX  ?= /usr/local
 VENV    := .venv
 
-# Optional recorder arguments, see `ble-recorder --help`.
+# Optional arguments, see `ble-flight-bridge --help`.
 OUT      ?=
 NAME     ?=
 RAW      ?=
@@ -33,7 +33,7 @@ endif
 VENV_PYTHON := $(VENV_BIN)/python$(EXE)
 VENV_STAMP  := $(VENV)/.installed
 DIST        := dist/$(PRODUCT)$(EXE)
-SOURCES     := main.py $(wildcard ble_recorder/*.py)
+SOURCES     := main.py $(wildcard ble_flight_bridge/*.py)
 
 RUN_ARGS := $(if $(OUT),-o $(OUT)) $(if $(NAME),-n $(NAME)) $(if $(DURATION),-t $(DURATION)) $(if $(RAW),--raw) \
             $(if $(TCP),--tcp $(TCP)) $(if $(SOCKET),--socket $(SOCKET)) $(if $(NOFILE),--no-file) $(ARGS)
@@ -61,7 +61,7 @@ $(DIST): $(VENV_STAMP) $(SOURCES)
 	@echo "Built $(DIST)"
 
 run: $(VENV_STAMP)
-	$(VENV_PYTHON) -m ble_recorder $(RUN_ARGS)
+	$(VENV_PYTHON) -m ble_flight_bridge $(RUN_ARGS)
 
 run-dist: $(DIST)
 	$(DIST) $(RUN_ARGS)

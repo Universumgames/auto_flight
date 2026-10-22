@@ -28,7 +28,7 @@ TOPIC_UUIDS = {name: uuid for uuid, name in TOPIC_NAMES.items()}
 
 _BASE_UUID_SUFFIX = "-0000-1000-8000-00805f9b34fb"
 
-log = logging.getLogger("ble-recorder")
+log = logging.getLogger("ble-flight-bridge")
 
 
 def full_uuid(short_or_full: str) -> str:

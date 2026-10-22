@@ -1,4 +1,4 @@
-# ble-recorder
+# ble-flight-bridge
 
 Command-line counterpart of the iOS app's Bluetooth layer, written in Python with
 [bleak](https://github.com/hbldh/bleak), so it runs on macOS, Linux and Windows. It connects
@@ -14,13 +14,13 @@ framework. The file stays valid JSON after every write.
 Needs Python 3.10+ and `make`. From a fresh clone:
 
 ```sh
-cd app/bleRecorder
-make            # creates .venv, installs bleak + PyInstaller, builds dist/ble-recorder
+cd app/bleFlightBridge
+make            # creates .venv, installs bleak + PyInstaller, builds dist/ble-flight-bridge
 ```
 
-`dist/ble-recorder` (`ble-recorder.exe` on Windows) is a standalone executable with Python
+`dist/ble-flight-bridge` (`ble-flight-bridge.exe` on Windows) is a standalone executable with Python
 bundled, so you can copy it to a machine without Python. PyInstaller can't cross-compile, so
-build on each target OS. The `ble_recorder` CI job builds the Linux executable.
+build on each target OS. The `ble_flight_bridge` CI job builds the Linux executable.
 
 | Command | What it does |
 |---|---|
@@ -36,8 +36,8 @@ build on each target OS. The `ble_recorder` CI job builds the Linux executable.
 
 ```sh
 make run OUT=flight.json DURATION=60      # stop after 60 s
-dist/ble-recorder -n base --raw           # filter by name, keep raw CBOR hex
-dist/ble-recorder --help
+dist/ble-flight-bridge -n base --raw           # filter by name, keep raw CBOR hex
+dist/ble-flight-bridge --help
 ```
 
 ## Platform notes
@@ -60,7 +60,7 @@ Each entry looks like:
 }
 ```
 
-The UUID → topic name table in `ble_recorder/protocol.py` mirrors
+The UUID → topic name table in `ble_flight_bridge/protocol.py` mirrors
 `iosApp/iosApp/Models/BluetoothUUIDs.generated.swift`. Packets on characteristics missing
 from that table are still recorded, with `"topic": "unknown"`.
 
@@ -71,7 +71,7 @@ the BLE link. Add `--no-file` if you don't also want the JSON file.
 
 ```sh
 make run TCP=7878 NOFILE=1
-make run SOCKET=/tmp/ble-recorder.sock
+make run SOCKET=/tmp/ble-flight-bridge.sock
 ```
 
 The protocol is newline-delimited JSON, one compact object per line:
@@ -93,7 +93,7 @@ The protocol is newline-delimited JSON, one compact object per line:
 import json, socket
 
 sock = socket.create_connection(("127.0.0.1", 7878))
-# sock = socket.socket(socket.AF_UNIX); sock.connect("/tmp/ble-recorder.sock")
+# sock = socket.socket(socket.AF_UNIX); sock.connect("/tmp/ble-flight-bridge.sock")
 sock.sendall(json.dumps({"topic": "position", "seq": 1}).encode() + b"\n")
 
 for line in sock.makefile("rb"):

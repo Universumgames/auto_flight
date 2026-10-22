@@ -50,7 +50,7 @@ ios_app:
       - app/build/ios/Build/Products
     expire_in: 1 week
 
-ble_recorder:
+ble_flight_bridge:
   stage: build
   needs: []
   # bookworm (glibc 2.36) rather than the newest base, so the executable runs on older distros too.
@@ -60,13 +60,13 @@ ble_recorder:
     # binutils: PyInstaller needs objdump to collect shared libraries on Linux.
     - apt-get install -y --no-install-recommends -qq make binutils
   script:
-    - cd app/bleRecorder
+    - cd app/bleFlightBridge
     - make test
     - make
-    - ./dist/ble-recorder --help
+    - ./dist/ble-flight-bridge --help
   artifacts:
     paths:
-      - app/bleRecorder/dist/ble-recorder
+      - app/bleFlightBridge/dist/ble-flight-bridge
     expire_in: 1 week
 
 motor_controller:

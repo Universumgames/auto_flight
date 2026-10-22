@@ -243,16 +243,8 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix compile">
-      <change afterPath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster_esp.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster_native.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/components/camera_com_master/CameraComMaster.cpp" afterDir="false" />
+    <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="fix tests">
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/cam_com/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication_native.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/cam_com/CameraCommunication_native.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -418,61 +410,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0000000004442415" />
-      <entry key="S5" value="1.000212637784067" />
-      <entry key="S10" value="1.0217583168077344" />
-      <entry key="S30" value="1.7464160510798643" />
-      <entry key="S60" value="3.4610565338811408" />
-      <entry key="M2" value="6.393005528323032" />
-      <entry key="M5" value="14.022321170008647" />
-      <entry key="M10" value="32.9111595844674" />
-      <entry key="M15" value="55.72808558817781" />
-      <entry key="M30" value="110.3219822665056" />
-      <entry key="H1" value="167.9491292986139" />
-      <entry key="H2" value="239.19409187762108" />
-      <entry key="H4" value="347.4314848379913" />
-      <entry key="D1" value="664.716406700799" />
-      <entry key="W1" value="1637.7908053579708" />
+      <entry key="MS100" value="1.0435857395734502" />
+      <entry key="MS500" value="1.534402995605504" />
+      <entry key="S2" value="1.8550974227016064" />
+      <entry key="S5" value="1.9639016226353774" />
+      <entry key="S10" value="2.1295229859241" />
+      <entry key="S30" value="2.931653365917218" />
+      <entry key="S60" value="4.536759850581856" />
+      <entry key="M2" value="7.476196607185189" />
+      <entry key="M5" value="15.18189347287192" />
+      <entry key="M10" value="33.91039773987104" />
+      <entry key="M15" value="56.59280977884256" />
+      <entry key="M30" value="111.19265108334507" />
+      <entry key="H1" value="169.0873431686198" />
+      <entry key="H2" value="240.5796409142204" />
+      <entry key="H4" value="348.9849601039969" />
+      <entry key="D1" value="666.5739496116167" />
+      <entry key="W1" value="1639.7406587710207" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="1.0793077601713853E-169" />
-      <entry key="S2" value="7.767357031222382E-43" />
-      <entry key="S5" value="2.1088391796684602E-17" />
-      <entry key="S10" value="6.461119328166079E-9" />
-      <entry key="S30" value="0.0029561615576805876" />
-      <entry key="S60" value="0.08110539956222851" />
-      <entry key="M2" value="0.6129205136885902" />
-      <entry key="M5" value="3.9056057909784663" />
-      <entry key="M10" value="10.427088191990823" />
-      <entry key="M15" value="16.54638661649206" />
-      <entry key="M30" value="29.368392035090544" />
-      <entry key="H1" value="41.41147164437731" />
-      <entry key="H2" value="52.7863170196031" />
-      <entry key="H4" value="67.4482599426181" />
-      <entry key="D1" value="112.71324952577146" />
-      <entry key="W1" value="366.31127803950034" />
+      <entry key="MS500" value="8.881995960265242E-186" />
+      <entry key="S2" value="7.398004414681031E-47" />
+      <entry key="S5" value="5.194933455344064E-19" />
+      <entry key="S10" value="1.014088891791036E-9" />
+      <entry key="S30" value="0.001594596915195107" />
+      <entry key="S60" value="0.059567743038683015" />
+      <entry key="M2" value="0.5252727190173855" />
+      <entry key="M5" value="3.671814068268838" />
+      <entry key="M10" value="10.11018690853612" />
+      <entry key="M15" value="16.20941194322984" />
+      <entry key="M30" value="29.067803440550538" />
+      <entry key="H1" value="41.199001188506486" />
+      <entry key="H2" value="52.65072710521179" />
+      <entry key="H4" value="67.36157853871656" />
+      <entry key="D1" value="112.68909427315648" />
+      <entry key="W1" value="366.30006227828346" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9201876506248751" />
-      <entry key="MS500" value="0.9835020740262483" />
-      <entry key="S2" value="0.9958497533995945" />
-      <entry key="S5" value="0.9985206883044431" />
-      <entry key="S10" value="1.0193104311423051" />
-      <entry key="S30" value="1.730183647863528" />
-      <entry key="S60" value="3.5090597134189547" />
-      <entry key="M2" value="6.961655274284138" />
-      <entry key="M5" value="17.86835059753717" />
-      <entry key="M10" value="43.27435970763524" />
-      <entry key="M15" value="72.21258740425499" />
-      <entry key="M30" value="139.64042812414453" />
-      <entry key="H1" value="209.32712702882054" />
-      <entry key="H2" value="291.9600141450961" />
-      <entry key="H4" value="414.8674830318714" />
-      <entry key="D1" value="777.4265823873742" />
-      <entry key="W1" value="2004.1004890232525" />
+      <entry key="MS100" value="0.9283975747281413" />
+      <entry key="MS500" value="1.5008397667206916" />
+      <entry key="S2" value="1.8450841503207405" />
+      <entry key="S5" value="1.9596848536324953" />
+      <entry key="S10" value="2.1270211097559635" />
+      <entry key="S30" value="2.922184606820341" />
+      <entry key="S60" value="4.571658464728157" />
+      <entry key="M2" value="7.963350445822037" />
+      <entry key="M5" value="18.797625861605532" />
+      <entry key="M10" value="43.9586024694039" />
+      <entry key="M15" value="72.74157336253236" />
+      <entry key="M30" value="140.2110076142853" />
+      <entry key="H1" value="210.25303621954302" />
+      <entry key="H2" value="293.21002267009317" />
+      <entry key="H4" value="416.3342911600348" />
+      <entry key="D1" value="779.2599704556245" />
+      <entry key="W1" value="2006.0391266883737" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -2081,7 +2073,6 @@
       <path value="$USER_HOME$/.espressif/v6.1/esp-idf/components/spiffs/spiffs" />
       <path value="$USER_HOME$/.espressif/v6.1/esp-idf/components/unity/unity" />
     </ignored-roots>
-    <MESSAGE value="get magnetometer and i2c working again" />
     <MESSAGE value="add localization to app" />
     <MESSAGE value="refactor packet de-/serialisation and prepare for alternative route algorithms" />
     <MESSAGE value="bugfixes and magnetometer testing" />
@@ -2106,7 +2097,8 @@
     <MESSAGE value="fix ci/cd" />
     <MESSAGE value="prep cnn and camera recording" />
     <MESSAGE value="fix compile" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix compile" />
+    <MESSAGE value="fix tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix tests" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
