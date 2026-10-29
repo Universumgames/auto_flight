@@ -3,12 +3,16 @@
 
 #include "scanner_i2c_manager.hpp"
 
+#include <cstring>
+
+#include "esp_attr.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "driver/gpio.h"
 #include "driver/i2c_master.h"
 #include "driver/i2c_slave.h"
 #include "esp_rom_sys.h"
+#include "freertos/task.h"
 
 static ScannerI2CManager* instance = new ScannerI2CManager();
 
@@ -160,6 +164,92 @@ void ScannerI2CManager::initSlave(uint16_t address) {
              CONFIG_I2C_PIN_SDA, CONFIG_I2C_PIN_SCL);
 
     slaveInitialized = true;
+}
+
+bool ScannerI2CManager::registerSlaveCallbacks(SlaveReceiveCallback onReceive, SlaveRequestCallback onRequest) {
+    if (!instance->slaveInitialized || !instance->slaveBus) {
+        ESP_LOGE("scanner_i2c_manager", "Cannot register slave callbacks: slave bus not initialized");
+        return false;
+    }
+    if (instance->slaveEventQueue) {
+        ESP_LOGE("scanner_i2c_manager", "Slave callbacks already registered");
+        return false;
+    }
+
+    instance->slaveReceiveCallback = std::move(onReceive);
+    instance->slaveRequestCallback = std::move(onRequest);
+
+    instance->slaveEventQueue = xQueueCreate(8, sizeof(SlaveEvent));
+    if (!instance->slaveEventQueue) {
+        ESP_LOGE("scanner_i2c_manager", "Failed to create slave event queue");
+        return false;
+    }
+
+    static i2c_slave_event_callbacks_t callbacks = {
+        .on_request = on_slave_request,
+        .on_receive = on_slave_receive,
+    };
+
+    esp_err_t err = i2c_slave_register_event_callbacks(instance->slaveBus, &callbacks, instance);
+    I2C_ERROR_LOG("scanner_i2c_manager", "i2c_slave_register_event_callbacks failed", err);
+    if (err != ESP_OK) {
+        vQueueDelete(instance->slaveEventQueue);
+        instance->slaveEventQueue = nullptr;
+        return false;
+    }
+
+    // High priority, the master is clock stretched until the request is answered
+    xTaskCreate(slaveTaskLoop, "scanner_i2c", 4096, instance, configMAX_PRIORITIES - 2, nullptr);
+    return true;
+}
+
+void ScannerI2CManager::slaveTaskLoop(void* arg) {
+    const auto self = static_cast<ScannerI2CManager*>(arg);
+    SlaveEvent event{};
+    while (true) {
+        if (xQueueReceive(self->slaveEventQueue, &event, portMAX_DELAY) != pdTRUE) {
+            continue;
+        }
+        if (event.type == SlaveEvent::RECEIVE) {
+            if (self->slaveReceiveCallback) {
+                self->slaveReceiveCallback(event.data, event.length);
+            }
+        } else {
+            if (self->slaveRequestCallback) {
+                self->slaveRequestCallback(event.command);
+            }
+        }
+    }
+}
+
+bool IRAM_ATTR ScannerI2CManager::on_slave_receive(i2c_slave_dev_handle_t i2c_slave, const i2c_slave_rx_done_event_data_t* evt_data, void* arg) {
+    const auto self = static_cast<ScannerI2CManager*>(arg);
+    if (evt_data->length == 0) {
+        return false;
+    }
+    self->lastCommand = evt_data->buffer[0];
+
+    SlaveEvent event{};
+    event.type = SlaveEvent::RECEIVE;
+    event.command = evt_data->buffer[0];
+    event.length = evt_data->length < sizeof(event.data) ? evt_data->length : sizeof(event.data);
+    memcpy(event.data, evt_data->buffer, event.length);
+
+    BaseType_t higherPriorityTaskWoken = pdFALSE;
+    xQueueSendFromISR(self->slaveEventQueue, &event, &higherPriorityTaskWoken);
+    return higherPriorityTaskWoken == pdTRUE;
+}
+
+bool IRAM_ATTR ScannerI2CManager::on_slave_request(i2c_slave_dev_handle_t i2c_slave, const i2c_slave_request_event_data_t* evt_data, void* arg) {
+    const auto self = static_cast<ScannerI2CManager*>(arg);
+
+    SlaveEvent event{};
+    event.type = SlaveEvent::REQUEST;
+    event.command = self->lastCommand;
+
+    BaseType_t higherPriorityTaskWoken = pdFALSE;
+    xQueueSendFromISR(self->slaveEventQueue, &event, &higherPriorityTaskWoken);
+    return higherPriorityTaskWoken == pdTRUE;
 }
 
 void ScannerI2CManager::recoverBus() {
