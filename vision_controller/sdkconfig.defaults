@@ -1,5 +1,5 @@
-# Requires a 4MB+ flash chip: the app partition alone is 3MB (see partitions.csv).
-CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+# Seeed XIAO ESP32S3 Sense: 8MB flash (app partition alone is 3MB, see partitions.csv).
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
 CONFIG_PARTITION_TABLE_CUSTOM=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 
@@ -12,6 +12,13 @@ CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
 CONFIG_COMPILER_CXX_EXCEPTIONS=y
 CONFIG_COMPILER_CXX_EXCEPTIONS_EMG_POOL_SIZE=0
 
-# On an S3/PSRAM board (e.g. ESP32-S3-EYE), also enable PSRAM support via
-# `idf.py menuconfig` -> Component config -> ESP PSRAM, and consider moving
-# the tensor arena into PSRAM (see main/inference.cc) if you grow the model.
+# XIAO ESP32S3 Sense has 8MB of octal PSRAM (quad mode fails with
+# "PSRAM chip is not connected, or wrong PSRAM line mode").
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+
+# I2C link to the flight controller on the XIAO header pins D4 (SDA) / D5 (SCL).
+# The shared default 47/48 is used by the XIAO Sense camera (HREF/D7).
+CONFIG_I2C_PIN_SDA=5
+CONFIG_I2C_PIN_SCL=6

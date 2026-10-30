@@ -8,25 +8,10 @@ dependencies:
       type: local
     version: '*'
   esp-idf-lib/ads111x:
-    dependencies:
-    - name: idf
-      version: '>=4.0'
-    - name: espressif/i2c_bus
-      public: true
+    dependencies: []
     source:
       path: ../shared_components/esp-idf-lib__ads111x
       type: local
-    targets:
-    - esp32
-    - esp32c2
-    - esp32c3
-    - esp32c5
-    - esp32c6
-    - esp32c61
-    - esp32h2
-    - esp32p4
-    - esp32s2
-    - esp32s3
     version: 1.1.14
   esp-idf-lib/esp_idf_lib_helpers:
     component_hash: 689853bb8993434f9556af0f2816e808bf77b5d22100144b21f3519993daf237
@@ -159,11 +144,7 @@ dependencies:
       type: service
     version: 1.5.2
   espressif/mpu6050:
-    dependencies:
-    - name: idf
-      version: '>=4.0'
-    - name: espressif/i2c_bus
-      public: true
+    dependencies: []
     source:
       path: ../shared_components/espressif__mpu6050
       type: local
@@ -183,9 +164,7 @@ dependencies:
       type: idf
     version: 6.1.0
   jgromes/radiolib:
-    dependencies:
-    - name: idf
-      version: '>=4.1'
+    dependencies: []
     source:
       path: ../shared_components/jgromes__radiolib
       type: local
@@ -257,6 +236,6 @@ direct_dependencies:
 - johboh/nlohmann-json
 - lvgl/lvgl
 - waveshare/esp_oled_ssd1315
-manifest_hash: 6e1e5b5437492b1eab0bd93c2aac30e249dd541a2845c175fa5a43d8fec0dca9
+manifest_hash: 9a9ade4b6f7fe7fd4a5fbc1939f9eb4c9bf9513befcd1a2241df10cccfe6cfc7
 target: esp32s3
 version: 3.0.0
