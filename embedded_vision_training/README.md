@@ -14,7 +14,7 @@ data/{train,val,test}/<class>/*.jpg
         │  train.py
         ▼
 models/fire_smoke_cnn.keras, models/labels.txt
-        │  convert_to_tflite.py
+        │  model_helper/modelConverter.py
         ▼
 models/fire_smoke_cnn_int8.tflite
         │  evaluate.py (sanity check accuracy after quantization)
@@ -25,10 +25,16 @@ models/fire_smoke_cnn_int8.tflite
 
 ## Setup
 
+Requires [uv](https://docs.astral.sh/uv/). It installs the pinned Python
+version (`.python-version`) and the locked dependencies (`uv.lock`):
+
 ```bash
-make venv
-source .venv/bin/activate
+uv sync        # or: make venv
 ```
+
+Run scripts with `uv run <script>.py` (the `make` targets below do this for
+you), or `source .venv/bin/activate` to use the environment directly.
+Add dependencies with `uv add <package>`.
 
 ## 1. Get data
 
@@ -89,7 +95,7 @@ tensor arena size configured in `vision_controller/main/inference.cpp`.
 TensorFlow Lite Micro on ESP32 needs a fully integer-quantized model (int8
 weights, activations, input and output) -- there's no practical float32
 inference path at any useful framerate without an FPU-heavy CPU. This
-happens in `convert_to_tflite.py` via post-training quantization, using a
+happens in `model_helper/modelConverter.py` via post-training quantization, using a
 sample of the training set as the representative dataset TFLite needs to
 compute per-tensor quantization ranges. `evaluate.py` re-checks accuracy
 after quantization since int8 rounding can occasionally hurt a borderline

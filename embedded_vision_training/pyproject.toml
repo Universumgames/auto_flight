@@ -1,0 +1,20 @@
+[project]
+name = "embedded-vision-training"
+version = "0.1.0"
+description = "Train a small fire/smoke CNN and export it as an int8 TFLite model for the vision_controller"
+readme = "README.md"
+# TensorFlow 2.21 only ships wheels for CPython 3.10-3.13.
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "tensorflow>=2.21.0",
+    "keras>=3.15.1",
+    "numpy>=2.5.4",
+    "pillow>=13.0.0",
+    "scikit-learn>=1.9.1",
+    "matplotlib>=3.11.2",
+    "kagglehub>=1.0.3",
+]
+
+[tool.uv]
+# Flat collection of scripts, not an installable package.
+package = false
