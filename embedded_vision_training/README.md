@@ -2,7 +2,7 @@
 
 Trains a small image classifier (fire / smoke / none) and exports it as an
 int8-quantized TensorFlow Lite model, ready to embed into the
-[`fire_detection_esp`](../fire_detection_esp) ESP-IDF project.
+[`vision_controller`](../vision_controller) ESP-IDF project.
 
 ## Pipeline
 
@@ -20,7 +20,7 @@ models/fire_smoke_cnn_int8.tflite
         │  evaluate.py (sanity check accuracy after quantization)
         │  export_c_array.py
         ▼
-../fire_detection_esp/main/model_data.{hpp,cpp}
+../vision_controller/main/model_data.{hpp,cpp}
 ```
 
 ## Setup
@@ -63,7 +63,7 @@ make prepare   # splits data/raw into train/val/test (70/15/15)
 make train     # trains the CNN, ~a few minutes on CPU for a small dataset
 make convert   # int8-quantizes to .tflite
 make evaluate  # accuracy/confusion matrix on the test set, post-quantization
-make export    # writes model_data.hpp/.cpp into ../fire_detection_esp/main/
+make export    # writes model_data.hpp/.cpp into ../vision_controller/main/
 ```
 
 or all at once (skipping download, assuming `data/raw/` is already populated):
@@ -82,7 +82,7 @@ whole interpreter, tensor arena, and activations in a few hundred KB of RAM,
 not just the model weights. If you need more accuracy and have headroom
 (e.g. an S3 board with PSRAM), widen the `filters` in `model.py` and/or
 increase `IMAGE_SIZE` in `config.py`; both directly trade off against the
-tensor arena size configured in `fire_detection_esp/main/inference.cpp`.
+tensor arena size configured in `vision_controller/main/inference.cpp`.
 
 ## Why int8 quantization
 

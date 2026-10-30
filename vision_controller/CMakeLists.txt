@@ -11,4 +11,4 @@ set(FLIGHT_DEVICE_TYPE_PLANE 1)
 set(EXTRA_COMPONENT_DIRS components shared_components)
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-project(fire_detection_esp)
+project(vision_controller)

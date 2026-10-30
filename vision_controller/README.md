@@ -1,4 +1,4 @@
-# fire_detection_esp
+# vision_controller
 
 ESP-IDF firmware that runs the CNN trained in
 [`fire_detection_training`](../fire_detection_training) on an ESP32, via

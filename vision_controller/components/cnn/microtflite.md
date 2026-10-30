@@ -60,7 +60,7 @@ The component is downloaded into `managed_components/` on the next build. **ESP-
 ### 1.2 Project layout used in this guide
 
 ```
-fire_detection_esp/
+vision_controller/
 ├── CMakeLists.txt
 ├── sdkconfig.defaults
 ├── partitions.csv

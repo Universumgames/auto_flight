@@ -1,8 +1,8 @@
 """Embed the quantized .tflite model into the ESP-IDF project as a C++ array.
 
-Writes main/model_data.cpp and main/model_data.hpp into fire_detection_esp/,
+Writes main/model_data.cpp and main/model_data.hpp into vision_controller/,
 replacing the placeholder committed there. Run this after convert_to_tflite.py
-and before building fire_detection_esp.
+and before building vision_controller.
 """
 
 import argparse
@@ -57,7 +57,7 @@ def main():
     if not args.labels.is_file():
         raise SystemExit(f"{args.labels} not found -- run train.py first.")
     if not args.output_dir.is_dir():
-        raise SystemExit(f"{args.output_dir} not found -- is fire_detection_esp/main/ present?")
+        raise SystemExit(f"{args.output_dir} not found -- is vision_controller/main/ present?")
 
     model_bytes = args.model.read_bytes()
     labels = [line.strip() for line in args.labels.read_text().splitlines() if line.strip()]

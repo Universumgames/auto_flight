@@ -245,14 +245,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="add conditional ci/cd">
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Kconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/Kconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/main/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig.defaults" beforeDir="false" afterPath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig.defaults" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../vision_controller/components/camera/Kconfig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../vision_controller/components/cnn/Kconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.hpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vision_controller/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/dependencies.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vision_controller/main/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/main/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vision_controller/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/sdkconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../vision_controller/sdkconfig.defaults" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/sdkconfig.defaults" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />

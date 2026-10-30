@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b056a474-fb99-40cd-93b0-50dbdbeb78c3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/camera/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Camera.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/camera/Kconfig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/camera/idf_component.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CNN.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/CNN.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/Kconfig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/idf_component.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/cnn/microtflite.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/ScannerController.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/ScannerController.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/scanner_i2c_manager.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/components/scanner_controller/scanner_i2c_manager.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/dependencies.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/fire_detection_training" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/idf_component.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/model_data.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/old/i2c_task.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/old/i2c_task.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/old/image_provider.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/old/image_provider.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/old/inference.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/main/old/inference.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/partitions.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/sdkconfig.defaults" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../fire_detection_esp/shared_components" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/convert_to_tflite.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/download_dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluate.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/export_c_array.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/prepare_dataset.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000000026051254" />
+      <entry key="S2" value="1.007144258511718" />
+      <entry key="S5" value="1.1385424502820771" />
+      <entry key="S10" value="1.3722129098809943" />
+      <entry key="S30" value="1.7193338165946082" />
+      <entry key="S60" value="1.8481354942428765" />
+      <entry key="M2" value="1.9209427203919236" />
+      <entry key="M5" value="1.9675937350472013" />
+      <entry key="M10" value="1.983663425693566" />
+      <entry key="M15" value="1.989079079341052" />
+      <entry key="M30" value="1.9945245493908392" />
+      <entry key="H1" value="1.9972585168304353" />
+      <entry key="H2" value="1.9986283176589952" />
+      <entry key="H4" value="1.9993139234790012" />
+      <entry key="D1" value="1.9998856212118863" />
+      <entry key="W1" value="1.9999836593721" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.9526379980439373" />
+      <entry key="MS500" value="0.9903428737372165" />
+      <entry key="S2" value="1.0040942698924993" />
+      <entry key="S5" value="1.132575262103224" />
+      <entry key="S10" value="1.3649532780927198" />
+      <entry key="S30" value="1.714781214131493" />
+      <entry key="S60" value="1.8454621186815814" />
+      <entry key="M2" value="1.9194936789335668" />
+      <entry key="M5" value="1.9669853047745498" />
+      <entry key="M10" value="1.983354246373947" />
+      <entry key="M15" value="1.9888718443596765" />
+      <entry key="M30" value="1.994420371083422" />
+      <entry key="H1" value="1.997206286888746" />
+      <entry key="H2" value="1.9986021674179446" />
+      <entry key="H4" value="1.9993008395317582" />
+      <entry key="D1" value="1.9998834393273008" />
+      <entry key="W1" value="1.9999833476442501" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 6,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3LQ5o7OazixUJph5RyqjjnD6Xmh" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "cnn",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
+    "settings.editor.selected.configurable": "settings.sync"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
+      <steps>
+        <latexmkCompile id="01ff33b2-7bcf-41ee-b567-b3104d472638" />
+        <pdfViewer id="427c66b5-4acb-420c-9143-12d4ca659819" />
+      </steps>
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-73a66231627c-5bd6d13a2a75-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-262.10968.92" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b056a474-fb99-40cd-93b0-50dbdbeb78c3" name="Changes" comment="" />
+      <created>1793373622605</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1793373622605</updated>
+      <workItem from="1793373623630" duration="447000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
