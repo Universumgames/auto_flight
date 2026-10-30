@@ -252,7 +252,8 @@ void OledDisplayClass::statusTaskEntry(void* param) {
         const ConnectionState linkState = FlightStorage.getBaseConnectionState();
         lines[lineCount++] = std::string("Link: ") +
             (linkState == ConnectionState::CONNECTED ? "CONNECTED" : "CONNECTING");
-#else
+#elif defined(FLIGHT_DEVICE_TYPE_BASE_STATION)
+        if defined(FLIGHT_DEVICE_TYPE_BASE_STATION)
         const auto& knownPlanes = Cache.getSourceLastUpdateTimes();
         const auto connectionCount = std::ranges::count_if(knownPlanes,
                                                            [](const auto& plane) {
@@ -282,7 +283,7 @@ void OledDisplayClass::statusTaskEntry(void* param) {
         lines[lineCount++] =
             "Plane: " + connectionSummary(planeDevices, planeDeviceNames, std::size(planeDevices));
         lines[lineCount++] = "ID: " + std::to_string(DeviceId::get32());
-#else
+#elif defined(FLIGHT_DEVICE_TYPE_BASE_STATION)
         auto components = Cache.getLatestComponentStatus(DeviceId::BASE_STATION);
         const ConnectionState baseDevices[] = {
             components.gps,
