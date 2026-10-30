@@ -22,4 +22,4 @@ LABELS_PATH = MODELS_DIR / "labels.txt"
 MODEL_TFLITE_PATH = MODELS_DIR / "fire_smoke_cnn_int8.tflite"
 
 # Where export_c_array.py writes the generated C source by default.
-ESP_MAIN_DIR = ROOT_DIR.parent / "fire_detection_esp" / "main"
+ESP_MAIN_DIR = ROOT_DIR.parent / "fire_detection_esp" / "components" / "cnn"

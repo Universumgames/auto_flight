@@ -7,9 +7,10 @@ CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
 # more stack than the default main task allows.
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
 
-# C++ exceptions/RTTI are off by default in ESP-IDF; TFLM doesn't need them,
-# but leave this here as a reminder if a future dependency does.
-# CONFIG_COMPILER_CXX_EXCEPTIONS=y
+# C++ exceptions are off by default in ESP-IDF; the camera component uses them
+# for bounds-checked pixel access (FrameData::at).
+CONFIG_COMPILER_CXX_EXCEPTIONS=y
+CONFIG_COMPILER_CXX_EXCEPTIONS_EMG_POOL_SIZE=0
 
 # On an S3/PSRAM board (e.g. ESP32-S3-EYE), also enable PSRAM support via
 # `idf.py menuconfig` -> Component config -> ESP PSRAM, and consider moving

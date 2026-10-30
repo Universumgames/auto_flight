@@ -1,0 +1,27 @@
+menu "Camera"
+
+    config CAMERA_FOV
+        int "Camera Field of View (FOV)"
+        default 90
+        help
+          Set the field of view for the camera in degrees. This determines how wide the camera can see.
+
+    config CAMERA_MAX_DISTANCE
+        int "Camera Maximum Distance"
+        default 20
+        help
+          Set the maximum distance the camera can capture. This is useful for limiting the range of the camera.
+
+    config CAMERA_RESOLUTION_X
+        int "Camera Resolution X"
+        default 640
+        help
+          Set the horizontal resolution of the camera in pixels.
+
+    config CAMERA_RESOLUTION_Y
+        int "Camera Resolution Y"
+        default 480
+        help
+          Set the vertical resolution of the camera in pixels.
+
+endmenu

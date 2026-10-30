@@ -53,6 +53,15 @@ void ScannerControllerClass::init() {
     }
 
     xTaskCreate(scanLoop, "scanner_scan", 4096, this, configMAX_PRIORITIES - 3, nullptr);
+
+    camera = new Camera();
+    if (camera->init() != ESP_OK) {
+        ESP_LOGE(TAG_SCANNER_CONTROLLER, "Failed to initialize camera");
+    }
+    classifier = new CNN();
+    if (classifier->init() != ESP_OK) {
+        ESP_LOGE(TAG_SCANNER_CONTROLLER, "Failed to initialize CNN classifier");
+    }
 }
 
 std::optional<ScanRequest> ScannerControllerClass::waitForScanRequest(int timeoutMs) const {

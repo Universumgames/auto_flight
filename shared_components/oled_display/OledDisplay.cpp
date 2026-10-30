@@ -272,11 +272,12 @@ void OledDisplayClass::statusTaskEntry(void* param) {
             FlightStorage.getPlaneMagnetometerConnectionState(),
             FlightStorage.getPlaneAccelerometerConnectionState(),
             FlightStorage.getPlaneBatteryConnectionState(),
+            FlightStorage.getPlaneCameraControlConnectionState()
         };
 
         static constexpr const char* planeDeviceNames[] = {
             "GPS", "Barometer",
-            "MotorControl", "Magnetometer", "Accelerometer", "Battery"
+            "MotorControl", "Magnetometer", "Accelerometer", "Battery", "Camera"
         };
         lines[lineCount++] =
             "Plane: " + connectionSummary(planeDevices, planeDeviceNames, std::size(planeDevices));

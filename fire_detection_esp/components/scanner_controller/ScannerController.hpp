@@ -2,12 +2,14 @@
 
 #include <optional>
 
+#include "Camera.hpp"
 #include "driver/i2c_slave.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 
 #include "CameraCommunication.hpp"
+#include "CNN.hpp"
 
 class ScannerControllerClass {
 private:
@@ -56,6 +58,9 @@ private:
     // Guarded by stateMutex
     std::optional<CameraCommunication::ScanResult> scanResult;
     std::optional<CameraCommunication::CNNClassifierMetadata> classifierMetadata;
+
+    Camera* camera = nullptr;
+    CNN* classifier = nullptr;
 
     void handleReceive(const uint8_t* data, size_t length);
     void handleRequest(uint8_t command);
