@@ -5,6 +5,6 @@ if (NOT NATIVE_BUILD)
     idf_component_register(
             SRCS ${camera_srcs}
             INCLUDE_DIRS "."
-            REQUIRES freertos esp_timer flight_com
+            REQUIRES freertos esp_timer flight_com esp32-camera
     )
 endif ()
