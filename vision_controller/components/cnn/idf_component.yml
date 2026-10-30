@@ -14,4 +14,7 @@ dependencies:
   #   # `public` flag doesn't have an effect dependencies of the `main` component.
   #   # All dependencies of `main` are public by default.
   #   public: true
-  espressif/esp-tflite-micro: "^1.4.1"
+  # public: CNN.hpp exposes the generated model_data.h, which includes tflite-micro headers.
+  espressif/esp-tflite-micro:
+    version: "^1.4.1"
+    public: true
