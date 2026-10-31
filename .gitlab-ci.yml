@@ -164,6 +164,28 @@ base_station:
       - base_station/build
     expire_in: 1 week
 
+vision_controller:
+  stage: build
+  needs: []
+  rules:
+    - *run_always
+    - changes:
+        - "vision_controller/**/*"
+        - "shared_components/**/*"
+        # The cnn component embeds the trained model and runs the C exporter from here.
+        - "embedded_vision_training/models/**/*"
+        - "embedded_vision_training/model_helper/**/*"
+        - "embedded_vision_training/config.py"
+        - ".gitlab-ci.yml"
+  image: espressif/idf:v6.1
+  script:
+    - cd vision_controller
+    - idf.py build
+  artifacts:
+    paths:
+      - vision_controller/build
+    expire_in: 1 week
+
 3d_models:
   stage: build
   needs: []

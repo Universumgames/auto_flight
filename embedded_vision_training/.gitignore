@@ -1,6 +1,5 @@
 .DS_Store
 data/
-models/
 .venv/
 venv/
 .idea/

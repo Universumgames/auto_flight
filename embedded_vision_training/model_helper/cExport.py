@@ -9,84 +9,18 @@ esp-tflite-micro headers the firmware is built against.
 """
 import argparse
 import re
-import struct
 import sys
 from pathlib import Path
 
-# Run as a script (model_helper/cExport.py), so the training root holding config.py isn't on sys.path
+# Run as a script (model_helper/cExport.py), so the training root holding config.py and the
+# model_helper package isn't on sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from config import MODEL_TFLITE_PATH, LABELS_PATH, ESP_MAIN_DIR
+from model_helper.extractMetadata import get_model_ops
 
 DEFAULT_TFLM_DIR = ESP_MAIN_DIR.parent.parent / "managed_components" / "espressif__esp-tflite-micro"
 RESOLVER_HEADER = Path("tensorflow/lite/micro/micro_mutable_op_resolver.h")
 SCHEMA_HEADER = Path("tensorflow/lite/schema/schema_generated.h")
-
-
-class _FlatBuffer:
-    """Just enough of a flatbuffer reader to walk tables, vectors and strings."""
-
-    def __init__(self, data: bytes):
-        self.data = data
-
-    def u16(self, pos: int) -> int:
-        return struct.unpack_from("<H", self.data, pos)[0]
-
-    def u32(self, pos: int) -> int:
-        return struct.unpack_from("<I", self.data, pos)[0]
-
-    def i32(self, pos: int) -> int:
-        return struct.unpack_from("<i", self.data, pos)[0]
-
-    def root(self) -> int:
-        return self.u32(0)
-
-    def field(self, table: int, index: int) -> int | None:
-        """Absolute position of field `index` of `table`, or None if it's absent (default value)."""
-        vtable = table - self.i32(table)
-        entry = 4 + 2 * index
-        if entry >= self.u16(vtable):
-            return None
-        offset = self.u16(vtable + entry)
-        return table + offset if offset else None
-
-    def deref(self, pos: int) -> int:
-        return pos + self.u32(pos)
-
-    def tables(self, table: int, index: int) -> list[int]:
-        pos = self.field(table, index)
-        if pos is None:
-            return []
-        vector = self.deref(pos)
-        return [self.deref(vector + 4 + 4 * i) for i in range(self.u32(vector))]
-
-    def string(self, table: int, index: int) -> str | None:
-        pos = self.field(table, index)
-        if pos is None:
-            return None
-        string = self.deref(pos)
-        return self.data[string + 4:string + 4 + self.u32(string)].decode()
-
-
-def get_model_ops(tfLiteModelData: bytes) -> list[int]:
-    """Builtin operator codes used by the model (tflite schema: Model.operator_codes)."""
-    if tfLiteModelData[4:8] != b"TFL3":
-        raise ValueError("not a .tflite model (missing TFL3 file identifier)")
-    fb = _FlatBuffer(tfLiteModelData)
-    codes = []
-    # Model field 1: operator_codes; OperatorCode fields: 0 deprecated_builtin_code (int8),
-    # 1 custom_code, 3 builtin_code (int32). Codes >= 127 only fit builtin_code, older
-    # converters only write deprecated_builtin_code, so the actual code is the larger one.
-    for op_code in fb.tables(fb.root(), 1):
-        custom = fb.string(op_code, 1)
-        if custom is not None:
-            raise ValueError(f"custom op {custom!r} can't be registered automatically")
-        deprecated = fb.field(op_code, 0)
-        builtin = fb.field(op_code, 3)
-        code = max(struct.unpack_from("<b", tfLiteModelData, deprecated)[0] if deprecated is not None else 0,
-                   fb.i32(builtin) if builtin is not None else 0)
-        if code not in codes:
-            codes.append(code)
-    return codes
 
 
 def get_resolver_methods(tflm_dir: Path) -> dict[int, tuple[str, str]]:
