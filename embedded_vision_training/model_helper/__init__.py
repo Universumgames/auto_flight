@@ -5,7 +5,5 @@ from model_helper.cExport import export_model_to_c
 
 __all__ = [
     "export_model_to_c",
-    "create_raw_model"
 ]
 
-from model_helper.creator import create_raw_model
