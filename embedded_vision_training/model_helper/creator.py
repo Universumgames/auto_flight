@@ -1,15 +1,8 @@
-"""Tiny depthwise-separable CNN, sized to fit an ESP32 tensor arena.
-
-Architecture is a scaled-down MobileNet (same family as the TFLite Micro
-"person detection" reference model), which is the standard shape for image
-classifiers that need to run on microcontrollers.
-"""
 
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from config import CHANNELS, IMAGE_SIZE
-
+from config import IMAGE_SIZE, CHANNELS
 
 def _depthwise_separable_block(x, filters: int, strides: int):
     x = layers.DepthwiseConv2D(3, strides=strides, padding="same", use_bias=False)(x)
@@ -20,9 +13,14 @@ def _depthwise_separable_block(x, filters: int, strides: int):
     x = layers.ReLU()(x)
     return x
 
-
-def build_model(num_classes: int, image_size: int = IMAGE_SIZE) -> keras.Model:
-    inputs = keras.Input(shape=(image_size, image_size, CHANNELS), name="image")
+def create_raw_model(name: str, num_classes: int, image_size: int = IMAGE_SIZE, color_channel_count: int = CHANNELS) -> keras.Model:
+    """
+    name: the filename of the model
+    num_classes: number of classes
+    image_size: pixel size of the square input image
+    color_channel_count: number of color channels (3 for RGB)
+    """
+    inputs = keras.Input(shape=(image_size, image_size, color_channel_count), name="image")
 
     # Rescale uint8 [0, 255] -> float32 [-1, 1]. This lives inside the graph
     # so the same preprocessing is baked into the exported TFLite model.
@@ -42,8 +40,8 @@ def build_model(num_classes: int, image_size: int = IMAGE_SIZE) -> keras.Model:
     x = layers.Dropout(0.3)(x)
     outputs = layers.Dense(num_classes, activation="softmax", name="class")(x)
 
-    return keras.Model(inputs, outputs, name="fire_smoke_cnn")
+    return keras.Model(inputs, outputs, name=name)
 
 
 if __name__ == "__main__":
-    build_model(num_classes=3).summary()
+    create_raw_model(name="fire_smoke_cnn", num_classes=3).summary()

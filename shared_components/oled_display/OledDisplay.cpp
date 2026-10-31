@@ -253,7 +253,6 @@ void OledDisplayClass::statusTaskEntry(void* param) {
         lines[lineCount++] = std::string("Link: ") +
             (linkState == ConnectionState::CONNECTED ? "CONNECTED" : "CONNECTING");
 #elif(defined(FLIGHT_DEVICE_TYPE_BASE_STATION))
-        if defined(FLIGHT_DEVICE_TYPE_BASE_STATION)
         const auto& knownPlanes = Cache.getSourceLastUpdateTimes();
         const auto connectionCount = std::ranges::count_if(knownPlanes,
                                                            [](const auto& plane) {

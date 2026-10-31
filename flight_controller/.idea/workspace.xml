@@ -245,18 +245,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="add conditional ci/cd">
-      <change afterPath="$PROJECT_DIR$/../vision_controller/components/camera/Kconfig" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../vision_controller/components/cnn/Kconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/components/camera/Camera.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vision_controller/dependencies.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/dependencies.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vision_controller/main/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/main/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vision_controller/sdkconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/sdkconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../vision_controller/sdkconfig.defaults" beforeDir="false" afterPath="$PROJECT_DIR$/../vision_controller/sdkconfig.defaults" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../embedded_vision_training/model_helper/creator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../embedded_vision_training/model.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" beforeDir="false" afterPath="$PROJECT_DIR$/../hardware/circuits/base_station_pcb/.history" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../shared_components/oled_display/OledDisplay.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../shared_components/oled_display/OledDisplay.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -370,6 +362,7 @@
   <component name="CopilotPersistence">
     <persistenceIdMap>
       <entry key="_/Users/universum/.espressif/v6.1/esp-idf" value="3DPSIwC87DpoyHi6sOoRa44wmss" />
+      <entry key="_/Users/universum/Developer/Studium/master_thesis/auto_flight/flight_controller" value="3LR2RwvUbemGB6WBsyV6AtsFBdR" />
       <entry key="_/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller" value="3DMyMsmDV5QJhpLVCSMWn4KRz55" />
       <entry key="_/Users/universum/Developer/Studium/semester_12/mrb/auto_flight/flight_controller/.idea" value="3DuvO8hY9O5SFNPFvt0n2lRNAbm" />
     </persistenceIdMap>
@@ -422,61 +415,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="5.398003344035662E-22" />
-      <entry key="MS500" value="6.07057801601711E-5" />
-      <entry key="S2" value="0.13354000225072624" />
-      <entry key="S5" value="0.6701648336881529" />
-      <entry key="S10" value="1.1556077856385774" />
-      <entry key="S30" value="1.6651222967012906" />
-      <entry key="S60" value="1.8248025559015064" />
-      <entry key="M2" value="1.9103695681474246" />
-      <entry key="M5" value="1.9636479233650364" />
-      <entry key="M10" value="1.9817395978883503" />
-      <entry key="M15" value="1.9878075729382347" />
-      <entry key="M30" value="1.9939573686581853" />
-      <entry key="H1" value="2.090427966853913" />
-      <entry key="H2" value="7.52311641572716" />
-      <entry key="H4" value="55.466828374489715" />
-      <entry key="D1" value="503.74908126623615" />
-      <entry key="W1" value="1595.0896412496916" />
+      <entry key="MS100" value="5.198913512551254E-25" />
+      <entry key="MS500" value="1.5134425278357765E-5" />
+      <entry key="S2" value="0.09436161199245087" />
+      <entry key="S5" value="0.5832506396338719" />
+      <entry key="S10" value="1.0780707265809475" />
+      <entry key="S30" value="1.62701566505858" />
+      <entry key="S60" value="1.8038012337449851" />
+      <entry key="M2" value="1.8993447068658227" />
+      <entry key="M5" value="1.9591071175767492" />
+      <entry key="M10" value="1.979446950928883" />
+      <entry key="M15" value="1.98627416590339" />
+      <entry key="M30" value="1.9931881447709352" />
+      <entry key="H1" value="2.0900247079214203" />
+      <entry key="H2" value="7.522390748479618" />
+      <entry key="H4" value="55.46415319115332" />
+      <entry key="D1" value="503.7450318542724" />
+      <entry key="W1" value="1595.087809499501" />
     </decayedCancelled>
     <decayedSelected>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0" />
-      <entry key="S60" value="1.0" />
-      <entry key="M2" value="1.0" />
-      <entry key="M5" value="1.0" />
-      <entry key="M10" value="1.0" />
-      <entry key="M15" value="1.0000000000003464" />
-      <entry key="M30" value="1.0000042414991026" />
-      <entry key="H1" value="1.01593225912572" />
-      <entry key="H2" value="2.0490536614723425" />
-      <entry key="H4" value="10.608260590165033" />
-      <entry key="D1" value="83.49458083949267" />
-      <entry key="W1" value="352.3636327839308" />
+      <entry key="MS100" value="1.0009631178754819" />
+      <entry key="MS500" value="1.2493078128380173" />
+      <entry key="S2" value="1.7066168219413647" />
+      <entry key="S5" value="1.8703092288863299" />
+      <entry key="S10" value="1.932903654664473" />
+      <entry key="S30" value="1.9771148150990459" />
+      <entry key="S60" value="1.9884911810932082" />
+      <entry key="M2" value="1.9942289379681162" />
+      <entry key="M5" value="1.9976875662208804" />
+      <entry key="M10" value="1.9988431139177365" />
+      <entry key="M15" value="1.999228593826167" />
+      <entry key="M30" value="1.9996184623635989" />
+      <entry key="H1" value="2.0157362783194945" />
+      <entry key="H2" value="3.0488560131776175" />
+      <entry key="H4" value="11.6077489502752" />
+      <entry key="D1" value="84.49390966416524" />
+      <entry key="W1" value="353.3632281407466" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="7.377526197451737E-12" />
-      <entry key="MS500" value="0.0059421365010062874" />
-      <entry key="S2" value="0.3278344314466708" />
-      <entry key="S5" value="0.9931202451110773" />
-      <entry key="S10" value="1.6322555557182121" />
-      <entry key="S30" value="2.4146525110240464" />
-      <entry key="S60" value="2.6864721349911496" />
-      <entry key="M2" value="2.837581434611199" />
-      <entry key="M5" value="2.9336143591721986" />
-      <entry key="M10" value="2.966565511316901" />
-      <entry key="M15" value="2.977656236810709" />
-      <entry key="M30" value="2.9888682138465428" />
-      <entry key="H1" value="3.1037954608100717" />
-      <entry key="H2" value="9.570469775425142" />
-      <entry key="H4" value="66.07263732933711" />
-      <entry key="D1" value="587.2412462240405" />
-      <entry key="W1" value="1947.4517191407372" />
+      <entry key="MS100" value="9.631178754889009E-4" />
+      <entry key="MS500" value="0.2507892338926682" />
+      <entry key="S2" value="0.9382701460131655" />
+      <entry key="S5" value="1.7346309436003546" />
+      <entry key="S10" value="2.4556408279403827" />
+      <entry key="S30" value="3.3365075569367537" />
+      <entry key="S60" value="3.6440451947846024" />
+      <entry key="M2" value="3.8154345140996524" />
+      <entry key="M5" value="3.924518136454019" />
+      <entry key="M10" value="3.9619766468824724" />
+      <entry key="M15" value="3.974587848230871" />
+      <entry key="M30" value="3.987329398242251" />
+      <entry key="H1" value="4.103003808477183" />
+      <entry key="H2" value="10.569450165560921" />
+      <entry key="H4" value="67.06940239402587" />
+      <entry key="D1" value="588.2365176176199" />
+      <entry key="W1" value="1948.4494816007798" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -512,9 +505,11 @@
             <option name="modelValue" value="auto" />
           </model>
         </option>
-        <option name="targetType" value="LOCAL" />
+        <option name="targetType" value="BACKGROUND" />
+        <option name="worktreeMode" value="WORKSPACE" />
       </template>
     </option>
+    <option name="version" value="1" />
   </component>
   <component name="ProjectStatusUIService">{
   &quot;uiKindId&quot;: &quot;Widget&quot;
@@ -1886,10 +1881,18 @@
       <item itemvalue="Google Test.flight_controller_test" />
     </list>
   </component>
-  <component name="SelectedDebugProfileService"><![CDATA[{
-  "profileIdByStamp": [],
-  "modificationCount": 46
-}]]></component>
+  <component name="SelectedDebugProfileService">{
+  &quot;profileIdByStamp&quot;: [
+    {
+      &quot;first&quot;: {
+        &quot;##RUN_CONFIGURATION##&quot;: &quot;CMake Application.Upload &amp; Monitor&quot;,
+        &quot;cmake&quot;: &quot;CMakeBuildProfile:Debug-ESP-IDF&quot;
+      },
+      &quot;second&quot;: &quot;d82c8aca-5a8e-4aa2-b7fb-a54e855b0ac4&quot;
+    }
+  ],
+  &quot;modificationCount&quot;: 48
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="87a59b20-3e69-4385-bc22-634600e51f96" name="Changes" comment="" />
