@@ -5,7 +5,7 @@ int8 quantization didn't wreck accuracy before flashing it to the ESP32.
 import argparse
 
 import numpy as np
-import tensorflow as tf
+from ai_edge_litert.interpreter import Interpreter
 from sklearn.metrics import classification_report, confusion_matrix
 
 from dataset_helper import load
@@ -22,7 +22,7 @@ def evaluate_tflite_model(tfLiteModel: Path, test_dir: Path, image_size: int):
     test_dir: Path to test dataset
     image_size: the image_size
     """
-    interpreter = tf.lite.Interpreter(model_path=tfLiteModel)
+    interpreter = Interpreter(model_path=str(tfLiteModel))
     interpreter.allocate_tensors()
     input_details = interpreter.get_input_details()[0]
     output_details = interpreter.get_output_details()[0]

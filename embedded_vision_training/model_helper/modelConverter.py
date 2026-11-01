@@ -9,6 +9,7 @@ import argparse
 from pathlib import Path
 
 import tensorflow as tf
+from ai_edge_litert.interpreter import Interpreter
 
 def representative_dataset(train_dir: Path, image_size: int, num_samples: int):
     """
@@ -62,7 +63,7 @@ def export_quantized(model: keras.Model, train_dir: Path, image_size: int, dest:
     with open(dest, "wb") as f:
         f.write(tflite_model)
 
-    interpreter = tf.lite.Interpreter(model_content=tflite_model)
+    interpreter = Interpreter(model_content=tflite_model)
     input_details = interpreter.get_input_details()[0]
     output_details = interpreter.get_output_details()[0]
 
