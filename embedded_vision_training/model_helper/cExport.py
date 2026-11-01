@@ -59,7 +59,8 @@ def export_model_to_c(name: str, tfLiteModelData: bytes, labels: list[str], outp
         '#include "tensorflow/lite/micro/micro_mutable_op_resolver.h"\n\n'
         "extern const unsigned char g_model[];\n"
         "extern const unsigned int g_model_len;\n"
-        "static const char* const kLabels[] = { \n"
+        f"static const char* modelName = \"{name}\"\n"
+        "static const char* kLabels[] = { \n"
         + ",\n".join(f'    "{label}"' for label in labels)
         + "\n};\n"
         f'static constexpr int kNumLabels = {len(labels)};\n\n'
