@@ -4,7 +4,7 @@ import random
 import shutil
 from pathlib import Path
 
-from config import RAW_DIR, ROOT_DIR, SPLIT_SEED, TRAIN_VAL_TEST_SPLIT
+import cli_defaults
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
 
@@ -84,12 +84,15 @@ def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
+    parser.add_argument("--raw-dir", type=Path, default=cli_defaults.RAW_DIR)
+    parser.add_argument("--out-dir", type=Path, default=cli_defaults.DATA_DIR)
     parser.add_argument("--copy", action="store_true", help="Copy files instead of symlinking (default: symlink).")
+    parser.add_argument("--split-relation", nargs="+", typle=float, default=list(cli_defaults.TRAIN_VAL_TEST_SPLIT), help="Split relation of train, validation and test")
+    parser.add_argument("--seed", default=cli_defaults.SPLIT_SEED)
     args = parser.parse_args()
 
-    train_ratio, val_ratio, _test_ratio = TRAIN_VAL_TEST_SPLIT
-    split_dataset(args.raw_dir, ROOT_DIR / "data", train_ratio, val_ratio, SPLIT_SEED, True)
+    train_ratio, val_ratio, _test_ratio = tuple(args.split_relation)
+    split_dataset(args.raw_dir, args.out_dir, train_ratio, val_ratio, args.seed, True)
 
 if __name__ == "__main__":
     main()

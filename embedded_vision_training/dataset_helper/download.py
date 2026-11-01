@@ -4,15 +4,13 @@ import shutil
 from pathlib import Path
 import kagglehub
 
-from config import RAW_DIR
-from download_dataset import DATASET_SLUG
-
+import cli_defaults
 
 def normalize(name: str) -> str:
     return re.sub(r"[^a-z0-9]", "", name.lower())
 
 
-def find_class_dirs(download_path: Path):
+def find_class_dirs(download_path: Path, class_aliases: dict[str, list[str]]):
     """Find every source directory per class among all subdirectories.
 
     Some datasets (e.g. the default FLAME-derived one) ship their own
@@ -22,7 +20,7 @@ def find_class_dirs(download_path: Path):
     keeping the source split separate would just waste held-out images.
     """
     normalized_aliases = {
-        cls: {normalize(alias) for alias in aliases} for cls, aliases in CLASS_ALIASES.items()
+        cls: {normalize(alias) for alias in aliases} for cls, aliases in class_aliases.items()
     }
 
     found = {}
@@ -85,12 +83,8 @@ def download_ds_slug(slug: str, class_aliases: dict[str, list[str]], raw_dir: Pa
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--slug", default=DATASET_SLUG, help="Kaggle dataset slug, e.g. 'owner/dataset-name'.")
-    parser.add_argument("--raw-dir", type=Path, default=RAW_DIR)
+    parser.add_argument("--slug", default=cli_defaults.DATASET_SLUG, help="Kaggle dataset slug, e.g. 'owner/dataset-name'.")
+    parser.add_argument("--raw-dir", type=Path, default=cli_defaults.RAW_DIR)
     args = parser.parse_args()
 
-    download_ds_slug(args.slug, {
-        "fire": ["fire"],
-        "smoke": ["smoke"],
-        "none": ["nofire", "nonfire", "no", "normal", "none", "negative", "background"],
-    }, args.raw_dir)
+    download_ds_slug(args.slug, cli_defaults.CLASS_ALIASES, args.raw_dir)

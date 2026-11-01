@@ -1,15 +1,16 @@
 """Train the fire/smoke CNN on data/{train,val}/<class>/*.jpg."""
 
 import argparse
+import json
 from pathlib import Path
 from typing import Any
 
-import keras
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
+from tensorflow.keras.callbacks import History
 
-from config import IMAGE_SIZE, MODEL_KERAS_PATH, LABELS_PATH, MODELS_DIR, TRAIN_DIR, VAL_DIR, ROOT_DIR
+import cli_defaults
 from dataset_helper.load import load_datasets
 from model_helper.modelCreator import create_raw_model
 
@@ -23,7 +24,7 @@ AUGMENTATION = keras.Sequential(
     name="augmentation",
 )
 
-def train_new_model(model_name: str, train_ds: tf.data.Dataset, val_ds: tf.data.Dataset, class_names: list[str], learning_rate: float, epochs: int):
+def train_new_model(model_name: str, output_dir: Path, color_channels: int, image_size: int, train_ds: tf.data.Dataset, val_ds: tf.data.Dataset, class_names: list[str], learning_rate: float, epochs: int) -> History:
     """
     Train a new model
     model_name: name the model should be saved as
@@ -33,7 +34,9 @@ def train_new_model(model_name: str, train_ds: tf.data.Dataset, val_ds: tf.data.
     learning_rate: the learning rate
     epochs: number of epochs to run
     """
-    model = create_raw_model(name=model_name, num_classes=len(class_names))
+    model = create_raw_model(name=model_name, num_classes=len(class_names), color_channel_count=color_channels, image_size=image_size)
+    model_filename = output_dir / (model_name + ".keras")
+    labels_filename = output_dir / (model_name + ".labels.txt")
     model.compile(
         optimizer=keras.optimizers.Adam(learning_rate),
         loss="sparse_categorical_crossentropy",
@@ -43,41 +46,48 @@ def train_new_model(model_name: str, train_ds: tf.data.Dataset, val_ds: tf.data.
 
     callbacks = [
         keras.callbacks.ModelCheckpoint(
-            str(MODEL_KERAS_PATH), monitor="val_accuracy", save_best_only=True, verbose=1
+            model_filename, monitor="val_accuracy", save_best_only=True, verbose=1
         ),
         keras.callbacks.EarlyStopping(monitor="val_accuracy", patience=8, restore_best_weights=True),
         keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=4),
     ]
 
-    model.fit(train_ds, validation_data=val_ds, epochs=epochs, callbacks=callbacks)
+    labels_filename.write_text("\n".join(class_names) + "\n")
+    history = model.fit(train_ds, validation_data=val_ds, epochs=epochs, callbacks=callbacks)
 
     # ModelCheckpoint already wrote the best model to MODEL_KERAS_PATH, but
     # make sure it exists even if val_accuracy never improved from -inf.
-    if not MODEL_KERAS_PATH.exists():
-        model.save(MODEL_KERAS_PATH)
+    if not model_filename.exists():
+        model.save(model_filename)
 
-    LABELS_PATH.write_text("\n".join(class_names) + "\n")
-    print(f"\nSaved model to {MODEL_KERAS_PATH}")
-    print(f"Saved labels to {LABELS_PATH}")
+    print(f"\nSaved model to {model_filename}")
+    print(f"Saved labels to {labels_filename}")
+    return history
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--epochs", type=int, default=40)
+    parser.add_argument("--epochs", type=int, default=2)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--learning-rate", type=float, default=1e-3)
+    parser.add_argument("--split-dir", type=Path, default=cli_defaults.DATA_DIR, help="Path to directory containing split for train and validation data")
+    parser.add_argument("--image-size", type=int, default=cli_defaults.IMAGE_SIZE)
+    parser.add_argument("--channels", type=int, default=cli_defaults.CHANNELS)
+    parser.add_argument("--out-dir", type=Path, default=cli_defaults.MODELS_DIR)
+    parser.add_argument("--name", type=str, help="Model name", default="debug")
     args = parser.parse_args()
 
-    if not TRAIN_DIR.is_dir() or not VAL_DIR.is_dir():
+    if not args.split_dir.is_dir():
         raise SystemExit("data/train and data/val not found -- run prepare_dataset.py first.")
 
-    MODELS_DIR.mkdir(parents=True, exist_ok=True)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    train_ds, val_ds, class_names = load_datasets(ROOT_DIR/"data", AUGMENTATION, IMAGE_SIZE, args.batch_size)
+    train_ds, val_ds, class_names = load_datasets(args.split_dir, AUGMENTATION, args.image_size, args.batch_size)
     print(f"Classes ({len(class_names)}): {class_names}")
 
-    train_new_model("fire_smoke_cnn", train_ds, val_ds, class_names, args.learning_rate, args.epochs)
-
+    history = train_new_model(args.name, args.out_dir, args.channels, args.image_size, train_ds, val_ds, class_names, args.learning_rate, args.epochs)
+    with open(args.out_dir / f"{args.name}_history.json", "w") as file:
+        file.write(json.dumps(history.history))
 
 if __name__ == "__main__":
     main()

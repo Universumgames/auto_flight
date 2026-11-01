@@ -2,7 +2,6 @@ import argparse
 import struct
 from pathlib import Path
 
-from config import MODEL_TFLITE_PATH
 from model_helper.FlatBuffer import FlatBuffer
 
 
@@ -35,7 +34,7 @@ def get_model_ops(tfLiteModelData: bytes) -> list[int]:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-m", "--model", default=str(MODEL_TFLITE_PATH), help=".tflite model to get metadata out of")
+    parser.add_argument("-m", "--model", type=Path, help=".tflite model to get metadata out of")
 
     args = parser.parse_args()
 

@@ -8,7 +8,6 @@ import numpy as np
 import tensorflow as tf
 from sklearn.metrics import classification_report, confusion_matrix
 
-from config import IMAGE_SIZE, MODEL_TFLITE_PATH, TEST_DIR
 from dataset_helper import load
 from pathlib import Path
 
@@ -50,13 +49,17 @@ def evaluate_tflite_model(tfLiteModel: Path, test_dir: Path, image_size: int):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default=str(MODEL_TFLITE_PATH))
+    parser.add_argument("--model", type=Path, help="Path to tflite model")
+    parser.add_argument("--test-dir", type=Path, help="Path to test data directory")
+    parser.add_argument("--image-size", type=int, help="Image size")
     args = parser.parse_args()
 
-    if not TEST_DIR.is_dir():
+    test_dir = args.test_dir
+
+    if not test_dir.is_dir():
         raise SystemExit("data/test not found -- run prepare_dataset.py first.")
 
-    evaluate_tflite_model(args.model, TEST_DIR, IMAGE_SIZE)
+    evaluate_tflite_model(args.model, test_dir, args.image_size)
 
 
 if __name__ == "__main__":

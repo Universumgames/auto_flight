@@ -13,11 +13,10 @@ if (NOT NATIVE_BUILD)
     # model). Written to this component's binary dir, which is a public include dir above.
     set(CNN_TRAINING_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../embedded_vision_training")
     set(CNN_MODEL_TFLITE "${CNN_TRAINING_DIR}/models/fire_smoke_cnn_int8.tflite")
-    set(CNN_MODEL_LABELS "${CNN_TRAINING_DIR}/models/labels.txt")
     set(CNN_MODEL_EXPORT "${CNN_TRAINING_DIR}/model_helper/cExport.py")
     set(CNN_MODEL_OUT "${CMAKE_CURRENT_BINARY_DIR}/model_data.h" "${CMAKE_CURRENT_BINARY_DIR}/model_data.cc")
 
-    foreach (input IN ITEMS "${CNN_MODEL_TFLITE}" "${CNN_MODEL_LABELS}")
+    foreach (input IN ITEMS "${CNN_MODEL_TFLITE}")
         if (NOT EXISTS "${input}")
             message(FATAL_ERROR "cnn: ${input} not found, train and convert the model first "
                     "(make pipeline in embedded_vision_training)")
@@ -36,7 +35,6 @@ if (NOT NATIVE_BUILD)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     set(CNN_MODEL_GEN_CMD ${Python3_EXECUTABLE} "${CNN_MODEL_EXPORT}"
             --model "${CNN_MODEL_TFLITE}"
-            --labels "${CNN_MODEL_LABELS}"
             --tflm-dir "${CNN_TFLM_DIR}"
             --out "${CMAKE_CURRENT_BINARY_DIR}/model_data")
     # Also generate once at configure time, so the header exists as soon as the project is

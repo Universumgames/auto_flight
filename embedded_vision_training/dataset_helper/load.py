@@ -1,11 +1,9 @@
 from pathlib import Path
-from typing import Any
 
 from PIL.Image import Image
 from tensorflow import keras
 import tensorflow as tf
 from tensorflow.python.keras import Sequential
-
 
 def load_datasets(ds_dir: Path, augmentation: Sequential, image_size: int, batch_size: int) -> tuple[tf.data.Dataset, tf.data.Dataset, list[str]]:
     """

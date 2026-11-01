@@ -6,15 +6,9 @@ for float32 inference at any useful framerate, and the int8 model is ~4x
 smaller than float32.
 """
 import argparse
-import tempfile
 from pathlib import Path
 
-import keras
 import tensorflow as tf
-
-from config import MODEL_KERAS_PATH, MODEL_TFLITE_PATH, TRAIN_DIR, IMAGE_SIZE
-
-NUM_REPRESENTATIVE_SAMPLES = 200
 
 def representative_dataset(train_dir: Path, image_size: int, num_samples: int):
     """
@@ -23,14 +17,14 @@ def representative_dataset(train_dir: Path, image_size: int, num_samples: int):
     image_size: the image size
     num_samples: the number of samples
     """
-    train_ds = keras.utils.image_dataset_from_directory(
+    train_ds = tf.keras.utils.image_dataset_from_directory(
         train_dir,
         image_size=(image_size, image_size),
         batch_size=1,
         shuffle=True,
     )
 
-    for images, _ in train_ds.unbatch().batch(1).take(NUM_REPRESENTATIVE_SAMPLES):
+    for images, _ in train_ds.unbatch().batch(1).take(num_samples):
         yield [tf.cast(images, tf.float32)]
 
 # PyCharm can't statically resolve tf.lite.* / tf.int8 (TensorFlow lazy-loads them)
@@ -81,13 +75,16 @@ def export_quantized(model: keras.Model, train_dir: Path, image_size: int, dest:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--model", default=str(MODEL_KERAS_PATH))
-    parser.add_argument("--output", default=str(MODEL_TFLITE_PATH))
+    parser.add_argument("--model", type=Path)
+    parser.add_argument("--output", type=Path, nargs="?")
+    parser.add_argument("--train-dir", type=Path)
+    parser.add_argument("--image-size", type=int)
     args = parser.parse_args()
 
-    model = keras.models.load_model(args.model)
+    model = tf.keras.models.load_model(args.model)
+    output_file = args.output if args.output is not None else args.model.parent / (args.model.stem + ".tflite")
 
-    export_quantized(model, TRAIN_DIR, IMAGE_SIZE, args.output)
+    export_quantized(model, args.train_dir, args.image_size, output_file)
 
 
 if __name__ == "__main__":

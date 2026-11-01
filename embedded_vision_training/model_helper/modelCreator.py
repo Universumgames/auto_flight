@@ -1,8 +1,11 @@
+import argparse
+from pathlib import Path
 
 from tensorflow import keras
 from tensorflow.keras import layers
 
-from config import IMAGE_SIZE, CHANNELS
+import cli_defaults
+
 
 def _depthwise_separable_block(x, filters: int, strides: int):
     x = layers.DepthwiseConv2D(3, strides=strides, padding="same", use_bias=False)(x)
@@ -13,7 +16,7 @@ def _depthwise_separable_block(x, filters: int, strides: int):
     x = layers.ReLU()(x)
     return x
 
-def create_raw_model(name: str, num_classes: int, image_size: int = IMAGE_SIZE, color_channel_count: int = CHANNELS) -> keras.Model:
+def create_raw_model(name: str, num_classes: int, image_size: int, color_channel_count: int) -> keras.Model:
     """
     name: the filename of the model
     num_classes: number of classes
@@ -40,8 +43,18 @@ def create_raw_model(name: str, num_classes: int, image_size: int = IMAGE_SIZE, 
     x = layers.Dropout(0.3)(x)
     outputs = layers.Dense(num_classes, activation="softmax", name="class")(x)
 
-    return keras.Model(inputs, outputs, name=name)
+    model = keras.Model(inputs, outputs, name=name)
+    return model
 
 
 if __name__ == "__main__":
-    create_raw_model(name="fire_smoke_cnn", num_classes=3).summary()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--model", type=str, help="Name of the model")
+    parser.add_argument("-c", "--classes", type=int)
+    parser.add_argument("--channels", type=int, default=3, help="Number of color channels")
+    parser.add_argument("--size", type=int, help="Image size")
+    parser.add_argument("--output", type=Path, default=cli_defaults.MODELS_DIR, help="Output directory of model")
+
+    args = parser.parse_args()
+    model = create_raw_model(name=args.model, num_classes=args.classes, image_size=args.size, color_channel_count=args.channels).summary()
+    model.save(args.output / (args.model + ".keras"))
