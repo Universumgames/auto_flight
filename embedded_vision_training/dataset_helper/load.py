@@ -13,24 +13,24 @@ def load_datasets(ds_dir: Path, augmentation: Sequential, image_size: int, batch
     image_size: size of images
     batch_size: the batch size used for training
     """
-    train_ds = keras.utils.image_dataset_from_directory(
-        ds_dir / "train",
-        image_size=(image_size, image_size),
-        batch_size=batch_size,
-        label_mode="int",
-    )
-    val_ds = keras.utils.image_dataset_from_directory(
-        ds_dir / "val",
-        image_size=(image_size, image_size),
-        batch_size=batch_size,
-        label_mode="int",
-    )
+
+    train_ds = load_dataset(ds_dir / "train", image_size, batch_size, augmentation)
+    val_ds = load_dataset(ds_dir / "val", image_size, batch_size, None)
     class_names = train_ds.class_names
 
-    train_ds = train_ds.map(lambda x, y: (augmentation(x, training=True), y))
-    train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
-    val_ds = val_ds.prefetch(tf.data.AUTOTUNE)
     return train_ds, val_ds, class_names
+
+def load_dataset(ds_dir: Path, image_size: int, batch_size: int, augmentation: Sequential | None) -> tf.data.Dataset:
+    ds = keras.utils.image_dataset_from_directory(
+        ds_dir,
+        image_size=(image_size, image_size),
+        batch_size=batch_size,
+        label_mode="int"
+    )
+    if augmentation is not None:
+        ds = ds.map(lambda  x,y: (augmentation(x, training=True), y))
+    ds.prefetch(tf.data.AUTOTUNE)
+    return ds
 
 def load_test_images(test_dir: Path, image_size: int) -> tuple[list[Image], list[int], list[str]]:
     """
@@ -52,3 +52,21 @@ def load_test_images(test_dir: Path, image_size: int) -> tuple[list[Image], list
         images.append(image_batch.numpy()[0])
         labels.append(int(label_batch.numpy()[0]))
     return images, labels, class_names
+
+
+def representative_dataset(train_dir: Path, image_size: int, num_samples: int):
+    """
+    Get a representative dataset for training or quantisation
+    train_dir: path to the training data directory
+    image_size: the image size
+    num_samples: the number of samples
+    """
+    train_ds = tf.keras.utils.image_dataset_from_directory(
+        train_dir,
+        image_size=(image_size, image_size),
+        batch_size=1,
+        shuffle=True,
+    )
+
+    for images, _ in train_ds.unbatch().batch(1).take(num_samples):
+        yield [tf.cast(images, tf.float32)]

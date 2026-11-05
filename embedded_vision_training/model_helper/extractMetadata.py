@@ -4,7 +4,6 @@ from pathlib import Path
 
 from model_helper.FlatBuffer import FlatBuffer
 
-
 def log_model_metadata(tfLiteModelFile: Path):
     # Imported here, so get_model_ops stays stdlib only for cExport.py (run by the vision_controller build)
     import tensorflow
@@ -31,6 +30,8 @@ def get_model_ops(tfLiteModelData: bytes) -> list[int]:
             codes.append(code)
     return codes
 
+def get_model_ops_from_file(tfLiteModelPath: Path) -> list[int]:
+    return get_model_ops(tfLiteModelPath.read_bytes())
 
 def main():
     parser = argparse.ArgumentParser()

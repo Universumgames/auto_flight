@@ -16,7 +16,7 @@ data/{train,val,test}/<class>/*.jpg
 models/fire_smoke_cnn.keras, models/labels.txt
         │  model_helper/modelConverter.py
         ▼
-models/fire_smoke_cnn_int8.tflite
+models/fire_smoke_cnn.tflite
         │  evaluate.py (sanity check accuracy after quantization)
         │  export_c_array.py
         ▼

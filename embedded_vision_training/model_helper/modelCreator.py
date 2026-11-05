@@ -4,7 +4,7 @@ from pathlib import Path
 from tensorflow import keras
 from tensorflow.keras import layers
 
-import cli_defaults
+from constants import MODELS_DIR
 
 
 def _depthwise_separable_block(x, filters: int, strides: int):
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--classes", type=int)
     parser.add_argument("--channels", type=int, default=3, help="Number of color channels")
     parser.add_argument("--size", type=int, help="Image size")
-    parser.add_argument("--output", type=Path, default=cli_defaults.MODELS_DIR, help="Output directory of model")
+    parser.add_argument("--output", type=Path, default=MODELS_DIR, help="Output directory of model")
 
     args = parser.parse_args()
     model = create_raw_model(name=args.model, num_classes=args.classes, image_size=args.size, color_channel_count=args.channels).summary()

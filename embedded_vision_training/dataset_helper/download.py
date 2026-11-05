@@ -6,53 +6,30 @@ import kagglehub
 
 import cli_defaults
 
-def normalize(name: str) -> str:
-    return re.sub(r"[^a-z0-9]", "", name.lower())
+import constants
+from dataset_helper import splitter, commons
+from dataset_helper.commons import is_image, find_class_dirs
 
 
-def find_class_dirs(download_path: Path, class_aliases: dict[str, list[str]]):
-    """Find every source directory per class among all subdirectories.
-
-    Some datasets (e.g. the default FLAME-derived one) ship their own
-    train/valid/test split, each with its own fire/nofire/... subfolders.
-    We deliberately flatten all of those together into data/raw/<class>/:
-    prepare_dataset.py does its own train/val/test split downstream, and
-    keeping the source split separate would just waste held-out images.
-    """
-    normalized_aliases = {
-        cls: {normalize(alias) for alias in aliases} for cls, aliases in class_aliases.items()
-    }
-
-    found = {}
-    for d in download_path.rglob("*"):
-        if not d.is_dir():
-            continue
-        norm = normalize(d.name)
-        for cls, aliases in normalized_aliases.items():
-            if norm in aliases:
-                # Prefer directories that actually contain image files.
-                if any(f.suffix.lower() in {".jpg", ".jpeg", ".png"} for f in d.iterdir() if f.is_file()):
-                    found.setdefault(cls, []).append(d)
-    return found
-
-
-def download_ds_slug(slug: str, class_aliases: dict[str, list[str]], raw_dir: Path):
+def download_ds_slug(slug: str, class_aliases: dict[str, list[str]] | None, raw_dir: Path | None) -> Path:
     """
     slug: kaggle hub slug to download
-    class_aliases: aliases dict to merge multiple classes
+    class_aliases: aliases dict to merge multiple classes; folders not covered by it keep their own name
     raw_dir: "raw" directory to copy every image to per class, on this directory the dataset is eventually split into train, test and validate
     """
     print(f"Downloading '{slug}' via kagglehub ...")
     download_path = Path(kagglehub.dataset_download(slug))
     print(f"Downloaded to {download_path}")
 
-    class_dirs = find_class_dirs(download_path)
+    class_dirs = find_class_dirs(download_path, class_aliases)
     if not class_dirs:
         raise SystemExit(
-            f"Could not find any fire/smoke/none-like folders under {download_path}.\n"
-            "Inspect that path yourself and either rename folders to match CLASS_ALIASES "
-            "in this script, or copy images into data/raw/<class>/ by hand."
+            f"Could not find any folders containing images under {download_path}.\n"
+            "Inspect that path yourself and copy images into data/raw/<class>/ by hand."
         )
+
+    if raw_dir is None:
+        raw_dir = constants.DATASETS_DIR / commons.slug_to_id(slug)
 
     raw_dir.mkdir(parents=True, exist_ok=True)
     for cls, src_dirs in class_dirs.items():
@@ -65,13 +42,13 @@ def download_ds_slug(slug: str, class_aliases: dict[str, list[str]], raw_dir: Pa
             # overwrite each other.
             prefix = src_dir.parent.name
             for f in src_dir.iterdir():
-                if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}:
+                if is_image(f):
                     shutil.copy2(f, dst_dir / f"{prefix}_{f.name}")
                     n += 1
             print(f"  {src_dir} -> {dst_dir}/{prefix}_*")
         print(f"  {cls}: {n} files total")
 
-    missing = set(class_aliases) - set(class_dirs)
+    missing = set(class_aliases or {}) - set(class_dirs)
     if missing:
         print(f"\nNo folder found for: {sorted(missing)} -- add data/raw/{{{'/'.join(sorted(missing))}}} yourself.")
 
@@ -79,6 +56,15 @@ def download_ds_slug(slug: str, class_aliases: dict[str, list[str]], raw_dir: Pa
         "\nDone. Before training: open a handful of images in data/raw/ and confirm "
         "they're actually aerial/drone shots, not ground-level photos."
     )
+
+def download_and_split_dataset(slug: str, class_aliases: dict[str, list[str]] | None, train_ratio: float | int,
+                  val_ratio: float | int,
+                  seed: int,
+                  copy: bool = True) -> tuple[Path, Path, Path]:
+    raw_dir = download_ds_slug(slug, class_aliases, None)
+    ds_dir = constants.DATASETS_DIR / commons.slug_to_id(slug)
+    split_dirs = splitter.split_dataset(raw_dir, ds_dir, train_ratio, val_ratio, seed, copy, overwrite=False)
+    return split_dirs["train"], split_dirs["val"], split_dirs["test"]
 
 
 def main():

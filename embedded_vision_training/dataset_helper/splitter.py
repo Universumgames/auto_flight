@@ -39,7 +39,7 @@ def split_exists(output_dir: Path) -> bool:
     """
     return (output_dir / "train").is_dir() and (output_dir / "val").is_dir() and (output_dir / "test").is_dir()
 
-def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio: float, seed: int, copy: bool = True):
+def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio: float, seed: int, copy: bool = True, overwrite: bool = False) -> dict[str, Path]:
     """
     Split dataset into training, validation and testing data
     If the output directories already exist (aka. previous splits) they are removed and a new split is created
@@ -49,6 +49,7 @@ def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio
     val_ration: percentage of how many images should be used for validation
     seed: seed for the RNG, used for shuffling the images before splitting
     copy: if True files are copied into splitted directory, if False symlinks are created
+    overwrite: if True delete existing split and create a new one
     """
     if not raw_dir.is_dir():
         raise SystemExit(f"{raw_dir} does not exist. Create data/raw/<class>/*.jpg first.")
@@ -62,6 +63,9 @@ def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio
 
     if not output_dir.is_dir():
         os.mkdir(output_dir)
+
+    if split_exists(output_dir) and not overwrite:
+        return split_dirs
 
     for split_name, split_dir in split_dirs.items():
         if split_dir.exists():
@@ -81,6 +85,7 @@ def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio
             print(f"{class_dir.name:>8} / {split_name:<5}: {len(files)} images")
 
     print(f"\nDone. Classes: {[d.name for d in class_dirs]}")
+    return split_dirs
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)

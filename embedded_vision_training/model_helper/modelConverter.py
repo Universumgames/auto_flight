@@ -9,24 +9,12 @@ import argparse
 from pathlib import Path
 
 import tensorflow as tf
+from tensorflow import keras
 from ai_edge_litert.interpreter import Interpreter
 
-def representative_dataset(train_dir: Path, image_size: int, num_samples: int):
-    """
-    Get a representative dataset for training or quantisation
-    train_dir: path to the training data directory
-    image_size: the image size
-    num_samples: the number of samples
-    """
-    train_ds = tf.keras.utils.image_dataset_from_directory(
-        train_dir,
-        image_size=(image_size, image_size),
-        batch_size=1,
-        shuffle=True,
-    )
+from dataset_helper import load
 
-    for images, _ in train_ds.unbatch().batch(1).take(num_samples):
-        yield [tf.cast(images, tf.float32)]
+from model_helper import trainModel
 
 # PyCharm can't statically resolve tf.lite.* / tf.int8 (TensorFlow lazy-loads them)
 # noinspection PyUnresolvedReferences
@@ -40,7 +28,7 @@ def quantize_model(model: keras.Model, train_dir: Path, image_size: int) -> byte
     """
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    converter.representative_dataset = representative_dataset
+    load.representative_dataset = lambda: representative_dataset(train_dir, image_size, num_samples=200)
     converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
     converter.inference_input_type = tf.int8  # input tensor is int8
     converter.inference_output_type = tf.int8  # output tensor is int8
@@ -83,7 +71,8 @@ def main():
     args = parser.parse_args()
 
     model = tf.keras.models.load_model(args.model)
-    output_file = args.output if args.output is not None else args.model.parent / (args.model.stem + ".tflite")
+    tflite_filename = trainModel.model_filenames(args.model.parent, args.model.stem)["tflite"]
+    output_file = args.output if args.output is not None else tflite_filename
 
     export_quantized(model, args.train_dir, args.image_size, output_file)
 

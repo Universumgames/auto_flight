@@ -1,17 +1,14 @@
-from pathlib import Path
+from constants import ROOT_DIR
 
 DATASET_SLUG = "warcoder/flamevision-dataset-for-wildfire-classification"
 
-
 CLASS_ALIASES = {
-    "fire": ["fire"],
-    "smoke": ["smoke"],
-    "none": ["nofire", "nonfire", "no", "normal", "none", "negative", "background"],
+    "fire": [],
+    "smoke": [],
+    "none": ["nofire", "nonfire", "no", "normal", "negative", "background"],
 }
 
 # dataset dirs
-ROOT_DIR = Path(__file__).parent
-MODELS_DIR = ROOT_DIR / "models"
 DATA_DIR = ROOT_DIR / "data"
 RAW_DIR = DATA_DIR/ "raw"
 TRAIN_DIR = ROOT_DIR / "data" / "train"
