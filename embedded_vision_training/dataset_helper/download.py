@@ -1,5 +1,4 @@
 import argparse
-import re
 import shutil
 from pathlib import Path
 import kagglehub
@@ -7,7 +6,7 @@ import kagglehub
 import cli_defaults
 
 import constants
-from dataset_helper import splitter, commons
+from dataset_helper import commons
 from dataset_helper.commons import is_image, find_class_dirs
 
 
@@ -29,7 +28,7 @@ def download_ds_slug(slug: str, class_aliases: dict[str, list[str]] | None, raw_
         )
 
     if raw_dir is None:
-        raw_dir = constants.DATASETS_DIR / commons.slug_to_id(slug)
+        raw_dir = commons.dataset_root_dir(slug)
 
     raw_dir.mkdir(parents=True, exist_ok=True)
     for cls, src_dirs in class_dirs.items():
@@ -56,15 +55,7 @@ def download_ds_slug(slug: str, class_aliases: dict[str, list[str]] | None, raw_
         "\nDone. Before training: open a handful of images in data/raw/ and confirm "
         "they're actually aerial/drone shots, not ground-level photos."
     )
-
-def download_and_split_dataset(slug: str, class_aliases: dict[str, list[str]] | None, train_ratio: float | int,
-                  val_ratio: float | int,
-                  seed: int,
-                  copy: bool = True) -> tuple[Path, Path, Path]:
-    raw_dir = download_ds_slug(slug, class_aliases, None)
-    ds_dir = constants.DATASETS_DIR / commons.slug_to_id(slug)
-    split_dirs = splitter.split_dataset(raw_dir, ds_dir, train_ratio, val_ratio, seed, copy, overwrite=False)
-    return split_dirs["train"], split_dirs["val"], split_dirs["test"]
+    return raw_dir
 
 
 def main():

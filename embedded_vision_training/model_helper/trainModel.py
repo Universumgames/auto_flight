@@ -1,6 +1,5 @@
 """Train the fire/smoke CNN on data/{train,val}/<class>/*.jpg."""
 
-import argparse
 from pathlib import Path
 
 import tensorflow as tf
@@ -8,26 +7,14 @@ from tensorflow import keras
 from tensorflow.keras import Model
 from tensorflow.keras.callbacks import History
 
-import cli_defaults
 import constants
-from dataset_helper.load import load_datasets
-from model_helper.commons import AUGMENTATION
+from model_helper.commons import AUGMENTATION, model_filenames
 from model_helper.modelCreator import create_raw_model
-from model_helper.historyExporter import save_history
 
 
-def model_filenames(output_dir: Path, model_name: str) -> dict[str, Path]:
-    model_filename = output_dir / (model_name + ".keras")
-    labels_filename = output_dir / (model_name + ".labels.txt")
-    tflite_filename = output_dir / (model_name + ".tflite")
-    data = {
-        "model": model_filename,
-        "labels": labels_filename,
-        "tflite": tflite_filename
-    }
-    return data
-
-def train_new_model(model_name: str, output_dir: Path, color_channels: int, image_size: int, train_ds: tf.data.Dataset, val_ds: tf.data.Dataset, class_names: list[str], learning_rate: float, epochs: int) -> tuple[Model, History]:
+def train_new_model(model_name: str, color_channels: int, image_size: int, train_ds: tf.data.Dataset,
+                    val_ds: tf.data.Dataset, class_names: list[str], learning_rate: float, epochs: int,
+                    output_dir: Path | None = None) -> tuple[Model, History]:
     """
     Train a new model
     model_name: name the model should be saved as
@@ -37,8 +24,10 @@ def train_new_model(model_name: str, output_dir: Path, color_channels: int, imag
     learning_rate: the learning rate
     epochs: number of epochs to run
     """
+    if output_dir is None:
+        output_dir = constants.MODELS_DIR
     model = create_raw_model(name=model_name, num_classes=len(class_names), color_channel_count=color_channels, image_size=image_size)
-    filenames = model_filenames(output_dir, model_name)
+    filenames = model_filenames(model_name, output_dir)
     model_filename = filenames["model"]
     labels_filename = filenames["labels"]
     model.compile(
@@ -68,6 +57,12 @@ def train_new_model(model_name: str, output_dir: Path, color_channels: int, imag
     print(f"Saved labels to {labels_filename}")
     return model, history
 
+"""
+import argparse
+import cli_defaults
+from dataset_helper.load import load_training_datasets
+from model_helper.historyExporter import save_history
+
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -86,11 +81,13 @@ def main():
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    train_ds, val_ds, class_names = load_datasets(args.split_dir, AUGMENTATION, args.image_size, args.batch_size)
+    train_ds, val_ds, class_names = load_training_datasets(args.split_dir, AUGMENTATION, args.image_size, args.batch_size)
     print(f"Classes ({len(class_names)}): {class_names}")
 
-    model, history = train_new_model(args.name, args.out_dir, args.channels, args.image_size, train_ds, val_ds, class_names, args.learning_rate, args.epochs)
+    model, history = train_new_model(args.name, args.channels, args.image_size, train_ds, val_ds, class_names,
+                                     args.learning_rate, args.epochs, args.out_dir)
     save_history(history, args.name)
 
 if __name__ == "__main__":
     main()
+"""

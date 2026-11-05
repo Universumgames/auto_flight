@@ -1,4 +1,3 @@
-import argparse
 import struct
 from pathlib import Path
 
@@ -32,6 +31,8 @@ def get_model_ops(tfLiteModelData: bytes) -> list[int]:
 
 def get_model_ops_from_file(tfLiteModelPath: Path) -> list[int]:
     return get_model_ops(tfLiteModelPath.read_bytes())
+
+import argparse
 
 def main():
     parser = argparse.ArgumentParser()

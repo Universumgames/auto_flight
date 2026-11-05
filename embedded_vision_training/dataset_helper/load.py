@@ -1,24 +1,13 @@
 from pathlib import Path
+from typing import Generator
 
 from PIL.Image import Image
 from tensorflow import keras
 import tensorflow as tf
 from tensorflow.python.keras import Sequential
 
-def load_datasets(ds_dir: Path, augmentation: Sequential, image_size: int, batch_size: int) -> tuple[tf.data.Dataset, tf.data.Dataset, list[str]]:
-    """
-    Load training and validation dataset
-    ds_dir: root dir where training and validation directories reside
-    augmentation: augmentation pipeline definition
-    image_size: size of images
-    batch_size: the batch size used for training
-    """
+from dataset_helper import commons
 
-    train_ds = load_dataset(ds_dir / "train", image_size, batch_size, augmentation)
-    val_ds = load_dataset(ds_dir / "val", image_size, batch_size, None)
-    class_names = train_ds.class_names
-
-    return train_ds, val_ds, class_names
 
 def load_dataset(ds_dir: Path, image_size: int, batch_size: int, augmentation: Sequential | None) -> tf.data.Dataset:
     ds = keras.utils.image_dataset_from_directory(
@@ -31,6 +20,20 @@ def load_dataset(ds_dir: Path, image_size: int, batch_size: int, augmentation: S
         ds = ds.map(lambda  x,y: (augmentation(x, training=True), y))
     ds.prefetch(tf.data.AUTOTUNE)
     return ds
+
+def load_training_datasets(ds_dir: Path, augmentation: Sequential, image_size: int, batch_size: int) -> tuple[tf.data.Dataset, tf.data.Dataset, list[str]]:
+    """
+    Load training and validation dataset
+    ds_dir: root dir where training and validation directories reside
+    augmentation: augmentation pipeline definition
+    image_size: size of images
+    batch_size: the batch size used for training
+    """
+    train_ds = load_dataset(ds_dir / "train", image_size, batch_size, augmentation)
+    val_ds = load_dataset(ds_dir / "val", image_size, batch_size, None)
+    class_names = train_ds.class_names
+
+    return train_ds, val_ds, class_names
 
 def load_test_images(test_dir: Path, image_size: int) -> tuple[list[Image], list[int], list[str]]:
     """
@@ -54,7 +57,7 @@ def load_test_images(test_dir: Path, image_size: int) -> tuple[list[Image], list
     return images, labels, class_names
 
 
-def representative_dataset(train_dir: Path, image_size: int, num_samples: int):
+def representative_dataset(train_dir: Path, image_size: int, num_samples: int) -> Generator[list[Image]]:
     """
     Get a representative dataset for training or quantisation
     train_dir: path to the training data directory

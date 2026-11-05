@@ -1,18 +1,37 @@
+import re
 from pathlib import Path
 
-from dataset_helper.download import _normalize
+from constants import DATASETS_DIR
 
+
+def _normalize(name: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", name.lower())
 
 def slug_to_id(slug: str) -> str:
     return slug.replace("/", "_")
 
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
 
 def is_image(f: Path) -> bool:
     return f.is_file() and f.suffix.lower() in IMAGE_SUFFIXES
 
+def dataset_root_dir(slug: str, datasets_dir: Path | None = None):
+    if datasets_dir is None:
+        datasets_dir = DATASETS_DIR
+    slug_id = slug_to_id(slug)
+    ds_dir = datasets_dir / slug_id
+    return ds_dir
 
-IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png"}
-
+def splitted_dataset_dirs(slug: str, root: Path | None = None):
+    ds_dir = dataset_root_dir(slug, root)
+    train_path = ds_dir / "train"
+    val_path = ds_dir / "val"
+    test_path = ds_dir / "test"
+    data = {
+        "train": train_path,
+        "test": test_path,
+        "val": val_path
+    }
 
 def find_class_dirs(download_path: Path, class_aliases: dict[str, list[str]] | None = None) -> dict[str, list[Path]]:
     """Find every source directory per class among all subdirectories.

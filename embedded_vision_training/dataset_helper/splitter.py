@@ -5,6 +5,9 @@ import shutil
 from pathlib import Path
 
 import cli_defaults
+import constants
+from dataset_helper import commons
+from dataset_helper.download import download_ds_slug
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp"}
 
@@ -39,7 +42,8 @@ def split_exists(output_dir: Path) -> bool:
     """
     return (output_dir / "train").is_dir() and (output_dir / "val").is_dir() and (output_dir / "test").is_dir()
 
-def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio: float, seed: int, copy: bool = True, overwrite: bool = False) -> dict[str, Path]:
+def split_dataset_custom(raw_dir: Path, train_ratio: float, val_ratio: float, seed: int, output_dir: Path | None = None,
+                         copy: bool = True, overwrite: bool = False) -> dict[str, Path]:
     """
     Split dataset into training, validation and testing data
     If the output directories already exist (aka. previous splits) they are removed and a new split is created
@@ -57,6 +61,9 @@ def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio
     class_dirs = sorted(p for p in raw_dir.iterdir() if p.is_dir())
     if len(class_dirs) < 2:
         raise SystemExit(f"Found {len(class_dirs)} class folders under {raw_dir}, need at least 2.")
+
+    if output_dir is None:
+        output_dir = raw_dir.parent
 
     _test_ratio = 1 - train_ratio - val_ratio
     split_dirs = {"train": output_dir / "train", "val": output_dir / "val", "test": output_dir / "test"}
@@ -87,6 +94,19 @@ def split_dataset(raw_dir: Path, output_dir: Path, train_ratio: float, val_ratio
     print(f"\nDone. Classes: {[d.name for d in class_dirs]}")
     return split_dirs
 
+def split_dataset(slug: str, train_ratio: float, val_ratio: float, seed: int, copy: bool = True, overwrite: bool = False) -> dict[str, Path]:
+    return split_dataset_custom(constants.DATASETS_DIR / commons.slug_to_id(slug), train_ratio, val_ratio, seed, copy=copy, overwrite=overwrite)
+
+def download_and_split_dataset(slug: str, class_aliases: dict[str, list[str]] | None, train_ratio: float | int,
+                  val_ratio: float | int,
+                  seed: int,
+                  copy: bool = True) -> tuple[Path, Path, Path]:
+    raw_dir = download_ds_slug(slug, class_aliases, None)
+    split_dirs = split_dataset(slug, train_ratio, val_ratio, seed, copy, False)
+    return split_dirs["train"], split_dirs["val"], split_dirs["test"]
+
+
+"""
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw-dir", type=Path, default=cli_defaults.RAW_DIR)
@@ -97,7 +117,9 @@ def main():
     args = parser.parse_args()
 
     train_ratio, val_ratio, _test_ratio = tuple(args.split_relation)
-    split_dataset(args.raw_dir, args.out_dir, train_ratio, val_ratio, args.seed, True)
+    split_dataset_custom(args.raw_dir, train_ratio, val_ratio, args.seed, args.out_dir, True)
 
 if __name__ == "__main__":
     main()
+    
+"""

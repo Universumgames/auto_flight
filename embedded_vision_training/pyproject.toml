@@ -16,6 +16,14 @@ dependencies = [
     "ai-edge-litert>=2.3.0",
 ]
 
-[tool.uv]
-# Flat collection of scripts, not an installable package.
-package = false
+[project.scripts]
+embedded-vision-training = "cli:main"
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+# Flat layout: top-level modules plus helper packages.
+py-modules = ["cli", "cli_defaults", "constants"]
+packages = ["dataset_helper", "model_helper"]

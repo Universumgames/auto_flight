@@ -5,4 +5,4 @@ venv/
 .idea/
 __pycache__/
 *.pyc
-*.keras
+*.egg-info

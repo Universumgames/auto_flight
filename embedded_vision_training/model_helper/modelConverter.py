@@ -5,16 +5,13 @@ required for TensorFlow Lite Micro on ESP32: there's no FPU-friendly path
 for float32 inference at any useful framerate, and the int8 model is ~4x
 smaller than float32.
 """
-import argparse
 from pathlib import Path
 
 import tensorflow as tf
-from tensorflow import keras
 from ai_edge_litert.interpreter import Interpreter
+from tensorflow import keras
 
-from dataset_helper import load
 
-from model_helper import trainModel
 
 # PyCharm can't statically resolve tf.lite.* / tf.int8 (TensorFlow lazy-loads them)
 # noinspection PyUnresolvedReferences
@@ -28,7 +25,7 @@ def quantize_model(model: keras.Model, train_dir: Path, image_size: int) -> byte
     """
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
-    load.representative_dataset = lambda: representative_dataset(train_dir, image_size, num_samples=200)
+    converter.representative_dataset = lambda: representative_dataset(train_dir, image_size, num_samples=200)
     converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
     converter.inference_input_type = tf.int8  # input tensor is int8
     converter.inference_output_type = tf.int8  # output tensor is int8
@@ -37,7 +34,6 @@ def quantize_model(model: keras.Model, train_dir: Path, image_size: int) -> byte
 
     return tflite_model
 
-# noinspection PyUnresolvedReferences
 def export_quantized(model: keras.Model, train_dir: Path, image_size: int, dest: Path) -> None:
     """
     Create a quantized model for embedded use
@@ -61,6 +57,9 @@ def export_quantized(model: keras.Model, train_dir: Path, image_size: int, dest:
     print(f"Output: dtype={output_details['dtype'].__name__}, shape={output_details['shape']}, "
           f"scale={output_details['quantization'][0]:.6f}, zero_point={output_details['quantization'][1]}")
 
+"""
+from model_helper import commons
+import argparse
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -71,7 +70,7 @@ def main():
     args = parser.parse_args()
 
     model = tf.keras.models.load_model(args.model)
-    tflite_filename = trainModel.model_filenames(args.model.parent, args.model.stem)["tflite"]
+    tflite_filename = commons.model_filenames(args.model.stem)["tflite"]
     output_file = args.output if args.output is not None else tflite_filename
 
     export_quantized(model, args.train_dir, args.image_size, output_file)
@@ -79,3 +78,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""

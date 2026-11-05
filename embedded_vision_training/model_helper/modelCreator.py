@@ -1,11 +1,5 @@
-import argparse
-from pathlib import Path
-
 from tensorflow import keras
 from tensorflow.keras import layers
-
-from constants import MODELS_DIR
-
 
 def _depthwise_separable_block(x, filters: int, strides: int):
     x = layers.DepthwiseConv2D(3, strides=strides, padding="same", use_bias=False)(x)
@@ -46,6 +40,12 @@ def create_raw_model(name: str, num_classes: int, image_size: int, color_channel
     model = keras.Model(inputs, outputs, name=name)
     return model
 
+"""
+import argparse
+from pathlib import Path
+
+from constants import MODELS_DIR
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -58,3 +58,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     model = create_raw_model(name=args.model, num_classes=args.classes, image_size=args.size, color_channel_count=args.channels).summary()
     model.save(args.output / (args.model + ".keras"))
+
+"""
